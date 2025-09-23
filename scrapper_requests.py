@@ -335,8 +335,8 @@ def scrape_data():
         
         # Logout setelah mendapatkan data
         logout()
-        # Print column names to check if 'Nama Mata Kuliah' is present
-        print("Columns in DataFrame:", df.columns)
+        # # Print column names to check if 'Nama Mata Kuliah' is present
+        # print("Columns in DataFrame:", df.columns)
 
         # Clean column names to ensure no extra spaces or hidden characters
         df.columns = df.columns.str.strip()
@@ -370,9 +370,8 @@ def scrape_data():
             }
             events.append(event)
         
-        return events
-        
-        return events
+        df = pd.DataFrame(events)
+        return df
     except Exception as e:
         print(f"Error scraping: {e}")
         raise
