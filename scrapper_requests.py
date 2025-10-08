@@ -106,29 +106,10 @@ def scrape_data():
         df_raw.columns = df_raw.columns.str.strip()
         print(f"   --> Kolom yang terdeteksi di tabel: {df_raw.columns.tolist()}")
         
-        # ==================================================================
-        # === PERBAIKAN FINAL ADA DI SINI ===
-        # ==================================================================
         # TAHAP 6: Membersihkan data dan Logout
         print("6. Membersihkan data dan melakukan logout...")
-        events = []
-        for _, row in df_raw.iterrows():
-            # Mengambil data dari kolom 'Keterangan' yang sudah pasti ada
-            keterangan_info = row.get('Keterangan', '') # Default string kosong jika tidak ada
-            
-            start_time_str = re.sub(r"^\w+, ", "", row['Hari, Tanggal']) + ' ' + row['Jam'].split('-')[0]
-            end_time_str = re.sub(r"^\w+, ", "", row['Hari, Tanggal']) + ' ' + row['Jam'].split('-')[1]
-            events.append({
-                'start_time': start_time_str.strip(),
-                'end_time': end_time_str.strip(),
-                'summary': row['Nama Matakuliah'],
-                'location': row['Ruangan'],
-                'description': f"Keterangan: {keterangan_info}", # Menggunakan kolom Keterangan
-                'status': row['Status Kuliah']
-            })
-        
         sess.get(urljoin(GATE_ROOT, "/logout"), timeout=30)
-        return pd.DataFrame(events)
+        return df_raw
         
     except Exception as e:
         print(f"Error saat scraping: {e}")
