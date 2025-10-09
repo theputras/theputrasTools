@@ -4,17 +4,18 @@ import os
 from datetime import datetime
 import pandas as pd
 import re
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request, render_template_string
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # Impor fungsi scraper dari file sebelah
-from scrapper_requests import scrape_data
+from scrapper_requests import scrape_data,search_mahasiswa
 
 app = Flask(__name__)
 
-JSON_FILE = 'jadwal.json'
+JSON_FILE = 'jadwal.json'   
 ICS_FILE = 'jadwal_kegiatan.ics'
-
+HOST='127.0.0.1'
+PORT=5000
 # ==================================================================
 # === PERBAIKAN DIMULAI DI SINI ===
 # ==================================================================
@@ -114,25 +115,82 @@ def download_ics():
         return "<h3>Data jadwal belum tersedia untuk dibuatkan kalender.</h3>", 404
     except Exception as e:
         return f"<pre>Error: {str(e)}</pre>", 500
+SEARCH_PAGE_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencarian Mahasiswa Sicyca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-4 md:p-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Pencarian Mahasiswa</h1>
+            <p class="text-gray-600 mb-6">Masukkan NIM atau Nama untuk mencari data mahasiswa di Sicyca.</p>
+            <a href="/" class="text-blue-500 hover:underline mb-4 inline-block">&laquo; Kembali ke Jadwal Kuliah</a>
+            
+            <form method="POST" action="/cari-mahasiswa" class="mb-8">
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" name="query" placeholder="Masukkan NIM atau Nama..." value="{{ query }}"
+                           class="flex-grow w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <button type="submit"
+                            class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">
+                        Cari
+                    </button>
+                </div>
+            </form>
 
+            {% if results is not none %}
+                <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Hasil Pencarian untuk "{{ query }}"</h2>
+                <div class="overflow-x-auto">
+                    {{ results | safe }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+@app.route('/cari-mahasiswa', methods=['GET', 'POST'])
+def cari_mahasiswa_route():
+    if request.method == 'POST':
+        query = request.form.get('query', '').strip()
+        if not query:
+            return render_template_string(SEARCH_PAGE_TEMPLATE, query='', results=None)
+            
+        print(f"Menerima permintaan pencarian untuk: '{query}'")
+        df_results = search_mahasiswa(query)
+        
+        if not df_results.empty:
+            results_table = df_results.to_html(classes='w-full text-sm text-left text-gray-700 border-collapse', index=False, justify='left')
+            # Ganti style default pandas dengan Tailwind
+            results_table = results_table.replace('<table border="1" class="dataframe">', '<table class="w-full text-sm text-left text-gray-700 border-collapse">')
+            results_table = results_table.replace('<thead>', '<thead class="text-xs text-white uppercase bg-blue-600">')
+            results_table = results_table.replace('<tr>', '<tr class="bg-white border-b hover:bg-gray-50">')
+            results_table = results_table.replace('<th>', '<th scope="col" class="px-6 py-3">')
+            results_table = results_table.replace('<td>', '<td class="px-6 py-4">')
+        else:
+            results_table = "<p class='text-gray-500 mt-4'>Tidak ada hasil yang ditemukan.</p>"
+            
+        return render_template_string(SEARCH_PAGE_TEMPLATE, query=query, results=results_table)
+    
+    # Untuk GET request, tampilkan halaman kosong
+    return render_template_string(SEARCH_PAGE_TEMPLATE, query='', results=None)
 if __name__ == "__main__":
     if not os.path.exists(JSON_FILE):
         print(f"File {JSON_FILE} tidak ditemukan. Menjalankan scraper untuk pertama kali...")
         run_scraper_and_save()
 
     scheduler = BackgroundScheduler(daemon=True)
-    
-    # ==================================================================
-    # === PERUBAHAN ADA DI SINI ===
-    # ==================================================================
-    # Mengubah trigger dari 'interval' menjadi 'cron' untuk waktu yang spesifik
-    # 'hour=0' berarti jam 00 atau 12 pagi.
-    scheduler.add_job(run_scraper_and_save, 'cron', hour=3, minute=0)
+    scheduler.add_job(run_scraper_and_save, 'cron', hour=9, minute=46)
     # ==================================================================
     
     scheduler.start()
     
-    print("\nScheduler telah dimulai. Scraping akan berjalan setiap hari pada jam 12:00 pagi.")
-    print("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
+    print("\nScheduler telah dimulai. Scraping akan berjalan setiap hari pada jam 3:00 pagi.")
+    print(f"Aplikasi web Flask siap di http://{HOST}:5000\n")
     
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    app.run(HOST, PORT, debug=True, use_reloader=True)
