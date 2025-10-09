@@ -148,11 +148,11 @@ def pencarian_komunitas_route():
                 if nim and len(nim) >= 7:
                     prodi_code = nim[2:7]
                     prodi_name = majorID.get(prodi_code, 'Prodi Tidak Dikenal')
-                combined_results.append({ 'Tipe': 'Mahasiswa', 'Nama': row.get('Nama'), 'ID': nim, 'Prodi / Bagian': f"{row.get('Status')} / {prodi_name}", 'Detail': row.get('Dosen Wali') })
+                combined_results.append({ 'Tipe': 'Mahasiswa', 'Nama': row.get('Nama'), 'ID': nim, 'Status': f"{row.get('Status')}",'Prodi' : prodi_name, 'Detail': row.get('Dosen Wali') })
         
         if not df_staff.empty:
             for _, row in df_staff.iterrows():
-                combined_results.append({'Tipe': 'Staff/Dosen', 'Nama': row.get('Nama'), 'ID': row.get('NIK'), 'Prodi / Bagian': row.get('Bagian'), 'Detail': row.get('Email')})
+                combined_results.append({'Tipe': 'Staff/Dosen', 'Nama': row.get('Nama'), 'ID': row.get('NIK'), 'Bagian': row.get('Bagian'), 'Detail': row.get('Email')})
 
         results_html = None
         if combined_results:
@@ -162,14 +162,15 @@ def pencarian_komunitas_route():
                 detail_html = ""
                 if item['Tipe'] == 'Mahasiswa':
                     detail_html = f"""
-                        <dt class="font-medium text-gray-400">ID (NIM)</dt><dd class="col-span-2 text-white">{item.get('ID', '')}</dd>
-                        <dt class="font-medium text-gray-400">Status/Prodi</dt><dd class="col-span-2 text-white">{item.get('Prodi / Bagian', '')}</dd>
+                        <dt class="font-medium text-gray-400">NIM</dt><dd class="col-span-2 text-white">{item.get('ID', '')}</dd>
+                        <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item.get('Status', '')}</dd>
+                        <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item.get('Prodi', '')}</dd>
                         <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item.get('Detail', '')}</dd>
                     """
                 else: # Staff/Dosen
                     detail_html = f"""
-                        <dt class="font-medium text-gray-400">ID (NIK)</dt><dd class="col-span-2 text-white">{item.get('ID', '')}</dd>
-                        <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item.get('Prodi / Bagian', '')}</dd>
+                        <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item.get('ID', '')}</dd>
+                        <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item.get('Bagian', '')}</dd>
                         <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item.get('Detail', '')}</dd>
                     """
                 mobile_list += f"""
