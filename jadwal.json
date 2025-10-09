@@ -1,29 +1,5 @@
 [
     {
-        "Hari, Tanggal":"Rabu, 08 Oktober 2025",
-        "Jam":"07:30-10:00",
-        "Ruangan":"B401",
-        "Nama Matakuliah":"Analisis dan Perancangan Sistem Informasi",
-        "Status Kuliah":"Luring",
-        "Keterangan":"Dosen Hadir"
-    },
-    {
-        "Hari, Tanggal":"Rabu, 08 Oktober 2025",
-        "Jam":"11:00-13:00",
-        "Ruangan":"Lab. De Morgan",
-        "Nama Matakuliah":"Analisis dan Perancangan Sistem Informasi",
-        "Status Kuliah":"Luring",
-        "Keterangan":"Praktikum"
-    },
-    {
-        "Hari, Tanggal":"Rabu, 08 Oktober 2025",
-        "Jam":"13:30-16:00",
-        "Ruangan":"B402",
-        "Nama Matakuliah":"Manajemen Proyek Sistem Informasi",
-        "Status Kuliah":"Luring",
-        "Keterangan":""
-    },
-    {
         "Hari, Tanggal":"Kamis, 09 Oktober 2025",
         "Jam":"07:30-10:50",
         "Ruangan":"B505",
@@ -84,6 +60,30 @@
         "Jam":"13:30-16:00",
         "Ruangan":"B502",
         "Nama Matakuliah":"Metode Penelitian dan Penulisan Ilmiah",
+        "Status Kuliah":"Luring",
+        "Keterangan":""
+    },
+    {
+        "Hari, Tanggal":"Rabu, 15 Oktober 2025",
+        "Jam":"07:30-10:00",
+        "Ruangan":"B406",
+        "Nama Matakuliah":"Analisis dan Perancangan Sistem Informasi",
+        "Status Kuliah":"Luring",
+        "Keterangan":""
+    },
+    {
+        "Hari, Tanggal":"Rabu, 15 Oktober 2025",
+        "Jam":"11:00-13:00",
+        "Ruangan":"Lab. De Morgan",
+        "Nama Matakuliah":"Analisis dan Perancangan Sistem Informasi",
+        "Status Kuliah":"Luring",
+        "Keterangan":"Praktikum"
+    },
+    {
+        "Hari, Tanggal":"Rabu, 15 Oktober 2025",
+        "Jam":"13:30-16:00",
+        "Ruangan":"B402",
+        "Nama Matakuliah":"Manajemen Proyek Sistem Informasi",
         "Status Kuliah":"Luring",
         "Keterangan":""
     }

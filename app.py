@@ -127,7 +127,7 @@ if __name__ == "__main__":
     # ==================================================================
     # Mengubah trigger dari 'interval' menjadi 'cron' untuk waktu yang spesifik
     # 'hour=0' berarti jam 00 atau 12 pagi.
-    scheduler.add_job(run_scraper_and_save, 'cron', hour=0, minute=0)
+    scheduler.add_job(run_scraper_and_save, 'cron', hour=3, minute=0)
     # ==================================================================
     
     scheduler.start()
