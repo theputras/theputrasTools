@@ -18,8 +18,8 @@ executor = ThreadPoolExecutor(max_workers=3)
 
 JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
-JAM_SET = 10
-MENIT_SET = 44
+JAM_SET = 5
+MENIT_SET = 0
 
 month_translation = { 'Januari': 'January', 'Februari': 'February', 'Maret': 'March', 'April': 'April', 'Mei': 'May', 'Juni': 'June', 'Juli': 'July', 'Agustus': 'August', 'September': 'September', 'Oktober': 'October', 'November': 'November', 'Desember': 'December' }
 
