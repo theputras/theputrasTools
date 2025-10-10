@@ -1,29 +1,5 @@
 [
     {
-        "Hari, Tanggal":"Kamis, 09 Oktober 2025",
-        "Jam":"07:30-10:50",
-        "Ruangan":"B505",
-        "Nama Matakuliah":"Pemrograman Web Lanjut",
-        "Status Kuliah":"Luring",
-        "Keterangan":""
-    },
-    {
-        "Hari, Tanggal":"Kamis, 09 Oktober 2025",
-        "Jam":"11:00-13:00",
-        "Ruangan":"Lab. De Morgan",
-        "Nama Matakuliah":"Pemrograman Web Lanjut",
-        "Status Kuliah":"Luring",
-        "Keterangan":"Praktikum"
-    },
-    {
-        "Hari, Tanggal":"Kamis, 09 Oktober 2025",
-        "Jam":"13:30-16:00",
-        "Ruangan":"M403",
-        "Nama Matakuliah":"Sistem Pendukung Keputusan",
-        "Status Kuliah":"Luring",
-        "Keterangan":""
-    },
-    {
         "Hari, Tanggal":"Jumat, 10 Oktober 2025",
         "Jam":"13:30-16:00",
         "Ruangan":"B403",
@@ -84,6 +60,30 @@
         "Jam":"13:30-16:00",
         "Ruangan":"B402",
         "Nama Matakuliah":"Manajemen Proyek Sistem Informasi",
+        "Status Kuliah":"Luring",
+        "Keterangan":""
+    },
+    {
+        "Hari, Tanggal":"Kamis, 16 Oktober 2025",
+        "Jam":"07:30-10:50",
+        "Ruangan":"B505",
+        "Nama Matakuliah":"Pemrograman Web Lanjut",
+        "Status Kuliah":"Luring",
+        "Keterangan":""
+    },
+    {
+        "Hari, Tanggal":"Kamis, 16 Oktober 2025",
+        "Jam":"11:00-13:00",
+        "Ruangan":"Lab. De Morgan",
+        "Nama Matakuliah":"Pemrograman Web Lanjut",
+        "Status Kuliah":"Luring",
+        "Keterangan":"Praktikum"
+    },
+    {
+        "Hari, Tanggal":"Kamis, 16 Oktober 2025",
+        "Jam":"13:30-16:00",
+        "Ruangan":"M403",
+        "Nama Matakuliah":"Sistem Pendukung Keputusan",
         "Status Kuliah":"Luring",
         "Keterangan":""
     }

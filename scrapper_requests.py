@@ -127,6 +127,11 @@ def get_authenticated_session():
         print("Memulai proses login baru untuk sesi global...")
         if login_gateDinamika(new_session):
             save_cookies(new_session)
+                        # Buat sesi BARU yang bersih, lalu muat cookies yang baru saja disimpan
+            print("   --> Membuat sesi bersih dan memuat cookies baru...")
+            clean_session = requests.Session()
+            clean_session.headers.update({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"})
+            load_cookies(clean_session)
             _authenticated_session = new_session
             return _authenticated_session
         
@@ -144,6 +149,10 @@ def scrape_data():
         akademik_url = urljoin(TARGET_URL, "/akademik")
         resp_ak2 = sess.get(akademik_url, timeout=30, headers={"Referer": TARGET_URL})
         resp_ak2.raise_for_status()
+        # === PENAMBAHAN KODE UNTUK DEBUGGING ===
+        with open("debug_output.html", "w", encoding="utf-8") as f:
+            f.write(resp_ak2.text)
+        print("   --> HTML dari halaman akademik disimpan ke debug_output.html")
         soup = BeautifulSoup(resp_ak2.text, "lxml")
         text_node = soup.find(string=re.compile(r'JADWAL KEGIATAN MINGGU INI', re.IGNORECASE))
         target_div = text_node.find_parent("div", class_="tabletitle") if text_node else None

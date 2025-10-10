@@ -35,10 +35,10 @@ var wid = '273060';
 
 $(document).ready(function(){
     SetBaseurl('https://sicyca.dinamika.ac.id');
-    SetServerDay('Kamis, 09 Oktober 2025');
-    SetServerHour('11');
+    SetServerDay('Jum\'at, 10 Oktober 2025');
+    SetServerHour('10');
     SetServerMinute('43');
-    SetServerSecond('16');    
+    SetServerSecond('57');    
     SetShowMessage(true);    
     startClockTimer();     
 
@@ -204,7 +204,7 @@ function hasSubmitFeedback(data)
                                 </li>
                                                                         </ul>
                 </li>
-                                            <li class="">
+                                            <li class="selected">
                     <a href="https://sicyca.dinamika.ac.id/akademik" style="
                         height: 16px;
                         display: block;
@@ -219,7 +219,7 @@ function hasSubmitFeedback(data)
                     ">Akademik</a>
                     <ul>
                                                                             <li>
-                                <a href="https://sicyca.dinamika.ac.id/akademik" class="">
+                                <a href="https://sicyca.dinamika.ac.id/akademik" class="selected">
                                     Jadwal                                </a>
                             </li>
                                                                                                                                             <li>
@@ -492,7 +492,7 @@ function hasSubmitFeedback(data)
                             </li>
                                                                     </ul>
                 </li>
-                                            <li class="selected">
+                                            <li class="">
                     <a href="https://sicyca.dinamika.ac.id/komunitas" style="
                         height: 16px;
                         display: block;
@@ -511,7 +511,7 @@ function hasSubmitFeedback(data)
                                     Cari                                </a>
                             </li>
                                                                                                                                             <li>
-                                    <a href="https://sicyca.dinamika.ac.id/komunitas/mahasiswa" class="selected">
+                                    <a href="https://sicyca.dinamika.ac.id/komunitas/mahasiswa" class="">
                                         Mahasiswa                                    </a>
                                 </li>
                                                                                             <li>
@@ -587,59 +587,73 @@ function hasSubmitFeedback(data)
     </form>  
     <iframe name="dummyPost" style="width: 1px; height: 1px; opacity: 0" ></iframe>               
 </div>      
-
 <div id="dashboardcontainer">
-    <div class="content">
-        
+    <div class="content">   
         
         <div style="height: 15px;">&nbsp;</div>
-        
-        
-        
-        
-        
-        
-        
-        <div class="boxtitle" ><span class="square">&nbsp;</span>Pencarian Mahasiswa</div>
-        <div class="boxcontainer" style="padding:0px;">
-            <form method="get" action="https://sicyca.dinamika.ac.id/komunitas/mahasiswa/">                
-                <ul class="forminput" style="padding:5px;">
-                    <li><label>Nim / Nama</label> <input type="text" name="q" value="960174" style="width: 287px"  /></li>
-                                                    
-                </ul>         
-                
-                <div class="formaction">
-                    <button class="bluishBtn button_small">Cari</button>                    
-                </div>        
-                
-                                                     
-            </form>               
-        </div>     
 
+                <!-- jadwal minggu ini -->
+        <div style="height: 15px;">&nbsp;</div>
 
+        <div class="tabletitle"><span class="square">&nbsp;</span>JADWAL KEGIATAN MINGGU INI<span>Periode 10 Oktober 2025 - 16 Oktober 2025</span></div>
+        <table class="sicycatable" style="margin-bottom: 0;">
+            <tr>
+                <th>Hari, Tanggal</th>
+                <th>Jam</th>
+                <th>Ruangan</th>
+                <th style="text-align: left">Nama Matakuliah</th>
+                <th>Status Kuliah</th>
+                <th style="text-align: left">Keterangan</th>
+            </tr>
+            <tr>  <td style="text-align:left;text-indent:35px;">Jumat, 10 Oktober 2025</td>  <td>13:30-16:00</td>  <td>B403</td>  <td style="text-align:left">Sistem Pendukung Keputusan</td>  <td>Luring</td>  <td style="text-align:left">Kuliah Pengganti</td></tr><tr>  <td style="text-align:left;text-indent:35px;">Senin, 13 Oktober 2025</td>  <td>07:30-10:50</td>  <td>B505</td>  <td style="text-align:left">Pemrograman Mobile Lanjut</td>  <td>Luring</td>  <td style="text-align:left"></td></tr><tr>  <td style="text-align:left;text-indent:35px;">Senin, 13 Oktober 2025</td>  <td>11:00-13:00</td>  <td>Lab. De Morgan</td>  <td style="text-align:left">Pemrograman Mobile Lanjut</td>  <td>Luring</td>  <td style="text-align:left">Praktikum</td></tr><tr>  <td style="text-align:left;text-indent:35px;">Selasa, 14 Oktober 2025</td>  <td>07:30-10:00</td>  <td>M308</td>  <td style="text-align:left">Manajemen Layanan Teknologi Informasi</td>  <td>Luring</td>  <td style="text-align:left"></td></tr><tr>  <td style="text-align:left;text-indent:35px;">Selasa, 14 Oktober 2025</td>  <td>13:30-16:00</td>  <td>B502</td>  <td style="text-align:left">Metode Penelitian dan Penulisan Ilmiah</td>  <td>Luring</td>  <td style="text-align:left"></td></tr><tr>  <td style="text-align:left;text-indent:35px;">Rabu, 15 Oktober 2025</td>  <td>07:30-10:00</td>  <td>B406</td>  <td style="text-align:left">Analisis dan Perancangan Sistem Informasi</td>  <td>Luring</td>  <td style="text-align:left"></td></tr><tr>  <td style="text-align:left;text-indent:35px;">Rabu, 15 Oktober 2025</td>  <td>11:00-13:00</td>  <td>Lab. De Morgan</td>  <td style="text-align:left">Analisis dan Perancangan Sistem Informasi</td>  <td>Luring</td>  <td style="text-align:left">Praktikum</td></tr><tr>  <td style="text-align:left;text-indent:35px;">Rabu, 15 Oktober 2025</td>  <td>13:30-16:00</td>  <td>B402</td>  <td style="text-align:left">Manajemen Proyek Sistem Informasi</td>  <td>Luring</td>  <td style="text-align:left"></td></tr><tr>  <td style="text-align:left;text-indent:35px;">Kamis, 16 Oktober 2025</td>  <td>07:30-10:50</td>  <td>B505</td>  <td style="text-align:left">Pemrograman Web Lanjut</td>  <td>Luring</td>  <td style="text-align:left"></td></tr><tr>  <td style="text-align:left;text-indent:35px;">Kamis, 16 Oktober 2025</td>  <td>11:00-13:00</td>  <td>Lab. De Morgan</td>  <td style="text-align:left">Pemrograman Web Lanjut</td>  <td>Luring</td>  <td style="text-align:left">Praktikum</td></tr><tr>  <td style="text-align:left;text-indent:35px;">Kamis, 16 Oktober 2025</td>  <td>13:30-16:00</td>  <td>M403</td>  <td style="text-align:left">Sistem Pendukung Keputusan</td>  <td>Luring</td>  <td style="text-align:left"></td></tr>        </table>    
+        <div class="tableaction  footgrad">    
+            <a target="_NEWTABPRINT" href="https://sicyca.dinamika.ac.id/print/?t=jadwal-kegiatan-minggu-ini" class="print">Print</a>
+            <a target="_NEWTABPDF" href="https://sicyca.dinamika.ac.id/pdf/?t=jadwal-kegiatan-minggu-ini" class="pdf">Save PDF</a>
+        </div>
 
+        <div style="height: 15px;">&nbsp;</div>
+
+        <div class="tabletitle"><span class="square">&nbsp;</span>JADWAL KULIAH<span>Semester Gasal 2025</span></div>
+        <table id="tableView" class="sicycatablemanual" style="margin-bottom:0px">
+            <tr>              
+                <th>Hari</th>
+                <th>Waktu</th>    
+                <th style="text-align: left">Matakuliah (Kelas)</th>
+                <th style="text-align:left">Brilian</th>                           
+                <th style="text-align:left">Ruang</th>                           
+                <th style="text-align:left">Dosen</th>
+            </tr>           
+            <tr class="even">   <td>Senin</td>   <td>07:30 - 10:50</td>   <td style="text-align:left">Pemrograman Mobile Lanjut (P1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D140829%26identifier%3D36934%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">B505</td>   <td style="text-align:left" >Agus Dwi Churniawan, S.Si., M.Kom.</td></tr><tr class="even">   <td>Senin</td>   <td>11:00 - 13:00</td>   <td style="text-align:left">Pemrograman Mobile Lanjut (PPMLP1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D090704%26identifier%3D36934%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">BD</td>   <td style="text-align:left" >Rachmad Tulus Suryono, S.Kom., M.M.</td></tr><tr class="odd">   <td>Selasa</td>   <td>07:30 - 10:00</td>   <td style="text-align:left">Manajemen Layanan Teknologi Informasi (P1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D980243%26identifier%3D36932%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">M308</td>   <td style="text-align:left" >Yoppy Mirza Maulana, S.Kom., M.MT.</td></tr><tr class="odd">   <td>Selasa</td>   <td>13:30 - 16:00</td>   <td style="text-align:left">Metode Penelitian dan Penulisan Ilmiah (P1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D120772%26identifier%3D36940%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">B502</td>   <td style="text-align:left" >Endra Rahmawati, M.Kom.</td></tr><tr class="even">   <td>Rabu</td>   <td>07:30 - 10:00</td>   <td style="text-align:left">Analisis dan Perancangan Sistem Informasi (P1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D190888%26identifier%3D36897%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">B406</td>   <td style="text-align:left" >Pradita Maulidya Effendi, M.Kom.</td></tr><tr class="even">   <td>Rabu</td>   <td>11:00 - 13:00</td>   <td style="text-align:left">Analisis dan Perancangan Sistem Informasi (APSIP1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D090686%26identifier%3D36897%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">BD</td>   <td style="text-align:left" >Rio Anindita Pratama, S.Kom., M.M.</td></tr><tr class="even">   <td>Rabu</td>   <td>13:30 - 16:00</td>   <td style="text-align:left">Manajemen Proyek Sistem Informasi (P1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D980220%26identifier%3D36895%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">B402</td>   <td style="text-align:left" >Didiet Anindita Arnandy, M.Kom.</td></tr><tr class="odd">   <td>Kamis</td>   <td>07:30 - 10:50</td>   <td style="text-align:left">Pemrograman Web Lanjut (P1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D140829%26identifier%3D36933%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">B505</td>   <td style="text-align:left" >Agus Dwi Churniawan, S.Si., M.Kom.</td></tr><tr class="odd">   <td>Kamis</td>   <td>11:00 - 13:00</td>   <td style="text-align:left">Pemrograman Web Lanjut (PPWLP1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D240925%26identifier%3D36933%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">BD</td>   <td style="text-align:left" >Edwin David Effendy, S.Kom</td></tr><tr class="odd">   <td>Kamis</td>   <td>13:30 - 16:00</td>   <td style="text-align:left">Sistem Pendukung Keputusan (P1)</td><td style='text-align:left'>                        <a href="https://mybrilian.dinamika.ac.id/undika/sso?url=https%3A%2F%2Fmybrilian.dinamika.ac.id%2Fundika%2FredirectToCourse%2F%3Fnim%3D23410100003%26nik%3D070656%26identifier%3D37246%2BP1%2B41010%26semester%3D251" target="_blank">
+                            Site
+                        </a></td>   <td style="text-align:left">M403</td>   <td style="text-align:left" >Julianto Lemantara, S.Kom., M.Eng.</td></tr>                                                                             
+        </table>        
+		
+		        <div class="tableaction footgrad">    
+            <span class="footnote">
+
+            </span>        
+<!--             <a target="_NEWTABPRINT" href="https://sicyca.dinamika.ac.id/print/?t=jadwal-kegiatan-minggu-ini" class="print">Print</a>
+            <a target="_NEWTABPDF" href="https://sicyca.dinamika.ac.id/pdf/?t=jadwal-kegiatan-minggu-ini" class="pdf">Save PDF</a> -->
+        </div>        
         
-
-
-        
-        
-        <div class="tabletitle"><span class="square">&nbsp;</span>Hasil Pencarian</div>
-           
-        
-            <div class="boxcontainer" style="height:50px;">            
-                <p style="text-align:center;line-height: 50px">Maaf, mahasiswa yang anda cari tidak kami temukan</p>                     
-            </div>            
-            
-                    
-        
-        
-
-
-
-
-
-
-
         
     </div>    
 </div>    
