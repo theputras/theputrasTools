@@ -268,8 +268,8 @@ def refresh_jadwal_route():
     # Langsung redirect, JavaScript akan menangani update UI
     return redirect(url_for('index'))
 
-@app.route('/download_ics')
-def download_ics():
+@app.route('/kalendar')
+def kalendar_ics():
     # ... (sisa fungsi tidak berubah) ...
     try:
         create_ics_from_json(JSON_FILE, ICS_FILE)
