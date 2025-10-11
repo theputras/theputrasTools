@@ -1,0 +1,356 @@
+2025-10-11 09:59:06,267 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:11,101 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:12,386 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:12] "GET / HTTP/1.1" 200 -
+2025-10-11 09:59:12,399 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:12] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 09:59:12,451 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:12,451 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 09:59:12,452 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 09:59:12,452 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 09:59:14,344 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 09:59:14,344 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:14] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 09:59:18,267 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:23,269 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:28,271 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:33,275 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:38,269 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:42,456 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:43,896 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:43] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 09:59:44,765 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:44] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 09:59:46,741 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:46,758 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:46] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 09:59:51,151 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:51,156 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:51] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 09:59:51,172 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:51] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 09:59:55,268 - INFO - 127.0.0.1 - - [11/Oct/2025 09:59:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 09:59:59,250 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 09:59:59,360 - INFO -  * Restarting with stat
+2025-10-11 10:00:00,253 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:00:00,253 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:00:00,253 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:00:00,254 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:00:00,254 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:00:02,134 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:00:02,134 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:00:07,244 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:00:07,245 - INFO - Jadwal berhasil disimpan ke jadwal.json. Total: 10 jadwal.
+2025-10-11 10:00:07,245 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:00:07,250 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:00:07,251 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:00:07,251 - INFO - Scheduler started
+2025-10-11 10:00:07,252 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:00:07,252 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:00:07,258 - WARNING -  * Debugger is active!
+2025-10-11 10:00:07,262 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:00:07,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:07,270 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:10,272 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:15,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:20,273 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:25,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:28,985 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:28] "GET / HTTP/1.1" 200 -
+2025-10-11 10:00:28,992 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:28] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:00:29,089 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:29,089 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:00:29,090 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:00:29,090 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:00:31,584 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:00:31,585 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:31] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:00:34,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:39,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:44,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:49,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:54,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:59,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:00:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:00:59,391 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:00:59,534 - INFO -  * Restarting with stat
+2025-10-11 10:01:00,239 - INFO - File jadwal.json tidak ditemukan. Menjalankan scraper jadwal awal...
+2025-10-11 10:01:00,240 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:01:00,240 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:01:00,241 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:01:00,241 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:01:07,348 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:01:07,349 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:01:10,555 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:01:23,536 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:01:23,536 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:01:23,536 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:01:23,537 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:01:23,537 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:01:35,268 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:01:35,268 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:01:38,412 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:01:49,911 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:01:49,911 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:01:49,911 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:01:49,912 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:01:49,912 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:01:51,666 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:01:51,667 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:01:56,713 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:01:56,715 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:01:56.
+2025-10-11 10:01:56,715 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:01:56,720 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:01:56,720 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:01:56,721 - INFO - Scheduler started
+2025-10-11 10:01:56,721 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:01:56,721 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:01:56,733 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.8.104:5000
+2025-10-11 10:01:56,734 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-11 10:01:56,735 - INFO -  * Restarting with stat
+2025-10-11 10:01:57,369 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:01:57,370 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:01:57,370 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:01:57,370 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:01:57,371 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:01:59,241 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:01:59,241 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:02:00,383 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:02:00,385 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:02:00.
+2025-10-11 10:02:00,385 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:02:00,389 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:02:00,390 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:02:00,390 - INFO - Scheduler started
+2025-10-11 10:02:00,390 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:02:00,391 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:02:00,397 - WARNING -  * Debugger is active!
+2025-10-11 10:02:00,400 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:02:06,418 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:02:06,616 - INFO -  * Restarting with stat
+2025-10-11 10:02:07,316 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:02:07,316 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:02:07,316 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:02:07,317 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:02:07,317 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:02:16,382 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:02:16,382 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:02:19,386 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:02:19,393 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:02:19.
+2025-10-11 10:02:19,393 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:02:19,400 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:02:19,400 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:02:19,400 - INFO - Scheduler started
+2025-10-11 10:02:19,401 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:02:19,401 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:02:19,410 - WARNING -  * Debugger is active!
+2025-10-11 10:02:19,414 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:02:19,420 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:19,425 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:19,428 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:19,432 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:19,442 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:19] "GET / HTTP/1.1" 200 -
+2025-10-11 10:02:19,455 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:19] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:02:19,538 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:19,539 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:02:19,540 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:02:19,540 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:02:21,588 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:02:21,588 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:21] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:02:24,541 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:30,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:35,274 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:40,271 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:45,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:50,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:02:55,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:02:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:00,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:05,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:10,274 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:15,270 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:16,334 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:16] "GET / HTTP/1.1" 200 -
+2025-10-11 10:03:16,344 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:16] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:03:16,428 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:16,429 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:03:16,430 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:03:16,430 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:03:16,560 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:03:16,674 - INFO -  * Restarting with stat
+2025-10-11 10:03:17,383 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:03:17,383 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:03:17,383 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:03:17,384 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:03:17,384 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:03:28,765 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:03:28,765 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:03:29,874 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:03:29,876 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:03:29.
+2025-10-11 10:03:29,876 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:03:29,881 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:03:29,881 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:03:29,881 - INFO - Scheduler started
+2025-10-11 10:03:29,882 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:03:29,882 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:03:29,888 - WARNING -  * Debugger is active!
+2025-10-11 10:03:29,892 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:03:29,897 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:29,899 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:32,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:35,911 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:03:36,015 - INFO -  * Restarting with stat
+2025-10-11 10:03:36,822 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:03:36,823 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:03:36,823 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:03:36,824 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:03:36,824 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:03:38,713 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:03:38,713 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:03:40,121 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:03:40,123 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:03:40.
+2025-10-11 10:03:40,124 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:03:40,129 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:03:40,130 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:03:40,130 - INFO - Scheduler started
+2025-10-11 10:03:40,131 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:03:40,131 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:03:40,143 - WARNING -  * Debugger is active!
+2025-10-11 10:03:40,148 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:03:40,153 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:42,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:47,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:49,629 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:49] "GET / HTTP/1.1" 200 -
+2025-10-11 10:03:49,638 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:49] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:03:49,690 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:49,691 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:03:49,691 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:03:49,692 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:03:51,603 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:03:51,604 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:51] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:03:54,096 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:54] "GET / HTTP/1.1" 200 -
+2025-10-11 10:03:54,105 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:54] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:03:54,159 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:03:54,160 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:03:54,160 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:03:54,160 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:03:59,207 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:03:59,208 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:59] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:03:59,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:03:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:04,160 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:09,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:14,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:19,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:24,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:29,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:30,177 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:30] "GET / HTTP/1.1" 200 -
+2025-10-11 10:04:30,187 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:04:30,237 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:30,250 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:04:30,252 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:04:30,253 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:04:31,279 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:04:31,637 - INFO -  * Restarting with stat
+2025-10-11 10:04:32,413 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:04:32,414 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:04:32,414 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:04:32,415 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:04:32,416 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:04:45,124 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:04:45,125 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:04:48,269 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:04:48,271 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:04:48.
+2025-10-11 10:04:48,272 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:04:48,279 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:04:48,279 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:04:48,279 - INFO - Scheduler started
+2025-10-11 10:04:48,280 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:04:48,280 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:04:48,288 - WARNING -  * Debugger is active!
+2025-10-11 10:04:48,291 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:04:48,299 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:48,302 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:48,305 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:48,318 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:48] "GET / HTTP/1.1" 200 -
+2025-10-11 10:04:48,329 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:48] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:04:48,384 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:48,385 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:04:48,386 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:04:48,386 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:04:50,767 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:04:50,768 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:50] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:04:53,387 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:56,573 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:56] "GET / HTTP/1.1" 200 -
+2025-10-11 10:04:56,588 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:56] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:04:56,638 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:04:56,639 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:04:56,646 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:04:56,647 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:04:58,815 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:04:58,816 - INFO - 127.0.0.1 - - [11/Oct/2025 10:04:58] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:05:01,641 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:03,238 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:03] "GET / HTTP/1.1" 200 -
+2025-10-11 10:05:03,247 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:03] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:05:03,295 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:03,296 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:05:03,297 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:05:03,297 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:05:09,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:14,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:19,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:24,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:25,523 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:05:25,524 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:25] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:05:29,268 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:33,299 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:39,271 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:44,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:49,270 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:54,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:05:58,296 - INFO - 127.0.0.1 - - [11/Oct/2025 10:05:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:06:03,299 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:06:06,773 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:06] "GET / HTTP/1.1" 200 -
+2025-10-11 10:06:06,785 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:06] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:06:06,841 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:06:06,842 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:06:06,843 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:06:06,844 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:06:09,031 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:06:09,032 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:09] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:06:12,269 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:06:14,347 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:14] "GET / HTTP/1.1" 200 -
+2025-10-11 10:06:14,355 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:14] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:06:14,402 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:06:14,403 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:06:14,404 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:06:14,404 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:06:16,025 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:16] "GET / HTTP/1.1" 200 -
+2025-10-11 10:06:16,034 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:16] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:06:16,087 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:06:16,088 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:06:16,088 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:06:16,089 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:06:21,090 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:06:21,302 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:06:21,303 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:21] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:06:23,521 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:06:23,522 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:23] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:06:26,046 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:26] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-11 10:06:26,063 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:26] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:06:26,157 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:06:26,158 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:06:26,158 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:06:33,522 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:06:33,524 - INFO - 127.0.0.1 - - [11/Oct/2025 10:06:33] "GET /api/status HTTP/1.1" 200 -
