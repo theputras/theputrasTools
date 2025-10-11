@@ -533,7 +533,7 @@ if __name__ == "__main__":
         run_scraper_and_save()
 
     scheduler = BackgroundScheduler(daemon=True)
-    scheduler.add_job(run_scraper_and_save, 'cron', hour=9, minute=3)
+    scheduler.add_job(run_scraper_and_save, 'cron', hour=5, minute=0)
     scheduler.start()
     
     logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
