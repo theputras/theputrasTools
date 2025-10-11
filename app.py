@@ -370,21 +370,27 @@ COMMUNITY_SEARCH_TEMPLATE = """
                     statusMessage = data.message;
                 })
              ">
+             
             <div class="flex justify-between items-start mb-2">
                 <h1 class="text-2xl font-bold text-white">Pencarian Komunitas</h1>
                 
                 <template x-if="sicycaStatus === 'loading'">
                     <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
-                        <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                         Mengecek koneksi...
                     </span>
                 </template>
+
                 <template x-if="sicycaStatus === 'ready'">
                     <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full" :title="statusMessage">
                         <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
                         Sicyca Ready
                     </span>
                 </template>
+
                 <template x-if="sicycaStatus === 'error'">
                     <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" :title="statusMessage">
                         <span class="h-2 w-2 mr-2 rounded-full bg-red-500 animate-pulse"></span>
@@ -395,12 +401,32 @@ COMMUNITY_SEARCH_TEMPLATE = """
             
             <p class="text-gray-400 mb-6">Masukkan NIM, NIK, atau Nama untuk mencari data di Sicyca.</p>
             <a href="/" class="text-blue-400 hover:text-blue-300 mb-4 inline-block">&laquo; Kembali ke Jadwal Kuliah</a>
-            
-            <form @submit.prevent="
-                isLoading = true; results = null;
-                fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query }) })
-                .then(response => response.json()).then(data => { results = data; isLoading = false; });
-            " class="mb-8">
+                <form @submit.prevent="
+                    isLoading = true;
+                    results = null;
+                    fetch('/api/search', { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query })
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Server error: ' + response.status);
+                        return response.text();
+                    })
+                    .then(html => {
+                        results = { html: html };
+                    })
+
+                    .catch(err => {
+                        results = { html: `<p class='text-red-400 p-4'>Terjadi kesalahan: ${err.message}</p>` };
+                        console.error(err);
+                    })
+                    .finally(() => {
+                        isLoading = false;
+                    });
+                " class="mb-8">
+
+
                 <div class="flex flex-col sm:flex-row gap-2">
                     <input type="text" x-model="query" name="query" placeholder="Masukkan pencarian Anda..."
                            class="flex-grow w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -413,16 +439,21 @@ COMMUNITY_SEARCH_TEMPLATE = """
                 </div>
             </form>
 
-            <div x-show="isLoading" class="text-center p-4"><p class="text-gray-400">Loading...</p></div>
+            <div x-show="isLoading" class="text-center p-4">
+                <p class="text-gray-400">Loading...</p>
+            </div>
+
             <div x-show="results !== null && !isLoading">
-                <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2">Hasil Pencarian</h2>
-                <div class="border border-gray-700 rounded-md" x-html="results"></div>
+                <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2" 
+                    x-text="`Hasil Pencarian untuk \\\"${query}\\\"`"></h2>
+                <div class="border border-gray-700 rounded-md" x-html="results.html"></div>
             </div>
         </div>
     </div>
 </body>
 </html>
 """
+
 LOG_PAGE_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="id">
@@ -510,7 +541,7 @@ def api_search():
     data = request.get_json()
     query = data.get('query', '').strip()
     if not query:
-        return jsonify({"html": "<p class='text-gray-400 p-4'>Query tidak boleh kosong.</p>"})
+        return "<p class='text-gray-400 p-4'>Query tidak boleh kosong.</p>"
 
     future_mahasiswa = executor.submit(search_mahasiswa, query)
     future_staff = executor.submit(search_staff, query)
@@ -522,39 +553,51 @@ def api_search():
         for _, row in df_mahasiswa.iterrows():
             nim = row.get('NIM', '')
             prodi_name = majorID.get(nim[2:7], 'Prodi Tidak Dikenal') if nim and len(nim) >= 7 else 'Prodi Tidak Dikenal'
-            combined_results.append({ 'Tipe': 'Mahasiswa', 'Nama': row.get('Nama'), 'ID': nim, 'Status': f"{row.get('Status')}", 'Prodi' : prodi_name, 'Detail': row.get('Dosen Wali') })
-    
+            combined_results.append({
+                'Tipe': 'Mahasiswa',
+                'Nama': row.get('Nama'),
+                'ID': nim,
+                'Status': row.get('Status'),
+                'Prodi': prodi_name,
+                'Detail': row.get('Dosen Wali')
+            })
     if not df_staff.empty:
         for _, row in df_staff.iterrows():
-            combined_results.append({'Tipe': 'Staff/Dosen', 'Nama': row.get('Nama'), 'ID': row.get('NIK'), 'Bagian': row.get('Bagian'), 'Detail': row.get('Email')})
-    
-    # --- Backend sekarang membuat string HTML ---
+            combined_results.append({
+                'Tipe': 'Staff/Dosen',
+                'Nama': row.get('Nama'),
+                'ID': row.get('NIK'),
+                'Bagian': row.get('Bagian'),
+                'Detail': row.get('Email')
+            })
+
     html_output = ""
     if combined_results:
         for item in combined_results:
             detail_html = ""
             if item['Tipe'] == 'Mahasiswa':
                 detail_html = f"""
-                    <dt class="font-medium text-gray-400">NIM</dt><dd class="col-span-2 text-white">{item.get('ID', '')}</dd>
-                    <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item.get('Prodi', '')}</dd>
-                    <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item.get('Status', '')}</dd>
-                    <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item.get('Detail', '')}</dd>
+                    <dt class="font-medium text-gray-400">NIM</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
+                    <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item['Status']}</dd>
+                    <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item['Prodi']}</dd>
+                    <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
                 """
             else:
                 detail_html = f"""
-                    <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item.get('ID', '')}</dd>
-                    <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item.get('Bagian', '')}</dd>
-                    <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item.get('Detail', '')}</dd>
+                    <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
+                    <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item['Bagian']}</dd>
+                    <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
                 """
+
             html_output += f"""
-            <div x-data="{{ 'isOpen': false }}" class="border-b border-gray-700 last:border-b-0">
+            <div x-data="{{ isOpen: false }}" class="border-b border-gray-700 last:border-b-0">
                 <button @click="isOpen = !isOpen" class="w-full text-left p-4 hover:bg-gray-700 focus:outline-none">
                     <div class="flex justify-between items-center">
                         <div>
-                            <span class="font-semibold text-white">{item.get('Nama', '')}</span>
-                            <span class="text-xs text-gray-300 ml-2 px-2 py-1 bg-gray-600 rounded-full">{item.get('Tipe', '')}</span>
+                            <span class="font-semibold text-white">{item['Nama']}</span>
+                            <span class="text-xs text-gray-300 ml-2 px-2 py-1 bg-gray-600 rounded-full">{item['Tipe']}</span>
                         </div>
-                        <svg class="w-5 h-5 transform transition-transform duration-300" :class="{{'{{'}} 'rotate-180': isOpen {{'}}'}}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" :class="{{'rotate-180': isOpen}}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                 </button>
                 <div x-show="isOpen" x-transition class="p-4 bg-gray-900 border-t border-gray-700 text-sm">
@@ -562,10 +605,12 @@ def api_search():
                 </div>
             </div>
             """
+
     else:
         html_output = "<p class='text-gray-400 p-4'>Tidak ada data yang ditemukan.</p>"
-    
-    return jsonify({"html": html_output})
+
+    return html_output  # bukan jsonify
+
 
 # Untuk melihat log terus menerus
 @app.route('/api/log')
