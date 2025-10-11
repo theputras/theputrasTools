@@ -87,29 +87,67 @@ def run_scraper_and_save():
 
 
 def create_ics_from_json(json_path, ics_path):
-    # ... (sisa fungsi tidak berubah) ...
-    df = pd.read_json(json_path, orient='records')
-    events = df.to_dict('records')
-    ics_content = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n"
-    for event in events:
-        date_str, time_range_str = event['Hari, Tanggal'], event['Jam']
-        start_time_val, end_time_val = time_range_str.split('-')
-        start_date_time_str = re.sub(r"^\w+, ", "", date_str) + ' ' + start_time_val
-        end_date_time_str = re.sub(r"^\w+, ", "", date_str) + ' ' + end_time_val
-        for idn, eng in month_translation.items():
-            start_date_time_str = start_date_time_str.replace(idn, eng)
-            end_date_time_str = end_date_time_str.replace(idn, eng)
-        start_time = datetime.strptime(start_date_time_str, "%d %B %Y %H:%M")
-        end_time = datetime.strptime(end_date_time_str, "%d %B %Y %H:%M")
-        ics_content += (f"BEGIN:VEVENT\nSUMMARY:{event['Nama Matakuliah']}\n"
-                        f"DTSTART:{start_time.strftime('%Y%m%dT%H%M%S')}\n"
-                        f"DTEND:{end_time.strftime('%Y%m%dT%H%M%S')}\n"
-                        f"LOCATION:{event['Ruangan']}\n"
-                        f"DESCRIPTION:Keterangan: {event.get('Keterangan', '')}\n"
-                        f"STATUS:{event['Status Kuliah']}\nEND:VEVENT\n")
-    ics_content += "END:VCALENDAR\n"
-    with open(ics_path, 'w', encoding='utf-8') as f: f.write(ics_content)
-    logging.info(f"File {ics_path} berhasil diperbarui.")
+    try:
+        # Baca file JSON yang bisa punya struktur baru (metadata + data)
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data_json = json.load(f)
+
+        # Cek apakah ini struktur baru atau lama
+        if isinstance(data_json, dict) and "data" in data_json:
+            events = data_json["data"]
+        else:
+            # fallback: struktur lama (langsung list)
+            events = data_json
+
+        if not events:
+            raise ValueError("Data jadwal kosong atau tidak valid.")
+
+        ics_content = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n"
+
+        for event in events:
+            try:
+                date_str = event.get("Hari, Tanggal", "")
+                time_range_str = event.get("Jam", "")
+                if not date_str or not time_range_str:
+                    continue
+
+                start_time_val, end_time_val = time_range_str.split('-')
+                start_date_time_str = re.sub(r"^\w+, ", "", date_str) + ' ' + start_time_val
+                end_date_time_str = re.sub(r"^\w+, ", "", date_str) + ' ' + end_time_val
+
+                for idn, eng in month_translation.items():
+                    start_date_time_str = start_date_time_str.replace(idn, eng)
+                    end_date_time_str = end_date_time_str.replace(idn, eng)
+
+                start_time = datetime.strptime(start_date_time_str, "%d %B %Y %H:%M")
+                end_time = datetime.strptime(end_date_time_str, "%d %B %Y %H:%M")
+
+                ics_content += (
+                    "BEGIN:VEVENT\n"
+                    f"SUMMARY:{event.get('Nama Matakuliah', 'Tanpa Nama')}\n"
+                    f"DTSTART:{start_time.strftime('%Y%m%dT%H%M%S')}\n"
+                    f"DTEND:{end_time.strftime('%Y%m%dT%H%M%S')}\n"
+                    f"LOCATION:{event.get('Ruangan', 'Tidak Diketahui')}\n"
+                    f"DESCRIPTION:Keterangan: {event.get('Keterangan', '-')}\n"
+                    f"STATUS:{event.get('Status Kuliah', '-')}\n"
+                    "END:VEVENT\n"
+                )
+            except Exception as e:
+                logging.warning(f"Gagal konversi event: {e}")
+                continue
+
+        ics_content += "END:VCALENDAR\n"
+
+        with open(ics_path, 'w', encoding='utf-8') as f:
+            f.write(ics_content)
+
+        logging.info(f"File {ics_path} berhasil diperbarui.")
+        return True
+
+    except Exception as e:
+        logging.error(f"Error create_ics_from_json: {e}")
+        raise
+
 
 @app.route('/')
 def index():
@@ -270,14 +308,44 @@ def refresh_jadwal_route():
 
 @app.route('/kalendar')
 def kalendar_ics():
-    # ... (sisa fungsi tidak berubah) ...
     try:
+        # Pastikan file jadwal.json ada dan valid
+        if not os.path.exists(JSON_FILE):
+            return "<h3>File jadwal.json belum dibuat. Jalankan scraper dulu.</h3>", 404
+
+        # Baca file dan ambil bagian data
+        with open(JSON_FILE, 'r', encoding='utf-8') as f:
+            df_json = json.load(f)
+            data_records = df_json.get("data", [])
+            metadata = df_json.get("metadata", {})
+
+        if not data_records:
+            return "<h3>Data jadwal belum tersedia atau kosong.</h3>", 404
+
+        # Buat DataFrame dari data yang valid
+        df = pd.DataFrame(data_records)
+
+        # Simpan jadi file ICS
         create_ics_from_json(JSON_FILE, ICS_FILE)
-        return send_from_directory(os.path.abspath('.'), path=ICS_FILE, as_attachment=True, download_name='jadwal_kuliah.ics')
+
+        # Ambil waktu update dari metadata (opsional)
+        waktu = metadata.get("last_scraped", "Tidak diketahui")
+
+        logging.info(f"File ICS dibuat berdasarkan data terakhir: {waktu}")
+
+        return send_from_directory(
+            os.path.abspath('.'),
+            path=ICS_FILE,
+            as_attachment=True,
+            download_name=f'jadwal_kuliah_{datetime.now().strftime("%Y%m%d_%H%M")}.ics'
+        )
+
     except (FileNotFoundError, ValueError):
-        return "<h3>Data jadwal belum tersedia.</h3>", 404
+        return "<h3>File jadwal.json tidak ditemukan atau rusak.</h3>", 404
     except Exception as e:
-        return f"<pre>Error: {str(e)}</pre>", 500
+        return f"<pre>Error saat membuat ICS: {str(e)}</pre>", 500
+
+
 
 # (Template dan route pencarian komunitas tidak berubah)
 COMMUNITY_SEARCH_TEMPLATE = """
@@ -517,16 +585,25 @@ def api_jadwal_status():
     
 if __name__ == "__main__":
     should_run_scraper = False
+
     if not os.path.exists(JSON_FILE):
         logging.info(f"File {JSON_FILE} tidak ditemukan. Menjalankan scraper jadwal awal...")
         should_run_scraper = True
     else:
         try:
-            # Coba baca file untuk memvalidasi formatnya
-            pd.read_json(JSON_FILE)
-            logging.info(f"File {JSON_FILE} ditemukan dan formatnya valid.")
-        except ValueError: # pandas akan error jika JSON rusak/format salah
-            logging.warning(f"File {JSON_FILE} rusak atau format salah. Menjalankan scraper untuk membuat file baru...")
+            # Baca struktur file JSON
+            with open(JSON_FILE, encoding='utf-8') as f:
+                data = json.load(f)
+
+            # Pastikan format sesuai dan ada data
+            if isinstance(data, dict) and "data" in data and len(data["data"]) > 0:
+                logging.info(f"File {JSON_FILE} ditemukan dan berisi {len(data['data'])} jadwal.")
+            else:
+                logging.warning(f"File {JSON_FILE} kosong atau format tidak sesuai. Menjalankan scraper ulang...")
+                should_run_scraper = True
+
+        except Exception as e:
+            logging.warning(f"File {JSON_FILE} rusak atau tidak bisa dibaca ({e}). Menjalankan scraper ulang...")
             should_run_scraper = True
 
     if should_run_scraper:

@@ -425,3 +425,408 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 
 2025-10-11 10:44:22,323 - WARNING -  * Debugger is active!
 2025-10-11 10:44:22,327 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:48:00,507 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:00] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:48:00,537 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:00] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:48:26,228 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:48:26,339 - INFO -  * Restarting with stat
+2025-10-11 10:48:27,252 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:48:27,252 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:48:27,253 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:48:27,253 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:48:27,254 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:48:29,246 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:48:29,247 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:48:32,331 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:48:32,333 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:48:32.
+2025-10-11 10:48:32,334 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:48:32,340 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:48:32,340 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:48:32,341 - INFO - Scheduler started
+2025-10-11 10:48:32,342 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:48:32,342 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:48:32,353 - WARNING -  * Debugger is active!
+2025-10-11 10:48:32,363 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:48:32,371 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:32] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:48:32,382 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:32] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:48:36,872 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:36] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:48:36,882 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:36] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:48:37,769 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:37] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:48:37,777 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:37] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:48:39,067 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:39] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:48:39,083 - INFO - 127.0.0.1 - - [11/Oct/2025 10:48:39] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:48:49,170 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:48:49,170 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:48:49,170 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:48:49,171 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:48:49,171 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:48:51,710 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:48:51,710 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:48:52,953 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:48:52,957 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:48:52.
+2025-10-11 10:48:52,957 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:48:52,966 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:48:52,967 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:48:52,967 - INFO - Scheduler started
+2025-10-11 10:48:52,969 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:48:52,970 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:48:53,002 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.8.102:5000
+2025-10-11 10:48:53,002 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-11 10:48:53,004 - INFO -  * Restarting with stat
+2025-10-11 10:48:53,819 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:48:53,819 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:48:53,820 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:48:53,821 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:48:53,821 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:48:55,975 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:48:55,975 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:49:14,513 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:49:14,516 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:49:14.
+2025-10-11 10:49:14,517 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:49:14,523 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:49:14,523 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:49:14,523 - INFO - Scheduler started
+2025-10-11 10:49:14,524 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:49:14,525 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:49:14,535 - WARNING -  * Debugger is active!
+2025-10-11 10:49:14,539 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:49:14,637 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:14] "[35m[1mGET /kalendar HTTP/1.1[0m" 500 -
+2025-10-11 10:49:14,815 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:14] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:49:14,893 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:14] "GET /kalendar?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-10-11 10:49:14,896 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:14] "GET /kalendar?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-10-11 10:49:14,908 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:14] "GET /kalendar?__debugger__=yes&cmd=resource&f=console.png&s=qbfhAAFaZ4n3ONUprF9x HTTP/1.1" 200 -
+2025-10-11 10:49:14,984 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:14] "GET /kalendar?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-10-11 10:49:24,565 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:49:24,677 - INFO -  * Restarting with stat
+2025-10-11 10:49:25,681 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:49:25,681 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:49:25,681 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:49:25,682 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:49:25,682 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:49:29,904 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:49:29,904 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:49:35,047 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:49:35,050 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:49:35.
+2025-10-11 10:49:35,050 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:49:35,057 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:49:35,058 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:49:35,058 - INFO - Scheduler started
+2025-10-11 10:49:35,059 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:49:35,059 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:49:35,071 - WARNING -  * Debugger is active!
+2025-10-11 10:49:35,075 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:49:35,112 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:35] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:49:35,135 - INFO - 127.0.0.1 - - [11/Oct/2025 10:49:35] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:49:56,141 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:49:56,229 - INFO -  * Restarting with stat
+2025-10-11 10:50:02,999 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:50:02,999 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:50:02,999 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:50:03,000 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:50:03,000 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:50:05,026 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:50:05,027 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:50:06,126 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:50:06,129 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:50:06.
+2025-10-11 10:50:06,129 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:50:06,136 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:50:06,136 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:50:06,136 - INFO - Scheduler started
+2025-10-11 10:50:06,137 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:50:06,138 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:50:06,152 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.8.102:5000
+2025-10-11 10:50:06,152 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-11 10:50:06,154 - INFO -  * Restarting with stat
+2025-10-11 10:50:07,036 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:50:07,036 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:50:07,037 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:50:07,038 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:50:07,038 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:50:09,301 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:50:09,302 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:50:12,318 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:50:12,320 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:50:12.
+2025-10-11 10:50:12,320 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:50:12,327 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:50:12,327 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:50:12,328 - INFO - Scheduler started
+2025-10-11 10:50:12,329 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:50:12,329 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:50:12,336 - WARNING -  * Debugger is active!
+2025-10-11 10:50:12,340 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:50:14,974 - INFO - 127.0.0.1 - - [11/Oct/2025 10:50:14] "[33mGET /download_ics HTTP/1.1[0m" 404 -
+2025-10-11 10:50:14,985 - INFO - 127.0.0.1 - - [11/Oct/2025 10:50:14] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:51:06,531 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:51:06,682 - INFO -  * Restarting with stat
+2025-10-11 10:51:07,655 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:51:07,656 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:51:07,656 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:51:07,656 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:51:07,657 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:51:09,491 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:51:09,491 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:51:10,677 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:51:10,680 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:51:10.
+2025-10-11 10:51:10,680 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:51:10,687 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:51:10,687 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:51:10,688 - INFO - Scheduler started
+2025-10-11 10:51:10,689 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:51:10,689 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:51:10,698 - WARNING -  * Debugger is active!
+2025-10-11 10:51:10,702 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:51:10,709 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:10] "[33mGET /download_ics HTTP/1.1[0m" 404 -
+2025-10-11 10:51:10,718 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:10] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:51:16,522 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:16] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:51:16,534 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:16] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:51:28,461 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:28] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:51:28,480 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:28] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:51:28,745 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:51:28,848 - INFO -  * Restarting with stat
+2025-10-11 10:51:29,673 - INFO - File /jadwal.json tidak ditemukan. Menjalankan scraper jadwal awal...
+2025-10-11 10:51:29,674 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:51:29,674 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:51:29,674 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:51:29,675 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:51:32,066 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:51:32,066 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:51:35,046 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:51:35,048 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:51:35.
+2025-10-11 10:51:35,049 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:51:35,055 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:51:35,056 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:51:35,056 - INFO - Scheduler started
+2025-10-11 10:51:35,057 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:51:35,057 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:51:35,066 - WARNING -  * Debugger is active!
+2025-10-11 10:51:35,070 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:51:35,096 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:35] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:51:35,116 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:35] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:51:52,574 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:52] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:51:52,588 - INFO - 127.0.0.1 - - [11/Oct/2025 10:51:52] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:51:56,923 - WARNING - File /jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:51:56,923 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:51:56,924 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:51:56,924 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:51:56,925 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:51:58,997 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:51:58,998 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:52:00,139 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:52:00,141 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:52:00.
+2025-10-11 10:52:00,142 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:52:00,148 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:52:00,149 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:52:00,149 - INFO - Scheduler started
+2025-10-11 10:52:00,150 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:52:00,150 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:52:00,165 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.8.102:5000
+2025-10-11 10:52:00,165 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-11 10:52:00,167 - INFO -  * Restarting with stat
+2025-10-11 10:52:00,967 - WARNING - File /jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:52:00,968 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:52:00,968 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:52:00,969 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:52:00,969 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:52:03,304 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:52:03,304 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:52:04,441 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:52:04,443 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:52:04.
+2025-10-11 10:52:04,443 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:52:04,449 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:52:04,456 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:52:04,457 - INFO - Scheduler started
+2025-10-11 10:52:04,458 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:52:04,459 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:52:04,467 - WARNING -  * Debugger is active!
+2025-10-11 10:52:04,471 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:52:20,520 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:52:20,672 - INFO -  * Restarting with stat
+2025-10-11 10:52:21,485 - INFO - File jadwal.json tidak ditemukan. Menjalankan scraper jadwal awal...
+2025-10-11 10:52:21,485 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:52:21,485 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:52:21,486 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:52:21,486 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:52:23,569 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:52:23,570 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:52:26,664 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:52:26,667 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:52:26.
+2025-10-11 10:52:26,667 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:52:26,673 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:52:26,674 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:52:26,674 - INFO - Scheduler started
+2025-10-11 10:52:26,675 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:52:26,675 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:52:26,684 - WARNING -  * Debugger is active!
+2025-10-11 10:52:26,688 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:52:29,091 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:29] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:52:29,102 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:29] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:52:29,889 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:29] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:52:29,897 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:29] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,340 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,349 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,527 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,539 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,668 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,680 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,809 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,818 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,934 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:52:30,948 - INFO - 127.0.0.1 - - [11/Oct/2025 10:52:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 10:53:08,797 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:53:08,923 - INFO -  * Restarting with stat
+2025-10-11 10:53:09,803 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:53:09,803 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:53:09,803 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:53:09,804 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:53:09,804 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:53:12,520 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:53:12,521 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:53:13,657 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:53:13,659 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:53:13.
+2025-10-11 10:53:13,660 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:53:13,665 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:53:13,665 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:53:13,666 - INFO - Scheduler started
+2025-10-11 10:53:13,667 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:53:13,667 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:53:13,676 - WARNING -  * Debugger is active!
+2025-10-11 10:53:13,680 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:53:59,665 - INFO - 127.0.0.1 - - [11/Oct/2025 10:53:59] "[33mGET /kalendar HTTP/1.1[0m" 404 -
+2025-10-11 10:53:59,829 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:53:59,936 - INFO -  * Restarting with stat
+2025-10-11 10:54:00,737 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:54:00,738 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:54:00,738 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:54:00,739 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:54:00,740 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:54:02,901 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:54:02,902 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:54:06,035 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:54:06,037 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:54:06.
+2025-10-11 10:54:06,037 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:54:06,045 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:54:06,046 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:54:06,046 - INFO - Scheduler started
+2025-10-11 10:54:06,047 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:54:06,047 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:54:06,059 - WARNING -  * Debugger is active!
+2025-10-11 10:54:06,063 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:54:11,596 - INFO - File jadwal_kegiatan.ics berhasil diperbarui.
+2025-10-11 10:54:11,597 - INFO - File ICS dibuat berdasarkan data terakhir: Saturday, 11 October 2025 10:54:06
+2025-10-11 10:54:11,664 - INFO - 127.0.0.1 - - [11/Oct/2025 10:54:11] "GET /kalendar HTTP/1.1" 200 -
+2025-10-11 10:54:30,703 - INFO - File jadwal_kegiatan.ics berhasil diperbarui.
+2025-10-11 10:54:30,703 - INFO - File ICS dibuat berdasarkan data terakhir: Saturday, 11 October 2025 10:54:06
+2025-10-11 10:54:30,706 - INFO - 127.0.0.1 - - [11/Oct/2025 10:54:30] "GET /kalendar HTTP/1.1" 200 -
+2025-10-11 10:54:35,742 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:54:35,743 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:54:35,743 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:54:35,744 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:54:35,745 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:54:37,819 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:54:37,819 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:54:40,904 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:54:40,907 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:54:40.
+2025-10-11 10:54:40,907 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:54:40,913 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:54:40,914 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:54:40,914 - INFO - Scheduler started
+2025-10-11 10:54:40,915 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:54:40,915 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:54:40,929 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.8.102:5000
+2025-10-11 10:54:40,930 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-11 10:54:40,931 - INFO -  * Restarting with stat
+2025-10-11 10:54:41,725 - WARNING - File jadwal.json rusak atau format salah. Menjalankan scraper untuk membuat file baru...
+2025-10-11 10:54:41,726 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-11 10:54:41,726 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-11 10:54:41,727 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:54:41,728 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:54:43,713 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:54:43,714 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-11 10:54:44,855 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-10-11 10:54:44,857 - INFO - Jadwal berhasil disimpan (10 entri) pada Saturday, 11 October 2025 10:54:44.
+2025-10-11 10:54:44,857 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-11 10:54:44,863 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:54:44,864 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:54:44,864 - INFO - Scheduler started
+2025-10-11 10:54:44,865 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:54:44,865 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:54:44,872 - WARNING -  * Debugger is active!
+2025-10-11 10:54:44,876 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:55:48,096 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-11 10:55:48,194 - INFO -  * Restarting with stat
+2025-10-11 10:55:49,108 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-11 10:55:49,113 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-11 10:55:49,113 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-11 10:55:49,113 - INFO - Scheduler started
+2025-10-11 10:55:49,114 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-11 10:55:49,114 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-11 10:55:49,123 - WARNING -  * Debugger is active!
+2025-10-11 10:55:49,127 - INFO -  * Debugger PIN: 288-901-657
+2025-10-11 10:55:59,903 - INFO - 127.0.0.1 - - [11/Oct/2025 10:55:59] "GET / HTTP/1.1" 200 -
+2025-10-11 10:56:00,025 - INFO - 127.0.0.1 - - [11/Oct/2025 10:56:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:56:00,026 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-11 10:56:00,028 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-11 10:56:00,029 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-11 10:56:02,111 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-11 10:56:02,112 - INFO - 127.0.0.1 - - [11/Oct/2025 10:56:02] "GET /api/status HTTP/1.1" 200 -
+2025-10-11 10:56:05,028 - INFO - 127.0.0.1 - - [11/Oct/2025 10:56:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:56:10,267 - INFO - 127.0.0.1 - - [11/Oct/2025 10:56:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-11 10:56:15,271 - INFO - 127.0.0.1 - - [11/Oct/2025 10:56:15] "GET /api/jadwal-status HTTP/1.1" 200 -
