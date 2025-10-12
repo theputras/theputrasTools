@@ -213,3 +213,40 @@ def search_staff(query):
     except Exception as e:
         logging.error(f"Error saat mencari staff: {e}")
         return pd.DataFrame()
+        
+def fetch_photo_from_sicyca(role, id_):
+    """
+    Fetch foto dari Sicyca menggunakan session authenticated.
+    role: 'mahasiswa' atau 'staff'
+    id_: NIM (untuk mahasiswa) atau NIK (untuk staff)
+    Returns: bytes of image content, or None if failed.
+    """
+    sess = get_authenticated_session()
+    if not sess:
+        logging.error(f"   --> Gagal fetch foto {role}/{id_}: Session tidak valid.")
+        return None
+    
+    try:
+        if role == "mahasiswa":
+            photo_url = f"{TARGET_URL}/static/foto/mahasiswa/{id_}.jpg"
+        elif role == "staff":
+            photo_url = f"{TARGET_URL}/static/foto/karyawan/{id_}.jpg"
+        else:
+            raise ValueError("Role tidak valid.")
+        
+        logging.info(f"   --> Fetching foto dari {photo_url}")
+        response = sess.get(photo_url, timeout=10, headers={"Referer": TARGET_URL})
+        response.raise_for_status()
+        
+        if response.headers.get('content-type', '').startswith('image/'):
+            logging.info(f"   --> Foto {role}/{id_} berhasil di-fetch ({len(response.content)} bytes).")
+            return response.content
+        else:
+            logging.warning(f"   --> Response bukan image untuk {role}/{id_}.")
+            return None
+    except requests.RequestException as e:
+        logging.error(f"   --> Gagal fetch foto {role}/{id_}: {e}")
+        return None
+    except Exception as e:
+        logging.error(f"   --> Error tak terduga saat fetch foto {role}/{id_}: {e}")
+        return None

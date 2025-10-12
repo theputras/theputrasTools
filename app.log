@@ -1448,3 +1448,931 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-10-12 22:25:12,172 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
 
+2025-10-12 22:43:39,060 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:43:39,061 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:43:39,061 - INFO - Scheduler started
+2025-10-12 22:43:39,063 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:43:39,064 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:43:58,120 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:43:58,121 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:43:58,121 - INFO - Scheduler started
+2025-10-12 22:43:58,123 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:43:58,123 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:43:58,150 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 22:43:58,150 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 22:43:58,152 - INFO -  * Restarting with stat
+2025-10-12 22:43:59,604 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:43:59,605 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:43:59,605 - INFO - Scheduler started
+2025-10-12 22:43:59,607 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:43:59,607 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:43:59,619 - WARNING -  * Debugger is active!
+2025-10-12 22:43:59,626 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:45:07,617 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:07] "GET / HTTP/1.1" 200 -
+2025-10-12 22:45:08,956 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:08,964 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 22:45:08,967 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 22:45:08,968 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 22:45:09,432 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:09] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-10-12 22:45:11,637 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 22:45:11,638 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:11] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 22:45:14,601 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:19,308 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:24,599 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:29,305 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:34,600 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:39,304 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:44,601 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:49,300 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:54,600 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:45:58,944 - INFO - 127.0.0.1 - - [12/Oct/2025 22:45:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:46:04,255 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:46:08,947 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:46:14,251 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:46:18,950 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:46:24,248 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-12 22:46:28,390 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:28] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 22:46:28,749 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 22:46:28,750 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 22:46:28,751 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 22:46:32,633 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 22:46:32,635 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:32] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 22:46:40,790 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'neisha' ---
+2025-10-12 22:46:40,791 - INFO - 
+--- Memulai Pencarian Staff: 'neisha' ---
+2025-10-12 22:46:40,792 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 22:46:40,793 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 22:46:42,771 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 22:46:42,771 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 22:46:42,772 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 22:46:43,503 - INFO -    --> Pencarian mahasiswa berhasil, 1 data ditemukan.
+2025-10-12 22:46:44,181 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 22:46:44,181 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 22:46:44,892 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-10-12 22:46:44,895 - INFO - 127.0.0.1 - - [12/Oct/2025 22:46:44] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 22:49:28,293 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'erlangga' ---
+2025-10-12 22:49:28,293 - INFO - 
+--- Memulai Pencarian Staff: 'erlangga' ---
+2025-10-12 22:49:28,298 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 22:49:30,486 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 22:49:30,487 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 22:49:30,493 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 22:49:31,266 - INFO -    --> Pencarian mahasiswa berhasil, 4 data ditemukan.
+2025-10-12 22:49:32,655 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 22:49:32,655 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 22:49:33,404 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-10-12 22:49:33,408 - INFO - 127.0.0.1 - - [12/Oct/2025 22:49:33] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 22:57:13,775 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:57:13,954 - INFO -  * Restarting with stat
+2025-10-12 22:57:15,541 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:57:15,542 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:57:15,542 - INFO - Scheduler started
+2025-10-12 22:57:15,544 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:57:15,544 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:57:15,557 - WARNING -  * Debugger is active!
+2025-10-12 22:57:15,564 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:58:01,732 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:58:01,863 - INFO -  * Restarting with stat
+2025-10-12 23:10:14,574 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:10:14,574 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:10:14,575 - INFO - Scheduler started
+2025-10-12 23:10:14,576 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:10:14,576 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:10:14,592 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:10:14,592 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:10:14,593 - INFO -  * Restarting with stat
+2025-10-12 23:10:15,229 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:10:15,230 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:10:15,230 - INFO - Scheduler started
+2025-10-12 23:10:15,231 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:10:15,232 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:10:15,238 - WARNING -  * Debugger is active!
+2025-10-12 23:10:15,242 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:10:24,269 - INFO - 127.0.0.1 - - [12/Oct/2025 23:10:24] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:10:24,500 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:10:24,500 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-12 23:10:24,501 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-12 23:10:24,501 - INFO - Memulai proses login baru untuk sesi global...
+2025-10-12 23:10:24,502 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-10-12 23:10:24,859 - INFO - 2. [Login] Mengirim kredensial...
+2025-10-12 23:10:26,185 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-10-12 23:10:26,212 - INFO -    --> Login dan proses SSO berhasil.
+2025-10-12 23:10:26,213 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-10-12 23:10:26,214 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-10-12 23:10:26,228 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:10:26,231 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:10:28,334 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:10:28,334 - INFO - 127.0.0.1 - - [12/Oct/2025 23:10:28] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:10:29,442 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'erlangga' ---
+2025-10-12 23:10:29,442 - INFO - 
+--- Memulai Pencarian Staff: 'erlangga' ---
+2025-10-12 23:10:29,443 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:10:30,240 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:10:30,241 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:10:30,241 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:10:30,946 - INFO -    --> Pencarian mahasiswa berhasil, 4 data ditemukan.
+2025-10-12 23:10:31,703 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:10:31,704 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:10:32,385 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-10-12 23:10:32,387 - INFO - 127.0.0.1 - - [12/Oct/2025 23:10:32] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:10:36,145 - INFO - 127.0.0.1 - - [12/Oct/2025 23:10:36] "[33mPOST /{%20url_for('open_photo')%20} HTTP/1.1[0m" 404 -
+2025-10-12 23:12:38,668 - INFO - 127.0.0.1 - - [12/Oct/2025 23:12:38] "[33mPOST /{%20url_for('open_photo')%20} HTTP/1.1[0m" 404 -
+2025-10-12 23:14:55,115 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:14:55,271 - INFO -  * Restarting with stat
+2025-10-12 23:14:56,173 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:14:56,174 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:14:56,174 - INFO - Scheduler started
+2025-10-12 23:14:56,175 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:14:56,175 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:14:56,181 - WARNING -  * Debugger is active!
+2025-10-12 23:14:56,186 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:15:27,262 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:15:27,368 - INFO -  * Restarting with stat
+2025-10-12 23:15:28,087 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:15:28,087 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:15:28,087 - INFO - Scheduler started
+2025-10-12 23:15:28,088 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:15:28,088 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:15:28,095 - WARNING -  * Debugger is active!
+2025-10-12 23:15:28,099 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:15:29,105 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:15:29,179 - INFO -  * Restarting with stat
+2025-10-12 23:15:29,866 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:15:29,866 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:15:29,866 - INFO - Scheduler started
+2025-10-12 23:15:29,867 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:15:29,867 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:15:29,874 - WARNING -  * Debugger is active!
+2025-10-12 23:15:29,877 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:15:36,896 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:15:36,972 - INFO -  * Restarting with stat
+2025-10-12 23:15:37,873 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:15:37,874 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:15:37,874 - INFO - Scheduler started
+2025-10-12 23:15:37,875 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:15:37,875 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:15:37,881 - WARNING -  * Debugger is active!
+2025-10-12 23:15:37,885 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:16:24,027 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:16:24,206 - INFO -  * Restarting with stat
+2025-10-12 23:16:24,955 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:16:24,957 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:16:24,961 - INFO - Scheduler started
+2025-10-12 23:16:24,965 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:16:24,966 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:16:24,977 - WARNING -  * Debugger is active!
+2025-10-12 23:16:24,983 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:16:37,916 - INFO - 127.0.0.1 - - [12/Oct/2025 23:16:37] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:16:38,140 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:16:38,141 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:16:38,142 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:16:40,010 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:16:40,011 - INFO - 127.0.0.1 - - [12/Oct/2025 23:16:40] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:16:44,377 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'Er' ---
+2025-10-12 23:16:44,378 - INFO - 
+--- Memulai Pencarian Staff: 'Er' ---
+2025-10-12 23:16:44,379 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:16:44,379 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:16:46,041 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:16:46,042 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:16:46,043 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:16:46,762 - INFO -    --> Pencarian mahasiswa berhasil, 103 data ditemukan.
+2025-10-12 23:16:47,462 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:16:47,463 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:16:48,150 - INFO -    --> Pencarian staff berhasil, 24 data ditemukan.
+2025-10-12 23:16:48,154 - INFO - 127.0.0.1 - - [12/Oct/2025 23:16:48] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:16:50,854 - INFO - 127.0.0.1 - - [12/Oct/2025 23:16:50] "[33mPOST /{%20url_for('open_photo')%20} HTTP/1.1[0m" 404 -
+2025-10-12 23:17:21,145 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:17:21,228 - INFO -  * Restarting with stat
+2025-10-12 23:17:22,044 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:17:22,045 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:17:22,045 - INFO - Scheduler started
+2025-10-12 23:17:22,047 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:17:22,047 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:17:22,056 - WARNING -  * Debugger is active!
+2025-10-12 23:17:22,060 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:17:23,068 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:17:23,146 - INFO -  * Restarting with stat
+2025-10-12 23:17:24,074 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:17:24,074 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:17:24,075 - INFO - Scheduler started
+2025-10-12 23:17:24,075 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:17:24,076 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:17:24,083 - WARNING -  * Debugger is active!
+2025-10-12 23:17:24,087 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:17:27,097 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:17:27,171 - INFO -  * Restarting with stat
+2025-10-12 23:17:28,050 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:17:28,051 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:17:28,051 - INFO - Scheduler started
+2025-10-12 23:17:28,052 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:17:28,053 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:17:28,063 - WARNING -  * Debugger is active!
+2025-10-12 23:17:28,067 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:17:29,074 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:17:29,165 - INFO -  * Restarting with stat
+2025-10-12 23:17:29,985 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:17:29,986 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:17:29,986 - INFO - Scheduler started
+2025-10-12 23:17:29,987 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:17:29,987 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:17:29,994 - WARNING -  * Debugger is active!
+2025-10-12 23:17:29,998 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:17:33,009 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:17:33,103 - INFO -  * Restarting with stat
+2025-10-12 23:17:33,889 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:17:33,890 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:17:33,890 - INFO - Scheduler started
+2025-10-12 23:17:33,891 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:17:33,891 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:17:33,898 - WARNING -  * Debugger is active!
+2025-10-12 23:17:33,902 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:19:27,271 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:19:27,444 - INFO -  * Restarting with stat
+2025-10-12 23:21:47,759 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:21:47,760 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:21:47,760 - INFO - Scheduler started
+2025-10-12 23:21:47,761 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:21:47,761 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:21:47,776 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:21:47,776 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:21:47,777 - INFO -  * Restarting with stat
+2025-10-12 23:21:48,411 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:21:48,412 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:21:48,412 - INFO - Scheduler started
+2025-10-12 23:21:48,413 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:21:48,413 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:21:48,420 - WARNING -  * Debugger is active!
+2025-10-12 23:21:48,424 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:21:48,619 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:48] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:21:48,971 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:21:48,972 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:21:48,972 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:21:50,578 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:21:50,578 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:50] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:21:52,900 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'pe' ---
+2025-10-12 23:21:52,900 - INFO - 
+--- Memulai Pencarian Staff: 'pe' ---
+2025-10-12 23:21:52,901 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:21:52,901 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:21:54,513 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:21:54,513 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:21:54,514 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:21:55,210 - INFO -    --> Pencarian mahasiswa berhasil, 13 data ditemukan.
+2025-10-12 23:21:55,953 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:21:55,953 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:21:56,645 - INFO -    --> Pencarian staff berhasil, 3 data ditemukan.
+2025-10-12 23:21:56,647 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:56] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:21:59,288 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:59] "[35m[1mPOST /photos/open HTTP/1.1[0m" 500 -
+2025-10-12 23:21:59,410 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:59] "GET /photos/open?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-10-12 23:21:59,555 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:59] "GET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-10-12 23:21:59,874 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:59] "GET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-10-12 23:21:59,895 - INFO - 127.0.0.1 - - [12/Oct/2025 23:21:59] "GET /photos/open?__debugger__=yes&cmd=resource&f=console.png&s=aNjNufENMvU1WOm9ww60 HTTP/1.1" 200 -
+2025-10-12 23:22:00,148 - INFO - 127.0.0.1 - - [12/Oct/2025 23:22:00] "GET /photos/open?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-10-12 23:22:34,569 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:22:34,678 - INFO -  * Restarting with stat
+2025-10-12 23:23:11,374 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:23:11,375 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:23:11,375 - INFO - Scheduler started
+2025-10-12 23:23:11,376 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:23:11,376 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:23:11,392 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:23:11,392 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:23:11,393 - INFO -  * Restarting with stat
+2025-10-12 23:23:12,028 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:23:12,028 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:23:12,028 - INFO - Scheduler started
+2025-10-12 23:23:12,029 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:23:12,029 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:23:12,035 - WARNING -  * Debugger is active!
+2025-10-12 23:23:12,039 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:23:13,936 - INFO - 127.0.0.1 - - [12/Oct/2025 23:23:13] "[35m[1mPOST /photos/open HTTP/1.1[0m" 500 -
+2025-10-12 23:23:14,035 - INFO - 127.0.0.1 - - [12/Oct/2025 23:23:14] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-10-12 23:23:14,182 - INFO - 127.0.0.1 - - [12/Oct/2025 23:23:14] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-12 23:23:14,516 - INFO - 127.0.0.1 - - [12/Oct/2025 23:23:14] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-12 23:23:14,516 - INFO - 127.0.0.1 - - [12/Oct/2025 23:23:14] "GET /photos/open?__debugger__=yes&cmd=resource&f=console.png&s=AT4apJh1QEFCzwrdNglZ HTTP/1.1" 200 -
+2025-10-12 23:23:14,767 - INFO - 127.0.0.1 - - [12/Oct/2025 23:23:14] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-10-12 23:24:23,268 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:24:23,354 - INFO -  * Restarting with stat
+2025-10-12 23:24:24,508 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:24:24,508 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:24:24,509 - INFO - Scheduler started
+2025-10-12 23:24:24,510 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:24:24,510 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:24:24,517 - WARNING -  * Debugger is active!
+2025-10-12 23:24:24,522 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:25:11,621 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:25:11,746 - INFO -  * Restarting with stat
+2025-10-12 23:25:12,643 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:25:12,644 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:25:12,644 - INFO - Scheduler started
+2025-10-12 23:25:12,645 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:25:12,645 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:25:12,651 - WARNING -  * Debugger is active!
+2025-10-12 23:25:12,655 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:25:40,742 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:25:40,994 - INFO -  * Restarting with stat
+2025-10-12 23:26:47,606 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:26:47,606 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:26:47,607 - INFO - Scheduler started
+2025-10-12 23:26:47,607 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:26:47,608 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:26:47,622 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:26:47,623 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:26:47,624 - INFO -  * Restarting with stat
+2025-10-12 23:26:48,293 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:26:48,293 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:26:48,293 - INFO - Scheduler started
+2025-10-12 23:26:48,294 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:26:48,294 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:26:48,300 - WARNING -  * Debugger is active!
+2025-10-12 23:26:48,304 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:26:48,311 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:48] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:26:48,543 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:26:48,544 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:26:48,544 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:26:50,369 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:26:50,369 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:50] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:26:50,911 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'pe' ---
+2025-10-12 23:26:50,912 - INFO - 
+--- Memulai Pencarian Staff: 'pe' ---
+2025-10-12 23:26:50,912 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:26:50,912 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:26:52,847 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:26:52,847 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:26:52,848 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:26:53,622 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:26:53,623 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:26:54,303 - INFO -    --> Pencarian mahasiswa berhasil, 13 data ditemukan.
+2025-10-12 23:26:54,914 - INFO -    --> Pencarian staff berhasil, 3 data ditemukan.
+2025-10-12 23:26:54,916 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:54] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:26:58,708 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:58] "[35m[1mPOST /photos/open HTTP/1.1[0m" 500 -
+2025-10-12 23:26:58,806 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:58] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-10-12 23:26:58,953 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:58] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-12 23:26:59,277 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:59] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-12 23:26:59,295 - INFO - 127.0.0.1 - - [12/Oct/2025 23:26:59] "GET /photos/open?__debugger__=yes&cmd=resource&f=console.png&s=xZTEJX4QtBh5EOCmB6ZB HTTP/1.1" 200 -
+2025-10-12 23:27:07,357 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:27:07,511 - INFO -  * Restarting with stat
+2025-10-12 23:27:08,350 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:27:08,350 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:27:08,350 - INFO - Scheduler started
+2025-10-12 23:27:08,351 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:27:08,351 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:27:08,359 - WARNING -  * Debugger is active!
+2025-10-12 23:27:08,362 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:27:09,732 - INFO - 127.0.0.1 - - [12/Oct/2025 23:27:09] "[35m[1mPOST /photos/open HTTP/1.1[0m" 500 -
+2025-10-12 23:27:09,826 - INFO - 127.0.0.1 - - [12/Oct/2025 23:27:09] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-10-12 23:27:09,976 - INFO - 127.0.0.1 - - [12/Oct/2025 23:27:09] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-12 23:27:10,322 - INFO - 127.0.0.1 - - [12/Oct/2025 23:27:10] "[36mGET /photos/open?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-12 23:27:10,324 - INFO - 127.0.0.1 - - [12/Oct/2025 23:27:10] "GET /photos/open?__debugger__=yes&cmd=resource&f=console.png&s=wRMmFKf28Z7vlsNvabIA HTTP/1.1" 200 -
+2025-10-12 23:27:23,413 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:27:23,534 - INFO -  * Restarting with stat
+2025-10-12 23:32:12,339 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:32:12,340 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:32:12,340 - INFO - Scheduler started
+2025-10-12 23:32:12,342 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:32:12,342 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:32:12,364 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:32:12,364 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:32:12,366 - INFO -  * Restarting with stat
+2025-10-12 23:32:13,108 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:32:13,109 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:32:13,109 - INFO - Scheduler started
+2025-10-12 23:32:13,110 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:32:13,110 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:32:13,116 - WARNING -  * Debugger is active!
+2025-10-12 23:32:13,121 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:32:13,811 - INFO - 127.0.0.1 - - [12/Oct/2025 23:32:13] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:32:14,129 - INFO - 127.0.0.1 - - [12/Oct/2025 23:32:14] "[33mGET /photos/mahasiswa/ HTTP/1.1[0m" 404 -
+2025-10-12 23:32:16,589 - INFO - 127.0.0.1 - - [12/Oct/2025 23:32:16] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:32:16,675 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:32:16,676 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:32:16,677 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:32:18,508 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'pe' ---
+2025-10-12 23:32:18,509 - INFO - 
+--- Memulai Pencarian Staff: 'pe' ---
+2025-10-12 23:32:18,510 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:32:18,510 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:32:20,388 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:32:20,389 - INFO - 127.0.0.1 - - [12/Oct/2025 23:32:20] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:32:20,774 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:32:20,774 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:32:20,775 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:32:21,516 - INFO -    --> Pencarian mahasiswa berhasil, 13 data ditemukan.
+2025-10-12 23:32:22,226 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:32:22,227 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:32:22,971 - INFO -    --> Pencarian staff berhasil, 3 data ditemukan.
+2025-10-12 23:32:22,972 - INFO - 127.0.0.1 - - [12/Oct/2025 23:32:22] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:32:25,625 - INFO - 127.0.0.1 - - [12/Oct/2025 23:32:25] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:32:25,647 - INFO - 127.0.0.1 - - [12/Oct/2025 23:32:25] "[33mGET /photos/mahasiswa/ HTTP/1.1[0m" 404 -
+2025-10-12 23:36:41,950 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\scrapper_requests.py', reloading
+2025-10-12 23:36:42,075 - INFO -  * Restarting with stat
+2025-10-12 23:36:42,905 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:36:42,906 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:36:42,906 - INFO - Scheduler started
+2025-10-12 23:36:42,908 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:36:42,908 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:36:42,918 - WARNING -  * Debugger is active!
+2025-10-12 23:36:42,923 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:36:43,931 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\scrapper_requests.py', reloading
+2025-10-12 23:36:44,036 - INFO -  * Restarting with stat
+2025-10-12 23:36:45,506 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:36:45,507 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:36:45,507 - INFO - Scheduler started
+2025-10-12 23:36:45,508 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:36:45,508 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:36:45,515 - WARNING -  * Debugger is active!
+2025-10-12 23:36:45,519 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:37:21,613 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:37:21,813 - INFO -  * Restarting with stat
+2025-10-12 23:37:22,730 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:37:22,731 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:37:22,731 - INFO - Scheduler started
+2025-10-12 23:37:22,732 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:37:22,732 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:37:22,740 - WARNING -  * Debugger is active!
+2025-10-12 23:37:22,745 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:37:31,775 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:37:31,950 - INFO -  * Restarting with stat
+2025-10-12 23:37:32,749 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:37:32,749 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:37:32,749 - INFO - Scheduler started
+2025-10-12 23:37:32,750 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:37:32,751 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:37:32,760 - WARNING -  * Debugger is active!
+2025-10-12 23:37:32,764 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:37:57,847 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:37:57,931 - INFO -  * Restarting with stat
+2025-10-12 23:38:21,456 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:38:21,456 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:38:21,456 - INFO - Scheduler started
+2025-10-12 23:38:21,457 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:38:21,457 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:38:21,471 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:38:21,472 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:38:21,473 - INFO -  * Restarting with stat
+2025-10-12 23:38:22,151 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:38:22,152 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:38:22,152 - INFO - Scheduler started
+2025-10-12 23:38:22,153 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:38:22,153 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:38:22,161 - WARNING -  * Debugger is active!
+2025-10-12 23:38:22,164 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:38:24,080 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:24] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:38:24,296 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:38:24,297 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:38:24,297 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:38:25,925 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:38:25,926 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:25] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:38:26,656 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'pe' ---
+2025-10-12 23:38:26,657 - INFO - 
+--- Memulai Pencarian Staff: 'pe' ---
+2025-10-12 23:38:26,657 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:38:26,657 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:38:28,261 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:38:28,262 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:38:28,262 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:38:28,993 - INFO -    --> Pencarian mahasiswa berhasil, 13 data ditemukan.
+2025-10-12 23:38:29,697 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:38:29,698 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:38:30,389 - INFO -    --> Pencarian staff berhasil, 3 data ditemukan.
+2025-10-12 23:38:30,390 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:30] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:38:33,893 - INFO - Session photo set untuk mahasiswa/21410100025 (exp: 1760287173.8937478)
+2025-10-12 23:38:33,894 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:33] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:38:33,906 - INFO - Proxy fetch foto untuk mahasiswa/21410100025 via session.
+2025-10-12 23:38:33,906 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:38:34,696 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:38:34,696 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:38:34,696 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/21410100025.jpg
+2025-10-12 23:38:36,155 - INFO -    --> Foto mahasiswa/21410100025 berhasil di-fetch (4356742 bytes).
+2025-10-12 23:38:36,158 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:36] "[35m[1mGET /photos/mahasiswa/ HTTP/1.1[0m" 500 -
+2025-10-12 23:38:36,236 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:36] "GET /photos/mahasiswa/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-10-12 23:38:36,505 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:36] "GET /photos/mahasiswa/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-10-12 23:38:36,901 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:36] "GET /photos/mahasiswa/?__debugger__=yes&cmd=resource&f=console.png&s=BsQbv3PMNLqGngTdJqLv HTTP/1.1" 200 -
+2025-10-12 23:38:37,153 - INFO - 127.0.0.1 - - [12/Oct/2025 23:38:37] "GET /photos/mahasiswa/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-10-12 23:41:10,673 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:41:10,798 - INFO -  * Restarting with stat
+2025-10-12 23:41:11,770 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:41:11,771 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:41:11,771 - INFO - Scheduler started
+2025-10-12 23:41:11,772 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:41:11,772 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:41:11,780 - WARNING -  * Debugger is active!
+2025-10-12 23:41:11,783 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:41:37,858 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:41:37,934 - INFO -  * Restarting with stat
+2025-10-12 23:42:12,299 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:42:12,299 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:42:12,300 - INFO - Scheduler started
+2025-10-12 23:42:12,300 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:42:12,301 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:42:12,316 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:42:12,316 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:42:12,317 - INFO -  * Restarting with stat
+2025-10-12 23:42:13,062 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:42:13,062 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:42:13,062 - INFO - Scheduler started
+2025-10-12 23:42:13,063 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:42:13,064 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:42:13,070 - WARNING -  * Debugger is active!
+2025-10-12 23:42:13,075 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:42:14,071 - WARNING - Unauthorized access ke /photos/mahasiswa/ - session invalid atau expired.
+2025-10-12 23:42:14,072 - INFO - 127.0.0.1 - - [12/Oct/2025 23:42:14] "[31m[1mGET /photos/mahasiswa/ HTTP/1.1[0m" 403 -
+2025-10-12 23:42:16,291 - INFO - 127.0.0.1 - - [12/Oct/2025 23:42:16] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:42:16,423 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:42:16,425 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-12 23:42:16,425 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-12 23:42:16,425 - INFO - Memulai proses login baru untuk sesi global...
+2025-10-12 23:42:16,425 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-10-12 23:42:17,188 - INFO - 2. [Login] Mengirim kredensial...
+2025-10-12 23:42:18,685 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-10-12 23:42:18,704 - INFO -    --> Login dan proses SSO berhasil.
+2025-10-12 23:42:18,705 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-10-12 23:42:18,705 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-10-12 23:42:18,713 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:42:18,714 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:42:20,414 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:42:20,415 - INFO - 127.0.0.1 - - [12/Oct/2025 23:42:20] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:42:20,826 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'erlangga' ---
+2025-10-12 23:42:20,826 - INFO - 
+--- Memulai Pencarian Staff: 'erlangga' ---
+2025-10-12 23:42:20,827 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:42:21,708 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:42:21,709 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:42:21,710 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:42:22,514 - INFO -    --> Pencarian mahasiswa berhasil, 4 data ditemukan.
+2025-10-12 23:42:23,280 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:42:23,280 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:42:23,974 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-10-12 23:42:23,975 - INFO - 127.0.0.1 - - [12/Oct/2025 23:42:23] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:42:26,712 - INFO - 127.0.0.1 - - [12/Oct/2025 23:42:26] "[33mPOST /photos/open HTTP/1.1[0m" 404 -
+2025-10-12 23:42:44,163 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:42:44,248 - INFO -  * Restarting with stat
+2025-10-12 23:42:45,162 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:42:45,162 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:42:45,163 - INFO - Scheduler started
+2025-10-12 23:42:45,164 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:42:45,164 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:42:45,172 - WARNING -  * Debugger is active!
+2025-10-12 23:42:45,178 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:43:02,232 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:43:02,333 - INFO -  * Restarting with stat
+2025-10-12 23:43:03,103 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:43:03,103 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:43:03,103 - INFO - Scheduler started
+2025-10-12 23:43:03,104 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:43:03,105 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:43:03,111 - WARNING -  * Debugger is active!
+2025-10-12 23:43:03,116 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:43:18,173 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:43:18,319 - INFO -  * Restarting with stat
+2025-10-12 23:43:38,112 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:43:38,113 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:43:38,113 - INFO - Scheduler started
+2025-10-12 23:43:38,114 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:43:38,114 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:43:38,129 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 23:43:38,129 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 23:43:38,130 - INFO -  * Restarting with stat
+2025-10-12 23:43:38,766 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:43:38,766 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:43:38,766 - INFO - Scheduler started
+2025-10-12 23:43:38,767 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:43:38,767 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:43:38,774 - WARNING -  * Debugger is active!
+2025-10-12 23:43:38,777 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:43:38,923 - INFO - 127.0.0.1 - - [12/Oct/2025 23:43:38] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:43:39,095 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:43:39,096 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:43:39,097 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:43:40,723 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:43:40,724 - INFO - 127.0.0.1 - - [12/Oct/2025 23:43:40] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:43:45,400 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'Erlangga' ---
+2025-10-12 23:43:45,400 - INFO - 
+--- Memulai Pencarian Staff: 'Erlangga' ---
+2025-10-12 23:43:45,400 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:43:45,401 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:43:47,019 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:43:47,019 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:43:47,021 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:43:47,707 - INFO -    --> Pencarian mahasiswa berhasil, 4 data ditemukan.
+2025-10-12 23:43:48,446 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:43:48,447 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:43:49,203 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-10-12 23:43:49,204 - INFO - 127.0.0.1 - - [12/Oct/2025 23:43:49] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:43:52,381 - INFO - Session photo set untuk mahasiswa/23410100026 (exp: 1760287492.3817012)
+2025-10-12 23:43:52,382 - INFO - 127.0.0.1 - - [12/Oct/2025 23:43:52] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:43:52,399 - INFO - Proxy fetch foto untuk mahasiswa/23410100026 via session.
+2025-10-12 23:43:52,400 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:43:53,188 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:43:53,188 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:43:53,188 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/23410100026.jpg
+2025-10-12 23:43:53,481 - INFO -    --> Foto mahasiswa/23410100026 berhasil di-fetch (612184 bytes).
+2025-10-12 23:43:53,482 - INFO - 127.0.0.1 - - [12/Oct/2025 23:43:53] "GET /photos/mahasiswa/ HTTP/1.1" 200 -
+2025-10-12 23:44:07,532 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'sulis' ---
+2025-10-12 23:44:07,532 - INFO - 
+--- Memulai Pencarian Staff: 'sulis' ---
+2025-10-12 23:44:07,532 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:44:08,377 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:44:08,377 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:44:08,378 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:44:09,192 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:44:09,193 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:44:09,889 - INFO -    --> Pencarian mahasiswa berhasil, 4 data ditemukan.
+2025-10-12 23:44:10,529 - INFO -    --> Pencarian staff berhasil, 3 data ditemukan.
+2025-10-12 23:44:10,530 - INFO - 127.0.0.1 - - [12/Oct/2025 23:44:10] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:44:13,659 - INFO - Session photo set untuk staff/960174 (exp: 1760287513.6594143)
+2025-10-12 23:44:13,660 - INFO - 127.0.0.1 - - [12/Oct/2025 23:44:13] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:44:13,672 - INFO - Proxy fetch foto untuk staff/960174 via session.
+2025-10-12 23:44:13,672 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:44:14,454 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:44:14,454 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:44:14,455 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/karyawan/960174.jpg
+2025-10-12 23:44:14,614 - INFO -    --> Foto staff/960174 berhasil di-fetch (133512 bytes).
+2025-10-12 23:44:14,615 - INFO - 127.0.0.1 - - [12/Oct/2025 23:44:14] "GET /photos/staff/ HTTP/1.1" 200 -
+2025-10-12 23:44:30,959 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:44:31,122 - INFO -  * Restarting with stat
+2025-10-12 23:44:31,917 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:44:31,918 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:44:31,918 - INFO - Scheduler started
+2025-10-12 23:44:31,919 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:44:31,919 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:44:31,927 - WARNING -  * Debugger is active!
+2025-10-12 23:44:31,930 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:44:33,025 - INFO - 127.0.0.1 - - [12/Oct/2025 23:44:33] "[33mPOST /photos/open HTTP/1.1[0m" 404 -
+2025-10-12 23:44:36,950 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:44:37,032 - INFO -  * Restarting with stat
+2025-10-12 23:44:37,733 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:44:37,736 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:44:37,738 - INFO - Scheduler started
+2025-10-12 23:44:37,741 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:44:37,744 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:44:37,754 - WARNING -  * Debugger is active!
+2025-10-12 23:44:37,760 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:44:54,821 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:44:54,898 - INFO -  * Restarting with stat
+2025-10-12 23:44:55,723 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:44:55,723 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:44:55,724 - INFO - Scheduler started
+2025-10-12 23:44:55,725 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:44:55,725 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:44:55,732 - WARNING -  * Debugger is active!
+2025-10-12 23:44:55,736 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:44:58,329 - INFO - Session photo set untuk staff/960174 (exp: 1760287558.3294494)
+2025-10-12 23:44:58,330 - INFO - 127.0.0.1 - - [12/Oct/2025 23:44:58] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:44:58,345 - INFO - Proxy fetch foto untuk staff/960174 via session.
+2025-10-12 23:44:58,346 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:44:58,346 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:45:00,254 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:45:00,255 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:45:00,256 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/karyawan/960174.jpg
+2025-10-12 23:45:00,436 - INFO -    --> Foto staff/960174 berhasil di-fetch (133512 bytes).
+2025-10-12 23:45:00,437 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:00] "GET /photos/staff HTTP/1.1" 200 -
+2025-10-12 23:45:07,623 - INFO - Session photo set untuk mahasiswa/24430200003 (exp: 1760287567.6238642)
+2025-10-12 23:45:07,624 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:07] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:45:07,924 - INFO - Proxy fetch foto untuk mahasiswa/24430200003 via session.
+2025-10-12 23:45:07,926 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:45:08,731 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:45:08,732 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:45:08,732 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/24430200003.jpg
+2025-10-12 23:45:10,980 - INFO -    --> Foto mahasiswa/24430200003 berhasil di-fetch (374255 bytes).
+2025-10-12 23:45:10,980 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:10] "GET /photos/mahasiswa HTTP/1.1" 200 -
+2025-10-12 23:45:11,216 - INFO - Session photo set untuk mahasiswa/24430200003 (exp: 1760287571.2164128)
+2025-10-12 23:45:11,217 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:11] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:45:11,228 - INFO - Proxy fetch foto untuk mahasiswa/24430200003 via session.
+2025-10-12 23:45:11,228 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:45:12,030 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:45:12,031 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:45:12,031 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/24430200003.jpg
+2025-10-12 23:45:12,733 - INFO -    --> Foto mahasiswa/24430200003 berhasil di-fetch (374255 bytes).
+2025-10-12 23:45:12,734 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:12] "GET /photos/mahasiswa HTTP/1.1" 200 -
+2025-10-12 23:45:18,782 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'chesya' ---
+2025-10-12 23:45:18,782 - INFO - 
+--- Memulai Pencarian Staff: 'chesya' ---
+2025-10-12 23:45:18,782 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:45:19,581 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:45:19,582 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:45:19,582 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:45:20,560 - INFO -    --> Pencarian mahasiswa berhasil, 1 data ditemukan.
+2025-10-12 23:45:21,020 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:45:21,021 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:45:21,721 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-10-12 23:45:21,723 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:21] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:45:23,994 - INFO - Session photo set untuk mahasiswa/25410100016 (exp: 1760287583.9946878)
+2025-10-12 23:45:23,996 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:23] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:45:24,009 - INFO - Proxy fetch foto untuk mahasiswa/25410100016 via session.
+2025-10-12 23:45:24,009 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:45:24,957 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:45:24,958 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:45:24,958 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/25410100016.jpg
+2025-10-12 23:45:25,610 - WARNING -    --> Response bukan image untuk mahasiswa/25410100016.
+2025-10-12 23:45:25,617 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:25] "[35m[1mGET /photos/mahasiswa HTTP/1.1[0m" 500 -
+2025-10-12 23:45:25,717 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:25] "GET /photos/mahasiswa?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-10-12 23:45:25,994 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:25] "GET /photos/mahasiswa?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-10-12 23:45:26,323 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:26] "GET /photos/mahasiswa?__debugger__=yes&cmd=resource&f=console.png&s=9Ap47vp0fXimGXSyGQIy HTTP/1.1" 200 -
+2025-10-12 23:45:26,577 - INFO - 127.0.0.1 - - [12/Oct/2025 23:45:26] "GET /photos/mahasiswa?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-10-12 23:50:33,862 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:50:33,989 - INFO -  * Restarting with stat
+2025-10-12 23:50:36,041 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:50:36,041 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:50:36,042 - INFO - Scheduler started
+2025-10-12 23:50:36,044 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:50:36,044 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:50:36,060 - WARNING -  * Debugger is active!
+2025-10-12 23:50:36,067 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:50:42,164 - INFO - Session photo set untuk mahasiswa/25410100016 (exp: 1760287902.1648526)
+2025-10-12 23:50:42,167 - INFO - 127.0.0.1 - - [12/Oct/2025 23:50:42] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:50:42,184 - INFO - Proxy fetch foto untuk mahasiswa/25410100016 via session.
+2025-10-12 23:50:42,186 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:50:42,186 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:50:44,326 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-10-12 23:50:44,329 - INFO - Memulai proses login baru untuk sesi global...
+2025-10-12 23:50:44,329 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-10-12 23:50:44,406 - INFO - 2. [Login] Mengirim kredensial...
+2025-10-12 23:50:45,416 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-10-12 23:50:45,939 - INFO -    --> Login dan proses SSO berhasil.
+2025-10-12 23:50:45,941 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-10-12 23:50:45,942 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-10-12 23:50:45,958 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:50:45,958 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/25410100016.jpg
+2025-10-12 23:50:47,893 - WARNING -    --> Response bukan image untuk mahasiswa/25410100016.
+2025-10-12 23:50:47,894 - ERROR - Fetch gagal untuk mahasiswa/25410100016 - return 404.
+2025-10-12 23:50:47,895 - INFO - 127.0.0.1 - - [12/Oct/2025 23:50:47] "[33mGET /photos/mahasiswa/ HTTP/1.1[0m" 404 -
+2025-10-12 23:53:24,660 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:53:24,797 - INFO -  * Restarting with stat
+2025-10-12 23:53:25,711 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:53:25,712 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:53:25,712 - INFO - Scheduler started
+2025-10-12 23:53:25,713 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:53:25,713 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 23:53:25,724 - WARNING -  * Debugger is active!
+2025-10-12 23:53:25,731 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 23:58:03,469 - INFO - 127.0.0.1 - - [12/Oct/2025 23:58:03] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:58:04,976 - INFO - 127.0.0.1 - - [12/Oct/2025 23:58:04] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:58:09,067 - INFO - 127.0.0.1 - - [12/Oct/2025 23:58:09] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-12 23:58:09,168 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-12 23:58:09,169 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:58:09,170 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:58:10,352 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:58:10,353 - INFO - 127.0.0.1 - - [12/Oct/2025 23:58:10] "GET /api/status HTTP/1.1" 200 -
+2025-10-12 23:58:15,386 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'chesya' ---
+2025-10-12 23:58:15,386 - INFO - 
+--- Memulai Pencarian Staff: 'chesya' ---
+2025-10-12 23:58:15,387 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 23:58:15,387 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:58:16,622 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:58:16,622 - INFO - Membuat sesi global baru dari cookies file.
+2025-10-12 23:58:16,623 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:58:17,355 - INFO -    --> Pencarian mahasiswa berhasil, 1 data ditemukan.
+2025-10-12 23:58:18,036 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:58:18,036 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:58:18,717 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-10-12 23:58:18,718 - INFO - 127.0.0.1 - - [12/Oct/2025 23:58:18] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 23:58:22,282 - INFO - Session photo set untuk mahasiswa/25410100016 (exp: 1760288362.2827811)
+2025-10-12 23:58:22,284 - INFO - 127.0.0.1 - - [12/Oct/2025 23:58:22] "[32mPOST /photos/open HTTP/1.1[0m" 302 -
+2025-10-12 23:58:22,299 - INFO - Proxy fetch foto untuk mahasiswa/25410100016 via session.
+2025-10-12 23:58:22,299 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-12 23:58:27,115 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-12 23:58:27,116 - INFO - Menggunakan sesi global yang ada di memori.
+2025-10-12 23:58:27,116 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/25410100016.jpg
+2025-10-12 23:58:27,742 - WARNING -    --> Response bukan image untuk mahasiswa/25410100016.
+2025-10-12 23:58:27,750 - INFO - 127.0.0.1 - - [12/Oct/2025 23:58:27] "GET /photos/mahasiswa HTTP/1.1" 200 -
+2025-10-12 23:59:33,067 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 23:59:33,221 - INFO -  * Restarting with stat
+2025-10-12 23:59:34,139 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 23:59:34,140 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 23:59:34,140 - INFO - Scheduler started
+2025-10-12 23:59:34,141 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 23:59:34,141 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+

@@ -4,15 +4,17 @@ import os
 import re
 from datetime import datetime
 import pandas as pd
-from flask import Flask, send_from_directory, request, render_template_string, redirect, url_for, Response, jsonify, json   
+from flask import Flask, send_from_directory, request, render_template_string, redirect, url_for, Response, jsonify, json, session, abort
 from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import pytz
 from logging.handlers import RotatingFileHandler
+import secrets
+import time
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import scrape_data, search_mahasiswa, search_staff, get_session_status
+from scrapper_requests import scrape_data, search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca  
 
 app = Flask(__name__)
 
@@ -62,10 +64,64 @@ executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
 JADWAL_STATUS = {"status": "ready", "message": "Siap."}
+app.secret_key = os.environ.get("SECRET_KEY")
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SECURE", "0") == "1",
+)
 
 month_translation = { 'Januari': 'January', 'Februari': 'February', 'Maret': 'March', 'April': 'April', 'Mei': 'May', 'Juni': 'June', 'Juli': 'July', 'Agustus': 'August', 'September': 'September', 'Oktober': 'October', 'November': 'November', 'Desember': 'December' }
 majorID = { "39010": "D3 Sistem Informasi", "41010": "S1 Sistem Informasi", "41011": "S1 Sistem Informasi", "41020": "S1 Teknik Komputer", "42010": "S1 Desain Komunikasi Visual", "42020": "S1 Desain Produk", "43010": "S1 Manajemen", "43020": "S1 Akuntansi", "51016": "D4 Produksi Film dan Televisi" }
 
+# Fungsi validasi (sudah ada, tidak ubah)
+def _valid_role(x):
+    return x in ("mahasiswa", "staff")
+# POST route (sudah ada, tidak ubah - ini set session dari tombol)
+@app.post("/photos/open")
+def open_photo():
+    role = request.form.get("role","").strip()
+    id_ = request.form.get("id","").strip()
+    if not _valid_role(role) or not id_.isdigit():
+        return abort(400)
+    session["photo_view"] = {"role": role, "id": id_, "exp": time.time() + 60}
+    logging.info(f"Session photo set untuk {role}/{id_} (exp: {time.time() + 60})")  # Tambah logging
+    return redirect(url_for("photos_role", role=role))
+# GET route - MODIFIKASI: Proxy fetch dari Sicyca, bukan local
+@app.get("/photos/<role>")
+def photos_role(role):
+    if not _valid_role(role):
+        return abort(404)
+    
+    pv = session.get("photo_view")
+    if not pv or pv.get("role") != role or pv.get("exp",0) < time.time():
+        logging.warning(f"Unauthorized access ke /photos/{role}/ - session invalid atau expired.")
+        return abort(403)
+    
+    id_ = pv['id']
+    logging.info(f"Proxy fetch foto untuk {role}/{id_} via session.")
+    
+    # Fetch dari Sicyca menggunakan helper
+    image_content = fetch_photo_from_sicyca(role, id_)
+    if image_content is None:
+        # Return default image dari static folder (buat file no_photo.jpg di static/)
+        with open('static/no_photo.jpg', 'rb') as f:
+            return Response(f.read(), mimetype="image/jpeg")
+  
+    
+    # Clear session setelah serve (extra security)
+    session.pop("photo_view", None)
+    
+    # Return image response - Ini yang error jika Response tidak di-import
+    return Response(image_content, mimetype="image/jpeg", headers={
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+    })
+
+
+# Jalankan scraper dan simpan hasilnya ke file JSON
 def run_scraper_and_save():
     global JADWAL_STATUS
     JADWAL_STATUS = {"status": "loading", "message": f"Proses scraping dimulai: {datetime.now().strftime('%A, %d %B %Y %H:%M:%S')}"}
@@ -594,16 +650,32 @@ def api_search():
             detail_html = ""
             if item['Tipe'] == 'Mahasiswa':
                 detail_html = f"""
-                    <dt class="font-medium text-gray-400">NIM</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
-                    <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item['Status']}</dd>
-                    <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item['Prodi']}</dd>
-                    <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
+                <dt class="font-medium text-gray-400">NIM</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
+                <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item['Status']}</dd>
+                <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item['Prodi']}</dd>
+                <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
+                <!-- Tombol di bawah "Dosen Wali" seperti diminta -->
+                <dd class="col-span-3 mt-2">
+                <form action="/photos/open" method="post">
+                <input type="hidden" name="role" value="mahasiswa">
+                <input type="hidden" name="id" value="{item['ID']}">
+                <button type="submit" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded">Lihat Foto</button>
+                </form>
+                </dd>
                 """
             else:
                 detail_html = f"""
-                    <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
-                    <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item['Bagian']}</dd>
-                    <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
+                <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
+                <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item['Bagian']}</dd>
+                <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
+                <!-- Tombol di bawah "Email" seperti diminta -->
+                <dd class="col-span-3 mt-2">
+                <form action="/photos/open" method="post">
+                <input type="hidden" name="role" value="staff">
+                <input type="hidden" name="id" value="{item['ID']}">
+                <button type="submit" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded">Lihat Foto</button>
+                </form>
+                </dd>
                 """
 
             html_output += f"""
@@ -680,4 +752,4 @@ boot_scrape_if_needed()
 logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
 logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-    # app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+# app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
