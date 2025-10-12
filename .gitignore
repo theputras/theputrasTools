@@ -1,0 +1,5 @@
+.vercel
+.vscode
+node_modules/
+Database E-GBHM.sql
+.env
