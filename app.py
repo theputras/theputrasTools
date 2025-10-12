@@ -8,12 +8,17 @@ from flask import Flask, send_from_directory, request, render_template_string, r
 from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
+import pytz
 from logging.handlers import RotatingFileHandler
 
 # Impor SEMUA fungsi scraper
 from scrapper_requests import scrape_data, search_mahasiswa, search_staff, get_session_status
 
 app = Flask(__name__)
+
+# Inisialisasi scheduler SEKALI saat modul di-import
+SCHEDULER_TZ = pytz.timezone("Asia/Jakarta")
+scheduler = BackgroundScheduler(timezone=SCHEDULER_TZ)
 
 # ==================================================================
 # === KONFIGURASI LOGGING ===
@@ -40,6 +45,18 @@ logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 # ==================================================================
 
+# Jalankan sekali saat start (opsional)
+def boot_scrape_if_needed():
+    try:
+        if not os.path.exists(JSON_FILE):
+            run_scraper_and_save()
+        else:
+            with open(JSON_FILE, encoding='utf-8') as f:
+                data = json.load(f)
+            if not isinstance(data, dict) or "data" not in data or len(data["data"]) == 0:
+                run_scraper_and_save()
+    except Exception as e:
+        logging.warning(f"Boot scrape gagal: {e}")
 
 executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
@@ -628,37 +645,39 @@ def api_log():
 def api_jadwal_status():
     return jsonify(JADWAL_STATUS)
     
-if __name__ == "__main__":
-    should_run_scraper = False
+# if __name__ == "__main__":
+#     should_run_scraper = False
 
-    if not os.path.exists(JSON_FILE):
-        logging.info(f"File {JSON_FILE} tidak ditemukan. Menjalankan scraper jadwal awal...")
-        should_run_scraper = True
-    else:
-        try:
-            # Baca struktur file JSON
-            with open(JSON_FILE, encoding='utf-8') as f:
-                data = json.load(f)
+#     if not os.path.exists(JSON_FILE):
+#         logging.info(f"File {JSON_FILE} tidak ditemukan. Menjalankan scraper jadwal awal...")
+#         should_run_scraper = True
+#     else:
+#         try:
+#             # Baca struktur file JSON
+#             with open(JSON_FILE, encoding='utf-8') as f:
+#                 data = json.load(f)
 
-            # Pastikan format sesuai dan ada data
-            if isinstance(data, dict) and "data" in data and len(data["data"]) > 0:
-                logging.info(f"File {JSON_FILE} ditemukan dan berisi {len(data['data'])} jadwal.")
-            else:
-                logging.warning(f"File {JSON_FILE} kosong atau format tidak sesuai. Menjalankan scraper ulang...")
-                should_run_scraper = True
+#             # Pastikan format sesuai dan ada data
+#             if isinstance(data, dict) and "data" in data and len(data["data"]) > 0:
+#                 logging.info(f"File {JSON_FILE} ditemukan dan berisi {len(data['data'])} jadwal.")
+#             else:
+#                 logging.warning(f"File {JSON_FILE} kosong atau format tidak sesuai. Menjalankan scraper ulang...")
+#                 should_run_scraper = True
 
-        except Exception as e:
-            logging.warning(f"File {JSON_FILE} rusak atau tidak bisa dibaca ({e}). Menjalankan scraper ulang...")
-            should_run_scraper = True
+#         except Exception as e:
+#             logging.warning(f"File {JSON_FILE} rusak atau tidak bisa dibaca ({e}). Menjalankan scraper ulang...")
+#             should_run_scraper = True
 
-    if should_run_scraper:
-        run_scraper_and_save()
+#     if should_run_scraper:
+#         run_scraper_and_save()
 
-    scheduler = BackgroundScheduler(daemon=True)
-    scheduler.add_job(run_scraper_and_save, 'cron', hour=5, minute=0)
-    scheduler.start()
+# scheduler = BackgroundScheduler(daemon=True)
+# Daftarkan job harian jam 05:00 WIB
+scheduler.add_job(run_scraper_and_save, 'cron', hour=5, minute=0, id="scrape-05")
+scheduler.start()
+boot_scrape_if_needed()
     
-    logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
-    logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
+logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
+logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)

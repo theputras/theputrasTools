@@ -1276,3 +1276,175 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-10-11 11:15:44,740 - INFO -    --> Pencarian mahasiswa berhasil, 118 data ditemukan.
 2025-10-11 11:15:45,498 - INFO -    --> Pencarian staff berhasil, 16 data ditemukan.
 2025-10-11 11:15:45,515 - INFO - 127.0.0.1 - - [11/Oct/2025 11:15:45] "POST /api/search HTTP/1.1" 200 -
+2025-10-12 22:15:48,421 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:15:48,448 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:15:48,448 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:15:48,448 - INFO - Scheduler started
+2025-10-12 22:15:48,449 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:15:48,449 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:15:48,496 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 22:15:48,496 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 22:15:48,498 - INFO -  * Restarting with stat
+2025-10-12 22:15:49,433 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:15:49,438 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:15:49,439 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:15:49,439 - INFO - Scheduler started
+2025-10-12 22:15:49,440 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:15:49,440 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:15:49,451 - WARNING -  * Debugger is active!
+2025-10-12 22:15:49,455 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:15:59,485 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:15:59,617 - INFO -  * Restarting with stat
+2025-10-12 22:16:00,616 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:16:00,621 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:16:00,622 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:16:00,622 - INFO - Scheduler started
+2025-10-12 22:16:00,623 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:16:00,623 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:16:00,633 - WARNING -  * Debugger is active!
+2025-10-12 22:16:00,638 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:16:01,645 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:16:01,741 - INFO -  * Restarting with stat
+2025-10-12 22:16:02,496 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:16:02,501 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:16:02,502 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:16:02,502 - INFO - Scheduler started
+2025-10-12 22:16:02,503 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:16:02,503 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:16:02,511 - WARNING -  * Debugger is active!
+2025-10-12 22:16:02,515 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:16:08,558 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:16:08,770 - INFO -  * Restarting with stat
+2025-10-12 22:16:10,561 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:16:10,566 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:16:10,567 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:16:10,567 - INFO - Scheduler started
+2025-10-12 22:16:10,568 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:16:10,568 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:16:10,575 - WARNING -  * Debugger is active!
+2025-10-12 22:16:10,578 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:17:00,001 - INFO - Running job "run_scraper_and_save (trigger: cron[hour='22', minute='17'], next run at: 2025-10-13 22:17:00 +07)" (scheduled at 2025-10-12 22:17:00+07:00)
+2025-10-12 22:17:00,002 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-10-12 22:17:00,002 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-10-12 22:17:00,005 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-12 22:17:00,006 - INFO - Memulai proses login baru untuk sesi global...
+2025-10-12 22:17:00,006 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-10-12 22:17:01,423 - INFO - 2. [Login] Mengirim kredensial...
+2025-10-12 22:17:02,892 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-10-12 22:17:02,923 - INFO -    --> Login dan proses SSO berhasil.
+2025-10-12 22:17:02,925 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-10-12 22:17:02,926 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-10-12 22:17:02,943 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-12 22:17:06,986 - ERROR - Error saat scraping jadwal: Tidak ketemu div 'JADWAL KEGIATAN MINGGU INI'.
+2025-10-12 22:17:06,996 - WARNING - Scraping jadwal tidak menghasilkan data.
+2025-10-12 22:17:06,996 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-10-12 22:17:06,997 - INFO - Job "run_scraper_and_save (trigger: cron[hour='22', minute='17'], next run at: 2025-10-13 22:17:00 +07)" executed successfully
+2025-10-12 22:20:28,490 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:20:28,587 - INFO -  * Restarting with stat
+2025-10-12 22:20:29,554 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:20:29,562 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:20:29,562 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:20:29,563 - INFO - Scheduler started
+2025-10-12 22:20:29,564 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:20:29,564 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:20:29,574 - WARNING -  * Debugger is active!
+2025-10-12 22:20:29,579 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:20:39,620 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:20:39,713 - INFO -  * Restarting with stat
+2025-10-12 22:20:43,827 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:20:43,830 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:20:43,831 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:20:43,831 - INFO - Scheduler started
+2025-10-12 22:20:43,832 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:20:43,832 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:20:43,844 - WARNING -  * Debugger is active!
+2025-10-12 22:20:43,848 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:20:52,888 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:20:53,074 - INFO -  * Restarting with stat
+2025-10-12 22:20:53,906 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:20:53,910 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:20:53,910 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:20:53,910 - INFO - Scheduler started
+2025-10-12 22:20:53,911 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:20:53,911 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:20:53,920 - WARNING -  * Debugger is active!
+2025-10-12 22:20:53,924 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:20:54,931 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:20:55,014 - INFO -  * Restarting with stat
+2025-10-12 22:20:55,755 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:20:55,758 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:20:55,759 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:20:55,759 - INFO - Scheduler started
+2025-10-12 22:20:55,760 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:20:55,760 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:20:55,768 - WARNING -  * Debugger is active!
+2025-10-12 22:20:55,772 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:21:00,787 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:21:00,870 - INFO -  * Restarting with stat
+2025-10-12 22:21:01,662 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:21:01,666 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:21:01,667 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:21:01,667 - INFO - Scheduler started
+2025-10-12 22:21:01,668 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:21:01,668 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:21:01,676 - WARNING -  * Debugger is active!
+2025-10-12 22:21:01,680 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:21:29,767 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:21:29,859 - INFO -  * Restarting with stat
+2025-10-12 22:21:34,360 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:21:34,364 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:21:34,364 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:21:34,364 - INFO - Scheduler started
+2025-10-12 22:21:34,365 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:21:34,366 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:21:34,381 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.175:5000
+2025-10-12 22:21:34,382 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-12 22:21:34,383 - INFO -  * Restarting with stat
+2025-10-12 22:21:35,088 - INFO - File jadwal.json ditemukan dan berisi 10 jadwal.
+2025-10-12 22:21:35,091 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:21:35,092 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:21:35,092 - INFO - Scheduler started
+2025-10-12 22:21:35,093 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:21:35,093 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-12 22:21:35,105 - WARNING -  * Debugger is active!
+2025-10-12 22:21:35,109 - INFO -  * Debugger PIN: 288-901-657
+2025-10-12 22:24:54,818 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-12 22:24:54,924 - INFO -  * Restarting with stat
+2025-10-12 22:25:12,170 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-12 22:25:12,171 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-12 22:25:12,171 - INFO - Scheduler started
+2025-10-12 22:25:12,172 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-12 22:25:12,172 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
