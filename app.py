@@ -9,12 +9,17 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import pytz
+import json
+import base64  # Untuk encode image ke base64
 from logging.handlers import RotatingFileHandler
 import secrets
 import time
+from cachetools import TTLCache  # Install: pip install cachetools
+
 
 # Impor SEMUA fungsi scraper
 from scrapper_requests import scrape_data, search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca  
+
 
 app = Flask(__name__)
 
@@ -47,6 +52,9 @@ logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 # ==================================================================
 
+# Setup cache untuk foto (TTL 30 detik, max 100 items)
+photo_cache = TTLCache(maxsize=100, ttl=30)
+
 # Jalankan sekali saat start (opsional)
 def boot_scrape_if_needed():
     try:
@@ -64,7 +72,8 @@ executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
 JADWAL_STATUS = {"status": "ready", "message": "Siap."}
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = os.urandom(32)  # Untuk session
+
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
@@ -78,47 +87,37 @@ majorID = { "39010": "D3 Sistem Informasi", "41010": "S1 Sistem Informasi", "410
 # Fungsi validasi (sudah ada, tidak ubah)
 def _valid_role(x):
     return x in ("mahasiswa", "staff")
-# POST route (sudah ada, tidak ubah - ini set session dari tombol)
-@app.post("/photos/open")
-def open_photo():
-    role = request.form.get("role","").strip()
-    id_ = request.form.get("id","").strip()
-    if not _valid_role(role) or not id_.isdigit():
-        return abort(400)
-    session["photo_view"] = {"role": role, "id": id_, "exp": time.time() + 60}
-    logging.info(f"Session photo set untuk {role}/{id_} (exp: {time.time() + 60})")  # Tambah logging
-    return redirect(url_for("photos_role", role=role))
-# GET route - MODIFIKASI: Proxy fetch dari Sicyca, bukan local
-@app.get("/photos/<role>")
-def photos_role(role):
+
+@app.route('/api/photo/<role>/<id_>', methods=['GET'])
+def get_photo(role, id_):
     if not _valid_role(role):
-        return abort(404)
+        return jsonify({'error': 'Role tidak valid'}), 400
     
-    pv = session.get("photo_view")
-    if not pv or pv.get("role") != role or pv.get("exp",0) < time.time():
-        logging.warning(f"Unauthorized access ke /photos/{role}/ - session invalid atau expired.")
-        return abort(403)
+    if not id_.isdigit():
+        return jsonify({'error': 'ID harus angka'}), 400
     
-    id_ = pv['id']
-    logging.info(f"Proxy fetch foto untuk {role}/{id_} via session.")
+    # Cek cache dulu
+    cache_key = f"{role}_{id_}"
+    if cache_key in photo_cache:
+        logging.info(f"Foto {role}/{id_} dari cache.")
+        return jsonify({'success': True, 'image_b64': photo_cache[cache_key]})
     
-    # Fetch dari Sicyca menggunakan helper
+    # Fetch dari Sicyca
+    logging.info(f"Fetching foto untuk tombol: {role}/{id_}")  # Ubah log ke "tombol" untuk clarity
     image_content = fetch_photo_from_sicyca(role, id_)
+    
     if image_content is None:
-        # Return default image dari static folder (buat file no_photo.jpg di static/)
-        with open('static/no_photo.jpg', 'rb') as f:
-            return Response(f.read(), mimetype="image/jpeg")
-  
+        logging.warning(f"Fetch gagal untuk {role}/{id_}.")
+        return jsonify({'success': False, 'message': 'Foto tidak tersedia'})
     
-    # Clear session setelah serve (extra security)
-    session.pop("photo_view", None)
+    # Encode ke base64
+    image_b64 = base64.b64encode(image_content).decode('utf-8')
     
-    # Return image response - Ini yang error jika Response tidak di-import
-    return Response(image_content, mimetype="image/jpeg", headers={
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-    })
+    # Simpan ke cache
+    photo_cache[cache_key] = image_b64
+    
+    logging.info(f"Foto {role}/{id_} berhasil di-encode ({len(image_b64)} chars).")
+    return jsonify({'success': True, 'image_b64': image_b64})
 
 
 # Jalankan scraper dan simpan hasilnya ke file JSON
@@ -523,6 +522,165 @@ COMMUNITY_SEARCH_TEMPLATE = """
             </div>
         </div>
     </div>
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+  // Constants
+  const CACHE_EXPIRATION_MS = 300000; // 5 minutes
+  const MIN_BASE64_LENGTH = 100;
+  const OVERLAY_ID = 'photo-overlay';
+  const LOADING_TEXT = 'Loading photo...';
+  const ERROR_FETCH_TEXT = 'Error loading photo';
+  const ERROR_UNAVAILABLE_TEXT = 'Photo unavailable';
+
+  // Build overlay once
+  let overlay = document.getElementById(OVERLAY_ID);
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    overlay.style.cssText = `
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      cursor: pointer;
+    `;
+    overlay.innerHTML = `
+      <div id="overlay-content" style="text-align: center; color: #fff;">
+        <p id="overlay-loading" style="margin-bottom: 12px;">${LOADING_TEXT}</p>
+        <img id="overlay-img" alt="Photo" style="
+          max-width: 80vw;
+          max-height: 80vh;
+          border-radius: 8px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+          object-fit: contain;
+          display: none;
+        ">
+        <p id="overlay-error" style="margin-top: 12px; display: none;"></p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Close on backdrop click
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) hideOverlay();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.style.display === 'flex') {
+        hideOverlay();
+      }
+    });
+  }
+
+  // Cache elements for reuse
+  const overlayContent = document.getElementById('overlay-content');
+  const overlayImg = document.getElementById('overlay-img');
+  const overlayLoading = document.getElementById('overlay-loading');
+  const overlayError = document.getElementById('overlay-error');
+
+  // Hide overlay and reset state
+  function hideOverlay() {
+    overlay.style.display = 'none';
+    overlayImg.removeAttribute('src');
+    overlayImg.style.display = 'none';
+    overlayLoading.style.display = 'block';
+    overlayError.style.display = 'none';
+    overlayError.textContent = '';
+  }
+
+  // Show overlay from base64 string
+  function showOverlayFromB64(b64) {
+    // Simple MIME detection (PNG vs. default JPEG)
+    const isPng = b64.startsWith('iVBORw0KGgo');
+    const mime = isPng ? 'image/png' : 'image/jpeg';
+    overlayImg.src = `data:${mime};base64,${b64}`;
+    overlayLoading.style.display = 'none';
+    overlayError.style.display = 'none';
+    overlayImg.style.display = 'block';
+    overlay.style.display = 'flex';
+    window.scrollTo(0, 0); // Scroll to top for better viewing
+  }
+
+  // Get photo from cache
+  function getCachedPhoto(key) {
+    const b64 = localStorage.getItem(key);
+    const exp = localStorage.getItem(key + '_exp');
+    if (b64 && exp && Date.now() < parseInt(exp, 10)) {
+      return b64;
+    }
+    localStorage.removeItem(key);
+    localStorage.removeItem(key + '_exp');
+    return null;
+  }
+
+  // Set photo in cache
+  function setCachedPhoto(key, b64) {
+    localStorage.setItem(key, b64);
+    localStorage.setItem(key + '_exp', (Date.now() + CACHE_EXPIRATION_MS).toString());
+  }
+
+  // Handle dynamic button clicks via event delegation
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.photo-btn');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const role = btn.dataset.role;
+    const id = btn.dataset.id;
+    const cacheKey = `photo_${role}_${id}`;
+
+    // Show loading overlay
+    overlayImg.style.display = 'none';
+    overlayError.style.display = 'none';
+    overlayLoading.style.display = 'block';
+    overlay.style.display = 'flex';
+
+    // Check cache first
+    const cached = getCachedPhoto(cacheKey);
+    if (cached) {
+      showOverlayFromB64(cached);
+      return;
+    }
+
+    // Fetch from API
+    fetch(`/api/photo/${role}/${id}`)
+      .then(res => {
+        if (!res.ok) {
+          return Promise.reject(new Error(`HTTP ${res.status}`));
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (data && data.success && data.image_b64 && data.image_b64.length > MIN_BASE64_LENGTH) {
+          setCachedPhoto(cacheKey, data.image_b64);
+          showOverlayFromB64(data.image_b64);
+        } else {
+          showError((data && data.message) || ERROR_UNAVAILABLE_TEXT);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching photo:', err);
+        showError(ERROR_FETCH_TEXT);
+      });
+  });
+
+  // Helper to show error and auto-hide
+  function showError(message) {
+    overlayLoading.style.display = 'none';
+    overlayImg.style.display = 'none';
+    overlayError.textContent = message;
+    overlayError.style.display = 'block';
+    setTimeout(hideOverlay, 2000);
+  }
+});
+
+        </script>
 </body>
 </html>
 """
@@ -600,6 +758,8 @@ def log_program():
 
 # Api
 
+
+
 # Mengecek sicyca 
 @app.route('/api/status')
 def api_status():
@@ -654,13 +814,9 @@ def api_search():
                 <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item['Status']}</dd>
                 <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item['Prodi']}</dd>
                 <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
-                <!-- Tombol di bawah "Dosen Wali" seperti diminta -->
+                <!-- Tombol di bawah Dosen Wali -->
                 <dd class="col-span-3 mt-2">
-                <form action="/photos/open" method="post">
-                <input type="hidden" name="role" value="mahasiswa">
-                <input type="hidden" name="id" value="{item['ID']}">
-                <button type="submit" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded">Lihat Foto</button>
-                </form>
+                    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="mahasiswa" data-id="{item['ID']}">Lihat Foto</button>
                 </dd>
                 """
             else:
@@ -668,13 +824,9 @@ def api_search():
                 <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
                 <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item['Bagian']}</dd>
                 <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
-                <!-- Tombol di bawah "Email" seperti diminta -->
+                <!-- Tombol di bawah Email -->
                 <dd class="col-span-3 mt-2">
-                <form action="/photos/open" method="post">
-                <input type="hidden" name="role" value="staff">
-                <input type="hidden" name="id" value="{item['ID']}">
-                <button type="submit" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded">Lihat Foto</button>
-                </form>
+                    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="staff" data-id="{item['ID']}">Lihat Foto</button>
                 </dd>
                 """
 
@@ -694,11 +846,19 @@ def api_search():
                 </div>
             </div>
             """
+        
+        # **JS: Overlay untuk Tombol (Delegation untuk Alpine)**
+        # html_output += """
+       
+        # """
 
     else:
         html_output = "<p class='text-gray-400 p-4'>Tidak ada data yang ditemukan.</p>"
 
     return html_output  # bukan jsonify
+
+
+
 
 
 # Untuk melihat log terus menerus
@@ -752,4 +912,4 @@ boot_scrape_if_needed()
 logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
 logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-# app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)

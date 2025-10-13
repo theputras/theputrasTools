@@ -1,1731 +1,439 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Gate Dinamika</title>
     <link href="https://gate.dinamika.ac.id/icon-dinamika.png" rel="icon" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://gate.dinamika.ac.id/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://gate.dinamika.ac.id/fonts/avenir.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://gate.dinamika.ac.id/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://gate.dinamika.ac.id/fonts/avenir.css"
+      rel="stylesheet"
+    />
 
     <style>
-        body {
-            font-family: 'Avenir LT Std' !important;
-            background: url("https://gate.dinamika.ac.id/images/bg-dashboard.png") no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-            /* color: white; */
-        }
+      body {
+        font-family: "Avenir LT Std" !important;
+        background: url("https://gate.dinamika.ac.id/images/bg-dashboard.png")
+          no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        /* color: white; */
+      }
 
-        .container {
-            padding-left: 0;
-            padding-right: 0;
-        }
+      .container {
+        padding-left: 0;
+        padding-right: 0;
+      }
 
-        .custom-input {
-            border: none;
-            border-bottom: 1px solid #CCC;
-        }
+      .custom-input {
+        border: none;
+        border-bottom: 1px solid #ccc;
+      }
 
-        .bg-grey {
-            background-color: #4C4C4D;
-        }
+      .bg-grey {
+        background-color: #4c4c4d;
+      }
 
-        .bg-transparent {
-            background-color: transparent;
-        }
+      .bg-transparent {
+        background-color: transparent;
+      }
 
-        .btn-circle {
-            padding: 10px 12px;
-            border-radius: 25px;
-            text-align: center;
-        }
+      .btn-circle {
+        padding: 10px 12px;
+        border-radius: 25px;
+        text-align: center;
+      }
 
-        .card-rounded {
-            border: none;
-            border-radius: 0.8rem;
-        }
+      .card-rounded {
+        border: none;
+        border-radius: 0.8rem;
+      }
 
-        .ls-1 {
-            /* letter-spacing: 1px */
-        }
+      .ls-1 {
+        /* letter-spacing: 1px */
+      }
 
-        .icon-menu {
-            width: 4.5rem;
-        }
+      .icon-menu {
+        width: 4.5rem;
+      }
 
+      .x-small {
+        font-size: 0.75rem;
+      }
+
+      @media (max-width: 1200px) {
         .x-small {
-            font-size: 0.75rem;
+          font-size: 0.8rem;
         }
+      }
 
-        @media(max-width: 1200px) {
-            .x-small {
-                font-size: 0.80rem;
-            }
+      @media (max-width: 400px) {
+        .x-small {
+          font-size: 0.8rem;
         }
+      }
 
-        @media(max-width: 400px) {
-            .x-small {
-                font-size: 0.80rem;
-            }
+      @media (max-width: 280px) {
+        .x-small {
+          font-size: 0.4rem;
         }
+      }
 
-        @media(max-width: 280px) {
-            .x-small {
-                font-size: 0.40rem;
-            }
-        }
+      .clickable-menu {
+        cursor: pointer;
+        /* max-width: min-content; */
+      }
 
-        .clickable-menu {
-            cursor: pointer;
-            /* max-width: min-content; */
-        }
+      .custom-sidebar-container {
+        position: fixed;
+        width: 4rem;
+        left: 1rem;
+        top: 0.5rem;
+        /* height: 589px; */
+        height: calc(100% - 5rem);
+        padding-top: 1.5rem;
+        /* padding-bottom: 416px; */
+        padding-left: 1rem;
+        padding-right: 1rem;
+        background-color: rgba(167, 30, 34, 1);
+        border-radius: 1.5rem;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+      }
 
-        .custom-sidebar-container {
-            position: fixed;
-            width: 4rem;
-            left: 1rem;
-            top: 0.5rem;
-            /* height: 589px; */
-            height: calc(100% - 5rem);
-            padding-top: 1.5rem;
-            /* padding-bottom: 416px; */
-            padding-left: 1rem;
-            padding-right: 1rem;
-            background-color: rgba(167, 30, 34, 1);
-            border-radius: 1.5rem;
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-        }
+      .hide {
+        display: none !important;
+      }
 
-        .hide {
-            display: none !important
-        }
+      .col-detail-menu {
+        flex: 0 0 auto;
+        width: 33.33333333%;
+      }
 
-        .col-detail-menu {
-            flex: 0 0 auto;
-            width: 33.33333333%;
-        }
+      .menu-detail {
+        max-width: 100%;
+      }
 
+      @media (max-width: 990px) {
         .menu-detail {
-            max-width: 100%
+          max-width: 80%;
         }
+      }
 
-        @media (max-width: 990px) {
-            .menu-detail {
-                max-width: 80%
-            }
+      #header_right {
+        display: flex;
+      }
+
+      @media (max-width: 984px) {
+        .mobile_icon_nav {
+          display: block !important;
         }
 
         #header_right {
-            display: flex;
-        }
-
-        @media (max-width: 984px) {
-            .mobile_icon_nav {
-                display: block !important;
-            }
-
-            #header_right {
-                display: none;
-            }
-
-            #sapaan {
-                font-size: 12px !important;
-            }
-        }
-
-        .mobile_icon_nav {
-            color: #fff;
-            background-color: #4c4c4d8c;
-            font-size: 35px;
-            padding: 7px 10px 0px 10px;
-            border-radius: 10px;
-            display: none;
-        }
-
-        .dropdown_mobile_nav {
-            background-color: #adadad;
-            position: absolute;
-            top: 81px;
-            width: 100%;
-            max-width: 540px;
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
-            z-index: 1;
-        }
-
-        @media (min-width:985px) {
-            .dropdown_mobile_nav {
-                display: none !important;
-            }
-        }
-
-        @media  only screen and (min-width: 768px) and (max-width: 868px) {
-            .dropdown_mobile_nav {
-                max-width: 95%;
-            }
-        }
-
-        @media  only screen and (min-width: 868px) and (max-width: 984px) {
-            .dropdown_mobile_nav {
-                max-width: 75%;
-            }
+          display: none;
         }
 
         #sapaan {
-            font-size: 16px;
+          font-size: 12px !important;
         }
+      }
 
-        .bg-orange {
-            background-color: #ea7901 !important;
+      .mobile_icon_nav {
+        color: #fff;
+        background-color: #4c4c4d8c;
+        font-size: 35px;
+        padding: 7px 10px 0px 10px;
+        border-radius: 10px;
+        display: none;
+      }
+
+      .dropdown_mobile_nav {
+        background-color: #adadad;
+        position: absolute;
+        top: 81px;
+        width: 100%;
+        max-width: 540px;
+        padding: 15px;
+        border-radius: 10px;
+        display: none;
+        z-index: 1;
+      }
+
+      @media (min-width: 985px) {
+        .dropdown_mobile_nav {
+          display: none !important;
         }
+      }
 
-        .close {
-            float: right;
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1;
-            color: #000;
-            text-shadow: 0 1px 0 #fff;
-            opacity: .5;
+      @media only screen and (min-width: 768px) and (max-width: 868px) {
+        .dropdown_mobile_nav {
+          max-width: 95%;
         }
+      }
 
-        button.close {
-            padding: 0;
-            background-color: transparent;
-            border: 0;
+      @media only screen and (min-width: 868px) and (max-width: 984px) {
+        .dropdown_mobile_nav {
+          max-width: 75%;
         }
+      }
 
-        .fc-day-number {
-            width: 30px;
-        }
+      #sapaan {
+        font-size: 16px;
+      }
 
-        #calendar {
-            padding: 10px;
-        }
+      .bg-orange {
+        background-color: #ea7901 !important;
+      }
 
-        .fc-content {
-            white-space: normal !important;
-            font-size: 10px;
-        }
+      .close {
+        float: right;
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        text-shadow: 0 1px 0 #fff;
+        opacity: 0.5;
+      }
 
-        .hover-end {
-            padding: 0;
-            margin: 0;
-            font-size: 75%;
-            text-align: center;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            opacity: .8
-        }
+      button.close {
+        padding: 0;
+        background-color: transparent;
+        border: 0;
+      }
 
-        body {
-            margin: 0px 10px 25px !important;
-        }
+      .fc-day-number {
+        width: 30px;
+      }
 
+      #calendar {
+        padding: 10px;
+      }
+
+      .fc-content {
+        white-space: normal !important;
+        font-size: 10px;
+      }
+
+      .hover-end {
+        padding: 0;
+        margin: 0;
+        font-size: 75%;
+        text-align: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        opacity: 0.8;
+      }
+
+      body {
+        margin: 0px 10px 25px !important;
+      }
+
+      .label-birthday-null {
+        top: 1.5rem !important;
+      }
+
+      @media (min-width: 1365px) {
         .label-birthday-null {
-            top: 1.5rem !important;
+          left: 6rem !important;
         }
+      }
 
-        @media (min-width:1365px) {
-            .label-birthday-null {
-                left: 6rem !important;
-            }
-        }
+      .float {
+        position: fixed;
+        width: 80px;
+        height: 80px;
+        bottom: 104px;
+        right: 13px;
+        color: #fff;
+        border-radius: 50px;
+        text-align: center;
+        box-shadow: 2px 2px 3px #999;
+      }
 
-        .float {
-            position: fixed;
-            width: 80px;
-            height: 80px;
-            bottom: 104px;
-            right: 13px;
-            color: #FFF;
-            border-radius: 50px;
-            text-align: center;
-            box-shadow: 2px 2px 3px #999;
-        }
+      .my-float {
+        margin-top: 22px;
+      }
 
-        .my-float {
-            margin-top: 22px;
-        }
+      #menu-layanan {
+        /* flex-wrap:nowrap; */
+      }
 
-        #menu-layanan {
-            /* flex-wrap:nowrap; */
-        }
+      #batas-3 {
+        display: none;
+      }
 
+      @media (max-width: 337px) {
         #batas-3 {
-            display: none;
+          display: block;
         }
 
-        @media (max-width:337px) {
-            #batas-3 {
-                display: block;
-            }
-
-            #batas-4 {
-                display: none;
-            }
+        #batas-4 {
+          display: none;
         }
+      }
     </style>
-        <style>
-        .ultah-box {
-            position: relative;
-        }
+    <style>
+      .ultah-box {
+        position: relative;
+      }
 
+      /* .ultah-box marquee { */
+      .ultah-box p,
+      .ultah-box span,
+      .ultah-box small,
+      .ultah-box marquee {
+        position: absolute;
+        left: 4.5rem;
+        top: 1rem;
+        color: black;
+        line-height: 1rem;
+        /* max-width: 20rem; */
+      }
+
+      .tabel-ultah {
+        top: 1rem;
+        left: 1.2rem;
+      }
+
+      @media (min-width: 370px) and (max-width: 500px) {
+        .tabel-ultah {
+          top: 1.2rem;
+          left: 2.2rem;
+        }
+      }
+
+      @media (min-width: 270px) and (max-width: 370px) {
+        .tabel-ultah {
+          top: 0.5rem;
+          left: 1rem;
+        }
+      }
+
+      @media (min-width: 500px) and (max-width: 730px) {
+        .tabel-ultah {
+          top: 2rem;
+          left: 4rem;
+        }
+      }
+
+      @media only screen and (max-width: 297px) {
         /* .ultah-box marquee { */
         .ultah-box p,
         .ultah-box span,
         .ultah-box small,
         .ultah-box marquee {
-            position: absolute;
-            left: 4.5rem;
-            top: 1rem;
-            color: black;
-            line-height: 1rem;
-            /* max-width: 20rem; */
+          left: 3.2rem !important;
+          top: 0.5rem;
         }
+      }
 
+      .event-box {
+        background-color: brown;
+        line-height: 1rem;
+      }
+
+      @media (min-width: 1236px) and (max-width: 1400px) {
         .tabel-ultah {
-            top: 1rem;
-            left: 1.2rem;
+          top: 1rem;
+          left: 2rem;
         }
+      }
 
-        @media (min-width: 370px) and (max-width: 500px) {
-            .tabel-ultah {
-                top: 1.2rem;
-                left: 2.2rem;
-            }
+      @media (min-width: 1400px) {
+        .tabel-ultah {
+          top: 1.5rem;
+          left: 2rem;
         }
+      }
 
-        @media (min-width: 270px) and (max-width: 370px) {
-            .tabel-ultah {
-                top: 0.5rem;
-                left: 1rem;
-            }
+      .max_width_height {
+        height: 120px;
+        max-height: 150px;
+      }
+
+      #daftar-ultah {
+        font-size: 13px;
+      }
+
+      @media (max-width: 397px) {
+        .dropdown_mobile_nav {
+          max-width: 360px !important;
         }
+      }
 
-        @media (min-width: 500px) and (max-width: 730px) {
-            .tabel-ultah {
-                top: 2rem;
-                left: 4rem;
-            }
-        }
+      .menu_title_text {
+        font-size: 0.7rem;
+        font-weight: 500;
+      }
 
-        @media  only screen and (max-width: 297px) {
+      .menu-layanan-dekstop {
+        display: block;
+      }
 
-            /* .ultah-box marquee { */
-            .ultah-box p,
-            .ultah-box span,
-            .ultah-box small,
-            .ultah-box marquee {
-                left: 3.2rem !important;
-                top: 0.5rem;
-            }
-        }
+      .menu-layanan-mobile {
+        display: none;
+      }
 
-        .event-box {
-            background-color: brown;
-            line-height: 1rem
-        }
-
-        @media (min-width: 1236px) and (max-width: 1400px) {
-            .tabel-ultah {
-                top: 1rem;
-                left: 2rem;
-            }
-        }
-
-        @media (min-width: 1400px) {
-            .tabel-ultah {
-                top: 1.5rem;
-                left: 2rem;
-            }
-        }
-
-        .max_width_height {
-            height: 120px;
-            max-height: 150px;
-        }
-
-        #daftar-ultah {
-            font-size: 13px;
-        }
-
-        @media(max-width:397px) {
-            .dropdown_mobile_nav {
-                max-width: 360px !important;
-            }
-        }
-
-        .menu_title_text {
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-
+      @media (max-width: 500px) {
         .menu-layanan-dekstop {
-            display: block
+          display: none;
         }
 
         .menu-layanan-mobile {
-            display: none
+          display: block;
         }
 
-        @media (max-width: 500px) {
-            .menu-layanan-dekstop {
-                display: none
-            }
-
-            .menu-layanan-mobile {
-                display: block
-            }
-
-            @media (min-width: 280px) {
-                .menu_title_text {
-                    font-size: 0.8rem;
-                }
-            }
+        @media (min-width: 280px) {
+          .menu_title_text {
+            font-size: 0.8rem;
+          }
         }
+      }
 
-        @media (max-width: 280px) {
-            .menu_title_text {
-                font-size: 0.5rem;
-            }
+      @media (max-width: 280px) {
+        .menu_title_text {
+          font-size: 0.5rem;
         }
+      }
 
-        @-moz-document url-prefix() {
-            .max-content-img {
-                max-width: -moz-available;
-            }
-        }
-
+      @-moz-document url-prefix() {
         .max-content-img {
-            max-width: -webkit-fill-available;
+          max-width: -moz-available;
         }
+      }
+
+      .max-content-img {
+        max-width: -webkit-fill-available;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    
-        <div class="container py-lg-4 pt-3 px-3 px-md-0">
-        <div class="align-items-center mb-3 row">
-    
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6">
-            <div class="d-flex justify-content-between">
-            <div class="d-flex">
-                <div style="max-height: 6rem; width: 6rem; display: inherit;">
-                                        <img class="w-100" src="https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003" style="object-fit: cover; clip-path: circle();object-position: top;" />
-
-                </div>
-                <div class="welcome-text mx-3">
-                    <h6 class="fw-bold mb-1">
-                        Hi Putra Nur Muhammad!
-                    </h6>
-                                            <div id="nim_mahasiswa">
-                            
-                            <p class="ls-1 mb-0 small" id="semester-mhs" style="line-height: 1rem"></p>
-                        </div>
-                                        
-                                                                                <a class="btn btn-danger btn-sm mt-2" href="https://gate.dinamika.ac.id/logout">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
-                </div>
-            </div>
-            <!-- mobile toogle -->
-            <div>
-                <a class="icon mobile_icon_nav" href="javascript:void(0);" onclick="myFunction()">
-                    <i class="fa fa-bars"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6" id="header_right">
-            <div class="d-flex flex-fill flex-column">
-                <div class="row">
-                    <div class="col">
-                        <small>SKS yang :</small>
-                    </div>
-                </div>
-                <div class="row align-items-center">
-                    <div class="col-4">
-                        <small>Telah Ditempuh</small>
-                    </div>
-                    <div class="col">
-                        <div class="progress sks-telah-ditempuh-stack"></div>
-                    </div>
-                </div>
-                <div class="row align-items-center">
-                    <div class="col-4">
-                        <small>Sedang Ditempuh</small>
-                    </div>
-                    <div class="col">
-                        <div class="progress sks-ditempuh-stack"></div>
-                    </div>
-                </div>
-                <div class="row align-items-center">
-                    <div class="col-4">
-                        <small>Belum Ditempuh</small>
-                    </div>
-                    <div class="col">
-                        <div class="progress sks-belum-ditempuh-stack"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-    <!-- mobile dropdown nav -->
-    <div class="dropdown_mobile_nav" id="header_right_mobile">
-                    <div class="d-flex flex-fill flex-column">
-                <div class="row">
-                    <div class="col">
-                        <small>SKS yang :</small>
-                    </div>
-                </div>
-                <div class="row align-items-center">
-                    <div class="col-4">
-                        <small>Telah Ditempuh</small>
-                    </div>
-                    <div class="col">
-                        <div class="progress sks-telah-ditempuh-stack"></div>
-                    </div>
-                </div>
-                <div class="row align-items-center">
-                    <div class="col-4">
-                        <small>Sedang Ditempuh</small>
-                    </div>
-                    <div class="col">
-                        <div class="progress sks-ditempuh-stack"></div>
-                    </div>
-                </div>
-                <div class="row align-items-center">
-                    <div class="col-4">
-                        <small>Belum Ditempuh</small>
-                    </div>
-                    <div class="col">
-                        <div class="progress sks-belum-ditempuh-stack"></div>
-                    </div>
-                </div>
-            </div>
-            </div>
-</div>
-
-        <div class="row">
-            <div class="col-lg-5 col-md-6 mb-3">
-                <div class="menu-layanan-dekstop">
-                    <p class="small fw-bold">Layanan Google-Undika</p>
-                <div class="">
-
-                
-                
-                <div>
-                                            <div class="row">
-                                                            <div class="col clickable-menu text-center" data-href="https://mail.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/gmail.png" />
-                                    <p class="menu_title_text mb-0 x-small">Gmail</p>
-                                </div> 
-                                
-                                                                                                <div class="col clickable-menu text-center" data-href="https://drive.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/gdrive.png" />
-                                    <p class="menu_title_text mb-0 x-small">Drive</p>
-                                </div> 
-                                
-                                                                                                <div class="col clickable-menu text-center" data-href="https://calendar.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/calendar.png" />
-                                    <p class="menu_title_text mb-0 x-small">Calendar</p>
-                                </div> 
-                                
-                                                                                                <div class="col clickable-menu text-center" data-href="https://groups.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/groups.png" />
-                                    <p class="menu_title_text mb-0 x-small">Groups</p>
-                                </div> 
-                                
-                                                                                                <div class="col clickable-menu text-center" data-href="https://meet.google.com/">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/gmeet.png" />
-                                    <p class="menu_title_text mb-0 x-small">Meet</p>
-                                </div> 
-                                
-                                
-                            </div>
-                            <div class="row">
-                                                                                                                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                </div>
-                        
-                                    </div>
-				
-                                <p class="small fw-bold">Layanan Undika</p>
-                <div class="row mb-1">
-                                        <div class="col clickable-menu text-center" data-href="https://gate.dinamika.ac.id/detail" data-target=&quot;_self&quot;>
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/my_menu_logo (1).png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">My Menu</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://sicyca.dinamika.ac.id/sso_login.php" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/sicyca.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Sicyca</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://mybrilian.dinamika.ac.id/undika/sso" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/brilian.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Brilian</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://support.dinamika.ac.id" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/lasurti.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Lasurti</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://intranet.dinamika.ac.id/pr-go" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/pr-go.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">PR Go</p>
-                        </div>
-                    </div>
-                    
-                </div>
-                <div class="row">
-                                                            <div class="col clickable-menu text-center" data-href="https://kemahasiswaan.dinamika.ac.id" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/red-kemahasiswaan.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Portal Mahasiswa</p>
-                        </div>
-                    </div>
-                                                                                
-                                            <div class="col text-center"></div>
-                                            <div class="col text-center"></div>
-                                            <div class="col text-center"></div>
-                                            <div class="col text-center"></div>
-                                    </div>
-                                </div>
-                
-                </div>
-                <div class="menu-layanan-mobile">
-                    <p class="small fw-bold">Layanan Google-Undika</p>
-                <div class="">
-
-                
-                
-                <div>
-                                            <div class="row">
-                                                            <div class="col clickable-menu text-center" data-href="https://mail.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/gmail.png" />
-                                    <p class="menu_title_text mb-0 x-small">Gmail</p>
-                                </div> 
-                                
-                                                                                                <div class="col clickable-menu text-center" data-href="https://drive.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/gdrive.png" />
-                                    <p class="menu_title_text mb-0 x-small">Drive</p>
-                                </div> 
-                                
-                                                                                                <div class="col clickable-menu text-center" data-href="https://calendar.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/calendar.png" />
-                                    <p class="menu_title_text mb-0 x-small">Calendar</p>
-                                </div> 
-                                
-                                                                                                <div class="col clickable-menu text-center" data-href="https://groups.google.com/a/dinamika.ac.id">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/groups.png" />
-                                    <p class="menu_title_text mb-0 x-small">Groups</p>
-                                </div> 
-                                
-                                
-                            </div>
-                            <div class="row">
-                                                                                                                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                </div>
-                        
-                                            <div class="row">
-                                                            <div class="col clickable-menu text-center" data-href="https://meet.google.com/">
-                                    <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/gmeet.png" />
-                                    <p class="menu_title_text mb-0 x-small">Meet</p>
-                                </div> 
-                                
-                                                                                                                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                                    <div class="col text-center"></div>
-                                                </div>
-                        
-                                    </div>
-				
-                                <p class="small fw-bold">Layanan Undika</p>
-                    
-                <!-- batas 4 -->
-                <div id="batas-4">
-                <div class="row mb-1">
-                                        <div class="col clickable-menu text-center" data-href="https://gate.dinamika.ac.id/detail" data-target=&quot;_self&quot;>
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/my_menu_logo (1).png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">My Menu</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://sicyca.dinamika.ac.id/sso_login.php" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/sicyca.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Sicyca</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://mybrilian.dinamika.ac.id/undika/sso" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/brilian.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Brilian</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://support.dinamika.ac.id" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/lasurti.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Lasurti</p>
-                        </div>
-                    </div>
-                    
-                </div>
-                <div class="row" id="menu-layanan">
-                                                            <div class="col clickable-menu text-center" data-href="https://intranet.dinamika.ac.id/pr-go" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/pr-go.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">PR Go</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://kemahasiswaan.dinamika.ac.id" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/red-kemahasiswaan.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Portal Mahasiswa</p>
-                        </div>
-                    </div>
-                                                                                
-                                            <div class="col text-center"></div>
-                                            <div class="col text-center"></div>
-                                    </div>
-
-                </div>
-                <!-- batas 4 -->
-
-                <!-- batas 3 -->
-                <div id="batas-3">
-                <div class="row mb-1">
-                                        <div class="col clickable-menu text-center" data-href="https://gate.dinamika.ac.id/detail" data-target=&quot;_self&quot;>
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/my_menu_logo (1).png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">My Menu</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://sicyca.dinamika.ac.id/sso_login.php" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/sicyca.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Sicyca</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://mybrilian.dinamika.ac.id/undika/sso" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/brilian.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Brilian</p>
-                        </div>
-                    </div>
-                    
-                </div>
-                <div class="row" id="menu-layanan">
-                                                            <div class="col clickable-menu text-center" data-href="https://support.dinamika.ac.id" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/lasurti.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Lasurti</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://intranet.dinamika.ac.id/pr-go" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/pr-go.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">PR Go</p>
-                        </div>
-                    </div>
-                                                            <div class="col clickable-menu text-center" data-href="https://kemahasiswaan.dinamika.ac.id" >
-                        <img class="icon-menu w-100" src="https://gate.dinamika.ac.id/images/red-kemahasiswaan.png" />
-                        <div>
-                        <p class="menu_title_text mb-0 x-small" style="max-width: 100%;">Portal Mahasiswa</p>
-                        </div>
-                    </div>
-                    
-                </div>
-                <div class="row" id="menu-layanan">
-                                                                                
-                                            <div class="col text-center"></div>
-                                            <div class="col text-center"></div>
-                                            <div class="col text-center"></div>
-                                    </div>
-
-                </div>
-                <!-- batas 3 -->
-                                </div>
-                
-                </div>
-            </div>
-            <div class="col-lg-7 col-md-6 mb-3">
-                <div class="card card-rounded" style="background-color: #4c4c4d8c;">
-                    <div class="card-body" style="padding: 0.7rem">
-                        <div class="row" style="--bs-gutter-x: 1rem;">
-                            <div class="col-lg-7">
-                                <div class="mb-2">
-                                    <a href="https://afiliasi.dinamika.ac.id/login" target="_blank"><img class="mw-100" src="https://gate.dinamika.ac.id/images/SGS_New_Juni.jpg" style="width:100%;border-radius: 0.8rem;" /></a>
-                                </div>
-                                <div class="card card-rounded mb-2" style="overflow: hidden; object-fit: cover">
-                                                                        <iframe class="w-100 h-100" src="https://www.youtube.com/embed/MWW85BSGSmg?mute=1" style="min-height: 12rem" width="100%" height="100%"></iframe>
-
-                                    <!-- <div class="w-100 h-100" id="yt-player" style="min-height: 12rem"></div> -->
-
-                                </div>
-                                                                    <div class="card card-rounded mb-2" style="min-height: 8rem; background: url(https://gate.dinamika.ac.id/images/perpus.jpg);">
-                                        <div class="card-body py-2">
-                                            <marquee id="daftar-pinjaman" style="min-height: 6rem;max-height: 6rem;" direction="up" scrolldelay="300">&nbsp;</marquee>
-                                            <center><a href="https://lions.dinamika.ac.id" target="_blank"><img class="mw-100" src="https://gate.dinamika.ac.id/images/lions.png" style="max-height: 2.5rem" /></a></center>
-                                        </div>
-                                    </div>
-                                                                <div class="mb-2">
-                                    
-                                </div>
-                            </div>
-                            <div class="col-lg-5">
-                                                                    <div class="mb-2" style="height: 189px !important">
-                                        <div class="card card-rounded h-100" style="overflow-y: clip;">
-                                            <div class="card-body">
-                                                <div class="text-center mb-2">
-                                                    <img src="https://gate.dinamika.ac.id/images/event.png" style="max-width: 50% !important" />
-                                                </div>
-                                                <div class="carousel slide" id="carouselBenangMerah" data-bs-ride="carousel">
-                                                    <div class="carousel-inner-agenda carousel-inner spotlight-group" role="listbox">
-                                                        <!-- batas -->
-                                                                                                                                                                                                                                        <div class="carousel-item active" style="height: 100px">
-                                                                <div class="clickable-menu" data-href="https://www.dinamika.ac.id/agenda/gelar-karya-tugas-akhir-mahasiswa-tk/">
-                                                                    <div class="d-flex event-box mb-2 clickable-menu max_width_height" data-href="https://www.dinamika.ac.id/agenda/gelar-karya-tugas-akhir-mahasiswa-tk/" style="color: #fff;">
-                                                                        <div class="text-center p-2" style="background-color: grey">
-                                                                            <p class="mb-0">24 Sept</p>
-                                                                        </div>
-                                                                        <div class="p-2">
-                                                                            <p class="small mb-0">
-                                                                                                                                                                Gelar Karya Tugas Akhir Mahasiswa TK
-                                                                                                                                                            </p>
-                                                                            <div style="border-bottom: 1px solid #fff; margin: 2px"></div><small class="x-small">
-                                                                                                                                                                    Lobby Lt. 1
-                                                                                                                                                                <span>( 08.00 - 15.00 )</span>
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                                                                                                                                                <div class="carousel-item " style="height: 100px">
-                                                                <div class="clickable-menu" data-href="https://www.dinamika.ac.id/agenda/seminar-dan-workshop-jelajah-dunia-canggih-ai-iot-dan-plc-bikin-hidup-makin-keren/">
-                                                                    <div class="d-flex event-box mb-2 clickable-menu max_width_height" data-href="https://www.dinamika.ac.id/agenda/seminar-dan-workshop-jelajah-dunia-canggih-ai-iot-dan-plc-bikin-hidup-makin-keren/" style="color: #fff;">
-                                                                        <div class="text-center p-2" style="background-color: grey">
-                                                                            <p class="mb-0">23 Sept</p>
-                                                                        </div>
-                                                                        <div class="p-2">
-                                                                            <p class="small mb-0">
-                                                                                                                                                                    Seminar dan Workshop: Jelajah Dunia Cang ...
-                                                                                                                                                            </p>
-                                                                            <div style="border-bottom: 1px solid #fff; margin: 2px"></div><small class="x-small">
-                                                                                                                                                                    Ruang Laksda Mardiono Lt. 1
-                                                                                                                                                                <span>( 08.30 - 13.00 )</span>
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                                                                                                                                                <div class="carousel-item " style="height: 100px">
-                                                                <div class="clickable-menu" data-href="https://www.dinamika.ac.id/agenda/bimbingan-karir-semester-ganjil-25-1/">
-                                                                    <div class="d-flex event-box mb-2 clickable-menu max_width_height" data-href="https://www.dinamika.ac.id/agenda/bimbingan-karir-semester-ganjil-25-1/" style="color: #fff;">
-                                                                        <div class="text-center p-2" style="background-color: grey">
-                                                                            <p class="mb-0">22 Sept</p>
-                                                                        </div>
-                                                                        <div class="p-2">
-                                                                            <p class="small mb-0">
-                                                                                                                                                                Bimbingan Karir Semester Ganjil 25.1
-                                                                                                                                                            </p>
-                                                                            <div style="border-bottom: 1px solid #fff; margin: 2px"></div><small class="x-small">
-                                                                                                                                                                    Ruang Laksda Mardiono Lt. 1
-                                                                                                                                                                <span>( 08.00 - 16.00 )</span>
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                                                                                                                                                <div class="carousel-item " style="height: 100px">
-                                                                <div class="clickable-menu" data-href="https://www.dinamika.ac.id/agenda/kegiatan-donor-darah/">
-                                                                    <div class="d-flex event-box mb-2 clickable-menu max_width_height" data-href="https://www.dinamika.ac.id/agenda/kegiatan-donor-darah/" style="color: #fff;">
-                                                                        <div class="text-center p-2" style="background-color: grey">
-                                                                            <p class="mb-0">17 Sept</p>
-                                                                        </div>
-                                                                        <div class="p-2">
-                                                                            <p class="small mb-0">
-                                                                                                                                                                Kegiatan Donor Darah
-                                                                                                                                                            </p>
-                                                                            <div style="border-bottom: 1px solid #fff; margin: 2px"></div><small class="x-small">
-                                                                                                                                                                    Ruang Tech Inc. Lt 1
-                                                                                                                                                                <span>( 08.00 - 12.30 )</span>
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                                                                                                                                                <div class="carousel-item " style="height: 100px">
-                                                                <div class="clickable-menu" data-href="https://www.dinamika.ac.id/agenda/perisan/">
-                                                                    <div class="d-flex event-box mb-2 clickable-menu max_width_height" data-href="https://www.dinamika.ac.id/agenda/perisan/" style="color: #fff;">
-                                                                        <div class="text-center p-2" style="background-color: grey">
-                                                                            <p class="mb-0">8-10 Sept</p>
-                                                                        </div>
-                                                                        <div class="p-2">
-                                                                            <p class="small mb-0">
-                                                                                                                                                                Perisan
-                                                                                                                                                            </p>
-                                                                            <div style="border-bottom: 1px solid #fff; margin: 2px"></div><small class="x-small">
-                                                                                                                                                                    Gedung Serbaguna
-                                                                                                                                                                <span>( 08.00 - 12.00 )</span>
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        
-                                                    </div>
-                                                    <div class="carousel-control-prev" data-bs-target="#carouselBenangMerah" data-bs-slide="prev" href="#carouselBenangMerah" role="button" style="width: 2rem; height: 8rem;">
-                                                        <i class="fas fa-circle-chevron-left fa-2x"></i>
-                                                        <span class="sr-only">Previous</span>
-                                                    </div>
-                                                    <div class="carousel-control-next" data-bs-target="#carouselBenangMerah" data-bs-slide="next" href="#carouselBenangMerah" role="button" style="width: 2rem; height: 8rem;">
-                                                        <i class="fas fa-circle-chevron-right fa-2x"></i>
-                                                        <span class="sr-only">Next</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="card card-rounded h-100" style="overflow-y: clip; background-color: brown; color: #fff !important; max-height: 262px;">
-                                                                                            <div class="card-header" style="font-weight: 600">
-                                                    Jadwal Mata Kuliah Hari Ini
-                                                </div>
-                                                <div class="card-body" id="jadwal-mata-kuliah-hari-ini-body">
-                                                    <table style="width: 100%">
-                                                        <thead class="small" id="jadwal-mata-kuliah-hari-ini-head">
-                                                            <th>Jam</th>
-                                                            <th>Mata Kuliah</th>
-                                                        </thead>
-
-                                                        <tbody id="jadwal-mata-kuliah-hari-ini"></tbody>
-
-                                                    </table>
-                                                </div>
-                                                                                    </div>
-                                    </div>
-                                
-                                <div class="row" style="--bs-gutter-x: 1rem;"></div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pop Up Banner 2 untuk versi portrait kalau punya gambar versi vertical -->
-    <div class="modal fade" id="popUpBanner2" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true" tabindex="-1" style="z-index: 10000">
-        <div class="modal-dialog modal-dialog-centered mt-0" role="document" style="max-width: max-content;">
-            <div class="modal-content justify-content-center" style="background-color: transparent; border: 0px">
-                <button class="close" data-dismiss="modal" type="button" aria-label="Close" style="position: absolute; top: 0; right: 0rem; z-index: 100; background: rgba(76, 175, 80, 0.3); border: none;"
-                    onclick="$('#popUpBanner2').modal('hide')">
-                    <span aria-hidden="true" style="font-size: 2rem">&times;</span>
-                </button>
-                <div class="row text-center align-items-center" style="align-self: center;width: 100%;">
-                    <div class="col-sm-12 col-lg-12" style="border-radius: 10px; padding: 15px;">
-                        <div class="bg-white p-2 rounded-4" style="overflow-x: auto">
-                            <a class="text-center d-block" target="_blank" href="https://bit.ly/DonorDarahUndika2025">
-                                <img class="imagepreview w-100" src="https://gate.dinamika.ac.id/images/donor-darah-september-2025-2.jpg" style="max-height: 96vh;">
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal fade" id="popUpBanner2desktop" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true" tabindex="-1" style="z-index: 10000">
-        <div class="modal-dialog modal-dialog-centered mt-0" role="document" style="max-width: max-content;">
-            <div class="modal-content justify-content-center" style="background-color: transparent; border: 0px">
-                <button class="close" data-dismiss="modal" type="button" aria-label="Close" style="position: absolute; top: 0; right: 0rem; z-index: 100; background: rgba(76, 175, 80, 0.3); border: none;"
-                    onclick="$('#popUpBanner2desktop').modal('hide')">
-                    <span aria-hidden="true" style="font-size: 2rem">&times;</span>
-                </button>
-                <div class="row text-center align-items-center" style="align-self: center;width: 100%;">
-                    <div class="col-sm-12 col-lg-12" style="border-radius: 10px; padding: 15px;">
-                        <div class="bg-white p-2 rounded-4" style="overflow-x: auto">
-                            <a class="text-center d-block" target="_blank" href="https://bit.ly/DonorDarahUndika2025">
-                                <img class="imagepreview w-100" src="https://gate.dinamika.ac.id/images/donor-darah-september-2025-2.jpg" style="max-height: 96vh;">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pop Up Banner 3-->
-    <div class="modal" id="popUpBanner3" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered mt-0" role="document" style="max-width: max-content;">
-            <div class="modal-content justify-content-center" style="background-color: transparent; border: 0px">
-                <button class="close" data-dismiss="modal" type="button" aria-label="Close" style="position: absolute; top: 0; right: 0rem; z-index: 100; background: white; border: none;"
-                    onclick="$('#popUpBanner3').modal('hide')">
-                    <span aria-hidden="true" style="font-size: 2rem">&times;</span>
-                </button>
-                <div class="row text-center align-items-center" style="align-self: center;width: 100%;">
-                    <div class="col-sm-12 col-lg-12" style="border-radius: 10px; padding: 15px;">
-
-                        <div style="overflow-x: auto" onclick="$('#popUpBanner3').modal('hide')">
-                            <a class="text-center d-block" href="https://tinyurl.com/Pemira2025" target="_blank">
-                                <img class="imagepreview" src="https://gate.dinamika.ac.id/images/Banner Voting BEM DPM 2024.jpg" style="max-height: 90vh;">
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pop Up Banner 1-->
-    <div class="modal fade" id="popUpBanner1" aria-labelledby="modelTitleId" aria-hidden="true" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content justify-content-center">
-                <div class="modal-header">
-                    <h5 class="modal-title">Pengisian Angket Pelayanan Bag. Kemahasiswaan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    
-                    <p class="text-center text-dark">
-                        Selamat pagi, siang, ataupun malam, Mahasiswa Universitas Dinamika! :D
-                        <br><br>
-                        Dalam rangka mengevaluasi kinerja Bagian Kemahasiswaan serta untuk melakukan penilaian Akreditas Prodi, kami meminta waktu Mas dan Mbak sekalian sejenak untuk mengisi Angket Pelayanan Bagian Kemahasiswaan.
-                        <br><br>
-                        Harap diisi dengan jujur dan jangan lupa untuk tinggalkan kritik maupun saran untuk meningkatkan pelayanan dan kinerja kami ke depannya!
-                        <br><br>
-                        Silahkan login ke <a href="https://mail.google.com/a/dinamika.ac.id" target="_blank">akun Google Dinamika</a> terlebih dahulu.<br>Jika sudah, kembali ke halaman ini dan klik <a href="https://docs.google.com/forms/d/e/1FAIpQLSflGQ35vXB5p1JqlzSKdwLwYbYnhlcl-LSefN-al9vINf8ZOQ/viewform" style="" target="_blank">link Angket Pelayanan Bagian Kemahasiswaan</a> berikut untuk mengisinya!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pop Up Banner Spesifik-->
-    <div class="modal fade" id="popUpBannerCautionScam" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="popUpBannerCautionScam" aria-hidden="true" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content justify-content-center">
-                <div class="modal-header justify-content-center">
-                    <h5 class="modal-title fw-bold">PERHATIAN!!!</h5>
-                </div>
-                <div class="modal-body">
-                    <p class="text-center text-dark">
-                        Sehubungan dengan maraknya kasus penipuan yang mengatasnamakan dosen dan pimpinan Universitas Dinamika, kami menghimbau seluruh mahasiswa, dosen, dan karyawan untuk selalu waspada. <b>Modus penipuan ini umumnya berupa permintaan transfer uang</b> melalui chat WhatsApp dengan alasan mendesak.
-                        <br><br>
-                        <b>Jika Anda menerima pesan serupa, mohon jangan langsung percaya</b>. Selalu lakukan verifikasi dengan menghubungi pihak yang bersangkutan melalui jalur komunikasi resmi. <b>Jangan pernah membagikan informasi pribadi atau mentransfer uang kepada pihak yang tidak Anda kenal atau ragukan!</b>
-                        <br><br>
-                        Sebagai upaya pencegahan, sebaiknya aktifkan Two Factor Authentication (2FA) pada layanan atau aplikasi yang Anda gunakan. Mari kita jaga keamanan bersama dan lindungi diri dari penipuan. Kehati-hatian adalah langkah terbaik untuk mencegah kerugian.
-                    </p>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary w-50 fw-bold" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <nav class="navbar navbar-dark bg-black fixed-bottom px-3 d-none d-lg-flex d-xl-flex d-xxl-flex">
-    <div class="col-lg-4 col-8 d-flex justify-content-between align-items-center">
-        <button class="btn btn-danger btn-circle" id="play"><i class="fas fa-play fa-fw"></i></button>
-        <input type="range" class="w-75 mx-4" id="volume" name="volume" min="0" max="10" value="10">
-        <button class="btn btn-danger btn-circle" id="mute"><i class="fas fa-volume-up fa-fw"></i></button>
-    </div>
-    <div class="col-lg-2 d-none d-lg-block px-3">
-        <img src="https://gate.dinamika.ac.id/images/dradio.png" height="32">
-    </div>
-    <div class="col-lg-2 d-none d-lg-block px-3">
-    </div>
-    <div class="col-lg-4 col-4">
-        <div class="d-flex align-items-center justify-content-end">
-            <img class="mw-100" style="height: 2.5rem" src="https://gate.dinamika.ac.id/images/logo-dcast.png"/>
-            <div class="mx-2" style="max-width: 22rem">
-                <small id="podcast-title" class="text-white">D&#039;Cast Sesion 3 Eps.06 -Undika Punya Mobil Listrik?! Ngobrol Langsung ..</small>
-            </div>
-            <button class="btn btn-danger btn-circle" id="play-podcast"><i class="fas fa-play fa-fw"></i></button>
-        </div>
-    </div>
-</nav>
-    <div>
-        <a class="float" href="https://afiliasi.dinamika.ac.id/login" style="z-index: 9999;color: #fff;
-    text-transform: uppercase;
-    font-weight: 600;
-    font-size: 12px;" target="_blank">
-            <img src="https://gate.dinamika.ac.id/images/daftar_agen2.png" style="width:100%" />
-            <span style="font-size:12px">Daftar SGS</span>
-        </a>
-
-    </div>
-    <script src="https://gate.dinamika.ac.id/js/jquery-3.6.0.min.js"></script>
-    <script src="https://gate.dinamika.ac.id/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"></script>
+  <body>
     <script>
-        moment.locale('id')
-
-        var playState = false; // change to false if not autoplay
-        var muteState = false
-        const sound = new Howl({
-            src: ['https://a1.siar.us/radio/8420/radio.mp3'],
-            // autoplay: true,
-            html5: true,
-            volume: 0.5,
-            format: ['mp3'],
-            autoUnlock: true,
-            onloaderror: function(id, errcode) {
-                sound.unload();
-            },
-            onplayerror: function() {
-                sound.unload();
-            },
-        })
-
-        var podcast = {"title":"D'Cast Sesion 3 Eps.06 -Undika Punya Mobil Listrik?! Ngobrol Langsung Bareng Timnya Yuk!","description":"<p>Inovasi mobil listrik kini sudah semakin banyak dikembangkan di beberapa daerah di Indonesia bahkan dunia. Universitas Dinamika yang merupakan kampus berbasis teknologi juga tak ingin ketinggalan untuk menciptakan inovasi mobil listrik. Episode D'Cast kali ini akan ngobrol santai bersama teman-teman pengembang Mobil Listrik Mika.<\/p>\n<p>#InovasiMobilListrik #MobilListrikUndika<\/p>\n<p>______<\/p>\n<p>Ikuti terus informasi terbaru di Undika:<\/p>\n<p>Instagram:&nbsp;<a href=\"https:\/\/www.instagram.com\/universitasdinamika\/\" target=\"_blank\">https:\/\/www.instagram.com\/universitasdinamika\/<\/a><\/p>\n<p>Website:&nbsp;<a href=\"https:\/\/www.dinamika.ac.id\/\" target=\"_blank\">https:\/\/www.dinamika.ac.id\/<\/a><\/p>\n<p>Youtube:&nbsp;<a href=\"https:\/\/www.youtube.com\/user\/stikomsurabaya\" target=\"_blank\">https:\/\/www.youtube.com\/user\/stikomsurabaya<\/a><\/p>\n<p>TikTok:&nbsp;<a href=\"https:\/\/www.tiktok.com\/@undikaofficial\" target=\"_blank\">https:\/\/www.tiktok.com\/@undikaofficial<\/a><\/p>\n<p>Twitter:&nbsp;<a href=\"https:\/\/twitter.com\/undikasurabaya\" target=\"_blank\">https:\/\/twitter.com\/undikasurabaya<\/a><\/p>\n<p>Anchor:&nbsp;<a href=\"https:\/\/anchor.fm\/dcastundika\/\" target=\"_blank\">https:\/\/anchor.fm\/dcastundika\/<\/a><\/p>\n","link":"https:\/\/podcasters.spotify.com\/pod\/show\/dinamikapodcast\/episodes\/DCast-Sesion-3-Eps-06--Undika-Punya-Mobil-Listrik---Ngobrol-Langsung-Bareng-Timnya-Yuk-e1otojt","image":"","date":"Mon, 24 Oct 2022 03:40:42 GMT","media":"https:\/\/anchor.fm\/s\/702f2464\/podcast\/play\/58695741\/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2022-9-7%2Fadea0ce1-8f8b-8cdc-269f-45d2dcdbe081.mp3"}
-        var sound_podcast = new Howl({
-            src: [podcast.media],
-            // autoplay: true,
-            html5: true,
-            autoUnlock: true,
-            onloaderror: function(id, errcode) {
-                sound_podcast.unload();
-            },
-            onplayerror: function(id, errcode) {
-                sound_podcast.unload();
-            },
-        })
-
-        $('#play-podcast').click(function(e) {
-            togglePlay(sound_podcast)
-            setButton($(this), sound_podcast)
-            // setButtonPodcast($(this), sound_podcast)
-        })
-        /* function playPodcast(){
-            return sound_podcast.playing() ? sound_podcast.pause() : sound_podcast.play()
-        }
-        function setButtonPodcast(state, player){
-            if(!player.playing()){
-                state.children().removeClass('fa-pause').addClass('fa-play');
-            }else{
-                state.children().removeClass('fa-play').addClass('fa-pause');
-            }
-        } */
-
-        var nowplaying = null;
-        $('#play').click(function(e) {
-            togglePlay(sound)
-            setButton($(this), sound)
-        })
-        $('#mute').click(function(e) {
-            if (!muteState) {
-                $(this).children().removeClass('fa-volume-up').addClass('fa-volume-mute')
-            } else {
-                $(this).children().removeClass('fa-volume-mute').addClass('fa-volume-up')
-            }
-            sound.mute(!muteState)
-            muteState = !muteState
-        })
-        $('#volume').on('input', function(e) {
-            var vol = $(this).val()
-            sound.volume(vol / 10)
-        })
-
-        function togglePlay(player) {
-            // return sound.playing() ? sound.stop() : sound.play()
-            return player.playing() ? player.pause() : player.play()
-        }
-
-        function setButton(state, player) {
-            let isPlay = player.playing()
-            if (!isPlay) {
-                state.children().removeClass('fa-pause').addClass('fa-play')
-            } else {
-                state.children().removeClass('fa-play').addClass('fa-pause')
-            }
-            playState = !playState
-        }
-
-        function getNowPlaying() {
-            $.ajax({
-                url: 'https://a1.siar.us/api/nowplaying/53',
-                type: 'GET',
-                success: function(result) {
-                    $('#station').text(result.station.name)
-                    if (nowplaying != result.now_playing.song.text) {
-                        nowplaying = result.now_playing.song.text
-                        $('#nowplaying').text(nowplaying)
-                    }
-                    // if(sound.playing() && !playState) setButton($('#play'));
-                }
-            })
-        }
-
-        function scrollNext() {
-            return setInterval(function() {
-                $.fn.pagepiling.moveSectionDown()
-            }, 5000)
-        }
-        
-        // getNowPlaying()
-        
-        // setInterval(getNowPlaying, 8000)
-
-        /* setTimeout(function(){
-            if(sound.playing()){
-                console.log('is playing')
-            } else{
-                console.log('not playing')
-                // setButton($('#play'))
-                // console.log(playState)
-                // togglePlay();
-            }
-        }, 4000) */
-
-        $(document).on('click', '.clickable-menu', function() {
-            // window.open($(this).data("href")).focus()
-            window.open($(this).data("href"), $(this).data("target") == null ? '_blank' : '_self').focus()
-        })
-
-        var nik_nim = "23410100003";
-        var global_token = "$2y$10$ISjtGuHF1BbozWPKxkLaluA0ygL3cghRislkDJRo1TLfrgSiUuKEq"
-        var is_dekan = "";
-        var is_kaprodi = "";
+      
     </script>
-                    <script>
-            if (nik_nim.substring(7,8) != "5") {
-                $.ajax({
-                    type: "POST",
-                    url: `https://sicyca.dinamika.ac.id/sicyca_api.php`,
-                    data: {
-                        nim: nik_nim,
-                        token: global_token,
-                        masa_studi: true
-                    },
-                    dataType: 'json',
-                    success: function(result) {
-                        let data = result.data
-                        let html = `Saat ini anda semester ${data.smt_skrg},<br>masa studi kurang ${data.sisa_smt} semester lagi untuk lulus tepat waktu`
-                        if (data.sisa_smt < 0) {
-                            html = `Saat ini anda semester ${data.smt_skrg},<br>masa studi anda sudah melebihi batas`
-                        }
-                        $('#semester-mhs').html(html)
-                    },
-                    error: function(err) {
-                        console.log(err);
-                    }
-                });
-            }            
-
-            function barProgress({
-                title = null,
-                nilai = 0,
-                warna = null,
-            }) {
-                return `
-                    <div class="progress-bar" role="progressbar" style="width: 100%; background-color:${warna};" aria-valuenow="${nilai}" title="${title}">
-                        ${nilai}
-                    </div>
-                `;
-            }
-
-
-            $.ajax({
-                type: "POST",
-                url: "https://sicyca.dinamika.ac.id/sicyca_api.php",
-                data: {
-                    nim: nik_nim,
-                    token: global_token,
-                    sks: true
-                },
-                dataType: 'json',
-                success: function(result) {
-                    /* Ini adalah variabel-variabel yang dibuat oleh Daniel tetapi belum selesai */
-                    /* 
-                    var total_sks = parseInt(result.data.sks_tempuh) + parseInt(result.data.sks_ambil) + parseInt(result.data.sisa_sks)
-                    let sks_telah_ditempuh = barProgress(result.data.sks_tempuh, parseInt(result.data.sks_tempuh), total_sks, "#008000")
-                    let sks_ditempuh = barProgress(result.data.sks_ambil, parseInt(result.data.sks_ambil), parseInt(result.data.sks_ambil) + parseInt(result.data.sisa_sks), "#e37b00")
-                    let sks_belum_ditempuh = barProgress(result.data.sisa_sks, parseInt(result.data.sisa_sks), total_sks, "#FF0000") 
-                    */
-
-                    let sks_telah_ditempuh = barProgress({
-                        title: 'SKS yang Telah Ditempuh',
-                        nilai: parseInt(result.data.sks_tempuh),
-                        warna: "#008000"
-                    })
-
-                    let sks_ditempuh = barProgress({
-                        title: 'SKS yang Sedang Ditempuh',
-                        nilai: parseInt(result.data.sks_ambil),
-                        warna: "#e37b00"
-                    })
-
-                    let sks_belum_ditempuh = barProgress({
-                        title: 'SKS yang Belum Ditempuh',
-                        nilai: parseInt(result.data.sisa_sks),
-                        warna: "#FF0000"
-                    })
-
-                    $('.progress.sks-telah-ditempuh-stack').append(sks_telah_ditempuh)
-
-                    $('.progress.sks-ditempuh-stack').append(sks_ditempuh)
-
-                    $('.progress.sks-belum-ditempuh-stack').append(sks_belum_ditempuh)
-                },
-                error: function(err) {
-                    console.log(err);
-                }
-            })
-        </script>
-        <script>
-        //check dekan/kaprodi/kabag
-        $.ajax({
-            type: "GET",
-            url: "https://e-sicyca.dinamika.ac.id/api/data_bagian/" + nik_nim,
-            dataType: 'json',
-            success: function(result) {
-                if (result.dekan != null) {
-                    $("#detail_role_dekan").removeClass("hide")
-                }
-                if (result.kaprodi != null) {
-                    $("#detail_role_kaprodi").removeClass("hide")
-                }
-                // Added by 21410100019 (2025/2/3)
-                if (result.departemen !== null) {
-                    if (result.departemen.NAMA_BAGIAN == "WAKIL REKTOR 1" || result.departemen.NAMA_BAGIAN == "WAKIL REKTOR 2" || result.departemen.NAMA_BAGIAN == "WAKIL REKTOR 3" || result.departemen.NICK == "PIMP") {
-                        $( "#detail_role_warek" ).removeClass("hide")
-                    }
-                }
-                // Joko, Pak Erwin, Dyah, bu Mita
-                if (nik_nim == '259181' || nik_nim == '980249' || nik_nim == '259180' || nik_nim == '180883') {
-                    $( "#detail_role_board_baru" ).removeClass("hide")
-                }
-            },
-            error: function(err) {
-                console.log(err);
-            }
-        })
-        $(document).ajaxComplete(function() {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
-            })
-        })
-    </script>
-
-        <script>
-        function myFunction() {
-            var x = document.getElementById("header_right_mobile");
-            if (x.style.display === "block") {
-                x.style.display = "none";
-            } else {
-                x.style.display = "block";
-            }
-        }
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            // Tentukan tanggal terakhir pop up ditampilkan
-            // Biar lebih mudah, formatnya diganti jadi DD-MM-YYYY
-            let popUpDateStart = "01-09-2025";
-            let popUpDateFinish = "17-09-2025";
-
-            // Function ini ditambahkan parameter idPopUpBanner
-            // untuk memudahkan jika ingin menampilkan lebih dari satu banner bersamaan
-            if (window.innerWidth <= 768) {
-                // Jika device mobile phone
-                showPopUpBannerBeforeOrAtDate(popUpDateStart, popUpDateFinish, 'popUpBanner2');
-            } else {
-                // Jika device desktop pada umumnya
-                showPopUpBannerBeforeOrAtDate(popUpDateStart, popUpDateFinish, 'popUpBanner2desktop');
-            }
-        });
-
-        // Fungsi ini digunakan untuk menampilkan pop up banner sebelum atau sama dengan tanggal yang ditentukan
-        function showPopUpBannerBeforeOrAtDate(start, finish, idPopUpBanner, duration = null) {
-            // Parse pop up date sesuai format nya
-            start = moment(start, 'DD-MM-YYYY');
-            finish = moment(finish, 'DD-MM-YYYY');
-
-            // Cek apakah hari ini di dalam range tanggal pop up
-            let isTodaySameOrBeforeFinish = moment(Date.now()).isSameOrBefore(finish);
-            let isTodaySameOrAfterStart = moment(Date.now()).isSameOrAfter(start);
-
-            if (isTodaySameOrBeforeFinish && isTodaySameOrAfterStart) {
-                $(`#${idPopUpBanner}`).modal('show');
-            }
-            if (duration != null) {
-                $(`#${idPopUpBanner}`).find('[data-bs-dismiss="modal"]').addClass("d-none");
-                setTimeout(() => {
-                    $(`#${idPopUpBanner}`).find('[data-bs-dismiss="modal"]').removeClass("d-none");
-                }, (1000*duration));
-            }
-        }
-    </script>
-
-    
-    <script>
-        var agenda = [{"id":18665,"judul":"Gelar Karya Tugas Akhir Mahasiswa TK","lokasi":"Lobby Lt. 1","tanggal":"24 Sept","waktu":"08.00 - 15.00","url":"https:\/\/www.dinamika.ac.id\/agenda\/gelar-karya-tugas-akhir-mahasiswa-tk\/"},{"id":18661,"judul":"Seminar dan Workshop: Jelajah Dunia Canggih AI, IoT, dan PLC Bikin Hidup Makin Keren","lokasi":"Ruang Laksda Mardiono Lt. 1","tanggal":"23 Sept","waktu":"08.30 - 13.00","url":"https:\/\/www.dinamika.ac.id\/agenda\/seminar-dan-workshop-jelajah-dunia-canggih-ai-iot-dan-plc-bikin-hidup-makin-keren\/"},{"id":18630,"judul":"Bimbingan Karir Semester Ganjil 25.1","lokasi":"Ruang Laksda Mardiono Lt. 1","tanggal":"22 Sept","waktu":"08.00 - 16.00","url":"https:\/\/www.dinamika.ac.id\/agenda\/bimbingan-karir-semester-ganjil-25-1\/"},{"id":18608,"judul":"Kegiatan Donor Darah","lokasi":"Ruang Tech Inc. Lt 1","tanggal":"17 Sept","waktu":"08.00 - 12.30","url":"https:\/\/www.dinamika.ac.id\/agenda\/kegiatan-donor-darah\/"},{"id":18520,"judul":"Perisan","lokasi":"Gedung Serbaguna","tanggal":"8-10 Sept","waktu":"08.00 - 12.00","url":"https:\/\/www.dinamika.ac.id\/agenda\/perisan\/"}]
-        var tag = document.createElement('script')
-        var youtubeUrl = 'MWW85BSGSmg'
-        tag.src = "https://www.youtube.com/iframe_api"
-        var firstScriptTag = document.getElementsByTagName('script')[0]
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
-
-        // 3. This function creates an <iframe> (and YouTube player)
-        //    after the API code downloads.
-        var player;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('yt-player', {
-                // height: '390',
-                // width: '640',
-                videoId: youtubeUrl,
-                playerVars: {
-                    'autoplay': 1,
-                    'mute': 1,
-                    'playsinline': 1
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            })
-        }
-
-        // 4. The API will call this function when the video player is ready.
-        function onPlayerReady(event) {
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                // dont auto play on mobile
-            } else {
-                event.target.playVideo()
-            }
-        }
-
-        // 5. The API calls this function when the player's state changes.
-        //    The function indicates that when playing a video (state=1),
-        //    the player should play for six seconds and then stop.
-        var done = false
-
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-                // setTimeout(stopVideo, 6000);
-                // done = true;
-            }
-            if (event.data == YT.PlayerState.ENDED) {
-                done = true
-                stopVideo()
-            }
-        }
-
-        function stopVideo() {
-            player.stopVideo()
-        }
-
-        function rotateTerm() { // display fadein/fadeout text
-            var ct = $("#daftar-ultah").data("term") || 0;
-            // console.log(`ultah char : ${data_ultah[ct].length}`);
-            var isChrome = window.chrome;
-            var stringLength = data_ultah[ct].length; // count character length and positioning css
-            if (isChrome) {
-                stringLength = data_ultah[ct].replace(/(\r\n|\n|\r)/g, "  ").length;
-            }
-            var top_rem = '0.7rem';
-            if (stringLength > 20 && stringLength < 80) {
-                var top_rem = '0.5rem';
-            } else if (stringLength > 80) {
-                var top_rem = '0rem';
-            }
-            // console.log(`length is ${stringLength}`)
-            $("#daftar-ultah").data("term", ct == data_ultah.length - 1 ? 0 : ct + 1).html(data_ultah[ct]).fadeIn().delay(2000).fadeOut(200, rotateTerm);
-        }
-
-        var data_ultah = []
-
-        if (nik_nim != null || nik_nim != undefined) {
-            // api call buku peminjaman + ulang tahun karyawan
-            $.ajax({
-                type: "GET",
-                url: "https://intranet.dinamika.ac.id/sirkulasi-mandiri/api.php?nik_nim=" + nik_nim,
-                success: function(hasil) {
-                    data_api = hasil
-                },
-                error: function(err) {
-                    console.log(err)
-                },
-                complete: function(msg) {
-                    if (data_api.pinjaman_buku.length === 0 && data_api.pinjaman_majalah.length === 0 && data_api.pinjaman_software.length === 0) {
-                        $('#daftar-pinjaman').html('<span style="color:#fff">Saatnya berkunjung ke perpustakaan</span>')
-                    } else {
-                        $('#daftar-pinjaman').html('');
-                        data_api.pinjaman_buku.forEach(element => {
-                            $('#daftar-pinjaman').append(`<small style="color:#fff">${element.JUDUL} <span class="fw-bold text-danger">(Kembali: ${element.TGL_KEMBALI})</span></small><br>`);
-                        })
-                        data_api.pinjaman_majalah.forEach(element => {
-                            $('#daftar-pinjaman').append(`<small style="color:#fff">${element.JUDUL} <span class="fw-bold text-danger">(Kembali: ${element.TGL_KEMBALI})</span></small><br>`);
-                            // $('#daftar-pinjaman').append(element.JUDUL + ' <span style="color:red">(Kembali: ' + element.TGL_KEMBALI + ')</span><br>');
-                        })
-                        data_api.pinjaman_software.forEach(element => {
-                            $('#daftar-pinjaman').append(`<small style="color:#fff">${element.JUDUL} <span class="fw-bold text-danger">(Kembali: ${element.TGL_KEMBALI})</span></small><br>`);
-                            // $('#daftar-pinjaman').append(element.JUDUL + ' <span style="color:red">(Kembali: ' + element.TGL_KEMBALI + ')</span><br>');
-                        })
-                    }
-
-                    if (data_api.ulang_tahun.length === 0) {
-                        $('#daftar-ultah').remove(); // remove element
-                        $('#text-ultah').append('<small id="daftar-ultah" class="mb-0 fw-bold label-birthday-null">Tidak ada ulang tahun hari ini.</small>'); // add canvas element baru
-
-                    } else {
-                        data_api.ulang_tahun.forEach(element => {
-                            // console.log(element,00)
-                            data_ultah.push('Selamat Ulang Tahun <br/>' + element.NAMA + ' (' + element.BAGIAN + ')')
-                            // data_ultah.push(`Selamat Ulang Tahun \n ${element.NAMA} (${element.BAGIAN})`)
-                        })
-                        rotateTerm()
-                    }
-                }
-            })
-        }
-        //     var agenda=[]
-        //     function dateString2Date(dateString) {
-        //   const dt = dateString.split(/\-|\s/);
-        //   return new Date(dt.slice(0, 3).reverse().join('-') + ' ' + dt[3]);
-        // }
-        // $.ajax({
-        //     type: "GET",
-        //     url: "https://dinamika.ac.id/api/agenda",
-        //     success: function (hasil) {
-        //         // console.log(hasil)
-        //         hasil.forEach(function callback(element, index) {
-        //             $('.carousel-inner-agenda').append(eventCarouselCreate(element,index))
-        //             $('#agenda-undika').append(eventBoxCreate(element))
-        //             let m_tanggal = moment(element.tanggal, "DD/MM/YYYY")
-
-        //             var convert_tgl=moment(m_tanggal).format('MMMM Do YYYY, h:mm:ss a'); // May 30th 2022, 4:06:01 pm
-
-        //             agenda.push({
-        //                 id: element.id,
-        //                 judul: element.judul,
-        //                 lokasi: element.lokasi,
-        //                 tanggal: element.tanggal,
-        //                 convert_tgl: new Date(m_tanggal),
-        //                 url: element.url,
-        //                 waktu: element.waktu
-        //             })
-        //         })
-
-        //     },
-        //     error: function (err) {
-        //         console.log(err)
-        //     }
-        // })
-
-        // $.ajax({
-        //     type: "GET",
-        //     url: "https://kemahasiswaan.dinamika.ac.id/api/events",
-        //     success: function (hasil) {
-        //         // console.log(hasil)
-        //         hasil.forEach(function callback(element, index) {
-        //             // $('.carousel-inner-agenda').append(eventCarouselCreate(element,index))
-        //             // $('#agenda-undika').append(eventBoxCreate(element))
-        //             let m_tanggal = moment(element.tanggal, "DD/MM/YYYY")
-
-        //             var convert_tgl=moment(m_tanggal).format('MMMM Do YYYY, h:mm:ss a'); // May 30th 2022,
-        //             agenda.push({
-        //                 id: element.id,
-        //                 judul: element.judul,
-        //                 lokasi: element.lokasi,
-        //                 tanggal: element.tanggal,
-        //                 convert_tgl: new Date(m_tanggal),
-        //                 url: element.url,
-        //                 waktu: element.waktu
-        //             })
-
-        //         })
-        //     },
-        //     error: function (err) {
-        //         console.log(err)
-        //     }
-        // })
-
-        // function loadAgenda(){
-        //     const fruits = ["Banana", "Orange", "Apple", "Mango"];
-        //     var yeye=agenda.toString();
-        //     console.log(JSON.parse(yeye),fruits)
-        //     // var data = JSON.stringify(agenda);
-
-        //     // var data2= JSON.parse(data);
-        //     // console.log(agenda,data,data2)
-
-        //     // data.forEach(function callback(element, index) {
-        //     //     console.log(element)
-        //     // })
-        // }
-
-        function eventCarouselCreate(data, index) {
-            // let tanggal = data.tanggal.substr(0, 5)
-            let active = index == 0 ? 'active' : ''
-            let m_judul = data.judul.substring(0, 40)
-            let m_lokasi = data.lokasi.substring(0, 40)
-
-            let m_tanggal = moment(data.tanggal, "DD/MM/YYYY")
-            return '<div style="height:100px" class="carousel-item ' + active + '">' +
-                '<div class="clickable-menu" data-href="' + data.url + '">' +
-                '<div style="color: #fff;" class="d-flex event-box mb-2 clickable-menu max_width_height" data-href="">' +
-                '<div class="text-center p-2" style="background-color: grey">' +
-                '<p class="mb-0">' + m_tanggal.format("DD MMM") + '</p>' +
-                '</div>' +
-                '<div class="p-2">' +
-                '<p class="small mb-0">' + (data.judul.length > 40 ? `${m_judul}..` : data.judul) + '</p>' + '<div style="border-bottom:1px solid #fff;margin:2px"></div>' +
-                '<small class="x-small">' + (data.lokasi.length > 40 ? `${m_lokasi}..` : data.lokasi) + ' (' + data.waktu + ')</small>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>'
-        }
-
-        function eventBoxCreate(data, index) {
-            // let tanggal = data.tanggal.substr(0, 5)
-            let active = index == 0 ? 'active' : ''
-            let m_judul = data.judul.substring(0, 40)
-            let m_lokasi = data.lokasi.substring(0, 40)
-
-            let m_tanggal = moment(data.tanggal, "DD/MM/YYYY")
-            return '<div style="color: #fff;" class="event-box mb-2 clickable-menu clickable-menu" data-href="">' +
-                '<table style="width:100%;margin: 10px 0px 10px 0px;">' +
-                '<thead>' +
-                '<tr>' +
-                '<td style="background-color: grey;width:15%;vertical-align: text-top;">' +
-                '<div class="text-center p-2">' +
-                '<p class="mb-0">' + m_tanggal.format("DD MMM") + '</p>' + '</div>' +
-                '</td>' +
-                '<td style="background-color:brown;width:85%">' +
-                '<div class="p-2">' +
-                '<p class="small mb-0">' + (data.judul.length > 40 ? `${m_judul}..` : data.judul) + '</p>' + '<div style="border-bottom:1px solid #fff;margin:2px"></div>' +
-                '<small class="x-small">' + data.lokasi + ' ( ' + data.waktu + ' ) ' + '</small>' +
-                '</div>' + '</td>' + '</tr>' + '</thead>' + '</table>' +
-                '</div>'
-        }
-    </script>
-
-            <script>
-            var data_ultah_mahasiswa = []
-
-            function rotateTermMahasiswa() { // display fadein/fadeout text
-                var ct = $("#daftar-ultah-mahasiswa").data("term") || 0;
-                // console.log(`ultah char : ${data_ultah[ct].length}`);
-
-
-                let stringLength = data_ultah_mahasiswa[ct].length; // count character length and positioning css
-                // console.log(stringLength)
-                if (stringLength > 20 && stringLength < 80) {
-                    var top_rem = '0.5rem';
-                } else if (stringLength > 80) {
-                    var top_rem = '0rem';
-                }
-
-                $("#daftar-ultah-mahasiswa").data("term", ct == data_ultah_mahasiswa.length - 1 ? 0 : ct + 1).html(data_ultah_mahasiswa[ct]).fadeIn().delay(2000).fadeOut(200, rotateTermMahasiswa);
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "https://sicyca.dinamika.ac.id/sicyca_api.php",
-                data: {
-                    nim: nik_nim,
-                    token: global_token,
-                    ultah: true
-                },
-                dataType: 'json',
-                success: function(hasil) {
-                    // console.log(Array.isArray(hasil))
-                    if (hasil.data.length === 0) {
-                        $('#daftar-ultah-mahasiswa').remove(); // remove element
-                        $('#text-ultah-mahasiswa').append('<small id="daftar-ultah-mahasiswa" class="mb-0 fw-bold label-birthday-null">Tidak ada ulang tahun hari ini</small>'); // add canvas element baru
-                        // rotateTerm()
-                    } else {
-                        // $('#daftar-ultah').html('');
-                        hasil.data.forEach(element => {
-                            // $('#daftar-ultah').append('<li>' + element.NAMA + ' (' + element.BAGIAN + ')</li>');
-                            data_ultah_mahasiswa.push('Selamat Ulang Tahun <br/>' + element.NAMA + ' (' + element.PRODI + ')')
-                        })
-
-
-                        rotateTermMahasiswa()
-                    }
-                },
-                error: function(err) {
-                    console.log(err)
-                }
-            })
-
-            $.ajax({
-                type: "POST",
-                url: "https://sicyca.dinamika.ac.id/sicyca_api.php",
-                data: {
-                    nim: nik_nim,
-                    token: global_token,
-                    jadwal: true
-                },
-                dataType: 'json',
-                success: function(result) {
-                    var data = result.data
-                    if (data.length > 4) {
-                        $('#jadwal-mata-kuliah-hari-ini-body').css({
-                            overflow: 'scroll'
-                        });
-                    }
-                    data.forEach(function callback(element, index) {
-                        let div = `<tr class="small">
-                                    <td>${element.jam_mulai} - ${element.jam_selesai}</td>
-                                    <td>${element.nama_mk}</td>
-                                </tr>`
-
-                        $('#jadwal-mata-kuliah-hari-ini').append(div)
-                    })
-                    if (data.length === 0) {
-                        $('#jadwal-mata-kuliah-hari-ini-head').addClass('hide');
-                        let div = `<tr><td colspan="2" style="text-align:center"><small>-Tidak ada Jadwal-</small></td></tr>`
-                        $('#jadwal-mata-kuliah-hari-ini').append(div)
-                    }
-
-                },
-                error: function(err) {
-                    console.log(err);
-
-                }
-            })
-        </script>
-    
-    
-</body>
-
+  </body>
 </html>
