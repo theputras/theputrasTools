@@ -923,4 +923,4 @@ boot_scrape_if_needed()
 logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
 logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+# app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
