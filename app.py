@@ -190,9 +190,20 @@ def create_ics_from_json(json_path, ics_path):
                 for idn, eng in month_translation.items():
                     start_date_time_str = start_date_time_str.replace(idn, eng)
                     end_date_time_str = end_date_time_str.replace(idn, eng)
-
+                # Jika tahun hanya 2 digit, tambahkan '20' di depannya
+                def normalize_year(date_str):
+                    parts = date_str.split()
+                    if len(parts) >= 3 and len(parts[1]) > 0 and len(parts[2]) == 2:  # contoh: ['22', 'October', '25']
+                        parts[2] = "20" + parts[2]
+                        return " ".join(parts)
+                    return date_str
+                
+                start_date_time_str = normalize_year(start_date_time_str)
+                end_date_time_str = normalize_year(end_date_time_str)
+                
                 start_time = datetime.strptime(start_date_time_str, "%d %B %Y %H:%M")
                 end_time = datetime.strptime(end_date_time_str, "%d %B %Y %H:%M")
+
 
                 ics_content += (
                     "BEGIN:VEVENT\n"
