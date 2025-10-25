@@ -230,6 +230,8 @@ def create_ics_from_json(json_path, ics_path):
 @app.before_request
 def debug_cookies():
     print("[DEBUG COOKIE] Cookie header:", request.headers.get('Cookie'))
+    logging.info(f"[DEBUG COOKIE] Cookie header: {request.headers.get('Cookie')}")
+
 
 
 # Main route
@@ -246,6 +248,7 @@ def logout_page():
 @app.route('/')
 @login_required
 def index():
+    logging.info(f"[INDEX DEBUG] Session keys:", list(session.keys()))
     print("[INDEX DEBUG] Session keys:", list(session.keys()))
     try:
         # Baca JSON dengan struktur baru
@@ -394,4 +397,4 @@ boot_scrape_if_needed()
 logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
 logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+# app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
