@@ -62,41 +62,42 @@
     </p>
   </div>
 
-  <script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
+<script>
+document.querySelector('form').addEventListener('submit', async (e) => {
   e.preventDefault();
-
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const errorMessage = document.getElementById('errorMessage');
+  
+  const formData = new URLSearchParams({
+    username: document.getElementById('username').value,
+    password: document.getElementById('password').value
+  });
 
   try {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ username, password }),
-      credentials: 'include'
+      body: formData,
+      credentials: 'include' // penting biar cookie dikirim!
     });
 
-    const data = await response.json(); // cuma dibaca sekali!
-
     if (response.ok) {
-      console.log("✅ Login berhasil:", data);
-      await new Promise(r => setTimeout(r, 300)); // kasih waktu cookie tersimpan
-      window.location.href = data.redirect || '/';
+      const data = await response.json();
+      console.log("✅ Login sukses:", data);
+      
+      // kasih delay kecil biar browser sempat simpan cookie
+      setTimeout(() => {
+        window.location.href = data.redirect || '/';
+      }, 300);
     } else {
-      console.warn("⚠️ Login gagal:", data);
-      errorMessage.textContent = data.error || 'Login gagal.';
-      errorMessage.classList.remove('hidden');
+      const err = await response.json();
+      alert(err.error || 'Login gagal, periksa username/password.');
     }
-
   } catch (err) {
-    console.error("❌ Error saat login:", err);
-    errorMessage.textContent = 'Terjadi kesalahan koneksi ke server.';
-    errorMessage.classList.remove('hidden');
+    console.error('❌ Error saat login:', err);
+    alert('Terjadi kesalahan server.');
   }
 });
 </script>
+
 
 
 </body>

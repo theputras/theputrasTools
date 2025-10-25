@@ -23,11 +23,12 @@ from flask_cors import CORS
 from scrapper_requests import scrape_data
 from middleware.auth_quard import login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
-
-
+from dotenv import load_dotenv
+load_dotenv()  # biar bisa baca file .env
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+
 # CORS(
 #     app,
 #     supports_credentials=True,
@@ -36,6 +37,8 @@ CORS(app, supports_credentials=True)
 #         "http://localhost:5000"
 #     ]
 # )
+
+
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
@@ -83,23 +86,39 @@ def boot_scrape_if_needed():
                 run_scraper_and_save()
     except Exception as e:
         logging.warning(f"Boot scrape gagal: {e}")
+        
+        
 
 executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
 JADWAL_STATUS = {"status": "ready", "message": "Siap."}
 app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
+if not app.secret_key:
+    logging.error("FATAL ERROR: SECRET_KEY tidak diatur di environment!")
+    raise ValueError("SECRET_KEY tidak diatur. Set di file .env atau environment variable.")
+logging.info("Secret Key untuk session berhasil diatur.")
 
-logging.info(f"Secret Key untuk session diatur: {app.secret_key is not None}")
+# IS_PRODUCTION = os.getenv("FLASK_ENV") == "production"
 
+# app.config.update(
+#     SESSION_COOKIE_HTTPONLY=True,
+#     SESSION_COOKIE_SAMESITE='None' if IS_PRODUCTION else 'Lax',
+#     SESSION_COOKIE_SECURE=IS_PRODUCTION,  # False kalau localhost
+#     SESSION_PERMANENT=True,
+#     PERMANENT_SESSION_LIFETIME=3600 * 24 * 7,
+#     SESSION_COOKIE_PATH='/',
+#     SESSION_COOKIE_DOMAIN=None,  # biar domain fleksibel
+#     SESSION_REFRESH_EACH_REQUEST=True
+# )
 app.config.update(
-    SESSION_COOKIE_SECURE=True,
-    SESSION_COOKIE_SAMESITE='None',
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_PERMANENT=True,
-    PERMANENT_SESSION_LIFETIME=3600 * 24 * 7,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=False
 )
 
+
+# Session(app) # <--- TAMBAHIN INI
 
 
 
@@ -403,4 +422,4 @@ boot_scrape_if_needed()
 logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
 logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-# app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)

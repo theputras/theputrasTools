@@ -3,32 +3,41 @@ import bcrypt
 import os
 import jwt
 from datetime import datetime, timedelta
-from flask import Blueprint, request, jsonify, make_response, session, current_app as app
+from flask import Blueprint, request, jsonify, session, url_for
+from flask import current_app
 from connection import get_connection
-from flask import session
 import logging
+import pytz
 from dotenv import load_dotenv
 
 
 from datetime import datetime, timedelta
-import pytz
 
 load_dotenv()
 
 JAKARTA_TZ = pytz.timezone("Asia/Jakarta")
 
 auth_bp = Blueprint('auth', __name__)
-SECRET_KEY = os.getenv("SECRET_KEY")  # Ganti sama env var di produksi
-
 
 # === Utility ===
 def generate_access_token(user_id):
+    now = datetime.now(JAKARTA_TZ)
     payload = {
         "sub": user_id,
-        "exp": datetime.now(JAKARTA_TZ) + timedelta(minutes=15),
-        "iat": datetime.now(JAKARTA_TZ)
+        "iat": int(now.timestamp()),
+        "exp": int((now + timedelta(minutes=30)).timestamp())
     }
-    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+    secret = current_app.config.get("SECRET_KEY")
+    if not secret:
+        from flask import current_app as app
+        secret = app.secret_key  # fallback ke global Flask app
+    logging.info(f"[AUTH_API] Using SECRET_KEY hash={hash(secret)}")
+    token = jwt.encode(payload, secret, algorithm="HS256")
+    logging.info(f"[AUTH_API] Generated access token for user {user_id}")
+    return token if isinstance(token, str) else token.decode()
+
+
+
 
 def generate_refresh_token():
     return str(uuid.uuid4())
@@ -54,6 +63,8 @@ def login():
         return jsonify({"error": "Username atau password salah"}), 401
 
     access_token = generate_access_token(user['id'])
+    if isinstance(access_token, bytes):
+        access_token = access_token.decode('utf-8')
     refresh_token = generate_refresh_token()
     expires_at = datetime.now(JAKARTA_TZ) + timedelta(days=30)
 
@@ -69,23 +80,23 @@ def login():
     conn.close()
 
     # ===== SET SESSION =====
-    session['access_token'] = access_token
     session['user_id'] = user['id']
     session.modified = True
-
-    # ===== BUAT RESPONSE =====
-    resp = make_response(jsonify({
-        "message": "Login berhasil",
-        "redirect": "/"
-    }))
-
-    # ===== SIMPAN SESSION KE RESPONSE (ini penting!) =====
-    session.modified = True
-
-    # ===== LOG DEBUG =====
+    
+    # Simpan JWT ke cookie HTTP-only agar ga ilang tiap reload
+    resp = jsonify({
+        "message": "Login successful!",
+        "redirect": url_for('index')
+    })
+    resp.set_cookie(
+        "access_token",
+        access_token,
+        httponly=True,
+        secure=False,      # kalau masih localhost, pakai False
+        samesite="Lax",    # kalau udah deploy (https), ganti jadi "None"
+        max_age=1800
+    )
     logging.info(f"[LOGIN DEBUG] Session keys={list(session.keys())}")
-    logging.info(f"[LOGIN DEBUG] Set-Cookie (before return): {resp.headers.get('Set-Cookie')}")
-
     return resp, 200
 
 
