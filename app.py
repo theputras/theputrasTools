@@ -38,7 +38,7 @@ CORS(app, supports_credentials=True)
 # )
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 # Inisialisasi scheduler SEKALI saat modul di-import
 SCHEDULER_TZ = pytz.timezone("Asia/Jakarta")
 scheduler = BackgroundScheduler(timezone=SCHEDULER_TZ)
@@ -93,12 +93,11 @@ app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
 logging.info(f"Secret Key untuk session diatur: {app.secret_key is not None}")
 
 app.config.update(
-    SESSION_COOKIE_NAME='session',
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE='None',
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE='None',  # ganti ke 'None' kalau frontend beda origin
-    SESSION_COOKIE_SECURE=False,    # True kalau HTTPS
+    SESSION_PERMANENT=True,
     PERMANENT_SESSION_LIFETIME=3600 * 24 * 7,
-    SESSION_PERMANENT=True
 )
 
 
