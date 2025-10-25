@@ -22,7 +22,7 @@ from flask_cors import CORS
 # Impor SEMUA fungsi scraper
 from scrapper_requests import scrape_data
 from middleware.auth_quard import login_required
-
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 
@@ -37,6 +37,8 @@ CORS(app, supports_credentials=True)
 #     ]
 # )
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 # Inisialisasi scheduler SEKALI saat modul di-import
 SCHEDULER_TZ = pytz.timezone("Asia/Jakarta")
 scheduler = BackgroundScheduler(timezone=SCHEDULER_TZ)
@@ -231,6 +233,11 @@ def create_ics_from_json(json_path, ics_path):
 def debug_cookies():
     print("[DEBUG COOKIE] Cookie header:", request.headers.get('Cookie'))
     logging.info(f"[DEBUG COOKIE] Cookie header: {request.headers.get('Cookie')}")
+
+@app.after_request
+def log_cookie_header(resp):
+    logging.info(f"[AFTER RESPONSE] Set-Cookie={resp.headers.get('Set-Cookie')}")
+    return resp
 
 
 

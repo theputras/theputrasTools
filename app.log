@@ -6425,3 +6425,88 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-10-25 14:23:23,069 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
 
+2025-10-25 14:28:25,546 - INFO - Secret Key untuk session diatur: True
+2025-10-25 14:28:25,552 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 14:28:25,552 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 14:28:25,553 - INFO - Scheduler started
+2025-10-25 14:28:25,554 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 14:28:25,554 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-25 14:28:25,571 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.148:5000
+2025-10-25 14:28:25,571 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 14:28:25,572 - INFO -  * Restarting with stat
+2025-10-25 14:28:26,337 - INFO - Secret Key untuk session diatur: True
+2025-10-25 14:28:26,342 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 14:28:26,343 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 14:28:26,343 - INFO - Scheduler started
+2025-10-25 14:28:26,344 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 14:28:26,344 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-25 14:28:26,351 - WARNING -  * Debugger is active!
+2025-10-25 14:28:26,357 - INFO -  * Debugger PIN: 288-901-657
+2025-10-25 14:28:29,691 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 14:28:29,693 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 14:28:29,694 - INFO - 172.16.2.148 - - [25/Oct/2025 14:28:29] "GET /login HTTP/1.1" 200 -
+2025-10-25 14:28:55,861 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 14:28:56,131 - INFO - === Koneksi ke database berhasil ===
+2025-10-25 14:28:56,378 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-25 14:28:56,378 - INFO - [LOGIN DEBUG] Set-Cookie (before return): None
+2025-10-25 14:28:56,378 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 14:28:56,379 - INFO - 172.16.2.148 - - [25/Oct/2025 14:28:56] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-25 14:28:57,281 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 14:28:57,281 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 14:28:57,281 - INFO - 172.16.2.148 - - [25/Oct/2025 14:28:57] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-25 14:28:57,285 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 14:28:57,285 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 14:28:57,286 - INFO - 172.16.2.148 - - [25/Oct/2025 14:28:57] "GET /login HTTP/1.1" 200 -
+2025-10-25 14:29:27,559 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-25 14:29:27,657 - INFO -  * Restarting with stat
+2025-10-25 14:29:28,497 - INFO - Secret Key untuk session diatur: True
+2025-10-25 14:29:28,503 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 14:29:28,505 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 14:29:28,505 - INFO - Scheduler started
+2025-10-25 14:29:28,506 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 14:29:28,506 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-25 14:29:28,514 - WARNING -  * Debugger is active!
+2025-10-25 14:29:28,518 - INFO -  * Debugger PIN: 288-901-657
+2025-10-25 14:29:36,129 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 14:29:36,315 - INFO - === Koneksi ke database berhasil ===
+2025-10-25 14:29:36,670 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-25 14:29:36,672 - INFO - [LOGIN DEBUG] Set-Cookie (before return): None
+2025-10-25 14:29:36,673 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 14:29:36,675 - INFO - 172.16.2.148 - - [25/Oct/2025 14:29:36] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-25 14:29:37,281 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 14:29:37,281 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 14:29:37,282 - INFO - 172.16.2.148 - - [25/Oct/2025 14:29:37] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-25 14:29:37,288 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 14:29:37,292 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 14:29:37,293 - INFO - 172.16.2.148 - - [25/Oct/2025 14:29:37] "GET /login HTTP/1.1" 200 -
+2025-10-25 14:29:40,576 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-25 14:29:40,771 - INFO -  * Restarting with stat
+2025-10-25 14:29:41,735 - INFO - Secret Key untuk session diatur: True
+2025-10-25 14:29:41,740 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 14:29:41,741 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 14:29:41,741 - INFO - Scheduler started
+2025-10-25 14:29:41,742 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 14:29:41,742 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-25 14:29:41,749 - WARNING -  * Debugger is active!
+2025-10-25 14:29:41,754 - INFO -  * Debugger PIN: 288-901-657
+2025-10-25 14:30:14,923 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-25 14:30:15,020 - INFO -  * Restarting with stat
+2025-10-25 14:30:16,244 - INFO - Secret Key untuk session diatur: True
+2025-10-25 14:30:16,250 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 14:30:16,251 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 14:30:16,251 - INFO - Scheduler started
+2025-10-25 14:30:16,252 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 14:30:16,252 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
