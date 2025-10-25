@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans">
+    <div class="container mx-auto p-4 md:p-8">
+        <h1 class="text-2xl font-bold text-white mb-4">Log Program</h1>
+        <div class="flex gap-4 mb-4">
+            <a href="/" class="text-blue-400 hover:text-blue-300">&laquo; Kembali ke Halaman Utama</a>
+            <button onclick="window.location.reload();" class="px-4 py-1 bg-gray-700 text-white rounded-md text-sm hover:bg-gray-600">Refresh Manual</button>
+        </div>
+        <pre id="log-content" class="bg-black text-white p-4 rounded-md text-xs whitespace-pre-wrap break-words w-full overflow-x-auto h-[70vh]">{{ log_content }}</pre>
+    </div>
+    <script>
+        const logContainer = document.getElementById('log-content');
+        let isScrolledToTop = true; // Awalnya, kita anggap pengguna di atas
+
+        // Cek posisi scroll setiap kali pengguna scroll
+        logContainer.addEventListener('scroll', () => {
+            isScrolledToTop = logContainer.scrollTop === 0;
+        });
+
+        async function fetchLog() {
+            try {
+                const response = await fetch('/api/log');
+                if (!response.ok) return;
+                const newLogContent = await response.text();
+
+                if (logContainer.textContent !== newLogContent) {
+                    logContainer.textContent = newLogContent;
+                    // Jika pengguna sedang di paling atas, pertahankan di atas
+                    if (isScrolledToTop) {
+                        logContainer.scrollTop = 0;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching log:', error);
+            }
+        }
+
+        // Jalankan fungsi fetchLog setiap 2.5 detik
+        setInterval(fetchLog, 2500);
+    </script>
+</body>
+</html>

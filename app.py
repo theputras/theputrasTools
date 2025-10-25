@@ -4,7 +4,7 @@ import os
 import re
 from datetime import datetime
 import pandas as pd
-from flask import Flask, send_from_directory, request, render_template_string, redirect, url_for, Response, jsonify, json, session, abort
+from flask import Flask, send_from_directory, request, render_template, redirect, url_for, Response, jsonify, json, session, abort
 from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
@@ -15,14 +15,28 @@ from logging.handlers import RotatingFileHandler
 import secrets
 import time
 from cachetools import TTLCache  # Install: pip install cachetools
-
+from api.api import api_bp, init_api
+from models.auth_api import auth_bp
+from flask_cors import CORS
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import scrape_data, search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca  
+from scrapper_requests import scrape_data
+from middleware.auth_quard import login_required
+
+
 
 
 app = Flask(__name__)
-
+CORS(app, supports_credentials=True)
+# CORS(
+#     app,
+#     supports_credentials=True,
+#     origins=[
+#         "http://172.16.2.148:5000",
+#         "http://localhost:5000"
+#     ]
+# )
+app.register_blueprint(auth_bp, url_prefix='/api/auth')
 # Inisialisasi scheduler SEKALI saat modul di-import
 SCHEDULER_TZ = pytz.timezone("Asia/Jakarta")
 scheduler = BackgroundScheduler(timezone=SCHEDULER_TZ)
@@ -72,14 +86,23 @@ executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
 JADWAL_STATUS = {"status": "ready", "message": "Siap."}
-app.secret_key = os.urandom(32)  # Untuk session
+app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
 
+logging.info(f"Secret Key untuk session diatur: {app.secret_key is not None}")
 
 app.config.update(
+    SESSION_COOKIE_NAME='session',
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SECURE", "0") == "1",
+    SESSION_COOKIE_SAMESITE='None',  # ganti ke 'None' kalau frontend beda origin
+    SESSION_COOKIE_SECURE=False,    # True kalau HTTPS
+    PERMANENT_SESSION_LIFETIME=3600 * 24 * 7,
+    SESSION_PERMANENT=True
 )
+
+
+
+
+
 
 month_translation = { 'Januari': 'January', 'Februari': 'February', 'Maret': 'March', 'April': 'April', 'Mei': 'May', 'Juni': 'June', 'Juli': 'July', 'Agustus': 'August', 'September': 'September', 'Oktober': 'October', 'November': 'November', 'Desember': 'December' }
 majorID = { "39010": "D3 Sistem Informasi", "41010": "S1 Sistem Informasi", "41011": "S1 Sistem Informasi", "41020": "S1 Teknik Komputer", "42010": "S1 Desain Komunikasi Visual", "42020": "S1 Desain Produk", "43010": "S1 Manajemen", "43020": "S1 Akuntansi", "51016": "D4 Produksi Film dan Televisi" }
@@ -88,37 +111,10 @@ majorID = { "39010": "D3 Sistem Informasi", "41010": "S1 Sistem Informasi", "410
 def _valid_role(x):
     return x in ("mahasiswa", "staff")
 
-@app.route('/api/photo/<role>/<id_>', methods=['GET'])
-def get_photo(role, id_):
-    if not _valid_role(role):
-        return jsonify({'error': 'Role tidak valid'}), 400
-    
-    if not id_.isdigit():
-        return jsonify({'error': 'ID harus angka'}), 400
-    
-    # Cek cache dulu
-    cache_key = f"{role}_{id_}"
-    if cache_key in photo_cache:
-        logging.info(f"Foto {role}/{id_} dari cache.")
-        return jsonify({'success': True, 'image_b64': photo_cache[cache_key]})
-    
-    # Fetch dari Sicyca
-    logging.info(f"Fetching foto untuk tombol: {role}/{id_}")  # Ubah log ke "tombol" untuk clarity
-    image_content = fetch_photo_from_sicyca(role, id_)
-    
-    if image_content is None:
-        logging.warning(f"Fetch gagal untuk {role}/{id_}.")
-        return jsonify({'success': False, 'message': 'Foto tidak tersedia'})
-    
-    # Encode ke base64
-    image_b64 = base64.b64encode(image_content).decode('utf-8')
-    
-    # Simpan ke cache
-    photo_cache[cache_key] = image_b64
-    
-    logging.info(f"Foto {role}/{id_} berhasil di-encode ({len(image_b64)} chars).")
-    return jsonify({'success': True, 'image_b64': image_b64})
 
+
+init_api(photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role)
+app.register_blueprint(api_bp, url_prefix='/api')
 
 # Jalankan scraper dan simpan hasilnya ke file JSON
 def run_scraper_and_save():
@@ -230,10 +226,27 @@ def create_ics_from_json(json_path, ics_path):
     except Exception as e:
         logging.error(f"Error create_ics_from_json: {e}")
         raise
+        
+@app.before_request
+def debug_cookies():
+    print("[DEBUG COOKIE] Cookie header:", request.headers.get('Cookie'))
 
+
+# Main route
+
+@app.route('/login', methods=['GET'])
+def login_page():
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout_page():
+    session.clear()
+    return redirect(url_for('login_page'))
 
 @app.route('/')
+@login_required
 def index():
+    print("[INDEX DEBUG] Session keys:", list(session.keys()))
     try:
         # Baca JSON dengan struktur baru
         with open(JSON_FILE, encoding='utf-8') as f:
@@ -260,127 +273,18 @@ def index():
         </div>
         """
 
-        return INDEX_JADWAL.replace("<!-- TEMPAT_TABEL -->", info_html + html_table)
+        return render_template('show_schedule.html', tabel=info_html + html_table)
 
     except (FileNotFoundError, ValueError): 
         msg = "<h3 class='text-gray-400'>JADWAL BELUM TERSEDIA.</h3><p>Jalankan scraper terlebih dahulu atau tunggu jadwal otomatis berikutnya.</p>"
-        return INDEX_JADWAL.replace("<!-- TEMPAT_TABEL -->", msg)
+        return render_template('show_schedule.html', tabel=msg)
 
     except Exception as e:
         return f"<pre>Error: {str(e)}</pre>", 500
 
 
 
-INDEX_JADWAL = """
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status Jadwal & Sicyca</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
-<body class="bg-gray-900 text-gray-300 font-sans">
-    <div class="container mx-auto p-6">
-        
-        <!-- HEADER STATUS -->
-        <div class="bg-gray-800 rounded-lg shadow-md p-6 flex flex-wrap items-center gap-4 justify-start"
-             x-data="{ jadwalStatus: 'loading', jadwalMsg: '', sicycaStatus: 'loading', sicycaMsg: '', lastUpdate: '' }"
-             x-init="
-                fetch('/api/jadwal-status')
-                    .then(res => res.json())
-                    .then(data => { 
-                        jadwalStatus = data.status; 
-                        jadwalMsg = data.message; 
-                        lastUpdate = data.message; 
-                    });
-                fetch('/api/status')
-                    .then(res => res.json())
-                    .then(data => { sicycaStatus = data.status; sicycaMsg = data.message; });
-                setInterval(() => {
-                    fetch('/api/jadwal-status')
-                        .then(res => res.json())
-                        .then(data => { 
-                            jadwalStatus = data.status; 
-                            jadwalMsg = data.message; 
-                            lastUpdate = data.message; 
-                        });
-                }, 5000);
-             ">
-             
-            <a href="/pencarian-komunitas" class="text-blue-400 hover:text-blue-300 font-semibold underline">
-                &raquo; Pencarian Komunitas
-            </a>
 
-            <a href="/refresh-jadwal" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
-                &#x21bb; Refresh Jadwal
-            </a>
-
-            <a href="/log-program" class="text-gray-400 hover:text-gray-300 underline text-sm">
-                Lihat Log
-            </a>
-
-            <!-- STATUS JADWAL -->
-            <template x-if="jadwalStatus === 'loading'">
-                <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
-                    <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    Scraping...
-                </span>
-            </template>
-
-            <template x-if="jadwalStatus === 'ready'">
-                <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full" :title="jadwalMsg">
-                    <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
-                    Jadwal Ready
-                </span>
-            </template>
-
-            <template x-if="jadwalStatus === 'error'">
-                <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" :title="jadwalMsg">
-                    <span class="h-2 w-2 mr-2 rounded-full bg-red-500 animate-pulse"></span>
-                    Scraping Error
-                </span>
-            </template>
-
-            <!-- STATUS SICYCA -->
-            <template x-if="sicycaStatus === 'loading'">
-                <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
-                    <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    Mengecek koneksi...
-                </span>
-            </template>
-
-            <template x-if="sicycaStatus === 'ready'">
-                <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full" :title="sicycaMsg">
-                    <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
-                    Sicyca Ready
-                </span>
-            </template>
-
-            <template x-if="sicycaStatus === 'error'">
-                <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" :title="sicycaMsg">
-                    <span class="h-2 w-2 mr-2 rounded-full bg-red-500 animate-pulse"></span>
-                    Connection Error
-                </span>
-            </template>
-        </div>
-
-        <!-- AREA TABEL -->
-        <div class="bg-gray-800 rounded-lg shadow-md p-6 mt-6 overflow-x-auto" x-data="{ lastUpdate: '' }">
-
-            <!-- TEMPAT_TABEL -->
-        </div>
-    </div>
-</body>
-</html>
-"""
 
 @app.route('/refresh-jadwal')
 def refresh_jadwal_route():
@@ -430,326 +334,9 @@ def kalendar_ics():
 
 
 
-# (Template dan route pencarian komunitas tidak berubah)
-COMMUNITY_SEARCH_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pencarian Komunitas Sicyca</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
-<body class="bg-gray-900 text-gray-300 font-sans">
-    <div class="container mx-auto p-4 md:p-8">
-        <div class="bg-gray-800 rounded-lg shadow-md p-6" 
-             x-data="{ isLoading: false, results: null, query: '', sicycaStatus: 'loading', statusMessage: '' }"
-             x-init="
-                fetch('/api/status')
-                .then(res => res.json())
-                .then(data => {
-                    sicycaStatus = data.status;
-                    statusMessage = data.message;
-                })
-             ">
-             
-            <div class="flex justify-between items-start mb-2">
-                <h1 class="text-2xl font-bold text-white">Pencarian Komunitas</h1>
-                
-                <template x-if="sicycaStatus === 'loading'">
-                    <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
-                        <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Mengecek koneksi...
-                    </span>
-                </template>
-
-                <template x-if="sicycaStatus === 'ready'">
-                    <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full" :title="statusMessage">
-                        <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
-                        Sicyca Ready
-                    </span>
-                </template>
-
-                <template x-if="sicycaStatus === 'error'">
-                    <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" :title="statusMessage">
-                        <span class="h-2 w-2 mr-2 rounded-full bg-red-500 animate-pulse"></span>
-                        Connection Error
-                    </span>
-                </template>
-            </div>
-            
-            <p class="text-gray-400 mb-6">Masukkan NIM, NIK, atau Nama untuk mencari data di Sicyca.</p>
-            <a href="/" class="text-blue-400 hover:text-blue-300 mb-4 inline-block">&laquo; Kembali ke Jadwal Kuliah</a>
-                <form @submit.prevent="
-                    isLoading = true;
-                    results = null;
-                    fetch('/api/search', { 
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ query: query })
-                    })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Server error: ' + response.status);
-                        return response.text();
-                    })
-                    .then(html => {
-                        results = { html: html };
-                    })
-
-                    .catch(err => {
-                        results = { html: `<p class='text-red-400 p-4'>Terjadi kesalahan: ${err.message}</p>` };
-                        console.error(err);
-                    })
-                    .finally(() => {
-                        isLoading = false;
-                    });
-                " class="mb-8">
-
-
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="text" x-model="query" name="query" placeholder="Masukkan pencarian Anda..."
-                           class="flex-grow w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    <button type="submit"
-                            class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-wait"
-                            :disabled="isLoading">
-                        <span x-show="!isLoading">Cari</span>
-                        <span x-show="isLoading">Mencari...</span>
-                    </button>
-                </div>
-            </form>
-
-            <div x-show="isLoading" class="text-center p-4">
-                <p class="text-gray-400">Loading...</p>
-            </div>
-
-            <div x-show="results !== null && !isLoading">
-                <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2" 
-                    x-text="`Hasil Pencarian untuk \\\"${query}\\\"`"></h2>
-                <div class="border border-gray-700 rounded-md" x-html="results.html"></div>
-            </div>
-        </div>
-    </div>
-     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-  // Constants
-  const CACHE_EXPIRATION_MS = 300000; // 5 minutes
-  const MIN_BASE64_LENGTH = 100;
-  const OVERLAY_ID = 'photo-overlay';
-  const LOADING_TEXT = 'Loading photo...';
-  const ERROR_FETCH_TEXT = 'Error loading photo';
-  const ERROR_UNAVAILABLE_TEXT = 'Photo unavailable';
-
-  // Build overlay once
-  let overlay = document.getElementById(OVERLAY_ID);
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = OVERLAY_ID;
-    overlay.style.cssText = `
-      position: fixed;
-      inset: 0;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 10000;
-      cursor: pointer;
-    `;
-    overlay.innerHTML = `
-      <div id="overlay-content" style="text-align: center; color: #fff;">
-        <p id="overlay-loading" style="margin-bottom: 12px;">${LOADING_TEXT}</p>
-        <img id="overlay-img" alt="Photo" style="
-          max-width: 80vw;
-          max-height: 80vh;
-          border-radius: 8px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-          object-fit: contain;
-          display: none;
-        ">
-        <p id="overlay-error" style="margin-top: 12px; display: none;"></p>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-
-    // Close on backdrop click
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) hideOverlay();
-    });
-
-    // Close on Escape key
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && overlay.style.display === 'flex') {
-        hideOverlay();
-      }
-    });
-  }
-
-  // Cache elements for reuse
-  const overlayContent = document.getElementById('overlay-content');
-  const overlayImg = document.getElementById('overlay-img');
-  const overlayLoading = document.getElementById('overlay-loading');
-  const overlayError = document.getElementById('overlay-error');
-
-  // Hide overlay and reset state
-  function hideOverlay() {
-    overlay.style.display = 'none';
-    overlayImg.removeAttribute('src');
-    overlayImg.style.display = 'none';
-    overlayLoading.style.display = 'block';
-    overlayError.style.display = 'none';
-    overlayError.textContent = '';
-  }
-
-  // Show overlay from base64 string
-  function showOverlayFromB64(b64) {
-    // Simple MIME detection (PNG vs. default JPEG)
-    const isPng = b64.startsWith('iVBORw0KGgo');
-    const mime = isPng ? 'image/png' : 'image/jpeg';
-    overlayImg.src = `data:${mime};base64,${b64}`;
-    overlayLoading.style.display = 'none';
-    overlayError.style.display = 'none';
-    overlayImg.style.display = 'block';
-    overlay.style.display = 'flex';
-    window.scrollTo(0, 0); // Scroll to top for better viewing
-  }
-
-  // Get photo from cache
-  function getCachedPhoto(key) {
-    const b64 = localStorage.getItem(key);
-    const exp = localStorage.getItem(key + '_exp');
-    if (b64 && exp && Date.now() < parseInt(exp, 10)) {
-      return b64;
-    }
-    localStorage.removeItem(key);
-    localStorage.removeItem(key + '_exp');
-    return null;
-  }
-
-  // Set photo in cache
-  function setCachedPhoto(key, b64) {
-    localStorage.setItem(key, b64);
-    localStorage.setItem(key + '_exp', (Date.now() + CACHE_EXPIRATION_MS).toString());
-  }
-
-  // Handle dynamic button clicks via event delegation
-  document.addEventListener('click', function (e) {
-    const btn = e.target.closest('.photo-btn');
-    if (!btn) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    const role = btn.dataset.role;
-    const id = btn.dataset.id;
-    const cacheKey = `photo_${role}_${id}`;
-
-    // Show loading overlay
-    overlayImg.style.display = 'none';
-    overlayError.style.display = 'none';
-    overlayLoading.style.display = 'block';
-    overlay.style.display = 'flex';
-
-    // Check cache first
-    const cached = getCachedPhoto(cacheKey);
-    if (cached) {
-      showOverlayFromB64(cached);
-      return;
-    }
-
-    // Fetch from API
-    fetch(`/api/photo/${role}/${id}`)
-      .then(res => {
-        if (!res.ok) {
-          return Promise.reject(new Error(`HTTP ${res.status}`));
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (data && data.success && data.image_b64 && data.image_b64.length > MIN_BASE64_LENGTH) {
-          setCachedPhoto(cacheKey, data.image_b64);
-          showOverlayFromB64(data.image_b64);
-        } else {
-          showError((data && data.message) || ERROR_UNAVAILABLE_TEXT);
-        }
-      })
-      .catch(err => {
-        console.error('Error fetching photo:', err);
-        showError(ERROR_FETCH_TEXT);
-      });
-  });
-
-  // Helper to show error and auto-hide
-  function showError(message) {
-    overlayLoading.style.display = 'none';
-    overlayImg.style.display = 'none';
-    overlayError.textContent = message;
-    overlayError.style.display = 'block';
-    setTimeout(hideOverlay, 2000);
-  }
-});
-
-        </script>
-</body>
-</html>
-"""
-
-LOG_PAGE_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Program</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-gray-300 font-sans">
-    <div class="container mx-auto p-4 md:p-8">
-        <h1 class="text-2xl font-bold text-white mb-4">Log Program</h1>
-        <div class="flex gap-4 mb-4">
-            <a href="/" class="text-blue-400 hover:text-blue-300">&laquo; Kembali ke Halaman Utama</a>
-            <button onclick="window.location.reload();" class="px-4 py-1 bg-gray-700 text-white rounded-md text-sm hover:bg-gray-600">Refresh Manual</button>
-        </div>
-        <pre id="log-content" class="bg-black text-white p-4 rounded-md text-xs whitespace-pre-wrap break-words w-full overflow-x-auto h-[70vh]">{{ log_content }}</pre>
-    </div>
-    <script>
-        const logContainer = document.getElementById('log-content');
-        let isScrolledToTop = true; // Awalnya, kita anggap pengguna di atas
-
-        // Cek posisi scroll setiap kali pengguna scroll
-        logContainer.addEventListener('scroll', () => {
-            isScrolledToTop = logContainer.scrollTop === 0;
-        });
-
-        async function fetchLog() {
-            try {
-                const response = await fetch('/api/log');
-                if (!response.ok) return;
-                const newLogContent = await response.text();
-
-                if (logContainer.textContent !== newLogContent) {
-                    logContainer.textContent = newLogContent;
-                    // Jika pengguna sedang di paling atas, pertahankan di atas
-                    if (isScrolledToTop) {
-                        logContainer.scrollTop = 0;
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching log:', error);
-            }
-        }
-
-        // Jalankan fungsi fetchLog setiap 2.5 detik
-        setInterval(fetchLog, 2500);
-    </script>
-</body>
-</html>
-"""
 @app.route('/pencarian-komunitas', methods=['GET'])
 def pencarian_komunitas_route():
-    return render_template_string(COMMUNITY_SEARCH_TEMPLATE)
+    return render_template('pencarian_mhsstaff.html')
 
 
 @app.route('/cari-mahasiswa')
@@ -764,130 +351,14 @@ def log_program():
             lines = f.readlines()
             lines.reverse()
             log_content = "".join(lines)
-    return render_template_string(LOG_PAGE_TEMPLATE, log_content=log_content)
+    return render_template('log_page.html', log_content=log_content)
 
 
 # Api
 
 
 
-# Mengecek sicyca 
-@app.route('/api/status')
-def api_status():
-    if get_session_status():
-        return jsonify({"status": "ready", "message": "Koneksi Sicyca aman."})
-    else:
-        return jsonify({"status": "error", "message": "Koneksi Sicyca gagal. Cookie mungkin tidak valid. Coba lakukan pencarian untuk login ulang."})
 
-# Untuk mencari mahasiswa atau staff
-@app.route('/api/search', methods=['POST'])
-def api_search():
-    data = request.get_json()
-    query = data.get('query', '').strip()
-    if not query:
-        return "<p class='text-gray-400 p-4'>Query tidak boleh kosong.</p>"
-
-    future_mahasiswa = executor.submit(search_mahasiswa, query)
-    future_staff = executor.submit(search_staff, query)
-    df_mahasiswa = future_mahasiswa.result()
-    df_staff = future_staff.result()
-
-    combined_results = []
-    if not df_mahasiswa.empty:
-        for _, row in df_mahasiswa.iterrows():
-            nim = row.get('NIM', '')
-            prodi_name = majorID.get(nim[2:7], 'Prodi Tidak Dikenal') if nim and len(nim) >= 7 else 'Prodi Tidak Dikenal'
-            combined_results.append({
-                'Tipe': 'Mahasiswa',
-                'Nama': row.get('Nama'),
-                'ID': nim,
-                'Status': row.get('Status'),
-                'Prodi': prodi_name,
-                'Detail': row.get('Dosen Wali')
-            })
-    if not df_staff.empty:
-        for _, row in df_staff.iterrows():
-            combined_results.append({
-                'Tipe': 'Staff/Dosen',
-                'Nama': row.get('Nama'),
-                'ID': row.get('NIK'),
-                'Bagian': row.get('Bagian'),
-                'Detail': row.get('Email')
-            })
-
-    html_output = ""
-    if combined_results:
-        for item in combined_results:
-            detail_html = ""
-            if item['Tipe'] == 'Mahasiswa':
-                detail_html = f"""
-                <dt class="font-medium text-gray-400">NIM</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
-                <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item['Status']}</dd>
-                <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item['Prodi']}</dd>
-                <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
-                <!-- Tombol di bawah Dosen Wali -->
-                <dd class="col-span-3 mt-2">
-                    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="mahasiswa" data-id="{item['ID']}">Lihat Foto</button>
-                </dd>
-                """
-            else:
-                detail_html = f"""
-                <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
-                <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item['Bagian']}</dd>
-                <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
-                <!-- Tombol di bawah Email -->
-                <dd class="col-span-3 mt-2">
-                    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="staff" data-id="{item['ID']}">Lihat Foto</button>
-                </dd>
-                """
-
-            html_output += f"""
-            <div x-data="{{ isOpen: false }}" class="border-b border-gray-700 last:border-b-0">
-                <button @click="isOpen = !isOpen" class="w-full text-left p-4 hover:bg-gray-700 focus:outline-none">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold text-white">{item['Nama']}</span>
-                            <span class="text-xs text-gray-300 ml-2 px-2 py-1 bg-gray-600 rounded-full">{item['Tipe']}</span>
-                        </div>
-                        <svg class="w-5 h-5 transform transition-transform duration-300" :class="{{'rotate-180': isOpen}}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                </button>
-                <div x-show="isOpen" x-transition class="p-4 bg-gray-900 border-t border-gray-700 text-sm">
-                    <dl class="grid grid-cols-3 gap-2 text-sm">{detail_html}</dl>
-                </div>
-            </div>
-            """
-        
-        # **JS: Overlay untuk Tombol (Delegation untuk Alpine)**
-        # html_output += """
-       
-        # """
-
-    else:
-        html_output = "<p class='text-gray-400 p-4'>Tidak ada data yang ditemukan.</p>"
-
-    return html_output  # bukan jsonify
-
-
-
-
-
-# Untuk melihat log terus menerus
-@app.route('/api/log')
-def api_log():
-    if os.path.exists(log_file):
-        with open(log_file, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-            lines.reverse()
-            return Response("".join(lines), mimetype='text/plain')
-    return Response("Log file tidak ditemukan.", mimetype='text/plain', status=404)
-
-# Mengecek apakah jadwal ready atau error
-
-@app.route('/api/jadwal-status')
-def api_jadwal_status():
-    return jsonify(JADWAL_STATUS)
-    
 # if __name__ == "__main__":
 #     should_run_scraper = False
 
@@ -923,4 +394,4 @@ boot_scrape_if_needed()
 logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
 logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-# app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencarian Komunitas Sicyca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans">
+    <div class="container mx-auto p-4 md:p-8">
+        <div class="bg-gray-800 rounded-lg shadow-md p-6" 
+             x-data="{ isLoading: false, results: null, query: '', sicycaStatus: 'loading', statusMessage: '' }"
+             x-init="
+                fetch('/api/status_koneksi')
+                .then(res => res.json())
+                .then(data => {
+                    sicycaStatus = data.status;
+                    statusMessage = data.message;
+                })
+             ">
+             
+            <div class="flex justify-between items-start mb-2">
+                <h1 class="text-2xl font-bold text-white">Pencarian Komunitas</h1>
+                
+                <template x-if="sicycaStatus === 'loading'">
+                    <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                        <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Mengecek koneksi...
+                    </span>
+                </template>
+
+                <template x-if="sicycaStatus === 'ready'">
+                    <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full" :title="statusMessage">
+                        <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
+                        Sicyca Ready
+                    </span>
+                </template>
+
+                <template x-if="sicycaStatus === 'error'">
+                    <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" :title="statusMessage">
+                        <span class="h-2 w-2 mr-2 rounded-full bg-red-500 animate-pulse"></span>
+                        Connection Error
+                    </span>
+                </template>
+            </div>
+            
+            <p class="text-gray-400 mb-6">Masukkan NIM, NIK, atau Nama untuk mencari data di Sicyca.</p>
+            <a href="/" class="text-blue-400 hover:text-blue-300 mb-4 inline-block">&laquo; Kembali ke Jadwal Kuliah</a>
+                <form @submit.prevent="
+                    isLoading = true;
+                    results = null;
+                    fetch('/api/search', { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query })
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Server error: ' + response.status);
+                        return response.text();
+                    })
+                    .then(html => {
+                        results = { html: html };
+                    })
+
+                    .catch(err => {
+                        results = { html: `<p class='text-red-400 p-4'>Terjadi kesalahan: ${err.message}</p>` };
+                        console.error(err);
+                    })
+                    .finally(() => {
+                        isLoading = false;
+                    });
+                " class="mb-8">
+
+
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" x-model="query" name="query" placeholder="Masukkan pencarian Anda..."
+                           class="flex-grow w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <button type="submit"
+                            class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-wait"
+                            :disabled="isLoading">
+                        <span x-show="!isLoading">Cari</span>
+                        <span x-show="isLoading">Mencari...</span>
+                    </button>
+                </div>
+            </form>
+
+            <div x-show="isLoading" class="text-center p-4">
+                <p class="text-gray-400">Loading...</p>
+            </div>
+
+            <div x-show="results !== null && !isLoading">
+                <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2" 
+                    x-text="`Hasil Pencarian untuk \\\"${query}\\\"`"></h2>
+                <div class="border border-gray-700 rounded-md" x-html="results.html"></div>
+            </div>
+        </div>
+    </div>
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+  // Constants
+  const CACHE_EXPIRATION_MS = 300000; // 5 minutes
+  const MIN_BASE64_LENGTH = 100;
+  const OVERLAY_ID = 'photo-overlay';
+  const LOADING_TEXT = 'Loading photo...';
+  const ERROR_FETCH_TEXT = 'Error loading photo';
+  const ERROR_UNAVAILABLE_TEXT = 'Photo unavailable';
+
+  // Build overlay once
+  let overlay = document.getElementById(OVERLAY_ID);
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    overlay.style.cssText = `
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      cursor: pointer;
+    `;
+    overlay.innerHTML = `
+      <div id="overlay-content" style="text-align: center; color: #fff;">
+        <p id="overlay-loading" style="margin-bottom: 12px;">${LOADING_TEXT}</p>
+        <img id="overlay-img" alt="Photo" style="
+          max-width: 80vw;
+          max-height: 80vh;
+          border-radius: 8px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+          object-fit: contain;
+          display: none;
+        ">
+        <p id="overlay-error" style="margin-top: 12px; display: none;"></p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Close on backdrop click
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) hideOverlay();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.style.display === 'flex') {
+        hideOverlay();
+      }
+    });
+  }
+
+  // Cache elements for reuse
+  const overlayContent = document.getElementById('overlay-content');
+  const overlayImg = document.getElementById('overlay-img');
+  const overlayLoading = document.getElementById('overlay-loading');
+  const overlayError = document.getElementById('overlay-error');
+
+  // Hide overlay and reset state
+  function hideOverlay() {
+    overlay.style.display = 'none';
+    overlayImg.removeAttribute('src');
+    overlayImg.style.display = 'none';
+    overlayLoading.style.display = 'block';
+    overlayError.style.display = 'none';
+    overlayError.textContent = '';
+  }
+
+  // Show overlay from base64 string
+  function showOverlayFromB64(b64) {
+    // Simple MIME detection (PNG vs. default JPEG)
+    const isPng = b64.startsWith('iVBORw0KGgo');
+    const mime = isPng ? 'image/png' : 'image/jpeg';
+    overlayImg.src = `data:${mime};base64,${b64}`;
+    overlayLoading.style.display = 'none';
+    overlayError.style.display = 'none';
+    overlayImg.style.display = 'block';
+    overlay.style.display = 'flex';
+    window.scrollTo(0, 0); // Scroll to top for better viewing
+  }
+
+  // Get photo from cache
+  function getCachedPhoto(key) {
+    const b64 = localStorage.getItem(key);
+    const exp = localStorage.getItem(key + '_exp');
+    if (b64 && exp && Date.now() < parseInt(exp, 10)) {
+      return b64;
+    }
+    localStorage.removeItem(key);
+    localStorage.removeItem(key + '_exp');
+    return null;
+  }
+
+  // Set photo in cache
+  function setCachedPhoto(key, b64) {
+    localStorage.setItem(key, b64);
+    localStorage.setItem(key + '_exp', (Date.now() + CACHE_EXPIRATION_MS).toString());
+  }
+
+  // Handle dynamic button clicks via event delegation
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.photo-btn');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const role = btn.dataset.role;
+    const id = btn.dataset.id;
+    const cacheKey = `photo_${role}_${id}`;
+
+    // Show loading overlay
+    overlayImg.style.display = 'none';
+    overlayError.style.display = 'none';
+    overlayLoading.style.display = 'block';
+    overlay.style.display = 'flex';
+
+    // Check cache first
+    const cached = getCachedPhoto(cacheKey);
+    if (cached) {
+      showOverlayFromB64(cached);
+      return;
+    }
+
+    // Fetch from API
+    fetch(`/api/photo/${role}/${id}`)
+      .then(res => {
+        if (!res.ok) {
+          return Promise.reject(new Error(`HTTP ${res.status}`));
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (data && data.success && data.image_b64 && data.image_b64.length > MIN_BASE64_LENGTH) {
+          setCachedPhoto(cacheKey, data.image_b64);
+          showOverlayFromB64(data.image_b64);
+        } else {
+          showError((data && data.message) || ERROR_UNAVAILABLE_TEXT);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching photo:', err);
+        showError(ERROR_FETCH_TEXT);
+      });
+  });
+
+  // Helper to show error and auto-hide
+  function showError(message) {
+    overlayLoading.style.display = 'none';
+    overlayImg.style.display = 'none';
+    overlayError.textContent = message;
+    overlayError.style.display = 'block';
+    setTimeout(hideOverlay, 2000);
+  }
+});
+
+        </script>
+</body>
+</html>
