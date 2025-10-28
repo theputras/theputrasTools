@@ -94,10 +94,16 @@ JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
 JADWAL_STATUS = {"status": "ready", "message": "Siap."}
 app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
+# if not app.secret_key:
+    
+#     logging.error("FATAL ERROR: SECRET_KEY tidak diatur di environment!")
+#     raise ValueError("SECRET_KEY tidak diatur. Set di file .env atau environment variable.")
+# logging.info("Secret Key untuk session berhasil diatur.")
+
 if not app.secret_key:
-    logging.error("FATAL ERROR: SECRET_KEY tidak diatur di environment!")
-    raise ValueError("SECRET_KEY tidak diatur. Set di file .env atau environment variable.")
-logging.info("Secret Key untuk session berhasil diatur.")
+    app.secret_key = 'fallback_secret_for_dev'  # Jangan pakai di prod!
+    app.config['SECRET_KEY'] = app.secret_key  # Set ke config juga, biar current_app.config bisa akses
+  
 
 # IS_PRODUCTION = os.getenv("FLASK_ENV") == "production"
 
@@ -247,22 +253,27 @@ def create_ics_from_json(json_path, ics_path):
         logging.error(f"Error create_ics_from_json: {e}")
         raise
         
-@app.before_request
-def debug_cookies():
-    print("[DEBUG COOKIE] Cookie header:", request.headers.get('Cookie'))
-    logging.info(f"[DEBUG COOKIE] Cookie header: {request.headers.get('Cookie')}")
+# @app.before_request
+# def debug_cookies():
+#     print("[DEBUG COOKIE] Cookie header:", request.headers.get('Cookie'))
+#     logging.info(f"[DEBUG COOKIE] Cookie header: {request.headers.get('Cookie')}")
 
 @app.after_request
 def log_cookie_header(resp):
-    logging.info(f"[AFTER RESPONSE] Set-Cookie={resp.headers.get('Set-Cookie')}")
+    # logging.info(f"[AFTER RESPONSE] Set-Cookie={resp.headers.get('Set-Cookie')}")
     return resp
 
 
 
 # Main route
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['GET', 'POST'])
 def login_page():
+    if request.method == 'POST':
+        # Proses login dan set session setelah berhasil login
+        session['user_id'] = 1  # Contoh, set user_id setelah login berhasil
+        # Bisa tambahkan token atau informasi lainnya sesuai kebutuhan
+        return redirect(url_for('index'))  # Redirect ke halaman home setelah login
     return render_template('login.html')
 
 @app.route('/logout')
@@ -273,7 +284,7 @@ def logout_page():
 @app.route('/')
 @login_required
 def index():
-    logging.info(f"[INDEX DEBUG] Session keys:", list(session.keys()))
+    # logging.info(f"[INDEX DEBUG] Session keys:", list(session.keys()))
     print("[INDEX DEBUG] Session keys:", list(session.keys()))
     try:
         # Baca JSON dengan struktur baru
@@ -315,6 +326,7 @@ def index():
 
 
 @app.route('/refresh-jadwal')
+@login_required
 def refresh_jadwal_route():
     # Jalankan scraper di background agar tidak memblokir
     executor.submit(run_scraper_and_save)
@@ -363,15 +375,18 @@ def kalendar_ics():
 
 
 @app.route('/pencarian-komunitas', methods=['GET'])
+@login_required
 def pencarian_komunitas_route():
     return render_template('pencarian_mhsstaff.html')
 
 
 @app.route('/cari-mahasiswa')
+@login_required
 def cari_mahasiswa_redirect():
     return redirect(url_for('pencarian_komunitas_route'))
 
 @app.route('/log-program')
+@login_required
 def log_program():
     log_content = "Membaca log..."
     if os.path.exists(log_file):
@@ -422,4 +437,4 @@ boot_scrape_if_needed()
 logging.info("\nScheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.")
 logging.info("Aplikasi web Flask siap di http://0.0.0.0:5000\n")
     
-app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+# app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)

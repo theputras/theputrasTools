@@ -13,21 +13,25 @@ def login_required(view_func):
         print("[GUARD DEBUG] Session keys:", list(session.keys()))
 
         token = None
+        auth_header = None  # Tambahkan ini: Inisialisasi awal
 
-        # Kalau gak ada, coba dari session (fallback)
+        # 1. Dari session (existing)
         if not token and 'access_token' in session:
             token = session['access_token']
         
-        # Kalau gak ada, coba header Authorization
+    # 2. Dari header Authorization (existing)
         if not token:
             auth_header = request.headers.get('Authorization')
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.split(" ")[1]
-
-        # 3️⃣ Kalau tetap gak ada token sama sekali, redirect ke login
+    
+    # 3. Tambah: Dari cookie (baru)
+        if not token:
+            token = request.cookies.get('access_token')  # Ambil dari cookie
+        # Jika masih None, redirect
         if not token:
             return redirect(url_for('login_page'))
-
+        # logging.info(f"[GUARD] Token source: session={bool('access_token' in session)}, header={bool(auth_header)}, cookie={bool(request.cookies.get('access_token'))}")
         try:
             # Decode JWT dan verifikasi waktu dengan toleransi kecil
             secret = app.config.get('SECRET_KEY') or app.secret_key
@@ -40,8 +44,8 @@ def login_required(view_func):
             )
 
         
-            logging.info(f"[AUTH_GUARD] SECRET_KEY used for decode: {app.config['SECRET_KEY']}")
-            logging.info(f"[AUTH_GUARD] Payload diterima: {payload}")
+            # logging.info(f"[AUTH_GUARD] SECRET_KEY used for decode: {app.config['SECRET_KEY']}")
+            # logging.info(f"[AUTH_GUARD] Payload diterima: {payload}")
         
             exp_time = datetime.fromtimestamp(payload['exp'], JAKARTA_TZ)
             if exp_time < datetime.now(JAKARTA_TZ):

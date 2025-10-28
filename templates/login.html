@@ -79,15 +79,16 @@ document.querySelector('form').addEventListener('submit', async (e) => {
       credentials: 'include' // penting biar cookie dikirim!
     });
 
-    if (response.ok) {
+   if (response.ok) {
       const data = await response.json();
       console.log("✅ Login sukses:", data);
-      
-      // kasih delay kecil biar browser sempat simpan cookie
+      // Tambah: Reload untuk pastikan session/cookie sync
       setTimeout(() => {
-        window.location.href = data.redirect || '/';
+          // window.location.reload();  
+          window.location.href = data.redirect;
       }, 300);
-    } else {
+  }
+  else {
       const err = await response.json();
       alert(err.error || 'Login gagal, periksa username/password.');
     }

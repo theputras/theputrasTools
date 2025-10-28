@@ -814,3 +814,1241 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-10-25 18:09:35,997 - INFO - 127.0.0.1 - - [25/Oct/2025 18:09:35] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
 2025-10-25 18:13:53,326 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
 2025-10-25 18:13:53,495 - INFO -  * Restarting with stat
+2025-10-25 18:39:39,191 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-25 18:39:39,203 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 18:39:39,204 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 18:39:39,205 - INFO - Scheduler started
+2025-10-25 18:39:39,207 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 18:39:39,207 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-25 18:39:39,238 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.148:5000
+2025-10-25 18:39:39,238 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 18:39:39,240 - INFO -  * Restarting with stat
+2025-10-25 18:39:40,608 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-25 18:39:40,620 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 18:39:40,620 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 18:39:40,621 - INFO - Scheduler started
+2025-10-25 18:39:40,622 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 18:39:40,622 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-25 18:39:40,632 - WARNING -  * Debugger is active!
+2025-10-25 18:39:40,640 - INFO -  * Debugger PIN: 288-901-657
+2025-10-25 18:39:42,985 - INFO - [DEBUG COOKIE] Cookie header: session=eyJ1c2VyX2lkIjoxfQ.aPyvDw.6seoxeNPBBPZFBKQKf5Im3a3T24
+2025-10-25 18:39:42,998 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:39:42,998 - INFO - 127.0.0.1 - - [25/Oct/2025 18:39:42] "GET /login HTTP/1.1" 200 -
+2025-10-25 18:39:45,035 - INFO - [DEBUG COOKIE] Cookie header: session=eyJ1c2VyX2lkIjoxfQ.aPyvDw.6seoxeNPBBPZFBKQKf5Im3a3T24
+2025-10-25 18:39:45,036 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:39:45,036 - INFO - 127.0.0.1 - - [25/Oct/2025 18:39:45] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-25 18:39:50,897 - INFO - [DEBUG COOKIE] Cookie header: session=eyJ1c2VyX2lkIjoxfQ.aPyvDw.6seoxeNPBBPZFBKQKf5Im3a3T24
+2025-10-25 18:39:50,898 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:39:50,900 - INFO - 127.0.0.1 - - [25/Oct/2025 18:39:50] "GET /login HTTP/1.1" 200 -
+2025-10-25 18:39:50,931 - INFO - [DEBUG COOKIE] Cookie header: session=eyJ1c2VyX2lkIjoxfQ.aPyvDw.6seoxeNPBBPZFBKQKf5Im3a3T24
+2025-10-25 18:39:50,932 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:39:50,933 - INFO - 127.0.0.1 - - [25/Oct/2025 18:39:50] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-25 18:39:59,360 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 18:39:59,360 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:39:59,361 - INFO - 127.0.0.1 - - [25/Oct/2025 18:39:59] "GET /login HTTP/1.1" 200 -
+2025-10-25 18:39:59,402 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 18:39:59,403 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:39:59,422 - INFO - 127.0.0.1 - - [25/Oct/2025 18:39:59] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-25 18:40:08,299 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-25 18:40:08,652 - INFO - === Koneksi ke database berhasil ===
+2025-10-25 18:40:08,933 - INFO - [AUTH_API] Using SECRET_KEY hash=669586879399943921
+2025-10-25 18:40:08,934 - INFO - [AUTH_API] Generated access token for user 1
+2025-10-25 18:40:08,949 - INFO - [LOGIN DEBUG] Session keys=['user_id']
+2025-10-25 18:40:08,949 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; Expires=Sat, 25 Oct 2025 12:10:08 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-25 18:40:08,950 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:08] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-25 18:40:09,264 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:09,265 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:09,265 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:09] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-25 18:40:09,286 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:09,286 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:09,286 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:09] "GET /login HTTP/1.1" 200 -
+2025-10-25 18:40:09,335 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:09,336 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:09,336 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:09] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-25 18:40:13,690 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:13,690 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:13,690 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:13] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-25 18:40:13,704 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:13,705 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:13,705 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:13] "GET /login HTTP/1.1" 200 -
+2025-10-25 18:40:13,741 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:13,742 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:13,743 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:13] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-25 18:40:18,809 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-25 18:40:19,018 - INFO -  * Restarting with stat
+2025-10-25 18:40:20,957 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-25 18:40:20,966 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-25 18:40:20,966 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-25 18:40:20,966 - INFO - Scheduler started
+2025-10-25 18:40:20,968 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-25 18:40:20,968 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-25 18:40:20,981 - WARNING -  * Debugger is active!
+2025-10-25 18:40:20,988 - INFO -  * Debugger PIN: 288-901-657
+2025-10-25 18:40:20,998 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:21,001 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:21,002 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:21] "GET /login HTTP/1.1" 200 -
+2025-10-25 18:40:21,086 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTM5MjQwOCwiZXhwIjoxNzYxMzk0MjA4fQ.CRanum0CAEjG4LxjudFpviA6HalLWifHM6A30v6If0U; session=eyJ1c2VyX2lkIjoxfQ.aPy3GA.ixWPQX6FFd3lzuElOMwM-_S5pJs
+2025-10-25 18:40:21,087 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-25 18:40:21,087 - INFO - 127.0.0.1 - - [25/Oct/2025 18:40:21] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-28 09:38:14,251 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:38:14,259 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:38:14,259 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:38:14,259 - INFO - Scheduler started
+2025-10-28 09:38:14,261 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:38:14,261 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:38:15,563 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 09:38:15,563 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 09:38:15,565 - INFO -  * Restarting with stat
+2025-10-28 09:38:16,412 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:38:16,417 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:38:16,417 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:38:16,417 - INFO - Scheduler started
+2025-10-28 09:38:16,418 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:38:16,419 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:38:16,427 - WARNING -  * Debugger is active!
+2025-10-28 09:38:16,449 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:38:16,456 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:16,526 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:16,527 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:16] "GET / HTTP/1.1" 200 -
+2025-10-28 09:38:16,783 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:16,784 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:16,785 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:38:16,786 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:16,787 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:38:16,788 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-28 09:38:16,789 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-28 09:38:16,789 - INFO - Memulai proses login baru untuk sesi global...
+2025-10-28 09:38:16,790 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-10-28 09:38:17,143 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:17,143 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:17,144 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:17] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-10-28 09:38:17,183 - INFO - 2. [Login] Mengirim kredensial...
+2025-10-28 09:38:20,064 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-10-28 09:38:20,077 - INFO -    --> Login dan proses SSO berhasil.
+2025-10-28 09:38:20,081 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-10-28 09:38:20,085 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-10-28 09:38:20,096 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:38:20,113 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:38:21,722 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:38:21,723 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:21,724 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:21] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:38:22,581 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:22,582 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:22,583 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:38:27,280 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:27,281 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:27,281 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:38:32,595 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:32,595 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:32,596 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:38:33,524 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:38:33,620 - INFO -  * Restarting with stat
+2025-10-28 09:38:34,491 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:38:34,497 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:38:34,497 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:38:34,497 - INFO - Scheduler started
+2025-10-28 09:38:34,498 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:38:34,498 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:38:34,506 - WARNING -  * Debugger is active!
+2025-10-28 09:38:34,510 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:38:34,516 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:34,518 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:34,518 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:34] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-28 09:38:34,529 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:38:34,531 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:38:34,531 - INFO - 127.0.0.1 - - [28/Oct/2025 09:38:34] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:38:54,094 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:39:03,512 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:39:15,319 - ERROR - === Gagal konek database: 2003 (HY000): Can't connect to MySQL server on '172.16.3.3:3306' (10060) ===
+2025-10-28 09:39:15,320 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:39:15,321 - INFO - 127.0.0.1 - - [28/Oct/2025 09:39:15] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-10-28 09:39:24,517 - ERROR - === Gagal konek database: 2003 (HY000): Can't connect to MySQL server on '172.16.3.3:3306' (10060) ===
+2025-10-28 09:39:24,517 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:39:24,518 - INFO - 127.0.0.1 - - [28/Oct/2025 09:39:24] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-10-28 09:39:29,734 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:39:45,320 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:39:50,742 - ERROR - === Gagal konek database: 2003 (HY000): Can't connect to MySQL server on '172.16.3.3:3306' (10060) ===
+2025-10-28 09:39:50,742 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:39:50,743 - INFO - 127.0.0.1 - - [28/Oct/2025 09:39:50] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-10-28 09:40:00,392 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:40:00,399 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:40:00,399 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:40:00,399 - INFO - Scheduler started
+2025-10-28 09:40:00,400 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:40:00,400 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:40:01,674 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 09:40:01,674 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 09:40:01,676 - INFO -  * Restarting with stat
+2025-10-28 09:40:02,462 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:40:02,468 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:40:02,468 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:40:02,468 - INFO - Scheduler started
+2025-10-28 09:40:02,469 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:40:02,469 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:40:02,478 - WARNING -  * Debugger is active!
+2025-10-28 09:40:02,482 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:40:03,586 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:40:04,406 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 09:40:05,001 - INFO - [AUTH_API] Using SECRET_KEY hash=-6464561627299863534
+2025-10-28 09:40:05,001 - INFO - [AUTH_API] Generated access token for user 1
+2025-10-28 09:40:05,174 - INFO - [LOGIN DEBUG] Session keys=['user_id']
+2025-10-28 09:40:05,175 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIwNSwiZXhwIjoxNzYxNjIxMDA1fQ.kgzOYEUILQwadYFQoEEJXh0t__PcurnDmzzSgDyFups; Expires=Tue, 28 Oct 2025 03:10:05 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 09:40:05,177 - INFO - 127.0.0.1 - - [28/Oct/2025 09:40:05] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 09:40:11,457 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:40:12,107 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 09:40:12,717 - INFO - [AUTH_API] Using SECRET_KEY hash=-6464561627299863534
+2025-10-28 09:40:12,721 - INFO - [AUTH_API] Generated access token for user 1
+2025-10-28 09:40:12,944 - INFO - [LOGIN DEBUG] Session keys=['user_id']
+2025-10-28 09:40:12,944 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; Expires=Tue, 28 Oct 2025 03:10:12 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 09:40:12,945 - INFO - 127.0.0.1 - - [28/Oct/2025 09:40:12] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 09:40:13,309 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:40:13,310 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:40:13,311 - INFO - 127.0.0.1 - - [28/Oct/2025 09:40:13] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-28 09:40:13,608 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:40:13,621 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:40:13,626 - INFO - 127.0.0.1 - - [28/Oct/2025 09:40:13] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:44:25,605 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:44:25,611 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:44:25,611 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:44:25,611 - INFO - Scheduler started
+2025-10-28 09:44:25,612 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:44:25,613 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:44:26,877 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 09:44:26,878 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 09:44:26,881 - INFO -  * Restarting with stat
+2025-10-28 09:44:27,708 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:44:27,714 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:44:27,714 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:44:27,715 - INFO - Scheduler started
+2025-10-28 09:44:27,716 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:44:27,716 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:44:27,725 - WARNING -  * Debugger is active!
+2025-10-28 09:44:27,734 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:44:30,407 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:44:30,408 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:44:30,409 - INFO - 127.0.0.1 - - [28/Oct/2025 09:44:30] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-28 09:44:30,421 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:44:30,423 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:44:30,424 - INFO - 127.0.0.1 - - [28/Oct/2025 09:44:30] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:44:31,407 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:44:31,407 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:44:31,408 - INFO - 127.0.0.1 - - [28/Oct/2025 09:44:31] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:46:41,450 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:46:41,829 - INFO -  * Restarting with stat
+2025-10-28 09:46:42,764 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:46:42,770 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:46:42,773 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:46:42,774 - INFO - Scheduler started
+2025-10-28 09:46:42,776 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:46:42,777 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:46:42,784 - WARNING -  * Debugger is active!
+2025-10-28 09:46:42,790 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:46:44,804 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:46:44,897 - INFO -  * Restarting with stat
+2025-10-28 09:46:45,836 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:46:45,842 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:46:45,843 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:46:45,843 - INFO - Scheduler started
+2025-10-28 09:46:45,844 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:46:45,845 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:46:45,853 - WARNING -  * Debugger is active!
+2025-10-28 09:46:45,857 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:46:52,884 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:46:52,971 - INFO -  * Restarting with stat
+2025-10-28 09:46:53,776 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:46:53,783 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:46:53,783 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:46:53,784 - INFO - Scheduler started
+2025-10-28 09:46:53,784 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:46:53,785 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:46:53,792 - WARNING -  * Debugger is active!
+2025-10-28 09:46:53,796 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:47:17,934 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:47:18,050 - INFO -  * Restarting with stat
+2025-10-28 09:47:56,073 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:47:56,078 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:47:56,079 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:47:56,079 - INFO - Scheduler started
+2025-10-28 09:47:56,089 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:47:56,089 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:47:57,367 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 09:47:57,367 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 09:47:57,369 - INFO -  * Restarting with stat
+2025-10-28 09:47:58,157 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:47:58,161 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:47:58,162 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:47:58,163 - INFO - Scheduler started
+2025-10-28 09:47:58,164 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:47:58,164 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:47:58,173 - WARNING -  * Debugger is active!
+2025-10-28 09:47:58,178 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:48:00,804 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:48:00,809 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:48:00,810 - INFO - 127.0.0.1 - - [28/Oct/2025 09:48:00] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:48:02,129 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:48:02,129 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:48:02,130 - INFO - 127.0.0.1 - - [28/Oct/2025 09:48:02] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:48:03,090 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:48:03,091 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:48:03,091 - INFO - 127.0.0.1 - - [28/Oct/2025 09:48:03] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:48:57,517 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:48:57,742 - INFO -  * Restarting with stat
+2025-10-28 09:48:58,669 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:48:58,675 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:48:58,675 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:48:58,676 - INFO - Scheduler started
+2025-10-28 09:48:58,677 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:48:58,678 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:48:58,685 - WARNING -  * Debugger is active!
+2025-10-28 09:48:58,690 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:49:01,707 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:49:01,818 - INFO -  * Restarting with stat
+2025-10-28 09:49:02,659 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:49:35,810 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:50:03,346 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:50:03,351 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:50:03,352 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:50:03,353 - INFO - Scheduler started
+2025-10-28 09:50:03,353 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:50:03,354 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:50:04,607 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 09:50:04,607 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 09:50:04,609 - INFO -  * Restarting with stat
+2025-10-28 09:50:05,411 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:50:05,416 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:50:05,417 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:50:05,417 - INFO - Scheduler started
+2025-10-28 09:50:05,418 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:50:05,418 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:50:05,426 - WARNING -  * Debugger is active!
+2025-10-28 09:50:05,430 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:50:07,755 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTIxMiwiZXhwIjoxNzYxNjIxMDEyfQ.MpdlAs0FhJzR_pWQuOV2WUhSoUDZx0ue6nQvQlytYLY; session=eyJ1c2VyX2lkIjoxfQ.aQAtDA.d4bIXhOf5bx_tdsJjHChDMsE27Q
+2025-10-28 09:50:07,759 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:07,760 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:07] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:50:19,408 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:50:19,409 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:19,410 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:19] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:50:39,472 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 09:50:40,674 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 09:50:41,275 - INFO - [AUTH_API] Using SECRET_KEY hash=2211335612578654368
+2025-10-28 09:50:41,279 - INFO - [AUTH_API] Generated access token for user 1
+2025-10-28 09:50:41,510 - INFO - [LOGIN DEBUG] Session keys=['user_id']
+2025-10-28 09:50:41,511 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; Expires=Tue, 28 Oct 2025 03:20:41 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 09:50:41,513 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:41] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 09:50:42,151 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:42,225 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:42,228 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:42] "GET / HTTP/1.1" 200 -
+2025-10-28 09:50:42,416 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:42,416 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:42,417 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:42,417 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:50:42,417 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:50:42,419 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:50:42,422 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:50:44,856 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:50:44,856 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:44,857 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:44] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:50:47,719 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:47,720 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:47,720 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:50:49,069 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:49,101 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:49,101 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:49] "GET / HTTP/1.1" 200 -
+2025-10-28 09:50:49,369 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:49,370 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:49,370 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:50:49,565 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:49,565 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:50:49,566 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:50:49,566 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:50:52,148 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:50:52,149 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:52,150 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:52] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:50:54,562 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:54,563 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:54,564 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:54] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:50:54,816 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:54,818 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:54,819 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:50:57,061 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:50:57,062 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:50:57,062 - INFO - 127.0.0.1 - - [28/Oct/2025 09:50:57] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:51:04,436 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:04,454 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:04,454 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:04] "GET / HTTP/1.1" 200 -
+2025-10-28 09:51:05,067 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:05,068 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:05,069 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:05,069 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:05,070 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:51:05,071 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:51:05,072 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:51:05,765 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:05,771 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:05,772 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:05] "GET / HTTP/1.1" 200 -
+2025-10-28 09:51:06,235 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:06,236 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:06,237 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:06,238 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:06,239 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:51:06,240 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:51:06,240 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:51:06,485 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:06,491 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:06,491 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:06] "GET / HTTP/1.1" 200 -
+2025-10-28 09:51:06,718 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:06,718 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:06,718 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:06,890 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:06,891 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:51:06,891 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:51:06,891 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:51:06,894 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:51:06,894 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:06,895 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:06] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:51:07,897 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:51:07,898 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:07,898 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:07] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:51:08,401 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:51:08,401 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:08,401 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:08] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:51:12,278 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:12,279 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:12,279 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:17,596 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:17,597 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:17,597 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:22,303 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:22,304 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:22,305 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:27,582 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:27,582 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:27,583 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:32,284 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:32,285 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:32,285 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:37,601 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:37,602 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:37,603 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:42,291 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:42,291 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:42,292 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:47,003 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:51:47,008 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:51:47,008 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:51:47,008 - INFO - Scheduler started
+2025-10-28 09:51:47,009 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:51:47,009 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:51:48,276 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 09:51:48,277 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 09:51:48,280 - INFO -  * Restarting with stat
+2025-10-28 09:51:49,117 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:51:49,122 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:51:49,123 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:51:49,123 - INFO - Scheduler started
+2025-10-28 09:51:49,124 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:51:49,124 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:51:49,132 - WARNING -  * Debugger is active!
+2025-10-28 09:51:49,138 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:51:49,144 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:49,144 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:49,145 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:49,562 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:49,576 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:49,576 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:49] "GET / HTTP/1.1" 200 -
+2025-10-28 09:51:49,862 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:49,862 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:49,864 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:51:49,981 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:49,982 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:51:49,984 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:51:49,985 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:51:51,803 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:51:51,804 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:51,805 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:51] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:51:55,593 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:51:55,594 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:51:55,595 - INFO - 127.0.0.1 - - [28/Oct/2025 09:51:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:00,297 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:00,298 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:00,298 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:05,595 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:05,596 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:05,597 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:10,298 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:10,299 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:10,300 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:15,584 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:15,584 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:15,585 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:20,290 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:20,291 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:20,292 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:25,593 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:25,594 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:25,597 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:30,301 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:30,302 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:30,302 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:35,597 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:35,598 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:35,600 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:40,296 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:40,297 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:40,297 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:45,584 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:45,585 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:45,585 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:46,425 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:46,435 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:46,436 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:46] "GET / HTTP/1.1" 200 -
+2025-10-28 09:52:46,484 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:52:46,701 - INFO -  * Restarting with stat
+2025-10-28 09:52:47,602 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:52:47,607 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:52:47,608 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:52:47,608 - INFO - Scheduler started
+2025-10-28 09:52:47,610 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:52:47,611 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:52:47,618 - WARNING -  * Debugger is active!
+2025-10-28 09:52:47,622 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:52:47,630 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:47,630 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:47,631 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:47,631 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 09:52:47,631 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 09:52:47,632 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 09:52:47,632 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 09:52:49,694 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 09:52:49,694 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:49,695 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:49] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 09:52:50,444 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:50,446 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:50,446 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:50] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:52:51,902 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:51,902 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:51,903 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:51] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:52:52,461 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:52,461 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:52,462 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:52] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:52:52,764 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:52:52,767 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 09:52:52,768 - INFO - 127.0.0.1 - - [28/Oct/2025 09:52:52] "GET /login HTTP/1.1" 200 -
+2025-10-28 09:53:21,763 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:53:21,966 - INFO -  * Restarting with stat
+2025-10-28 09:53:22,853 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:53:22,859 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:53:22,859 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:53:22,860 - INFO - Scheduler started
+2025-10-28 09:53:22,861 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:53:22,861 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:53:22,868 - WARNING -  * Debugger is active!
+2025-10-28 09:53:22,873 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:53:24,885 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:53:24,974 - INFO -  * Restarting with stat
+2025-10-28 09:53:25,891 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:54:37,078 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:54:37,083 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:54:37,084 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:54:37,084 - INFO - Scheduler started
+2025-10-28 09:54:37,085 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:54:37,085 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:54:38,341 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 09:54:38,342 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 09:54:38,343 - INFO -  * Restarting with stat
+2025-10-28 09:54:39,181 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:54:39,186 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:54:39,186 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:54:39,186 - INFO - Scheduler started
+2025-10-28 09:54:39,187 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:54:39,188 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:54:39,195 - WARNING -  * Debugger is active!
+2025-10-28 09:54:39,199 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:54:47,173 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 09:54:47,203 - INFO - 127.0.0.1 - - [28/Oct/2025 09:54:47] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-10-28 09:54:47,296 - INFO - 127.0.0.1 - - [28/Oct/2025 09:54:47] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-10-28 09:54:47,445 - INFO - 127.0.0.1 - - [28/Oct/2025 09:54:47] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-10-28 09:54:47,793 - INFO - 127.0.0.1 - - [28/Oct/2025 09:54:47] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=tvyip6FMj6WrId0skwrS HTTP/1.1" 200 -
+2025-10-28 09:54:48,044 - INFO - 127.0.0.1 - - [28/Oct/2025 09:54:48] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-10-28 09:55:01,290 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:55:01,399 - INFO -  * Restarting with stat
+2025-10-28 09:55:02,281 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:55:02,287 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:55:02,287 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:55:02,287 - INFO - Scheduler started
+2025-10-28 09:55:02,288 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:55:02,288 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:55:02,296 - WARNING -  * Debugger is active!
+2025-10-28 09:55:02,301 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:55:04,316 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:55:04,420 - INFO -  * Restarting with stat
+2025-10-28 09:55:05,260 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:55:05,265 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:55:05,265 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:55:05,265 - INFO - Scheduler started
+2025-10-28 09:55:05,266 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:55:05,267 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:55:05,275 - WARNING -  * Debugger is active!
+2025-10-28 09:55:05,279 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:55:06,298 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:55:06,423 - INFO -  * Restarting with stat
+2025-10-28 09:55:07,228 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:55:07,234 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:55:07,234 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:55:07,234 - INFO - Scheduler started
+2025-10-28 09:55:07,235 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:55:07,235 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:55:07,243 - WARNING -  * Debugger is active!
+2025-10-28 09:55:07,248 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:55:10,263 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 09:55:10,350 - INFO -  * Restarting with stat
+2025-10-28 09:55:11,159 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:55:11,165 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:55:11,166 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:55:11,166 - INFO - Scheduler started
+2025-10-28 09:55:11,167 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:55:11,167 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:55:11,174 - WARNING -  * Debugger is active!
+2025-10-28 09:55:11,179 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 09:56:36,652 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\middleware\\auth_quard.py', reloading
+2025-10-28 09:56:36,861 - INFO -  * Restarting with stat
+2025-10-28 09:56:37,730 - INFO - Secret Key untuk session berhasil diatur.
+2025-10-28 09:56:37,736 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 09:56:37,736 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 09:56:37,737 - INFO - Scheduler started
+2025-10-28 09:56:37,738 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 09:56:37,738 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 09:56:37,745 - WARNING -  * Debugger is active!
+2025-10-28 09:56:37,749 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 10:01:28,603 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 10:01:28,729 - INFO -  * Restarting with stat
+2025-10-28 10:06:13,229 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 10:06:13,229 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 10:06:13,229 - INFO - Scheduler started
+2025-10-28 10:06:13,230 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 10:06:13,230 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 10:06:14,486 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.48.236:5000
+2025-10-28 10:06:14,487 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 10:06:14,489 - INFO -  * Restarting with stat
+2025-10-28 10:06:15,355 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 10:06:15,355 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 10:06:15,355 - INFO - Scheduler started
+2025-10-28 10:06:15,357 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 10:06:15,357 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 10:06:15,364 - WARNING -  * Debugger is active!
+2025-10-28 10:06:15,368 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 10:06:15,880 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 10:06:15,881 - INFO - [GUARD] Token source: session=False, header=False, cookie=True
+2025-10-28 10:06:15,881 - INFO - [GUARD DEBUG] Invalid token
+2025-10-28 10:06:15,889 - INFO - 127.0.0.1 - - [28/Oct/2025 10:06:15] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-10-28 10:06:15,968 - INFO - 127.0.0.1 - - [28/Oct/2025 10:06:15] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-10-28 10:06:16,132 - INFO - 127.0.0.1 - - [28/Oct/2025 10:06:16] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-28 10:06:16,466 - INFO - 127.0.0.1 - - [28/Oct/2025 10:06:16] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=rceyRkUy9h31RaqYkmDw HTTP/1.1" 200 -
+2025-10-28 10:06:16,726 - INFO - 127.0.0.1 - - [28/Oct/2025 10:06:16] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-10-28 10:06:31,760 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc2MTYxOTg0MSwiZXhwIjoxNzYxNjIxNjQxfQ.cv-8ZMb-joG8qNADmV_AE_2qV4ZbWbGy8dkz-9kYHBY; session=eyJ1c2VyX2lkIjoxfQ.aQAvgQ.afzVpjUHpamWectjxgPi-8ARVfQ
+2025-10-28 10:06:31,762 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 10:06:31,762 - INFO - 127.0.0.1 - - [28/Oct/2025 10:06:31] "GET /login HTTP/1.1" 200 -
+2025-10-28 10:09:48,542 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 10:09:48,649 - INFO -  * Restarting with stat
+2025-10-28 10:09:49,502 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 10:09:49,502 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 10:09:49,502 - INFO - Scheduler started
+2025-10-28 10:09:49,503 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 10:09:49,503 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 10:09:49,511 - WARNING -  * Debugger is active!
+2025-10-28 10:09:49,516 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 10:09:51,527 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 10:09:51,615 - INFO -  * Restarting with stat
+2025-10-28 10:09:52,510 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 10:09:52,511 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 10:09:52,511 - INFO - Scheduler started
+2025-10-28 10:09:52,512 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 10:09:52,512 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 10:09:52,520 - WARNING -  * Debugger is active!
+2025-10-28 10:09:52,524 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 10:09:53,548 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 10:09:53,700 - INFO -  * Restarting with stat
+2025-10-28 10:09:54,565 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 10:09:54,566 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 10:09:54,566 - INFO - Scheduler started
+2025-10-28 10:09:54,567 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 10:09:54,567 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 10:09:54,574 - WARNING -  * Debugger is active!
+2025-10-28 10:09:54,579 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 10:09:57,592 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 10:09:57,679 - INFO -  * Restarting with stat
+2025-10-28 10:09:58,633 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 10:09:58,634 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 10:09:58,634 - INFO - Scheduler started
+2025-10-28 10:09:58,636 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 10:09:58,636 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 10:09:58,645 - WARNING -  * Debugger is active!
+2025-10-28 10:09:58,650 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 10:10:02,672 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 10:10:02,762 - INFO -  * Restarting with stat
+2025-10-28 10:10:03,601 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 10:10:03,601 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 10:10:03,601 - INFO - Scheduler started
+2025-10-28 10:10:03,602 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 10:10:03,602 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 10:10:03,609 - WARNING -  * Debugger is active!
+2025-10-28 10:10:03,613 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 11:43:47,121 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 11:43:47,268 - INFO -  * Restarting with stat
+2025-10-28 11:53:55,873 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 11:53:55,874 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 11:53:55,874 - INFO - Scheduler started
+2025-10-28 11:53:55,875 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 11:53:55,875 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 11:53:57,149 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.237.203:5000
+2025-10-28 11:53:57,149 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 11:53:57,151 - INFO -  * Restarting with stat
+2025-10-28 11:53:58,178 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 11:53:58,179 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 11:53:58,179 - INFO - Scheduler started
+2025-10-28 11:53:58,180 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 11:53:58,180 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 11:53:58,190 - WARNING -  * Debugger is active!
+2025-10-28 11:53:58,195 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 11:54:05,463 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 11:54:05,581 - INFO - 127.0.0.1 - - [28/Oct/2025 11:54:05] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-10-28 11:54:05,778 - INFO - 127.0.0.1 - - [28/Oct/2025 11:54:05] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-10-28 11:54:05,846 - INFO - 127.0.0.1 - - [28/Oct/2025 11:54:05] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-28 11:54:06,198 - INFO - 127.0.0.1 - - [28/Oct/2025 11:54:06] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=OOuV3WUvRMp2g8buYzLq HTTP/1.1" 200 -
+2025-10-28 11:54:13,655 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 11:54:13,661 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 11:54:13,661 - INFO - 127.0.0.1 - - [28/Oct/2025 11:54:13] "GET /login HTTP/1.1" 200 -
+2025-10-28 11:54:14,704 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 11:54:14,705 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 11:54:14,706 - INFO - 127.0.0.1 - - [28/Oct/2025 11:54:14] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-10-28 11:54:29,900 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 11:54:30,889 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 11:54:31,508 - INFO - 127.0.0.1 - - [28/Oct/2025 11:54:31] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2025-10-28 11:54:44,558 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 11:54:44,786 - INFO -  * Restarting with stat
+2025-10-28 11:54:45,823 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 11:54:45,824 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 11:54:45,824 - INFO - Scheduler started
+2025-10-28 11:54:45,825 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 11:54:45,825 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 11:54:45,834 - WARNING -  * Debugger is active!
+2025-10-28 11:54:45,840 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 11:54:48,860 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 11:54:48,976 - INFO -  * Restarting with stat
+2025-10-28 11:54:49,999 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 11:54:50,000 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 11:54:50,000 - INFO - Scheduler started
+2025-10-28 11:54:50,001 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 11:54:50,002 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 11:54:50,015 - WARNING -  * Debugger is active!
+2025-10-28 11:54:50,022 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 11:54:51,034 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\models\\auth_api.py', reloading
+2025-10-28 11:54:51,162 - INFO -  * Restarting with stat
+2025-10-28 11:55:53,920 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 11:55:53,920 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 11:55:53,920 - INFO - Scheduler started
+2025-10-28 11:55:53,922 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 11:55:53,922 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 11:55:55,181 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.237.203:5000
+2025-10-28 11:55:55,181 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 11:55:55,183 - INFO -  * Restarting with stat
+2025-10-28 11:55:56,326 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 11:55:56,326 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 11:55:56,327 - INFO - Scheduler started
+2025-10-28 11:55:56,328 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 11:55:56,329 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 11:55:56,337 - WARNING -  * Debugger is active!
+2025-10-28 11:55:56,344 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 11:55:56,710 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 11:55:56,721 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 11:55:57,340 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 11:55:57,340 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 11:55:57,492 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 11:55:57,951 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-28 11:55:57,951 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-28 11:55:57,952 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzU3LCJleHAiOjE3NjE2MjkxNTd9.1GWTtkZpOGY-JwTllFenriguCXyHhFQRt0xvShJzPuY; Expires=Tue, 28 Oct 2025 05:25:57 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 11:55:57,953 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzU3LCJleHAiOjE3NjE2MjkxNTd9.1GWTtkZpOGY-JwTllFenriguCXyHhFQRt0xvShJzPuY; Expires=Tue, 28 Oct 2025 05:25:57 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 11:55:57,955 - INFO - 127.0.0.1 - - [28/Oct/2025 11:55:57] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 11:55:57,955 - INFO - 127.0.0.1 - - [28/Oct/2025 11:55:57] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 11:55:58,082 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 11:55:58,586 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzU3LCJleHAiOjE3NjE2MjkxNTd9.1GWTtkZpOGY-JwTllFenriguCXyHhFQRt0xvShJzPuY; session=.eJwNykkOgjAUANC7dK1GJJrAzhCG30hxAAE3BEsjbQkaBi013l3e-n1RSSnr-2J4StYiG7EJ13ef8ohjSDQYhEMP7XlLHdiBfGVXB1urOekqhTmBAv7hZeqtQTwV0bkiAsxQJ-bBwQ0L9jwSrkmEuwmFVCSurJXhp_Egb6_Iz5f4EzeNx9qOP0Ynm4LaO52HtXpfaqyPY44WaOxZV_AK2cbvDxC2Oyo.aQBM3Q.pvK6pgvyA-ZzM1nhVYFXKdqEHQ0
+2025-10-28 11:55:58,588 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 11:55:58,589 - INFO - 127.0.0.1 - - [28/Oct/2025 11:55:58] "GET /login HTTP/1.1" 200 -
+2025-10-28 11:55:58,729 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-28 11:55:58,730 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzU4LCJleHAiOjE3NjE2MjkxNTh9.zsW041I58oPIKChn08el_VUrIZpEVH6XwZV9XtP1cuo; Expires=Tue, 28 Oct 2025 05:25:58 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 11:55:58,730 - INFO - 127.0.0.1 - - [28/Oct/2025 11:55:58] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 11:56:07,321 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzU3LCJleHAiOjE3NjE2MjkxNTd9.1GWTtkZpOGY-JwTllFenriguCXyHhFQRt0xvShJzPuY; session=.eJwNykkOgjAUANC7dK1GJJrAzhCG30hxAAE3BEsjbQkaBi013l3e-n1RSSnr-2J4StYiG7EJ13ef8ohjSDQYhEMP7XlLHdiBfGVXB1urOekqhTmBAv7hZeqtQTwV0bkiAsxQJ-bBwQ0L9jwSrkmEuwmFVCSurJXhp_Egb6_Iz5f4EzeNx9qOP0Ynm4LaO52HtXpfaqyPY44WaOxZV_AK2cbvDxC2Oyo.aQBM3Q.pvK6pgvyA-ZzM1nhVYFXKdqEHQ0
+2025-10-28 11:56:07,322 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 11:56:07,322 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:07] "GET /login HTTP/1.1" 200 -
+2025-10-28 11:56:29,764 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzU3LCJleHAiOjE3NjE2MjkxNTd9.1GWTtkZpOGY-JwTllFenriguCXyHhFQRt0xvShJzPuY; session=.eJwNykkOgjAUANC7dK1GJJrAzhCG30hxAAE3BEsjbQkaBi013l3e-n1RSSnr-2J4StYiG7EJ13ef8ohjSDQYhEMP7XlLHdiBfGVXB1urOekqhTmBAv7hZeqtQTwV0bkiAsxQJ-bBwQ0L9jwSrkmEuwmFVCSurJXhp_Egb6_Iz5f4EzeNx9qOP0Ynm4LaO52HtXpfaqyPY44WaOxZV_AK2cbvDxC2Oyo.aQBM3Q.pvK6pgvyA-ZzM1nhVYFXKdqEHQ0
+2025-10-28 11:56:30,482 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 11:56:31,109 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-28 11:56:31,109 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzkwLCJleHAiOjE3NjE2MjkxOTB9.mM7tj8M3NMR1IGm4n8zJZS87Ce74_Xtr99eVz8WXuJw; Expires=Tue, 28 Oct 2025 05:26:31 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 11:56:31,110 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:31] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 11:56:31,436 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzkwLCJleHAiOjE3NjE2MjkxOTB9.mM7tj8M3NMR1IGm4n8zJZS87Ce74_Xtr99eVz8WXuJw; session=.eJwNyt0KgjAYANB32XVEpuXPXYnZN9oEK7VuxHTQttTwB9eid89zfb6oKEvW9_nQStYgD7EPfj7Ckkccw1WDQTn00MSb0octyHeW-NhdzklXKcwJFPCJF-lhBaJVVN8UFWASLaeTj1_suOORCEwqgjURUkWXvbusiT0Ih5iUxAaEtdU4Gt_Pju0z28qzoXNdlmgnzUY8oQUae9blvEKe8fsD6OE5sg.aQBM_w.0xDSt7Z0Jl-gXFNl6J5DrxMS3Bc
+2025-10-28 11:56:31,436 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 11:56:31,437 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:31] "GET /login HTTP/1.1" 200 -
+2025-10-28 11:56:34,993 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzkwLCJleHAiOjE3NjE2MjkxOTB9.mM7tj8M3NMR1IGm4n8zJZS87Ce74_Xtr99eVz8WXuJw; session=.eJwNyt0KgjAYANB32XVEpuXPXYnZN9oEK7VuxHTQttTwB9eid89zfb6oKEvW9_nQStYgD7EPfj7Ckkccw1WDQTn00MSb0octyHeW-NhdzklXKcwJFPCJF-lhBaJVVN8UFWASLaeTj1_suOORCEwqgjURUkWXvbusiT0Ih5iUxAaEtdU4Gt_Pju0z28qzoXNdlmgnzUY8oQUae9blvEKe8fsD6OE5sg.aQBM_w.0xDSt7Z0Jl-gXFNl6J5DrxMS3Bc
+2025-10-28 11:56:34,999 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:34] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-10-28 11:56:35,444 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzkwLCJleHAiOjE3NjE2MjkxOTB9.mM7tj8M3NMR1IGm4n8zJZS87Ce74_Xtr99eVz8WXuJw; session=.eJwNyt0KgjAYANB32XVEpuXPXYnZN9oEK7VuxHTQttTwB9eid89zfb6oKEvW9_nQStYgD7EPfj7Ckkccw1WDQTn00MSb0octyHeW-NhdzklXKcwJFPCJF-lhBaJVVN8UFWASLaeTj1_suOORCEwqgjURUkWXvbusiT0Ih5iUxAaEtdU4Gt_Pju0z28qzoXNdlmgnzUY8oQUae9blvEKe8fsD6OE5sg.aQBM_w.0xDSt7Z0Jl-gXFNl6J5DrxMS3Bc
+2025-10-28 11:56:35,450 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:35] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-10-28 11:56:35,548 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:35] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-10-28 11:56:35,696 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:35] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-28 11:56:36,050 - INFO - 127.0.0.1 - - [28/Oct/2025 11:56:36] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=qtThb6MhHN6pAnlDZfno HTTP/1.1" 200 -
+2025-10-28 11:57:45,861 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\middleware\\auth_quard.py', reloading
+2025-10-28 11:57:45,964 - INFO -  * Restarting with stat
+2025-10-28 11:57:47,004 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 11:57:47,004 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 11:57:47,004 - INFO - Scheduler started
+2025-10-28 11:57:47,006 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 11:57:47,006 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 11:57:47,014 - WARNING -  * Debugger is active!
+2025-10-28 11:57:47,019 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:00:22,857 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\middleware\\auth_quard.py', reloading
+2025-10-28 12:00:22,957 - INFO -  * Restarting with stat
+2025-10-28 12:00:23,967 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:00:23,967 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:00:23,968 - INFO - Scheduler started
+2025-10-28 12:00:23,968 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:00:23,969 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:00:23,976 - WARNING -  * Debugger is active!
+2025-10-28 12:00:23,982 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:00:54,073 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzkwLCJleHAiOjE3NjE2MjkxOTB9.mM7tj8M3NMR1IGm4n8zJZS87Ce74_Xtr99eVz8WXuJw; session=.eJwNyt0KgjAYANB32XVEpuXPXYnZN9oEK7VuxHTQttTwB9eid89zfb6oKEvW9_nQStYgD7EPfj7Ckkccw1WDQTn00MSb0octyHeW-NhdzklXKcwJFPCJF-lhBaJVVN8UFWASLaeTj1_suOORCEwqgjURUkWXvbusiT0Ih5iUxAaEtdU4Gt_Pju0z28qzoXNdlmgnzUY8oQUae9blvEKe8fsD6OE5sg.aQBM_w.0xDSt7Z0Jl-gXFNl6J5DrxMS3Bc
+2025-10-28 12:00:54,073 - INFO - [GUARD] Token source: session=True, header=False, cookie=True
+2025-10-28 12:00:54,074 - INFO - [AUTH_GUARD] SECRET_KEY used for decode: fa1c6b4ef8dc9e7a9a8b1f81e924a1b33fdc2294a03b4cd6a4f4c6cfdb6a8f4e
+2025-10-28 12:00:54,074 - INFO - [AUTH_GUARD] Payload diterima: {'sub': '1', 'iat': 1761627390, 'exp': 1761629190}
+2025-10-28 12:00:54,606 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:00:54,608 - INFO - 127.0.0.1 - - [28/Oct/2025 12:00:54] "GET / HTTP/1.1" 200 -
+2025-10-28 12:00:54,884 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzkwLCJleHAiOjE3NjE2MjkxOTB9.mM7tj8M3NMR1IGm4n8zJZS87Ce74_Xtr99eVz8WXuJw; session=.eJwNyt0KgjAYANB32XVEpuXPXYnZN9oEK7VuxHTQttTwB9eid89zfb6oKEvW9_nQStYgD7EPfj7Ckkccw1WDQTn00MSb0octyHeW-NhdzklXKcwJFPCJF-lhBaJVVN8UFWASLaeTj1_suOORCEwqgjURUkWXvbusiT0Ih5iUxAaEtdU4Gt_Pju0z28qzoXNdlmgnzUY8oQUae9blvEKe8fsD6OE5sg.aQBM_w.0xDSt7Z0Jl-gXFNl6J5DrxMS3Bc
+2025-10-28 12:00:54,885 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:00:54,886 - INFO - 127.0.0.1 - - [28/Oct/2025 12:00:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:00:54,886 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3MzkwLCJleHAiOjE3NjE2MjkxOTB9.mM7tj8M3NMR1IGm4n8zJZS87Ce74_Xtr99eVz8WXuJw; session=.eJwNyt0KgjAYANB32XVEpuXPXYnZN9oEK7VuxHTQttTwB9eid89zfb6oKEvW9_nQStYgD7EPfj7Ckkccw1WDQTn00MSb0octyHeW-NhdzklXKcwJFPCJF-lhBaJVVN8UFWASLaeTj1_suOORCEwqgjURUkWXvbusiT0Ih5iUxAaEtdU4Gt_Pju0z28qzoXNdlmgnzUY8oQUae9blvEKe8fsD6OE5sg.aQBM_w.0xDSt7Z0Jl-gXFNl6J5DrxMS3Bc
+2025-10-28 12:00:54,887 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 12:00:54,894 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-28 12:00:54,895 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-10-28 12:00:54,895 - INFO - Memulai proses login baru untuk sesi global...
+2025-10-28 12:00:54,896 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-10-28 12:00:55,473 - INFO - 2. [Login] Mengirim kredensial...
+2025-10-28 12:00:57,347 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-10-28 12:00:57,358 - INFO -    --> Login dan proses SSO berhasil.
+2025-10-28 12:00:57,359 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-10-28 12:00:57,359 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-10-28 12:00:57,367 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 12:00:57,384 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 12:01:00,169 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 12:01:00,170 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:01:00,171 - INFO - 127.0.0.1 - - [28/Oct/2025 12:01:00] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 12:01:00,189 - INFO - [DEBUG COOKIE] Cookie header: session=.eJwNyt0KgjAYANB32XVEpuXPXYnZN9oEK7VuxHTQttTwB9eid89zfb6oKEvW9_nQStYgD7EPfj7Ckkccw1WDQTn00MSb0octyHeW-NhdzklXKcwJFPCJF-lhBaJVVN8UFWASLaeTj1_suOORCEwqgjURUkWXvbusiT0Ih5iUxAaEtdU4Gt_Pju0z28qzoXNdlmgnzUY8oQUae9blvEKe8fsD6OE5sg.aQBM_w.0xDSt7Z0Jl-gXFNl6J5DrxMS3Bc
+2025-10-28 12:01:00,190 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:01:00,190 - INFO - 127.0.0.1 - - [28/Oct/2025 12:01:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:01:03,564 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:01:03,690 - INFO - 127.0.0.1 - - [28/Oct/2025 12:01:03] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-10-28 12:01:03,799 - INFO - 127.0.0.1 - - [28/Oct/2025 12:01:03] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-10-28 12:01:03,881 - INFO - 127.0.0.1 - - [28/Oct/2025 12:01:03] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-10-28 12:01:04,215 - INFO - 127.0.0.1 - - [28/Oct/2025 12:01:04] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=MX0L6Sq1wQAJCQEVl8QC HTTP/1.1" 200 -
+2025-10-28 12:01:04,467 - INFO - 127.0.0.1 - - [28/Oct/2025 12:01:04] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-10-28 12:05:49,958 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:05:50,071 - INFO -  * Restarting with stat
+2025-10-28 12:06:09,204 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:06:09,204 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:06:09,205 - INFO - Scheduler started
+2025-10-28 12:06:09,206 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:06:09,206 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:06:10,516 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.237.203:5000
+2025-10-28 12:06:10,517 - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 12:06:10,520 - INFO -  * Restarting with stat
+2025-10-28 12:06:11,525 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:06:11,526 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:06:11,527 - INFO - Scheduler started
+2025-10-28 12:06:11,528 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:06:11,529 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:06:11,539 - WARNING -  * Debugger is active!
+2025-10-28 12:06:11,544 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:06:11,552 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:06:11,553 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:06:11,553 - INFO - 127.0.0.1 - - [28/Oct/2025 12:06:11] "[32mGET / HTTP/1.1[0m" 302 -
+2025-10-28 12:06:11,569 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:06:11,599 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:06:11,600 - INFO - 127.0.0.1 - - [28/Oct/2025 12:06:11] "GET /login HTTP/1.1" 200 -
+2025-10-28 12:06:27,459 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:06:28,339 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 12:06:28,967 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-28 12:06:28,967 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3OTg4LCJleHAiOjE3NjE2Mjk3ODh9.Kzf_D6mg-Dli036Ka2QJsVA4YxHavJb6Jlm9LPIgm2I; Expires=Tue, 28 Oct 2025 05:36:28 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 12:06:28,968 - INFO - 127.0.0.1 - - [28/Oct/2025 12:06:28] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 12:06:30,015 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3OTg4LCJleHAiOjE3NjE2Mjk3ODh9.Kzf_D6mg-Dli036Ka2QJsVA4YxHavJb6Jlm9LPIgm2I; session=.eJwNykkOgjAUANC7dK0EKJLAjgDKLwhqFGRFGCq0TMY6IMa761u_D8rLkgqR3ceWDshE9E2aYlOyiBE4zaCEDAQMh1Vpgw7t9RzbxJD-aa4S-CeYgL1Ynqxl4OMUzukUcsDRsdYCm3TUs1jEXRxyV93yFkdOY0j-fMkcva-XTsdkrPu5uicitrR08vInKXTS9Uawg7pXAS3QQ9BbxipkKt8fwwg5GA.aQBPVA.TgFNRltrOOrkmOhAgp62enfiyj0
+2025-10-28 12:06:30,016 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:06:30,016 - INFO - 127.0.0.1 - - [28/Oct/2025 12:06:30] "GET /login HTTP/1.1" 200 -
+2025-10-28 12:06:57,970 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI3OTg4LCJleHAiOjE3NjE2Mjk3ODh9.Kzf_D6mg-Dli036Ka2QJsVA4YxHavJb6Jlm9LPIgm2I; session=.eJwNykkOgjAUANC7dK0EKJLAjgDKLwhqFGRFGCq0TMY6IMa761u_D8rLkgqR3ceWDshE9E2aYlOyiBE4zaCEDAQMh1Vpgw7t9RzbxJD-aa4S-CeYgL1Ynqxl4OMUzukUcsDRsdYCm3TUs1jEXRxyV93yFkdOY0j-fMkcva-XTsdkrPu5uicitrR08vInKXTS9Uawg7pXAS3QQ9BbxipkKt8fwwg5GA.aQBPVA.TgFNRltrOOrkmOhAgp62enfiyj0
+2025-10-28 12:06:57,972 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:06:57,972 - INFO - 127.0.0.1 - - [28/Oct/2025 12:06:57] "GET /login HTTP/1.1" 200 -
+2025-10-28 12:07:17,356 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:07:17,357 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:07:17,357 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:17] "GET /login HTTP/1.1" 200 -
+2025-10-28 12:07:25,308 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:07:25,995 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 12:07:26,633 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-28 12:07:26,634 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MDQ2LCJleHAiOjE3NjE2Mjk4NDZ9.u_JrgUV4Mp7XnT3j4pojysLaC7VmkwU525AZzUM0u-g; Expires=Tue, 28 Oct 2025 05:37:26 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 12:07:26,636 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:26] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 12:07:27,273 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MDQ2LCJleHAiOjE3NjE2Mjk4NDZ9.u_JrgUV4Mp7XnT3j4pojysLaC7VmkwU525AZzUM0u-g; session=.eJwNyksOgjAUAMC7dK1EECSwIxX1NVCikY9sCEKjLQqESvgY7y6zni_Ki4JJmX2aitXIRmwiz_ux4AEnEM6gUg4S6otRYNhB1SYRJpaypLmMYUkwAh94Hh82IJqRzreRCtD9_VnzMHmxk8MD4W6pcDVfVDrdp5bSZ6R7hJHut2ZSX7dCbxsxSS_HZvSuhtDQDCedQ3_Trx9ohXrJuoyXyFZ_f9XyOag.aQBPjg.C8Au4memiL9nZgKZ7GCrtX0HdBQ
+2025-10-28 12:07:27,274 - INFO - [GUARD] Token source: session=True, header=False, cookie=True
+2025-10-28 12:07:27,274 - INFO - [AUTH_GUARD] SECRET_KEY used for decode: fa1c6b4ef8dc9e7a9a8b1f81e924a1b33fdc2294a03b4cd6a4f4c6cfdb6a8f4e
+2025-10-28 12:07:27,275 - INFO - [AUTH_GUARD] Payload diterima: {'sub': '1', 'iat': 1761628046, 'exp': 1761629846}
+2025-10-28 12:07:27,329 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:07:27,330 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:27] "GET / HTTP/1.1" 200 -
+2025-10-28 12:07:27,584 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MDQ2LCJleHAiOjE3NjE2Mjk4NDZ9.u_JrgUV4Mp7XnT3j4pojysLaC7VmkwU525AZzUM0u-g; session=.eJwNyksOgjAUAMC7dK1EECSwIxX1NVCikY9sCEKjLQqESvgY7y6zni_Ki4JJmX2aitXIRmwiz_ux4AEnEM6gUg4S6otRYNhB1SYRJpaypLmMYUkwAh94Hh82IJqRzreRCtD9_VnzMHmxk8MD4W6pcDVfVDrdp5bSZ6R7hJHut2ZSX7dCbxsxSS_HZvSuhtDQDCedQ3_Trx9ohXrJuoyXyFZ_f9XyOag.aQBPjg.C8Au4memiL9nZgKZ7GCrtX0HdBQ
+2025-10-28 12:07:27,585 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:07:27,585 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:07:27,587 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MDQ2LCJleHAiOjE3NjE2Mjk4NDZ9.u_JrgUV4Mp7XnT3j4pojysLaC7VmkwU525AZzUM0u-g; session=.eJwNyksOgjAUAMC7dK1EECSwIxX1NVCikY9sCEKjLQqESvgY7y6zni_Ki4JJmX2aitXIRmwiz_ux4AEnEM6gUg4S6otRYNhB1SYRJpaypLmMYUkwAh94Hh82IJqRzreRCtD9_VnzMHmxk8MD4W6pcDVfVDrdp5bSZ6R7hJHut2ZSX7dCbxsxSS_HZvSuhtDQDCedQ3_Trx9ohXrJuoyXyFZ_f9XyOag.aQBPjg.C8Au4memiL9nZgKZ7GCrtX0HdBQ
+2025-10-28 12:07:27,587 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 12:07:27,588 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 12:07:27,589 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 12:07:29,805 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 12:07:29,806 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:07:29,807 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:29] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 12:07:32,885 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MDQ2LCJleHAiOjE3NjE2Mjk4NDZ9.u_JrgUV4Mp7XnT3j4pojysLaC7VmkwU525AZzUM0u-g; session=.eJwNyksOgjAUAMC7dK1EECSwIxX1NVCikY9sCEKjLQqESvgY7y6zni_Ki4JJmX2aitXIRmwiz_ux4AEnEM6gUg4S6otRYNhB1SYRJpaypLmMYUkwAh94Hh82IJqRzreRCtD9_VnzMHmxk8MD4W6pcDVfVDrdp5bSZ6R7hJHut2ZSX7dCbxsxSS_HZvSuhtDQDCedQ3_Trx9ohXrJuoyXyFZ_f9XyOag.aQBPjg.C8Au4memiL9nZgKZ7GCrtX0HdBQ
+2025-10-28 12:07:32,886 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:07:32,886 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:07:37,588 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MDQ2LCJleHAiOjE3NjE2Mjk4NDZ9.u_JrgUV4Mp7XnT3j4pojysLaC7VmkwU525AZzUM0u-g; session=.eJwNyksOgjAUAMC7dK1EECSwIxX1NVCikY9sCEKjLQqESvgY7y6zni_Ki4JJmX2aitXIRmwiz_ux4AEnEM6gUg4S6otRYNhB1SYRJpaypLmMYUkwAh94Hh82IJqRzreRCtD9_VnzMHmxk8MD4W6pcDVfVDrdp5bSZ6R7hJHut2ZSX7dCbxsxSS_HZvSuhtDQDCedQ3_Trx9ohXrJuoyXyFZ_f9XyOag.aQBPjg.C8Au4memiL9nZgKZ7GCrtX0HdBQ
+2025-10-28 12:07:37,589 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:07:37,589 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:07:37,992 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MDQ2LCJleHAiOjE3NjE2Mjk4NDZ9.u_JrgUV4Mp7XnT3j4pojysLaC7VmkwU525AZzUM0u-g; session=.eJwNyksOgjAUAMC7dK1EECSwIxX1NVCikY9sCEKjLQqESvgY7y6zni_Ki4JJmX2aitXIRmwiz_ux4AEnEM6gUg4S6otRYNhB1SYRJpaypLmMYUkwAh94Hh82IJqRzreRCtD9_VnzMHmxk8MD4W6pcDVfVDrdp5bSZ6R7hJHut2ZSX7dCbxsxSS_HZvSuhtDQDCedQ3_Trx9ohXrJuoyXyFZ_f9XyOag.aQBPjg.C8Au4memiL9nZgKZ7GCrtX0HdBQ
+2025-10-28 12:07:37,993 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:07:37,994 - INFO - 127.0.0.1 - - [28/Oct/2025 12:07:37] "GET /login HTTP/1.1" 200 -
+2025-10-28 12:08:51,426 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:08:51,428 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:08:51,429 - INFO - 127.0.0.1 - - [28/Oct/2025 12:08:51] "GET /login HTTP/1.1" 200 -
+2025-10-28 12:09:02,140 - INFO - [DEBUG COOKIE] Cookie header: None
+2025-10-28 12:09:02,914 - INFO - === Koneksi ke database berhasil ===
+2025-10-28 12:09:03,760 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-10-28 12:09:03,760 - INFO - [AFTER RESPONSE] Set-Cookie=access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; Expires=Tue, 28 Oct 2025 05:39:03 GMT; Max-Age=1800; HttpOnly; Path=/; SameSite=Lax
+2025-10-28 12:09:03,761 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:03] "POST /api/auth/login HTTP/1.1" 200 -
+2025-10-28 12:09:04,098 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:04,099 - INFO - [GUARD] Token source: session=True, header=False, cookie=True
+2025-10-28 12:09:04,099 - INFO - [AUTH_GUARD] SECRET_KEY used for decode: fa1c6b4ef8dc9e7a9a8b1f81e924a1b33fdc2294a03b4cd6a4f4c6cfdb6a8f4e
+2025-10-28 12:09:04,100 - INFO - [AUTH_GUARD] Payload diterima: {'sub': '1', 'iat': 1761628143, 'exp': 1761629943}
+2025-10-28 12:09:04,127 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:04,128 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:04] "GET / HTTP/1.1" 200 -
+2025-10-28 12:09:04,393 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:04,393 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:04,394 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:04,691 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:04,691 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 12:09:04,694 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 12:09:04,694 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 12:09:07,943 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 12:09:07,944 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:07,945 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:07] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 12:09:10,586 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:10,587 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:10,588 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:15,283 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:15,284 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:15,284 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:20,590 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:20,591 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:20,592 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:25,283 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:25,284 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:25,285 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:30,591 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:30,592 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:30,592 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:35,280 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:35,281 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:35,281 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:40,582 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:40,583 - INFO - [AFTER RESPONSE] Set-Cookie=None
+2025-10-28 12:09:40,583 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:44,773 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:09:44,896 - INFO -  * Restarting with stat
+2025-10-28 12:09:46,009 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:09:46,010 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:09:46,010 - INFO - Scheduler started
+2025-10-28 12:09:46,011 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:09:46,012 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:09:46,020 - WARNING -  * Debugger is active!
+2025-10-28 12:09:46,026 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:09:46,034 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:46,035 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:50,278 - INFO - [DEBUG COOKIE] Cookie header: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzYxNjI4MTQzLCJleHAiOjE3NjE2Mjk5NDN9.wqiHnnn3OJ5B032Tny3_PGsYEWDqSg4Ts5DhasYeF5g; session=.eJwNyt0OgiAYANB34bo5C2nLu_KvjyX2Y5lXzogV2DCjltJ69zrX54NqzoUx1bNthEY-EgO9nhIuM0lhb2HMJBjQW8IDmEJzPx4COnP-yZ4L-CfoQb5lXcQuqLZntuyZAi_NN3YV0JtYzmWmIsxUNElVQ1jIZs67k0utNc4oWbh4kusBV-vElFERdruLlxsSXmtTiphc0Ai9jHhU8oz88fcH3ds5pA.aQBP7w.r8q76xOCAHaCoHK8KgXNKtC_VJY
+2025-10-28 12:09:50,278 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:09:53,060 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:09:53,154 - INFO -  * Restarting with stat
+2025-10-28 12:09:54,257 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:09:54,257 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:09:54,258 - INFO - Scheduler started
+2025-10-28 12:09:54,259 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:09:54,259 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:09:54,266 - WARNING -  * Debugger is active!
+2025-10-28 12:09:54,271 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:09:55,592 - INFO - 127.0.0.1 - - [28/Oct/2025 12:09:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:00,286 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:05,588 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:10,287 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:12,337 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:10:12,437 - INFO -  * Restarting with stat
+2025-10-28 12:10:13,386 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:10:13,387 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:10:13,387 - INFO - Scheduler started
+2025-10-28 12:10:13,388 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:10:13,389 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:10:13,397 - WARNING -  * Debugger is active!
+2025-10-28 12:10:13,402 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:10:15,583 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:20,286 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:25,585 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:45,404 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:46,640 - INFO - [GUARD] Token source: session=True, header=False, cookie=True
+2025-10-28 12:10:46,641 - INFO - [AUTH_GUARD] SECRET_KEY used for decode: fa1c6b4ef8dc9e7a9a8b1f81e924a1b33fdc2294a03b4cd6a4f4c6cfdb6a8f4e
+2025-10-28 12:10:46,641 - INFO - [AUTH_GUARD] Payload diterima: {'sub': '1', 'iat': 1761628143, 'exp': 1761629943}
+2025-10-28 12:10:46,648 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:46] "GET / HTTP/1.1" 200 -
+2025-10-28 12:10:46,838 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:46,891 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 12:10:46,893 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 12:10:46,893 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 12:10:49,567 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 12:10:49,568 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:49] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 12:10:52,578 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:57,281 - INFO - 127.0.0.1 - - [28/Oct/2025 12:10:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:10:57,591 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\middleware\\auth_quard.py', reloading
+2025-10-28 12:10:57,717 - INFO -  * Restarting with stat
+2025-10-28 12:10:58,731 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:10:58,731 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:10:58,732 - INFO - Scheduler started
+2025-10-28 12:10:58,733 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:10:58,733 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:10:58,742 - WARNING -  * Debugger is active!
+2025-10-28 12:10:58,748 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:11:02,586 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:07,282 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:12,585 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:12,811 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\middleware\\auth_quard.py', reloading
+2025-10-28 12:11:12,899 - INFO -  * Restarting with stat
+2025-10-28 12:11:13,801 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:11:13,802 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:11:13,802 - INFO - Scheduler started
+2025-10-28 12:11:13,804 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:11:13,804 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:11:13,812 - WARNING -  * Debugger is active!
+2025-10-28 12:11:13,817 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:11:16,844 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:17,316 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:17] "GET / HTTP/1.1" 200 -
+2025-10-28 12:11:17,447 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:17,557 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 12:11:17,558 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 12:11:17,558 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 12:11:19,230 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 12:11:19,231 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:19] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 12:11:23,589 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:28,285 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:33,584 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:38,282 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:43,587 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:48,286 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:53,589 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:57,429 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-10-28 12:11:59,812 - INFO - 127.0.0.1 - - [28/Oct/2025 12:11:59] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-28 12:12:00,012 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 12:12:00,013 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 12:12:00,013 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 12:12:02,785 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 12:12:02,786 - INFO - 127.0.0.1 - - [28/Oct/2025 12:12:02] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 12:12:30,170 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:12:30,262 - INFO -  * Restarting with stat
+2025-10-28 12:12:31,438 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:12:31,439 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:12:31,439 - INFO - Scheduler started
+2025-10-28 12:12:31,441 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:12:31,441 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:12:31,451 - WARNING -  * Debugger is active!
+2025-10-28 12:12:31,457 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:12:39,501 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:12:39,588 - INFO -  * Restarting with stat
+2025-10-28 12:12:40,530 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:12:40,530 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:12:40,530 - INFO - Scheduler started
+2025-10-28 12:12:40,531 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:12:40,532 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:12:40,540 - WARNING -  * Debugger is active!
+2025-10-28 12:12:40,546 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:12:41,556 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:12:41,667 - INFO -  * Restarting with stat
+2025-10-28 12:12:42,674 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:12:42,675 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:12:42,675 - INFO - Scheduler started
+2025-10-28 12:12:42,676 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:12:42,676 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:12:42,684 - WARNING -  * Debugger is active!
+2025-10-28 12:12:42,689 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:12:43,699 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:12:43,845 - INFO -  * Restarting with stat
+2025-10-28 12:12:44,804 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:12:44,804 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:12:44,805 - INFO - Scheduler started
+2025-10-28 12:12:44,806 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:12:44,806 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-10-28 12:12:44,814 - WARNING -  * Debugger is active!
+2025-10-28 12:12:44,819 - INFO -  * Debugger PIN: 288-901-657
+2025-10-28 12:12:47,126 - INFO - 127.0.0.1 - - [28/Oct/2025 12:12:47] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-10-28 12:12:47,266 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-10-28 12:12:47,267 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-10-28 12:12:47,267 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-10-28 12:12:49,052 - INFO -    --> Sesi Sicyca masih valid.
+2025-10-28 12:12:49,053 - INFO - 127.0.0.1 - - [28/Oct/2025 12:12:49] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-10-28 12:12:55,147 - INFO - 127.0.0.1 - - [28/Oct/2025 12:12:55] "[32mGET /pencarian-komunitas HTTP/1.1[0m" 302 -
+2025-10-28 12:12:55,451 - INFO - 127.0.0.1 - - [28/Oct/2025 12:12:55] "GET /login HTTP/1.1" 200 -
+2025-10-28 12:13:08,942 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-10-28 12:13:09,074 - INFO -  * Restarting with stat
+2025-10-28 12:13:10,101 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-28 12:13:10,101 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-10-28 12:13:10,102 - INFO - Scheduler started
+2025-10-28 12:13:10,103 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-10-28 12:13:10,103 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+

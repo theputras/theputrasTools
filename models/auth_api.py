@@ -21,20 +21,13 @@ auth_bp = Blueprint('auth', __name__)
 
 # === Utility ===
 def generate_access_token(user_id):
-    now = datetime.now(JAKARTA_TZ)
     payload = {
-        "sub": user_id,
-        "iat": int(now.timestamp()),
-        "exp": int((now + timedelta(minutes=30)).timestamp())
+        'sub': str(user_id),  # Ubah ke str() agar jadi string, e.g., '1' bukan 1
+        'iat': datetime.now(JAKARTA_TZ),
+        'exp': datetime.now(JAKARTA_TZ) + timedelta(minutes=30)
     }
-    secret = current_app.config.get("SECRET_KEY")
-    if not secret:
-        from flask import current_app as app
-        secret = app.secret_key  # fallback ke global Flask app
-    logging.info(f"[AUTH_API] Using SECRET_KEY hash={hash(secret)}")
-    token = jwt.encode(payload, secret, algorithm="HS256")
-    logging.info(f"[AUTH_API] Generated access token for user {user_id}")
-    return token if isinstance(token, str) else token.decode()
+    return jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
+
 
 
 
@@ -63,6 +56,8 @@ def login():
         return jsonify({"error": "Username atau password salah"}), 401
 
     access_token = generate_access_token(user['id'])
+    session['access_token'] = access_token  # Tambahkan ini
+    session.modified = True  # Sudah ada, tapi pastikan
     if isinstance(access_token, bytes):
         access_token = access_token.decode('utf-8')
     refresh_token = generate_refresh_token()
