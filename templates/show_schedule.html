@@ -6,6 +6,7 @@
     <title>Status Jadwal & Sicyca</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans">
     <div class="container mx-auto p-6">
@@ -34,15 +35,22 @@
                         });
                 }, 5000);
              ">
-             
+<!-- <video id="video" width="320" height="240" autoplay muted></video>
+<canvas id="canvas" style="display:none;"></canvas>
+<p id="status"></p>  Tambah ini -->
+<!-- <button id="register-face-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+    Register Face
+</button>
+<button id="login-face-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+    Login with Face
+</button> -->
             <a href="/pencarian-komunitas" class="text-blue-400 hover:text-blue-300 font-semibold underline">
                 &raquo; Pencarian Komunitas
             </a>
-
             <a href="/refresh-jadwal" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
                 &#x21bb; Refresh Jadwal
             </a>
-
+            
             <a href="/log-program" class="text-gray-400 hover:text-gray-300 underline text-sm">
                 Lihat Log
             </a>
@@ -104,5 +112,88 @@
             {{ tabel | safe }}
         </div>
     </div>
+    <script>
+let video = document.getElementById('video');
+let canvas = document.getElementById('canvas');
+let context = canvas.getContext('2d');
+let status = document.getElementById('status');
+
+// Load face-api models
+async function loadModels() {
+  await faceapi.nets.tinyFaceDetector.loadFromUri('/static/models');
+  await faceapi.nets.faceLandmark68Net.loadFromUri('/static/models');
+  await faceapi.nets.faceRecognitionNet.loadFromUri('/static/models');
+  status.textContent = 'Models loaded';
+}
+
+// Start camera
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+  } catch (e) {
+    status.textContent = 'Camera access denied: ' + e.message;
+  }
+}
+
+// Register face
+async function registerFace() {
+  if (!video.srcObject) {
+    status.textContent = 'Start camera first';
+    return;
+  }
+  context.drawImage(video, 0, 0, 320, 240);
+  const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+  if (!detection) {
+    status.textContent = 'No face detected';
+    return;
+  }
+  const faceData = detection.descriptor;  // Feature vector
+  // Kirim ke backend
+  const response = await fetch('/api/auth/register-face', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ faceData: Array.from(faceData) })
+  });
+  if (response.ok) {
+    status.textContent = 'Face registered';
+  } else {
+    status.textContent = 'Registration failed';
+  }
+}
+
+// Login face
+async function loginFace() {
+  if (!video.srcObject) {
+    status.textContent = 'Start camera first';
+    return;
+  }
+  context.drawImage(video, 0, 0, 320, 240);
+  const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+  if (!detection) {
+    status.textContent = 'No face detected';
+    return;
+  }
+  const faceData = detection.descriptor;
+  // Kirim ke backend
+  const response = await fetch('/api/auth/login-face', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ faceData: Array.from(faceData) })
+  });
+  if (response.ok) {
+    window.location.href = '/';
+  } else {
+    status.textContent = 'Login failed';
+  }
+}
+
+// Event listeners
+document.getElementById('register-face-btn').addEventListener('click', registerFace);
+
+
+// Init
+loadModels().then(startCamera);
+</script>
 </body>
 </html>

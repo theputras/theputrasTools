@@ -68,7 +68,7 @@ def api_search():
             combined_results.append({
                 'Tipe': 'Mahasiswa',
                 'Nama': row.get('Nama'),
-                'ID': nim,
+                'IDMhs': nim,
                 'Status': row.get('Status'),
                 'Prodi': prodi_name,
                 'Detail': row.get('Dosen Wali')
@@ -78,7 +78,7 @@ def api_search():
             combined_results.append({
                 'Tipe': 'Staff/Dosen',
                 'Nama': row.get('Nama'),
-                'ID': row.get('NIK'),
+                'IDStaff': row.get('NIK'),
                 'Bagian': row.get('Bagian'),
                 'Detail': row.get('Email')
             })
@@ -89,41 +89,75 @@ def api_search():
             detail_html = ""
             if item['Tipe'] == 'Mahasiswa':
                 detail_html = f"""
-                <dt class="font-medium text-gray-400">NIM</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
-                <dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item['Status']}</dd>
-                <dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item['Prodi']}</dd>
-                <dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
-                <!-- Tombol di bawah Dosen Wali -->
-                <dd class="col-span-3 mt-2">
-                    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="mahasiswa" data-id="{item['ID']}">Lihat Foto</button>
-                </dd>
+           <dt class="font-medium text-gray-400">NIM</dt>
+<dd class="col-span-2 text-white flex items-center" id="nim-{item['IDMhs']}">
+    <span>{item['IDMhs']}</span>
+    <!-- Tombol Salin di sebelah NIM -->
+<button class="copy-id-btn p-1 text-gray-400 hover:text-white transition" 
+    data-name="{item['IDMhs']}" title="Salin NIM">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+    </svg>
+</button>
+
+
+</dd>
+
+<dt class="font-medium text-gray-400">Status</dt><dd class="col-span-2 text-white">{item['Status']}</dd>
+<dt class="font-medium text-gray-400">Prodi</dt><dd class="col-span-2 text-white">{item['Prodi']}</dd>
+<dt class="font-medium text-gray-400">Dosen Wali</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
+
+<!-- Tombol di bawah Dosen Wali -->
+<dd class="col-span-3 mt-2">
+    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="mahasiswa" data-id="{item['IDMhs']}">Lihat Foto</button>
+</dd>
+
                 """
             else:
                 detail_html = f"""
-                <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['ID']}</dd>
+                <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['IDStaff']}</dd>
                 <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item['Bagian']}</dd>
                 <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
                 <!-- Tombol di bawah Email -->
                 <dd class="col-span-3 mt-2">
-                    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="staff" data-id="{item['ID']}">Lihat Foto</button>
+                    <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="staff" data-id="{item['IDStaff']}">Lihat Foto</button>
                 </dd>
                 """
 
             html_output += f"""
             <div x-data="{{ isOpen: false }}" class="border-b border-gray-700 last:border-b-0">
-                <button @click="isOpen = !isOpen" class="w-full text-left p-4 hover:bg-gray-700 focus:outline-none">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold text-white">{item['Nama']}</span>
-                            <span class="text-xs text-gray-300 ml-2 px-2 py-1 bg-gray-600 rounded-full">{item['Tipe']}</span>
-                        </div>
-                        <svg class="w-5 h-5 transform transition-transform duration-300" :class="{{'rotate-180': isOpen}}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                </button>
-                <div x-show="isOpen" x-transition class="p-4 bg-gray-900 border-t border-gray-700 text-sm">
-                    <dl class="grid grid-cols-3 gap-2 text-sm">{detail_html}</dl>
-                </div>
+    <div class="w-full text-left p-4 ">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+               <button class="copy-name-btn flex items-center p-1 text-white hover:text-gray-400 transition" 
+    data-name="{item['Nama']}" title="Salin Nama">
+    <span class="font-semibold text-white mr-2 hover:text-gray-400">{item['Nama']}</span>
+    <!-- Ikon Salin -->
+    <svg class="w-4 h-4 hover:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+    </svg>
+</button>
+
+
+                <span class="text-xs text-gray-300 ml-2 px-2 py-1 bg-gray-600 rounded-full">{item['Tipe']}</span>
             </div>
+
+            <!-- SVG yang bisa dipencet untuk membuka dan menutup deskripsi -->
+            <div class="hover:bg-gray-700 focus:outline-none rounded-full p-2">
+            <svg @click="isOpen = !isOpen" class="w-5 h-5 transform transition-transform duration-300 cursor-pointer" 
+                 :class="{{'rotate-180': isOpen}}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bagian detail yang terbuka atau tertutup -->
+    <div x-show="isOpen" x-transition class="p-4 bg-gray-900 border-t border-gray-700 text-sm">
+        <dl class="grid grid-cols-3 gap-2 text-sm">{detail_html}</dl>
+    </div>
+</div>
+
             """
         
         # **JS: Overlay untuk Tombol (Delegation untuk Alpine)**

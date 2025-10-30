@@ -100,8 +100,35 @@
         </div>
     </div>
      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-  // Constants
+
+
+       function copyToClipboard(text) {
+           navigator.clipboard.writeText(text).then(function() {
+               alert("Teks telah disalin: " + text);  // Menampilkan pesan sukses
+           }).catch(function(err) {
+               console.error("Gagal menyalin teks: ", err);  // Menampilkan error jika gagal
+           });
+       }
+       document.addEventListener('DOMContentLoaded', function () {
+         // Fungsi untuk menyalin teks ke clipboard
+      
+              // Menangani klik pada tombol salin (baik untuk NIM atau Nama)
+        document.addEventListener('click', function (e) {
+            // Cek jika yang diklik adalah tombol salin Nama
+            const btnName = e.target.closest('.copy-name-btn');
+            if (btnName) {
+                const nama = btnName.getAttribute('data-name');
+                copyToClipboard(nama);
+            }
+
+            // Cek jika yang diklik adalah tombol salin NIM
+            const btnId = e.target.closest('.copy-id-btn');
+            if (btnId) {
+                const nim = btnId.closest('dd').querySelector('span').innerText;
+                copyToClipboard(nim);
+            }
+        });
+      // Constants
   const CACHE_EXPIRATION_MS = 300000; // 5 minutes
   const MIN_BASE64_LENGTH = 100;
   const OVERLAY_ID = 'photo-overlay';

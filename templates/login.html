@@ -6,6 +6,7 @@
   <title>Masuk ke Sistem</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 flex items-center justify-center min-h-screen font-sans">
 
@@ -54,6 +55,11 @@
         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow transition duration-200">
         Masuk
       </button>
+      <!-- <video id="video" width="320" height="240" autoplay muted></video>
+<canvas id="canvas" style="display:none;"></canvas>
+<button id="register-face-btn">Register Face</button>
+<button id="login-face-btn">Login with Face</button>
+<p id="status"></p> -->
     </form>
 
     <p class="text-center text-gray-400 text-sm mt-6">
@@ -97,6 +103,73 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     alert('Terjadi kesalahan server.');
   }
 });
+
+
+// // Fungsi register fingerprint (dari sebelumnya)
+// async function registerFingerprint() {
+//     try {
+//         const response = await fetch('/api/auth/register-fingerprint', { method: 'POST' });
+//         const options = await response.json();
+//         if (response.ok) {
+//             const credential = await navigator.credentials.create({ publicKey: options });
+//             const verifyResponse = await fetch('/api/auth/verify-fingerprint-registration', {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify(credential)
+//             });
+//             if (verifyResponse.ok) {
+//                 alert('Fingerprint registered successfully!');
+//             } else {
+//                 alert('Registration failed: ' + (await verifyResponse.json()).error);
+//             }
+//         } else {
+//             alert('Failed to get registration options: ' + options.error);
+//         }
+//     } catch (e) {
+//         alert('Error: ' + e.message);
+//     }
+// }
+
+// // Fungsi login fingerprint (dari sebelumnya, asumsikan user_id dari form atau session)
+// async function loginFingerprint(userId) {
+//     try {
+//         const response = await fetch('/api/auth/login-fingerprint', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ user_id: userId })
+//         });
+//         const options = await response.json();
+//         if (response.ok) {
+//             const assertion = await navigator.credentials.get({ publicKey: options });
+//             const loginResponse = await fetch('/api/auth/verify-fingerprint-login', {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify(assertion)
+//             });
+//             if (loginResponse.ok) {
+//                 window.location.href = '/';  // Redirect ke home
+//             } else {
+//                 alert('Login failed: ' + (await loginResponse.json()).error);
+//             }
+//         } else {
+//             alert('Failed to get login options: ' + options.error);
+//         }
+//     } catch (e) {
+//         alert('Error: ' + e.message);
+//     }
+// }
+
+// // Event listener untuk tombol fingerprint
+// document.getElementById('finger-id').addEventListener('click', async () => {
+//     // Asumsi user_id dari input username atau session (ganti sesuai logic kamu)
+//     const userId = 1;  // Placeholder: Ambil dari form atau query API untuk dapat user_id berdasarkan username
+//     // Jika belum register, coba register dulu
+//     if (confirm('Register fingerprint first?')) {
+//         await registerFingerprint();
+//     } else {
+//         await loginFingerprint(userId);
+//     }
+// });
 </script>
 
 
