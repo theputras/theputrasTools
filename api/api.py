@@ -1,4 +1,3 @@
-from fastapi import Query
 from flask import request, Response, jsonify
 import logging
 import base64  # Untuk encode image ke base64

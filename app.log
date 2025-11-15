@@ -10433,3 +10433,98 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-11-15 18:48:39,580 - INFO - 127.0.0.1 - - [15/Nov/2025 18:48:39] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-11-15 18:48:44,276 - INFO - 127.0.0.1 - - [15/Nov/2025 18:48:44] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-11-15 18:48:48,817 - INFO - 127.0.0.1 - - [15/Nov/2025 18:48:48] "GET /account HTTP/1.1" 200 -
+2025-11-15 18:50:58,672 - INFO - 127.0.0.1 - - [15/Nov/2025 18:50:58] "GET / HTTP/1.1" 200 -
+2025-11-15 18:50:58,857 - INFO - 127.0.0.1 - - [15/Nov/2025 18:50:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:50:58,922 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 18:50:58,922 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 18:50:58,923 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 18:51:00,780 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 18:51:00,781 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:00] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 18:51:04,160 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:51:09,273 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:51:11,783 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:11] "GET /tools HTTP/1.1" 200 -
+2025-11-15 18:51:14,658 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:14] "GET /pencarian-komunitas HTTP/1.1" 200 -
+2025-11-15 18:51:14,722 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 18:51:14,723 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 18:51:14,723 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 18:51:16,585 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 18:51:16,586 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:16] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 18:51:17,746 - INFO - 
+--- Memulai Pencarian Mahasiswa: 'Angela Heavenlyna' ---
+2025-11-15 18:51:17,746 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 18:51:17,747 - INFO - 
+--- Memulai Pencarian Staff: 'Angela Heavenlyna' ---
+2025-11-15 18:51:18,845 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 18:51:18,845 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-15 18:51:18,845 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 18:51:19,559 - INFO -    --> Pencarian mahasiswa berhasil, 1 data ditemukan.
+2025-11-15 18:51:20,410 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 18:51:20,411 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-15 18:51:21,154 - ERROR - Error saat mencari staff: Tabel hasil staff tidak ditemukan.
+2025-11-15 18:51:21,156 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:21] "POST /api/search HTTP/1.1" 200 -
+2025-11-15 18:51:26,480 - INFO - Fetching foto untuk tombol: mahasiswa/25420100006
+2025-11-15 18:51:26,481 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 18:51:27,421 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 18:51:27,422 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-15 18:51:27,422 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/25420100006.jpg
+2025-11-15 18:51:27,739 - INFO -    --> Foto mahasiswa/25420100006 berhasil di-fetch (244085 bytes).
+2025-11-15 18:51:27,742 - INFO - Foto mahasiswa/25420100006 berhasil di-encode (325448 chars).
+2025-11-15 18:51:27,744 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:27] "GET /api/photo/mahasiswa/25420100006 HTTP/1.1" 200 -
+2025-11-15 18:51:30,669 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:30] "GET /tools HTTP/1.1" 200 -
+2025-11-15 18:51:31,498 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:31] "GET / HTTP/1.1" 200 -
+2025-11-15 18:51:31,586 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:31] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:51:31,892 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 18:51:31,892 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 18:51:31,893 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 18:51:33,914 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 18:51:33,915 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:33] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 18:51:36,890 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:51:42,280 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:51:47,583 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:51:52,326 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:51:57,578 - INFO - 127.0.0.1 - - [15/Nov/2025 18:51:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:02,276 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:07,580 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:12,277 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:17,582 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:21,850 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:27,586 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:32,289 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:37,581 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:52:52,291 - INFO - 127.0.0.1 - - [15/Nov/2025 18:52:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:53:47,627 - INFO - 127.0.0.1 - - [15/Nov/2025 18:53:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:53:51,585 - INFO - 127.0.0.1 - - [15/Nov/2025 18:53:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:53:57,575 - INFO - 127.0.0.1 - - [15/Nov/2025 18:53:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:02,576 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:07,572 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:12,277 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:17,581 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:22,457 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:28,181 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:32,284 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:37,581 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:42,287 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:47,589 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:52,281 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:54:57,578 - INFO - 127.0.0.1 - - [15/Nov/2025 18:54:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:55:52,285 - INFO - 127.0.0.1 - - [15/Nov/2025 18:55:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:56:52,584 - INFO - 127.0.0.1 - - [15/Nov/2025 18:56:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:57:33,779 - INFO - 127.0.0.1 - - [15/Nov/2025 18:57:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:57:36,888 - INFO - 127.0.0.1 - - [15/Nov/2025 18:57:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:57:41,588 - INFO - 127.0.0.1 - - [15/Nov/2025 18:57:41] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:57:46,893 - INFO - 127.0.0.1 - - [15/Nov/2025 18:57:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:57:52,609 - INFO - 127.0.0.1 - - [15/Nov/2025 18:57:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:57:56,590 - INFO - 127.0.0.1 - - [15/Nov/2025 18:57:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 18:58:01,119 - INFO - 127.0.0.1 - - [15/Nov/2025 18:58:01] "GET /account HTTP/1.1" 200 -
+2025-11-15 19:01:59,111 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-15 19:01:59,244 - INFO -  * Restarting with stat
+2025-11-15 19:02:01,798 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-15 19:02:01,806 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-15 19:02:01,806 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-15 19:02:01,806 - INFO - Scheduler started
+2025-11-15 19:02:01,807 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-15 19:02:01,808 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-15 19:02:01,815 - WARNING -  * Debugger is active!
+2025-11-15 19:02:01,820 - INFO -  * Debugger PIN: 288-901-657
