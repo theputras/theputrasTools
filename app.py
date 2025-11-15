@@ -4,16 +4,16 @@ import os
 import re
 from datetime import datetime
 import pandas as pd
-from flask import Flask, send_from_directory, request, render_template, redirect, url_for, Response, jsonify, json, session, abort
+from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g
 from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import pytz
 import json
-import base64  # Untuk encode image ke base64
+from datetime import datetime
+import jwt
+# import base64  # Untuk encode image ke base64
 from logging.handlers import RotatingFileHandler
-import secrets
-import time
 from cachetools import TTLCache  # Install: pip install cachetools
 from api.api import api_bp, init_api
 from models.auth_api import auth_bp
@@ -23,6 +23,7 @@ from flask_cors import CORS
 from scrapper_requests import scrape_data
 from middleware.auth_quard import login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
+from models.auth_api import _revoke_refresh_token, _revoke_all_user_sessions
 from dotenv import load_dotenv
 load_dotenv()  # biar bisa baca file .env
 
@@ -43,7 +44,9 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 # Inisialisasi scheduler SEKALI saat modul di-import
-SCHEDULER_TZ = pytz.timezone("Asia/Jakarta")
+SCHEDULER_TZ = pytz.timezone(os.getenv("TIMEZONE"))
+
+
 scheduler = BackgroundScheduler(timezone=SCHEDULER_TZ)
 
 # ==================================================================
@@ -73,7 +76,7 @@ logger.addHandler(stream_handler)
 
 # Setup cache untuk foto (TTL 30 detik, max 100 items)
 photo_cache = TTLCache(maxsize=100, ttl=30)
-
+logging.info(f"Scheduler timezone diatur ke: {SCHEDULER_TZ}")
 # Jalankan sekali saat start (opsional)
 def boot_scrape_if_needed():
     try:
@@ -267,19 +270,96 @@ def log_cookie_header(resp):
 
 # Main route
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET']) # Kita cuma butuh GET
 def login_page():
-    if request.method == 'POST':
-        # Proses login dan set session setelah berhasil login
-        session['user_id'] = 1  # Contoh, set user_id setelah login berhasil
-        # Bisa tambahkan token atau informasi lainnya sesuai kebutuhan
-        return redirect(url_for('index'))  # Redirect ke halaman home setelah login
+    
+    # Ambil token dari session atau cookie
+    token = session.get('access_token') or request.cookies.get('access_token')
+    
+    if token:
+        try:
+            # Kita validasi token-nya (Mirip auth_quard.py)
+            secret = current_app.config.get('SECRET_KEY') or app.secret_key
+            payload = jwt.decode(
+                token,
+                secret,
+                algorithms=["HS256"],
+                options={"require": ["exp", "iat", "sub"]},
+                leeway=30 # Toleransi waktu
+            )
+            
+            # Cek kalo udah expired
+            exp_time = datetime.fromtimestamp(payload['exp'], SCHEDULER_TZ)
+            if exp_time < datetime.now(SCHEDULER_TZ):
+                raise jwt.ExpiredSignatureError("Token expired")
+
+            # Kalo token ADA dan VALID, lempar ke index
+            logging.info(f"User udah login, redirecting to index...")
+            return redirect(url_for('index'))
+        
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
+            # Kalo token ada tapi RUSAK atau EXPIRED
+            logging.warning(f"Token rusak/expired, biarkan login ulang: {e}")
+            session.clear() # Bersihin session/cookie yang rusak
+            # Lanjut ke return render_template di bawah
+            pass
+    
+    # Kalo token GAK ADA, atau token RUSAK, tampilkan halaman login
     return render_template('login.html')
 
+# Logout Route 1 Session + Cookie
 @app.route('/logout')
 def logout_page():
+    logging.info(f"User logging out...")
+    
+    # 1. Ambil refresh_token dari cookie
+    refresh_token = request.cookies.get('refresh_token')
+    
+    # 2. PANGGIL FUNGSI DARI auth_api.py (JAUH LEBIH BERSIH!)
+    if refresh_token:
+        _revoke_refresh_token(refresh_token)
+    else:
+        logging.warning("Logout: Tidak menemukan refresh_token di cookie.")
+
+    # 3. Buat response redirect (Sama kayak sebelumnya)
+    resp = make_response(redirect(url_for('login_page')))
+    
+    # 4. Hapus session di server
     session.clear()
-    return redirect(url_for('login_page'))
+    
+    # 5. Hapus KEDUA cookie di browser
+    resp.set_cookie("access_token", "", expires=0, httponly=True, samesite="Lax")
+    resp.set_cookie("refresh_token", "", expires=0, httponly=True, samesite="Lax")
+    
+    logging.info("Session and cookies cleared. Redirecting to login.")
+    return resp
+
+# Logout Route all Session + Cookie
+@app.route('/logout-all')
+@login_required # <-- Ini penting, buat mastiin kita tau siapa user-nya
+def logout_all_page():
+    logging.info(f"User logging out from ALL devices...")
+    
+    # 1. Dapatkan user_id dari 'g' 
+    # (g.user diisi oleh decorator @login_required)
+    if 'user' in g and g.user.get('sub'):
+        user_id = g.user['sub'] # 'sub' adalah user_id di JWT
+        logging.info(f"Revoking all sessions for user_id: {user_id}")
+        
+        # 2. Panggil fungsi internal dari auth_api.py
+        _revoke_all_user_sessions(user_id)
+        
+    else:
+        logging.warning("Logout All: Tidak bisa menemukan user_id dari token.")
+
+    # 3. Hapus sesi LOKAL (sama persis kayak logout biasa)
+    resp = make_response(redirect(url_for('login_page')))
+    session.clear()
+    resp.set_cookie("access_token", "", expires=0, httponly=True, samesite="Lax")
+    resp.set_cookie("refresh_token", "", expires=0, httponly=True, samesite="Lax")
+    
+    logging.info("Current session cleared. Redirecting to login.")
+    return resp
 
 @app.route('/')
 @login_required
@@ -292,36 +372,49 @@ def index():
             df_json = json.load(f)
 
         metadata = df_json.get("metadata", {})
-        df = pd.DataFrame(df_json.get("data", []))
-
-        # Tampilkan tabel jadwal 
-        html_table = df.to_html(
-            classes='table-auto w-full text-sm text-gray-300 border-collapse border border-gray-700',
-            justify='left',
-            index=False
-        )
+        # Ambil datanya sebagai list of dict, BUKAN DataFrame
+        jadwal_data = df_json.get("data", [])
 
         # Ambil waktu terakhir scraping dari metadata
         last_scraped = metadata.get("last_scraped", "Belum pernah di-scrape")
 
-        # Sisipkan info di atas tabel
-        info_html = f"""
-        <div class='flex justify-between items-center mb-4'>
-            <h2 class='text-lg font-semibold text-white'>Daftar Jadwal Kuliah</h2>
-            <p class='text-sm text-gray-400'>Terakhir diperbarui: {last_scraped}</p>
-        </div>
-        """
+        # Kirim data mentah ke template
+        return render_template(
+            'index.html', 
+            jadwal_list=jadwal_data,    # <-- Kirim list-nya
+            last_scraped=last_scraped  # <-- Kirim tanggal scrape-nya
+        )
 
-        return render_template('show_schedule.html', tabel=info_html + html_table)
-
-    except (FileNotFoundError, ValueError): 
-        msg = "<h3 class='text-gray-400'>JADWAL BELUM TERSEDIA.</h3><p>Jalankan scraper terlebih dahulu atau tunggu jadwal otomatis berikutnya.</p>"
-        return render_template('show_schedule.html', tabel=msg)
+    except (FileNotFoundError, ValueError, json.JSONDecodeError): 
+        msg = "JADWAL BELUM TERSEDIA. Jalankan scraper terlebih dahulu atau tunggu jadwal otomatis berikutnya."
+        # Kirim list kosong dan pesan error
+        return render_template(
+            'index.html', 
+            jadwal_list=[], 
+            last_scraped=None,
+            error_message=msg  # <-- Kirim pesan error
+        )
 
     except Exception as e:
-        return f"<pre>Error: {str(e)}</pre>", 500
+        logging.error(f"Error di route index: {e}")
+        return render_template(
+            'index.html', 
+            jadwal_list=[], 
+            last_scraped=None,
+            error_message=f"Terjadi error: {str(e)}"
+        )
 
+@app.route('/tools')
+@login_required
+def tools_page():
+    # Nanti kita bikin file tools.html
+    return render_template('tools.html') 
 
+@app.route('/account')
+@login_required
+def account_page():
+    # Nanti kita bikin file account.html
+    return render_template('account.html')
 
 
 

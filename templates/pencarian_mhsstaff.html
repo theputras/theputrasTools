@@ -49,7 +49,7 @@
             </div>
             
             <p class="text-gray-400 mb-6">Masukkan NIM, NIK, atau Nama untuk mencari data di Sicyca.</p>
-            <a href="/" class="text-blue-400 hover:text-blue-300 mb-4 inline-block">&laquo; Kembali ke Jadwal Kuliah</a>
+            <a href="/tools" class="text-blue-400 hover:text-blue-300 mb-4 inline-block">&laquo; Back to Tools</a>
                 <form @submit.prevent="
                     isLoading = true;
                     results = null;
@@ -208,24 +208,58 @@
     overlay.style.display = 'flex';
     window.scrollTo(0, 0); // Scroll to top for better viewing
   }
-
+  
+  /**
+ * Mengambil data dari localStorage, mengecek expiration-nya.
+ * @param {string} key - Kunci untuk localStorage.
+ * @returns {any|null} - Mengembalikan data jika valid, atau null jika expired/tidak ada.
+ */
   // Get photo from cache
-  function getCachedPhoto(key) {
-    const b64 = localStorage.getItem(key);
-    const exp = localStorage.getItem(key + '_exp');
-    if (b64 && exp && Date.now() < parseInt(exp, 10)) {
-      return b64;
+function getCache(key) {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) {
+        return null; // Nggak ada di cache
     }
-    localStorage.removeItem(key);
-    localStorage.removeItem(key + '_exp');
-    return null;
-  }
-
+    
+    try {
+        const item = JSON.parse(itemStr);
+        const now = new Date();
+        
+        // Cek kalo udah expired
+        if (now.getTime() > item.expiry) {
+            localStorage.removeItem(key); // Hapus cache basi
+            return null;
+        }
+        
+        return item.data; // Cache valid!
+    } catch (e) {
+        // Kalo JSON-nya rusak, hapus aja
+        console.error("Gagal parse cache:", e);
+        localStorage.removeItem(key);
+        return null;
+    }
+}
+  
+  /**
+   * Menyimpan data ke localStorage dengan timestamp expiration.
+   * @param {string} key - Kunci untuk localStorage.
+   * @param {any} data - Data yang ingin disimpan (bisa string, object, dll).
+   * @param {number} ttlInSeconds - Time-to-Live (waktu expired) dalam DETIK.
+   */
   // Set photo in cache
-  function setCachedPhoto(key, b64) {
-    localStorage.setItem(key, b64);
-    localStorage.setItem(key + '_exp', (Date.now() + CACHE_EXPIRATION_MS).toString());
-  }
+function setCache(key, data, ttlInSeconds) {
+    const now = new Date();
+    const item = {
+        data: data,
+        // Simpan kapan dia akan expired
+        expiry: now.getTime() + (ttlInSeconds * 1000), 
+    };
+    try {
+        localStorage.setItem(key, JSON.stringify(item));
+    } catch (e) {
+        console.error("Gagal set cache (mungkin storage penuh):", e);
+    }
+}
 
   // Handle dynamic button clicks via event delegation
   document.addEventListener('click', function (e) {
@@ -246,7 +280,7 @@
     overlay.style.display = 'flex';
 
     // Check cache first
-    const cached = getCachedPhoto(cacheKey);
+    const cached = getCache(cacheKey);
     if (cached) {
       showOverlayFromB64(cached);
       return;
@@ -262,8 +296,8 @@
       })
       .then(data => {
         if (data && data.success && data.image_b64 && data.image_b64.length > MIN_BASE64_LENGTH) {
-          setCachedPhoto(cacheKey, data.image_b64);
-          showOverlayFromB64(data.image_b64);
+            setCache(cacheKey, data.image_b64, 3600 * 24 * 7); 
+                showOverlayFromB64(data.image_b64);
         } else {
           showError((data && data.message) || ERROR_UNAVAILABLE_TEXT);
         }

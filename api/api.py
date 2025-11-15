@@ -1,23 +1,13 @@
-import os
-import re
-from datetime import datetime
-import pandas as pd
-from flask import Flask, send_from_directory, request, render_template, redirect, url_for, Response, jsonify, json, session, abort
-from apscheduler.schedulers.background import BackgroundScheduler
-from concurrent.futures import ThreadPoolExecutor
+from fastapi import Query
+from flask import request, Response, jsonify
 import logging
-import pytz
-import json
 import base64  # Untuk encode image ke base64
-from logging.handlers import RotatingFileHandler
-import secrets
-import time
-from cachetools import TTLCache  # Install: pip install cachetools
 from flask import Blueprint
+import json
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca  
+from scrapper_requests import   search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca, fetch_data_ultah
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
 
@@ -221,3 +211,68 @@ def get_photo(role, id_):
     
     logging.info(f"Foto {role}/{id_} berhasil di-encode ({len(image_b64)} chars).")
     return jsonify({'success': True, 'image_b64': image_b64})
+    
+# Di api/api.py
+@api_bp.route("/fetch-data-ultah", methods=['GET']) # <-- 1. Ganti ke sintaks Flask
+def fetch_data_ultah_route():
+    try:
+        # 2. Ambil query param pake cara Flask
+        force_val = request.args.get('force', 'false').lower()
+        force_refresh_flag = force_val in ['true', '1', 'yes']
+        
+        # 3. Panggil fungsi intinya
+        data_ultah = fetch_data_ultah(force_refresh=force_refresh_flag)
+        
+        # 4. Kembalikan sebagai JSON
+        return jsonify(data_ultah)
+        
+    except Exception as e:
+        # 5. Tambahin error handling biar aman
+        status_code = 500
+        detail_message = str(e)
+        
+        if hasattr(e, 'status_code'):
+            status_code = e.status_code
+        if hasattr(e, 'detail'):
+            detail_message = e.detail
+            
+        logging.error(f"Error di endpoint /fetch-data-ultah: {detail_message}")
+        
+        return jsonify({
+            "error": True, 
+            "message": detail_message,
+            "jumlah": 0, # Kasih nilai default biar HTML nggak error
+            "rows": []
+        }), status_code
+
+# (opsional) tetap sediakan alias lama
+@api_bp.route("/data_ultah", methods=['GET']) # <-- Ganti ini juga
+def data_ultah_alias():
+    return fetch_data_ultah_route() # Panggil fungsi di atas biar logikanya sama
+    
+@api_bp.route('/jadwal-list', methods=['GET'])
+def api_jadwal_list():
+    """
+    Endpoint baru untuk mengambil data jadwal.json mentah.
+    """
+    try:
+        with open('jadwal.json', 'r', encoding='utf-8') as f:
+            data_json = json.load(f)
+        
+        # Kirim datanya (metadata + list jadwal)
+        return jsonify(data_json)
+        
+    except FileNotFoundError:
+        logging.warning("API: jadwal.json tidak ditemukan.")
+        return jsonify({
+            "error": True, 
+            "message": "File jadwal belum dibuat.",
+            "data": []
+        }), 404
+    except Exception as e:
+        logging.error(f"Error di /api/jadwal-list: {e}")
+        return jsonify({
+            "error": True, 
+            "message": str(e),
+            "data": []
+        }), 500

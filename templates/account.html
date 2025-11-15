@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans">
+    
+    <div class="container mx-auto p-6 pb-20">
+        <h1 class="text-2xl font-semibold text-white">Halaman Akun</h1>
+        <p class="mt-4">Isi konten akun di sini.</p>
+        
+<div class="mt-6 bg-gray-800 rounded-lg shadow-md p-6 flex flex-wrap gap-4">
+             <a href="{{ url_for('logout_page') }}" 
+                class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+                 Logout
+             </a>
+
+             <a href="{{ url_for('logout_all_page') }}" 
+                class="bg-gray-800 hover:bg-gray-700 border border-red-600 text-red-400 font-semibold px-4 py-2 rounded-md text-sm"
+                onclick="return confirm('Anda yakin ingin logout dari SEMUA perangkat?')">
+                 Logout All Devices
+             </a>
+        </div>
+    </div>
+
+    {% include 'nativeNav.html' %}
+
+</body>
+</html>

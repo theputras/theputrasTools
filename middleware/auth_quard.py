@@ -1,11 +1,13 @@
 import jwt
 from functools import wraps
 from flask import request, redirect, url_for, session, g
-from datetime import datetime, timezone
+from datetime import datetime
 import pytz
+import os
 from flask import current_app as app
 import logging
-JAKARTA_TZ = pytz.timezone("Asia/Jakarta")
+
+JAKARTA_TZ = pytz.timezone(os.getenv("TIMEZONE"))
 
 def login_required(view_func):
     @wraps(view_func)

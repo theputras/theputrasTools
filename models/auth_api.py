@@ -19,22 +19,22 @@ from webauthn import verify_registration_response, verify_authentication_respons
 from datetime import datetime, timedelta
 
 
-def serialize_options(options):
-    def encode_bytes(obj):
-        if isinstance(obj, bytes):
-            return base64.b64encode(obj).decode('utf-8')
-        elif isinstance(obj, dict):
-            return {k: encode_bytes(v) for k, v in obj.items()}
-        elif isinstance(obj, list):
-            return [encode_bytes(item) for item in obj]
-        elif hasattr(obj, '__dict__'):
-            return encode_bytes(obj.__dict__)
-        else:
-            return obj
-    return encode_bytes(options)
+# def serialize_options(options):
+#     def encode_bytes(obj):
+#         if isinstance(obj, bytes):
+#             return base64.b64encode(obj).decode('utf-8')
+#         elif isinstance(obj, dict):
+#             return {k: encode_bytes(v) for k, v in obj.items()}
+#         elif isinstance(obj, list):
+#             return [encode_bytes(item) for item in obj]
+#         elif hasattr(obj, '__dict__'):
+#             return encode_bytes(obj.__dict__)
+#         else:
+#             return obj
+#     return encode_bytes(options)
 load_dotenv()
 
-JAKARTA_TZ = pytz.timezone("Asia/Jakarta")
+JAKARTA_TZ = pytz.timezone(os.getenv("TIMEZONE"))
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -54,6 +54,82 @@ def generate_access_token(user_id):
 def generate_refresh_token():
     return str(uuid.uuid4())
 
+# Revoke refresh token di DB
+def _revoke_refresh_token(refresh_token: str) -> bool:
+    """
+    Fungsi internal untuk me-revoke token di DB.
+    Mengembalikan True jika berhasil, False jika gagal.
+    """
+    if not refresh_token:
+        logging.warning("Revoke attempt: No refresh token provided.")
+        return False
+        
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        if not conn:
+            logging.warning("Revoke: Gagal konek DB.")
+            return False
+        
+        cursor = conn.cursor()
+        # Kita tambahin 'AND revoked = 0' biar lebih efisien
+        cursor.execute(
+            "UPDATE user_sessions SET revoked = 1 WHERE refresh_token = %s AND revoked = 0", 
+            (refresh_token,)
+        )
+        conn.commit()
+        
+        if cursor.rowcount > 0:
+            logging.info(f"Revoke: Token {refresh_token[:8]}... berhasil di-revoke.")
+        else:
+            logging.info(f"Revoke: Token {refresh_token[:8]}... tidak ditemukan atau sudah di-revoke.")
+        return True
+        
+    except Exception as e:
+        logging.error(f"Error saat revoke token (internal): {e}")
+        return False
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+def _revoke_all_user_sessions(user_id: str) -> bool:
+    """
+    Fungsi internal untuk me-revoke SEMUA token user di DB.
+    """
+    if not user_id:
+        logging.warning("Revoke All: No user_id provided.")
+        return False
+        
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        if not conn:
+            logging.warning("Revoke All: Gagal konek DB.")
+            return False
+            
+        cursor = conn.cursor()
+        # Kita tambahin 'AND revoked = 0' biar lebih efisien
+        cursor.execute(
+            "UPDATE user_sessions SET revoked = TRUE WHERE user_id = %s AND revoked = 0", 
+            (user_id,)
+        )
+        conn.commit()
+        
+        logging.info(f"Revoke All: Berhasil me-revoke {cursor.rowcount} sesi untuk user_id {user_id}.")
+        return True
+        
+    except Exception as e:
+        logging.error(f"Error saat revoke all (internal): {e}")
+        return False
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 # === LOGIN ===
 @auth_bp.route('/login', methods=['POST'])
@@ -102,13 +178,24 @@ def login():
         "message": "Login successful!",
         "redirect": url_for('index')
     })
+# 1. Cookie untuk Access Token (JWT, 30 menit)
     resp.set_cookie(
         "access_token",
         access_token,
         httponly=True,
-        secure=False,      # kalau masih localhost, pakai False
-        samesite="Lax",    # kalau udah deploy (https), ganti jadi "None"
-        max_age=1800
+        secure=False,      # (False di localhost)
+        samesite="Lax",
+        max_age=1800       # 30 menit
+    )
+    
+    # 2. Cookie untuk Refresh Token (UUID, 30 hari)
+    resp.set_cookie(
+        "refresh_token",   # <-- NAMA COOKIE BARU
+        refresh_token,     # <-- VALUE-NYA
+        httponly=True,
+        secure=False,      # (False di localhost)
+        samesite="Lax",
+        max_age=3600 * 24 * 30 # 30 hari
     )
     logging.info(f"[LOGIN DEBUG] Session keys={list(session.keys())}")
     return resp, 200
@@ -119,40 +206,31 @@ def login():
 # === LOGOUT (hapus 1 session aktif) ===
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
+    """
+    Rute API untuk logout (dipakai oleh 'Manajemen Sesi', dll)
+    """
     data = request.form
     refresh_token = data.get('refresh_token')
-
-    conn = get_connection()
-    if not conn:
-        return jsonify({"error": "DB connection failed"}), 500
-    cursor = conn.cursor()
-
-    cursor.execute("UPDATE user_sessions SET revoked = 1 WHERE refresh_token = %s", (refresh_token,))
     
-    conn.commit()
-
-    cursor.close()
-    conn.close()
-    return jsonify({"message": "Berhasil logout"}), 200
+    if _revoke_refresh_token(refresh_token):
+        return jsonify({"message": "Berhasil logout"}), 200
+    else:
+        return jsonify({"error": "Gagal me-revoke token"}), 500
 
 
 # === LOGOUT ALL DEVICE ===
 @auth_bp.route('/logout_all', methods=['POST'])
 def logout_all():
+    """
+    Rute API untuk logout semua device (dipakai 'Manajemen Sesi', dll)
+    """
     data = request.form
     user_id = data.get('user_id')
-
-    conn = get_connection()
-    if not conn:
-        return jsonify({"error": "DB connection failed"}), 500
-    cursor = conn.cursor()
-
-    cursor.execute("UPDATE user_sessions SET revoked = TRUE WHERE user_id = %s", (user_id,))
-    conn.commit()
-
-    cursor.close()
-    conn.close()
-    return jsonify({"message": "Semua sesi berhasil dihapus"}), 200
+    
+    if _revoke_all_user_sessions(user_id):
+        return jsonify({"message": "Semua sesi berhasil dihapus"}), 200
+    else:
+        return jsonify({"error": "Gagal menghapus sesi"}), 500
 
 
 @auth_bp.route('/register-face', methods=['POST'])

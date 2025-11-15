@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Jadwal & Sicyca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans">
+    <div class="container mx-auto p-6 pb-20">
+        
+        <!-- HEADER STATUS -->
+        <div class="bg-gray-800 rounded-lg shadow-md p-6 flex flex-wrap items-center gap-4 justify-start"
+             x-data="{ jadwalStatus: 'loading', jadwalMsg: '', sicycaStatus: 'loading', sicycaMsg: '', lastUpdate: '' }"
+             x-init="
+                fetch('/api/jadwal-status')
+                    .then(res => res.json())
+                    .then(data => { 
+                        jadwalStatus = data.status; 
+                        jadwalMsg = data.message; 
+                        lastUpdate = data.message; 
+                    });
+                fetch('/api/status_koneksi')
+                    .then(res => res.json())
+                    .then(data => { sicycaStatus = data.status; sicycaMsg = data.message; });
+                setInterval(() => {
+                    fetch('/api/jadwal-status')
+                        .then(res => res.json())
+                        .then(data => { 
+                            jadwalStatus = data.status; 
+                            jadwalMsg = data.message; 
+                            lastUpdate = data.message; 
+                        });
+                }, 5000);
+             ">
+             
+<!-- <video id="video" width="320" height="240" autoplay muted></video>
+<canvas id="canvas" style="display:none;"></canvas>
+<p id="status"></p>  Tambah ini -->
+<!-- <button id="register-face-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+    Register Face
+</button>
+<button id="login-face-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+    Login with Face
+</button> -->
+            <a href="/refresh-jadwal" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+                &#x21bb; Refresh Jadwal
+            </a>
+
+            <!-- STATUS JADWAL -->
+            <template x-if="jadwalStatus === 'loading'">
+                <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                    <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    Scraping...
+                </span>
+            </template>
+
+            <template x-if="jadwalStatus === 'ready'">
+                <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full" :title="jadwalMsg">
+                    <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
+                    Jadwal Ready
+                </span>
+            </template>
+
+            <template x-if="jadwalStatus === 'error'">
+                <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" :title="jadwalMsg">
+                    <span class="h-2 w-2 mr-2 rounded-full bg-red-500 animate-pulse"></span>
+                    Scraping Error
+                </span>
+            </template>
+
+            <!-- STATUS SICYCA -->
+            <template x-if="sicycaStatus === 'loading'">
+                <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                    <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    Mengecek koneksi...
+                </span>
+            </template>
+
+            <template x-if="sicycaStatus === 'ready'">
+                <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full" :title="sicycaMsg">
+                    <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
+                    Sicyca Ready
+                </span>
+            </template>
+
+            <template x-if="sicycaStatus === 'error'">
+                <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" :title="sicycaMsg">
+                    <span class="h-2 w-2 mr-2 rounded-full bg-red-500 animate-pulse"></span>
+                    Connection Error
+                </span>
+            </template>
+        </div>
+
+        <!-- AREA Jadwal Matkul -->
+<div class="bg-gray-800 rounded-lg shadow-md mt-6 overflow-hidden">
+    
+<div class='flex flex-wrap justify-between items-center gap-2 p-6 border-b border-gray-700'>
+        <h2 class='text-lg font-semibold text-white'>Daftar Jadwal Kuliah</h2>
+        
+        <p class='text-sm text-gray-400' style="display: none;">
+            Terakhir diperbarui: <span id="last-scraped-date"></span>
+        </p>
+    </div>
+
+    <div id="jadwal-container" class="divide-y divide-gray-700">
+        <div class="p-6 text-center text-gray-400">
+            <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+            <p class="mt-2 text-sm">Memuat jadwal...</p>
+        </div>
+    </div>
+</div>
+        <div class="bg-gray-800 rounded-lg shadow-md p-6 mt-6 overflow-x-auto" x-data="{ lastUpdate: '' }">
+
+          <h3>Ulang Tahun hari ini (<span id="tanggal-hari-ini"></span>)</h3>
+      <table border="1" cellpadding="8" cellspacing="0" id="tabel-ultah" class="mx-auto">
+          <thead>
+              <tr>
+                  <th>Nama</th>
+                  <th>Prodi</th>
+                  <th>Tanggal Lahir</th>
+                  <th>Umur</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+        </div>
+    </div>
+    {% include 'nativeNav.html' %}
+    <!-- <script>
+let video = document.getElementById('video');
+let canvas = document.getElementById('canvas');
+let context = canvas.getContext('2d');
+let status = document.getElementById('status');
+
+// Load face-api models
+async function loadModels() {
+  await faceapi.nets.tinyFaceDetector.loadFromUri('/static/models');
+  await faceapi.nets.faceLandmark68Net.loadFromUri('/static/models');
+  await faceapi.nets.faceRecognitionNet.loadFromUri('/static/models');
+  status.textContent = 'Models loaded';
+}
+
+// Start camera
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+  } catch (e) {
+    status.textContent = 'Camera access denied: ' + e.message;
+  }
+}
+
+// Register face
+async function registerFace() {
+  if (!video.srcObject) {
+    status.textContent = 'Start camera first';
+    return;
+  }
+  context.drawImage(video, 0, 0, 320, 240);
+  const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+  if (!detection) {
+    status.textContent = 'No face detected';
+    return;
+  }
+  const faceData = detection.descriptor;  // Feature vector
+  // Kirim ke backend
+  const response = await fetch('/api/auth/register-face', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ faceData: Array.from(faceData) })
+  });
+  if (response.ok) {
+    status.textContent = 'Face registered';
+  } else {
+    status.textContent = 'Registration failed';
+  }
+}
+
+// Login face
+async function loginFace() {
+  if (!video.srcObject) {
+    status.textContent = 'Start camera first';
+    return;
+  }
+  context.drawImage(video, 0, 0, 320, 240);
+  const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+  if (!detection) {
+    status.textContent = 'No face detected';
+    return;
+  }
+  const faceData = detection.descriptor;
+  // Kirim ke backend
+  const response = await fetch('/api/auth/login-face', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ faceData: Array.from(faceData) })
+  });
+  if (response.ok) {
+    window.location.href = '/';
+  } else {
+    status.textContent = 'Login failed';
+  }
+}
+
+
+
+// Event listeners
+document.getElementById('register-face-btn').addEventListener('click', registerFace);
+
+
+// Init
+loadModels().then(startCamera);
+</script> -->
+<script>
+    // Kita bungkus semua dalam DOMContentLoaded biar aman
+    // Ini mastiin semua HTML udah siap sebelum JS-nya jalan
+    function isCacheValid(cacheKey) {
+        const cached = localStorage.getItem(cacheKey);
+        if (!cached) return null; // Nggak ada cache
+
+        const { timestamp, data } = JSON.parse(cached);
+        
+        // Cek kalo timestamp-nya hari ini. 
+        // Kalo bukan hari ini, cache-nya basi.
+        const today = new Date().toDateString();
+        const cacheDate = new Date(timestamp).toDateString();
+
+        if (today === cacheDate) {
+            return data; // Cache valid, kembalikan datanya
+        }
+        
+        return null; // Cache basi
+    }
+
+    function setCache(cacheKey, data) {
+        const cacheItem = {
+            timestamp: new Date().getTime(), // Simpen timestamp sekarang
+            data: data
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheItem));
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // --- Bagian Face-API (dibuat aman dari null) ---
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const status = document.getElementById('status');
+        const registerBtn = document.getElementById('register-face-btn');
+        const loginBtn = document.getElementById('login-face-btn'); // Nggak ada di HTML
+        let context = null;
+
+        if (canvas) {
+            context = canvas.getContext('2d');
+        }
+
+        // Load face-api models
+        async function loadModels() {
+            if (!status) return; // Kalo elemen status nggak ada, stop
+            // Pastiin path-nya bener, mungkin perlu /static/models
+            await faceapi.nets.tinyFaceDetector.loadFromUri('/static/models'); 
+            await faceapi.nets.faceLandmark68Net.loadFromUri('/static/models');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('/static/models');
+            status.textContent = 'Models loaded';
+        }
+
+        // Start camera
+        async function startCamera() {
+            if (!video || !status) return; // Kalo video/status nggak ada, stop
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (e) {
+                status.textContent = 'Camera access denied: ' + e.message;
+            }
+        }
+
+        // Register face
+        async function registerFace() {
+            if (!video || !context || !status) {
+                if(status) status.textContent = 'Elemen (video/canvas) tidak ditemukan.';
+                return;
+            }
+            context.drawImage(video, 0, 0, 320, 240);
+            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+            if (!detection) {
+                status.textContent = 'No face detected';
+                return;
+            }
+            const faceData = detection.descriptor;  // Feature vector
+            // Kirim ke backend
+            const response = await fetch('/api/auth/register-face', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ faceData: Array.from(faceData) })
+            });
+            if (response.ok) {
+                status.textContent = 'Face registered';
+            } else {
+                status.textContent = 'Registration failed';
+            }
+        }
+
+        // Login face
+        async function loginFace() {
+             if (!video || !context || !status) {
+                if(status) status.textContent = 'Elemen (video/canvas) tidak ditemukan.';
+                return;
+            }
+            context.drawImage(video, 0, 0, 320, 240);
+            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+            if (!detection) {
+                status.textContent = 'No face detected';
+                return;
+            }
+            const faceData = detection.descriptor;
+            // Kirim ke backend
+            const response = await fetch('/api/auth/login-face', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ faceData: Array.from(faceData) })
+            });
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                status.textContent = 'Login failed';
+            }
+        }
+
+        // Event listeners (dibuat aman)
+        if (registerBtn) {
+            registerBtn.addEventListener('click', registerFace);
+        }
+        if (loginBtn) { // Kalo ada tombol login
+            loginBtn.addEventListener('click', loginFace);
+        }
+        
+        // Init (dibuat aman)
+        if (video && canvas && status) {
+             loadModels().then(startCamera);
+        }
+        
+        
+// 1. PANGGIL FUNGSI LOAD JADWAL
+        loadJadwal();
+        
+        // 2. PANGGIL FUNGSI LOAD ULTAH
+        loadUlangTahun();
+        
+    }); // Tutup DOMContentLoaded
+// --- Bagian Baru: Fetch Data Ulang Tahun ---
+async function loadJadwal() {
+        const cacheKey = 'dataJadwal';
+        const tabelContainer = document.getElementById('jadwal-container');
+        const lastScrapedEl = document.getElementById('last-scraped-date');
+        
+        if (!tabelContainer) return; // Error, elemen nggak ketemu
+
+        // Coba ambil dari cache dulu
+        const cachedData = isCacheValid(cacheKey);
+        if (cachedData) {
+            console.log("Jadwal: Load dari LocalStorage Cache.");
+            renderJadwal(cachedData.data, cachedData.metadata); // Tampilkan dari cache
+            return; // Selesai
+        }
+
+        // Kalo nggak ada cache / basi, fetch baru
+        console.log("Jadwal: Fetch dari /api/jadwal-list");
+        try {
+            const response = await fetch('/api/jadwal-list');
+            if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
+            const data = await response.json();
+
+            if (data.error) {
+                tabelContainer.innerHTML = `<div class="p-6 text-gray-400"><h3 class='font-semibold'>JADWAL BELUM TERSEDIA.</h3><p>${data.message}</p></div>`;
+                return;
+            }
+
+            // Sukses! Simpen ke cache
+            setCache(cacheKey, data, 3600);
+            // Tampilkan ke HTML
+            renderJadwal(data.data, data.metadata);
+
+        } catch (error) {
+            console.error("Gagal fetch data jadwal:", error);
+            tabelContainer.innerHTML = `<div class="p-6 text-red-400"><p>Gagal memuat data jadwal. Coba refresh.</p></div>`;
+        }
+    }
+
+    // --- FUNGSI BARU: Render HTML Jadwal (Biar rapi) ---
+    function renderJadwal(jadwalList, metadata) {
+        const tabelContainer = document.getElementById('jadwal-container');
+        const lastScrapedEl = document.getElementById('last-scraped-date');
+        
+        if (metadata && metadata.last_scraped && lastScrapedEl) {
+            lastScrapedEl.textContent = metadata.last_scraped;
+            // Tampilkan elemennya (kalo disembunyiin)
+            lastScrapedEl.closest('p').style.display = 'block';
+        }
+
+        if (!jadwalList || jadwalList.length === 0) {
+            tabelContainer.innerHTML = `<div class="p-6 text-gray-400"><p>Data jadwal kosong.</p></div>`;
+            return;
+        }
+
+        // Hapus isi lama (kalo ada)
+        tabelContainer.innerHTML = ''; 
+        
+        // Loop dan bikin HTML (pake Alpine.js)
+        jadwalList.forEach(jadwal => {
+            const div = document.createElement('div');
+            div.className = 'divide-y divide-gray-700'; // Kelas pembungkus luar
+            div.innerHTML = `
+                <div x-data="{ isOpen: false }">
+                    <div @click="isOpen = !isOpen" class="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-700/50">
+                        <div class="flex-1 pr-4">
+                            <p class="font-semibold text-white truncate">${jadwal['Nama Matakuliah'] || ''}</p>
+                            <p class="text-sm text-gray-400">${jadwal['Hari, Tanggal'] || ''}</p>
+                        </div>
+                        <div class="ml-auto">
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform" 
+                                 :class="{ 'rotate-180': isOpen }" 
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div x-show="isOpen" x-transition:enter="transition ease-out duration-100" 
+                         x-transition:leave="transition ease-in duration-100" 
+                         class="p-4 bg-gray-900 border-t border-gray-700 text-sm" style="display: none;">
+                        <dl class="grid grid-cols-3 gap-x-4 gap-y-2">
+                            <dt class="font-medium text-gray-400 col-span-1">Jam</dt>
+                            <dd class="col-span-2 text-white">${jadwal['Jam'] || '-'}</dd>
+                            <dt class="font-medium text-gray-400 col-span-1">Ruangan</dt>
+                            <dd class="col-span-2 text-white">${jadwal['Ruangan'] || '-'}</dd>
+                            <dt class="font-medium text-gray-400 col-span-1">Dosen</dt>
+                            <dd class="col-span-2 text-white">${jadwal['Dosen'] || '-'}</dd>
+                            <dt class="font-medium text-gray-400 col-span-1">Status Kuliah</dt>
+                            <dd class="col-span-2 text-white">${jadwal['Status Kuliah'] || '-'}</dd>
+                            <dt class="font-medium text-gray-400 col-span-1">Keterangan</dt>
+                            <dd class="col-span-2 text-white">${jadwal['Keterangan'] || '-'}</dd>
+                        </dl>
+                    </div>
+                </div>
+            `;
+            tabelContainer.appendChild(div);
+        });
+    }
+
+    // --- FUNGSI LAMA: Load Data Ultah (Dimodif dikit) ---
+    async function loadUlangTahun() {
+        const cacheKey = 'dataUltah';
+        const tabelBody = document.querySelector('#tabel-ultah tbody');
+        const tanggalEl = document.getElementById('tanggal-hari-ini');
+        if (!tabelBody) return; // Stop kalo tabel nggak ada
+
+        // Coba ambil dari cache dulu
+        const cachedData = isCacheValid(cacheKey);
+        if (cachedData) {
+            console.log("Ultah: Load dari LocalStorage Cache.");
+            renderUltah(cachedData); // Tampilkan dari cache
+            return; // Selesai
+        }
+
+        // Kalo nggak ada cache / basi, fetch baru
+        console.log("Ultah: Fetch dari /api/fetch-data-ultah");
+        try {
+            const response = await fetch('/api/fetch-data-ultah'); 
+            if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
+            const data = await response.json();
+
+            // Sukses! Simpen ke cache
+            setCache(cacheKey, data, 3600 * 6);
+            // Tampilkan ke HTML
+            renderUltah(data);
+
+        } catch (error) {
+            console.error("Gagal fetch data ultah:", error);
+            tabelBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 10px; color: #F87171;">Gagal memuat data ultah.</td></tr>`;
+        }
+    }
+
+    // --- FUNGSI BARU: Render HTML Ultah (Biar rapi) ---
+    function renderUltah(data) {
+        const tabelBody = document.querySelector('#tabel-ultah tbody');
+        const tanggalEl = document.getElementById('tanggal-hari-ini');
+
+        if (tanggalEl) {
+            tanggalEl.textContent = data.tanggal_hari_ini || 'Hari ini';
+        }
+        
+        tabelBody.innerHTML = ''; // Bersihin tabel
+
+        if (data.jumlah === 0 || !data.rows || data.rows.length === 0) {
+            tabelBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 10px; color: #9CA3AF;">Tidak ada yang ulang tahun hari ini.</td></tr>';
+            return;
+        }
+
+        data.rows.forEach(mhs => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-gray-700'; 
+            tr.innerHTML = `
+                <td style="padding: 12px 15px;">${mhs.nama}</td>
+                <td style="padding: 12px 15px;">${mhs.prodi}</td>
+                <td style="padding: 12px 15px;">${mhs.tanggal_lahir}</td>
+                <td style="padding: 12px 15px;">${mhs.umur}</td>
+            `;
+            tabelBody.appendChild(tr);
+        });
+    }
+</script>
+</body>
+</html>

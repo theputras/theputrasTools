@@ -1,29 +1,50 @@
 # scrapper_requests.py
 
-import os
+import os, json, time
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from dotenv import load_dotenv
 from urllib.parse import urljoin, urlparse, quote
 import re
-import json
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 import threading
 import logging # Tambahkan import logging
+from typing import List, Dict, Any
+from zoneinfo import ZoneInfo
+from requests.adapters import HTTPAdapter, Retry
+from fastapi import HTTPException
 
 load_dotenv()
 USER = os.getenv("SICYCA_USER")
 PASS = os.getenv("SICYCA_PASS")
 if not USER or not PASS:
     raise SystemExit("Set SICYCA_USER dan SICYCA_PASS di .env")
-
+# === ENV & TZ ===
+TZ = os.getenv("TIMEZONE", "Asia/Jakarta")
+JKT = ZoneInfo(TZ)
 TARGET_URL = "https://sicyca.dinamika.ac.id"
 GATE_ROOT = "https://gate.dinamika.ac.id"
 COOKIES_FILE = "cookies.json"
 
 _session_lock = threading.Lock()
 _authenticated_session = None
+
+
+# === HTTP session (retry) ===
+_session = requests.Session()
+_retries = Retry(total=3, backoff_factor=0.3, status_forcelist=[429, 500, 502, 503, 504])
+_session.mount("https://", HTTPAdapter(max_retries=_retries))
+_session.mount("http://", HTTPAdapter(max_retries=_retries))
+
+# === Cache harian ===
+_cache_data: Dict[str, Any] = {}
+_cache_expire_at: float = 0.0
+
+def _midnight_epoch() -> float:
+    now = datetime.now(JKT)
+    midnight_tomorrow = datetime(now.year, now.month, now.day, tzinfo=JKT) + timedelta(days=1)
+    return midnight_tomorrow.timestamp()
 
 def save_cookies(session):
     data_to_save = { "cookies": session.cookies.get_dict(), "last_access_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S") }
@@ -59,6 +80,41 @@ def check_session_validity(session):
     except requests.RequestException: pass
     logging.warning("   --> Sesi Sicyca sudah tidak valid.")
     return False
+
+# GANTI FUNGSI LAMA DENGAN INI
+# def check_session_validity(session):
+#     logging.info("   --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...")
+#     dashboard_url = urljoin(TARGET_URL, "/dashboard")
+#     try:
+#         response = session.get(dashboard_url, allow_redirects=True, timeout=15)
+#         response.raise_for_status()
+
+#         # --- Cek yang DIBUAT LEBIH KETAT ---
+#         parsed_url = urlparse(response.url)
+
+#         # Cek domainnya (netloc) HARUS sicyca, BUKAN gate
+#         is_sicyca_domain = "sicyca.dinamika.ac.id" in parsed_url.netloc
+#         # Cek path-nya HARUS diawali /dashboard
+#         is_dashboard_path = parsed_url.path.startswith("/dashboard")
+
+#         # Kalo dua-duanya bener, baru valid
+#         if is_sicyca_domain and is_dashboard_path:
+#             logging.info("   --> Sesi Sicyca masih valid (di domain sicyca & path /dashboard).")
+#             return True
+#         else:
+#             # Kalo di-redirect ke gate, itu pasti tidak valid
+#             if "gate.dinamika.ac.id" in parsed_url.netloc:
+#                 logging.warning(f"   --> Sesi tidak valid, di-redirect ke {response.url}")
+#             else:
+#                 logging.warning(f"   --> Sesi Sicyca tidak valid (URL akhir: {response.url}).")
+#             return False
+
+#     except requests.RequestException as e:
+#         logging.error(f"   --> Error saat cek validitas: {e}")
+#         pass # Lanjut ke return False
+
+#     logging.warning("   --> Sesi Sicyca sudah tidak valid (RequestException).")
+#     return False
 
 def login_gateDinamika(session):
     try:
@@ -250,3 +306,127 @@ def fetch_photo_from_sicyca(role, id_):
     except Exception as e:
         logging.error(f"   --> Error tak terduga saat fetch foto {role}/{id_}: {e}")
         return None
+        
+def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
+    """
+    Satu fungsi untuk:
+    - call API SICYCA (pakai env SICYCA_USER & SICYCA_TOKEN)
+    - normalisasi record (0/1/2/3 -> NIM/NAMA/PRODI/TANGGAL)
+    - parse tanggal & hitung umur
+    - filter ultah = hari ini
+    - caching sampai 23:59:59 zona Asia/Jakarta
+    """
+    global _cache_data, _cache_expire_at
+
+    now = datetime.now(JKT)
+    today = now.date()
+
+    if not force_refresh and time.time() <= _cache_expire_at and _cache_data:
+        logging.info("Mengambil data ultah dari cache.")
+        return _cache_data
+
+    sess = get_authenticated_session()
+    if not sess:
+        raise HTTPException(status_code=401, detail="Gagal autentikasi ke Sicyca")
+
+    # --- coba ambil CSRF token ---
+    token = None
+
+    # 2. Fallback: Parse dari Halaman (INI YANG DIGANTI)
+    logging.info("Mencoba scrape global_token dari Halaman Dashboard Sicyca...")
+    try:
+        # Akses halaman utama Sicyca (TARGET_URL)
+        r = sess.get(GATE_ROOT, timeout=10)
+        r.raise_for_status()
+        
+        # Cari token-nya pakai Regex (var global_token = "...")
+        match = re.search(r'var global_token\s*=\s*"([^"]+)"', r.text)
+        
+        if match:
+            token = match.group(1)
+            logging.info(f"   --> Global token (JS var) berhasil di-parse dari HTML.")
+        else:
+            # Fallback ke meta tag (jaga-jaga)
+            meta_match = re.search(r'name="csrf-token"\s+content="([^"]+)"', r.text)
+            if meta_match:
+                token = meta_match.group(1)
+                logging.info(f"   --> Global token (meta tag) berhasil di-parse.")
+            else:
+                logging.error("GAGAL! Tidak menemukan 'var global_token' atau 'meta csrf-token' di halaman.")
+                # Simpan HTML untuk cek
+                with open("debug_token_page.html", "w", encoding="utf-8") as f:
+                    f.write(r.text)
+                logging.error("HTML halaman disimpan ke debug_token_page.html")
+                raise Exception("Tidak bisa menemukan token di halaman HTML.") 
+
+    except Exception as e:
+        logging.error(f"Error saat scraping token: {e}")
+        raise HTTPException(status_code=500, detail=f"Gagal scrape token: {e}")
+
+
+    if not token:
+        raise HTTPException(status_code=403, detail="CSRF/Global token tidak ditemukan setelah scrape")
+
+    # --- panggil API ---
+    api_url = urljoin(TARGET_URL, "/sicyca_api.php")
+    payload = {"nim": USER, "token": token, "ultah": True}
+    logging.info("Memanggil API Sicyca untuk data ulang tahun...")
+    logging.info(f"   --> API URL: {api_url}")
+    logging.info(f"   --> Payload: nim={USER}, token={token}, ultah=True")
+    r = sess.post(api_url, data=payload, timeout=10)
+    r.raise_for_status()
+
+    try:
+        data_json = r.json()
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=502, detail="Invalid JSON dari Sicyca")
+
+    raw_list = data_json.get("data", [])
+    if not isinstance(raw_list, list):
+        raw_list = []
+    # helper lokal (biar satu fungsi)
+    def parse_tanggal(s: str) -> date | None:
+        s = (s or "").strip()
+        for fmt in ("%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y", "%d %m %Y", "%Y/%m/%d"):
+            try:
+                return datetime.strptime(s, fmt).date()
+            except ValueError:
+                continue
+        return None
+
+    def hitung_umur(tgl_lahir: date, today_: date) -> int:
+        umur = today_.year - tgl_lahir.year
+        if (today_.month, today_.day) < (tgl_lahir.month, tgl_lahir.day):
+            umur -= 1
+        return umur
+
+    def map_record(raw: Dict[str, Any]) -> Dict[str, Any]:
+        nim = raw.get("NIM") or raw.get("0") or ""
+        nama = raw.get("NAMA") or raw.get("1") or ""
+        prodi = raw.get("PRODI") or raw.get("2") or ""
+        tanggal_str = raw.get("TANGGAL") or raw.get("3") or ""
+        return {"nim": nim, "nama": nama, "prodi": prodi, "tanggal": tanggal_str}
+
+    # 2) map & filter
+    rows: List[Dict[str, Any]] = []
+    for raw in raw_list:
+        rec = map_record(raw)
+        tgl = parse_tanggal(rec["tanggal"])
+        if not tgl:
+            continue
+        if (tgl.month, tgl.day) == (today.month, today.day):
+            rows.append({
+                "nama": rec["nama"],
+                "prodi": rec["prodi"],
+                "tanggal_lahir": tgl.isoformat(),
+                "umur": hitung_umur(tgl, today)
+            })
+
+    # 3) simpan cache & return
+    _cache_data = {
+        "tanggal_hari_ini": now.strftime("%d %B %Y"),
+        "jumlah": len(rows),
+        "rows": rows
+    }
+    _cache_expire_at = _midnight_epoch()
+    return _cache_data
