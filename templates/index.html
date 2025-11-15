@@ -370,13 +370,13 @@ async function loadJadwal() {
         // Coba ambil dari cache dulu
         const cachedData = isCacheValid(cacheKey);
         if (cachedData) {
-            console.log("Jadwal: Load dari LocalStorage Cache.");
+            // console.log("Jadwal: Load dari LocalStorage Cache.");
             renderJadwal(cachedData.data, cachedData.metadata); // Tampilkan dari cache
             return; // Selesai
         }
 
         // Kalo nggak ada cache / basi, fetch baru
-        console.log("Jadwal: Fetch dari /api/jadwal-list");
+        // console.log("Jadwal: Fetch dari /api/jadwal-list");
         try {
             const response = await fetch('/api/jadwal-list');
             if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
@@ -469,13 +469,13 @@ async function loadJadwal() {
         // Coba ambil dari cache dulu
         const cachedData = isCacheValid(cacheKey);
         if (cachedData) {
-            console.log("Ultah: Load dari LocalStorage Cache.");
+            // console.log("Ultah: Load dari LocalStorage Cache.");
             renderUltah(cachedData); // Tampilkan dari cache
             return; // Selesai
         }
 
         // Kalo nggak ada cache / basi, fetch baru
-        console.log("Ultah: Fetch dari /api/fetch-data-ultah");
+        // console.log("Ultah: Fetch dari /api/fetch-data-ultah");
         try {
             const response = await fetch('/api/fetch-data-ultah'); 
             if (!response.ok) throw new Error(`HTTP error! ${response.status}`);

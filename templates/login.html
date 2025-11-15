@@ -51,10 +51,13 @@
 
       <div id="errorMessage" class="text-red-400 text-sm text-center hidden"></div>
 
-      <button type="submit"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow transition duration-200">
-        Masuk
-      </button>
+<button type="submit" id="login-btn" class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+    <svg id="login-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="display: none;">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    <span id="login-text">Login</span>
+</button>
       <!-- <video id="video" width="320" height="240" autoplay muted></video>
 <canvas id="canvas" style="display:none;"></canvas>
 <button id="register-face-btn">Register Face</button>
@@ -69,39 +72,93 @@
   </div>
 
 <script>
+(function() {
+        // Kita nggak pake localStorage.clear() karena itu terlalu
+        // barbar dan bisa hapus data lain. Kita hapus
+        // kunci (key) yang kita buat sendiri aja.
+
+        // console.log("Mengecek cache di localStorage...");
+
+        const keysToRemove = [
+          'dataJadwal',
+          'dataUltah'
+        ];
+
+        let removedCount = 0;
+
+        // Hapus key yang spesifik
+        keysToRemove.forEach(key => {
+          if (localStorage.getItem(key)) {
+            localStorage.removeItem(key);
+            removedCount++;
+          }
+        });
+
+        // Hapus semua cache foto (yang diawali 'photo_')
+        // Kita harus loop karena kita nggak tau semua ID-nya
+        Object.keys(localStorage)
+          .filter(key => key.startsWith('photo_'))
+          .forEach(key => {
+            localStorage.removeItem(key);
+            removedCount++;
+          });
+
+        if (removedCount > 0) {
+            // console.log(`Pembersihan localStorage selesai. ${removedCount} item dihapus.`);
+        } else {
+            // console.log("LocalStorage sudah bersih.");
+        }
+
+      })();
 document.querySelector('form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const formData = new URLSearchParams({
+    
+    // 1. Ambil elemen-elemen tombol
+    const btn = document.getElementById('login-btn');
+    const btnSpinner = document.getElementById('login-spinner');
+    const btnText = document.getElementById('login-text');
+    const errorEl = document.getElementById('errorMessage');
+
+    // 2. MASUK KE MODE LOADING (SESUAI PERMINTAAN)
+    btn.disabled = true;                // <-- Tombol di-disable
+    btnSpinner.style.display = 'block'; // <-- Tampilkan spinner
+    btnText.textContent = 'Logging in...'; // <-- Ganti teks
+    errorEl.style.display = 'none';
+
+      const formData = new URLSearchParams({
     username: document.getElementById('username').value,
     password: document.getElementById('password').value
   });
 
-  try {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData,
-      credentials: 'include' // penting biar cookie dikirim!
+    fetch('/api/auth/login', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect) {
+            // Sukses, biarin aja disabled, halaman bakal redirect
+            window.location.href = data.redirect;
+        } else if (data.error) {
+            // Gagal, balikin tombol ke semula
+            errorEl.textContent = data.error;
+            errorEl.style.display = 'block';
+            
+            btn.disabled = false; // <-- Balikin
+            btnSpinner.style.display = 'none'; // <-- Sembunyiin
+            btnText.textContent = 'Login'; // <-- Balikin
+        }
+    })
+    .catch(err => {
+        console.error('Login error:', err);
+        errorEl.textContent = 'Terjadi kesalahan. Coba lagi.';
+        errorEl.style.display = 'block';
+        
+        // Error, balikin tombol ke semula
+        btn.disabled = false; // <-- Balikin
+        btnSpinner.style.display = 'none'; // <-- Sembunyiin
+        btnText.textContent = 'Login'; // <-- Balikin
     });
-
-   if (response.ok) {
-      const data = await response.json();
-      console.log("✅ Login sukses:", data);
-      // Tambah: Reload untuk pastikan session/cookie sync
-      setTimeout(() => {
-          // window.location.reload();  
-          window.location.href = data.redirect;
-      }, 300);
-  }
-  else {
-      const err = await response.json();
-      alert(err.error || 'Login gagal, periksa username/password.');
-    }
-  } catch (err) {
-    console.error('❌ Error saat login:', err);
-    alert('Terjadi kesalahan server.');
-  }
 });
 
 
