@@ -10528,3 +10528,234 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 
 2025-11-15 19:02:01,815 - WARNING -  * Debugger is active!
 2025-11-15 19:02:01,820 - INFO -  * Debugger PIN: 288-901-657
+2025-11-15 19:04:05,214 - INFO - [GUARD DEBUG] Token expired (ExpiredSignatureError)
+2025-11-15 19:04:05,216 - INFO - 127.0.0.1 - - [15/Nov/2025 19:04:05] "[32mGET / HTTP/1.1[0m" 302 -
+2025-11-15 19:04:05,280 - INFO - 127.0.0.1 - - [15/Nov/2025 19:04:05] "GET /login HTTP/1.1" 200 -
+2025-11-15 19:04:55,232 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:04:55,513 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-15 19:04:55,515 - INFO - 127.0.0.1 - - [15/Nov/2025 19:04:55] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-15 19:04:56,268 - INFO - 127.0.0.1 - - [15/Nov/2025 19:04:56] "GET / HTTP/1.1" 200 -
+2025-11-15 19:04:56,537 - INFO - 127.0.0.1 - - [15/Nov/2025 19:04:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:04:56,539 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:04:56,551 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:04:56,554 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:05:01,025 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:05:01,027 - INFO - 127.0.0.1 - - [15/Nov/2025 19:05:01] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:05:01,844 - INFO - 127.0.0.1 - - [15/Nov/2025 19:05:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:05:04,117 - INFO - 127.0.0.1 - - [15/Nov/2025 19:05:04] "GET / HTTP/1.1" 200 -
+2025-11-15 19:05:04,417 - INFO - 127.0.0.1 - - [15/Nov/2025 19:05:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:05:04,590 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:05:04,593 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:05:04,593 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:05:06,721 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:05:06,724 - INFO - 127.0.0.1 - - [15/Nov/2025 19:05:06] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:05:06,908 - INFO - 127.0.0.1 - - [15/Nov/2025 19:05:06] "[32mGET / HTTP/1.1[0m" 302 -
+2025-11-15 19:05:07,226 - INFO - 127.0.0.1 - - [15/Nov/2025 19:05:07] "GET /login HTTP/1.1" 200 -
+2025-11-15 19:06:30,470 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:30] "GET /login HTTP/1.1" 200 -
+2025-11-15 19:06:47,973 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:06:48,231 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-15 19:06:48,233 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:48] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-15 19:06:48,567 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:48] "GET / HTTP/1.1" 200 -
+2025-11-15 19:06:48,859 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:06:49,091 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:06:49,093 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:06:49,094 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:06:49,116 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:49] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-15 19:06:49,120 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:06:49,120 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:06:52,298 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:06:52,299 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:52] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:06:54,092 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:06:56,449 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:06:56,460 - INFO - Membuat sesi global baru dari cookies file.
+2025-11-15 19:06:56,461 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-15 19:06:59,093 - INFO - 127.0.0.1 - - [15/Nov/2025 19:06:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:00,233 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-15 19:07:00,239 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-15 19:07:00,240 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-15 19:07:00,240 - INFO -    --> Payload: nim=23410100003, token=$2y$10$xqqalLOHhfBXRCQY3lIvyu5AH7VrmSf6zxjpYM9g0MJnRd5KbQuGq, ultah=True
+2025-11-15 19:07:01,117 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:01] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-15 19:07:04,088 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:04,961 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:04] "GET /account HTTP/1.1" 200 -
+2025-11-15 19:07:07,842 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:07] "GET / HTTP/1.1" 200 -
+2025-11-15 19:07:08,138 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:08,291 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:07:08,293 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:07:08,293 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:07:09,982 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:09] "GET /account HTTP/1.1" 200 -
+2025-11-15 19:07:10,401 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:07:10,402 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:10] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:07:11,843 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:11] "GET / HTTP/1.1" 200 -
+2025-11-15 19:07:11,938 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:12,089 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:07:12,090 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:07:12,090 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:07:14,022 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:07:14,022 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:14] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:07:17,301 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:22,277 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:27,593 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:32,284 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:37,008 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:37] "GET /account HTTP/1.1" 200 -
+2025-11-15 19:07:37,063 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:38,910 - INFO - User logging out from ALL devices...
+2025-11-15 19:07:38,910 - INFO - Revoking all sessions for user_id: 1
+2025-11-15 19:07:38,948 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:07:38,967 - INFO - Revoke All: Berhasil me-revoke 3 sesi untuk user_id 1.
+2025-11-15 19:07:38,967 - INFO - Current session cleared. Redirecting to login.
+2025-11-15 19:07:38,967 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:38] "[32mGET /logout-all HTTP/1.1[0m" 302 -
+2025-11-15 19:07:39,212 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:39] "GET /login HTTP/1.1" 200 -
+2025-11-15 19:07:45,193 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:07:45,562 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-15 19:07:45,564 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:45] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-15 19:07:45,895 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:45] "GET / HTTP/1.1" 200 -
+2025-11-15 19:07:46,193 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:46,442 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:07:46,456 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:46] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-15 19:07:46,457 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:07:46,458 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:07:46,460 - INFO - Mengambil data ultah dari cache.
+2025-11-15 19:07:46,461 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:46] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-15 19:07:48,629 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:07:48,630 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:48] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:07:51,590 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:07:56,824 - INFO - 127.0.0.1 - - [15/Nov/2025 19:07:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:01,588 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:06,280 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:11,584 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:17,368 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:21,579 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:26,282 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:31,574 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:31] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:36,825 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:41,664 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:41] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:46,272 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:51,575 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:08:56,496 - INFO - 127.0.0.1 - - [15/Nov/2025 19:08:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:09:01,577 - INFO - 127.0.0.1 - - [15/Nov/2025 19:09:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:09:06,273 - INFO - 127.0.0.1 - - [15/Nov/2025 19:09:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:09:11,580 - INFO - 127.0.0.1 - - [15/Nov/2025 19:09:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:09:16,281 - INFO - 127.0.0.1 - - [15/Nov/2025 19:09:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:09:21,590 - INFO - 127.0.0.1 - - [15/Nov/2025 19:09:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:09:52,301 - INFO - 127.0.0.1 - - [15/Nov/2025 19:09:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:10:19,670 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:10:19,921 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:19] "GET / HTTP/1.1" 200 -
+2025-11-15 19:10:20,113 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:10:20,417 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:10:20,418 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:10:20,418 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:10:22,644 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:10:22,645 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:22] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:10:25,411 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:25] "GET /account HTTP/1.1" 200 -
+2025-11-15 19:10:25,496 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:10:26,679 - INFO - User logging out...
+2025-11-15 19:10:27,125 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:10:27,142 - INFO - Revoke: Token 23f28800... berhasil di-revoke.
+2025-11-15 19:10:27,143 - INFO - Session and cookies cleared. Redirecting to login.
+2025-11-15 19:10:27,143 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:27] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-11-15 19:10:27,156 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:27] "GET /login HTTP/1.1" 200 -
+2025-11-15 19:10:34,412 - INFO - 127.0.0.1 - - [15/Nov/2025 19:10:34] "GET /login?username=theputras&password=theputras7781%2543 HTTP/1.1" 200 -
+2025-11-15 19:11:47,480 - INFO - 127.0.0.1 - - [15/Nov/2025 19:11:47] "GET /login?username=theputras&password=theputras7781%2543 HTTP/1.1" 200 -
+2025-11-15 19:14:19,233 - INFO - 127.0.0.1 - - [15/Nov/2025 19:14:19] "GET /login?username=theputras&password=theputras7781%2543 HTTP/1.1" 200 -
+2025-11-15 19:15:28,459 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:28] "GET /login?username=theputras&password=theputras7781%2543 HTTP/1.1" 200 -
+2025-11-15 19:15:35,549 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:15:35,933 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-15 19:15:35,934 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:35] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-15 19:15:35,973 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:35] "GET / HTTP/1.1" 200 -
+2025-11-15 19:15:36,302 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:15:36,616 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:15:36,626 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-15 19:15:36,628 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:15:36,646 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:36] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-15 19:15:36,656 - INFO - Mengambil data ultah dari cache.
+2025-11-15 19:15:36,658 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:36] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-15 19:15:38,899 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:15:38,902 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-15 19:15:38,904 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:15:39,810 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:15:39,814 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:39] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:15:41,598 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:41] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:15:45,649 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:45] "GET /account HTTP/1.1" 200 -
+2025-11-15 19:15:47,717 - INFO - User logging out from ALL devices...
+2025-11-15 19:15:47,721 - INFO - Revoking all sessions for user_id: 1
+2025-11-15 19:15:47,783 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:15:47,809 - INFO - Revoke All: Berhasil me-revoke 1 sesi untuk user_id 1.
+2025-11-15 19:15:47,812 - INFO - Current session cleared. Redirecting to login.
+2025-11-15 19:15:47,819 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:47] "[32mGET /logout-all HTTP/1.1[0m" 302 -
+2025-11-15 19:15:48,027 - INFO - 127.0.0.1 - - [15/Nov/2025 19:15:48] "GET /login HTTP/1.1" 200 -
+2025-11-15 19:16:34,908 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:34] "GET /login HTTP/1.1" 200 -
+2025-11-15 19:16:43,794 - INFO - === Koneksi ke database berhasil ===
+2025-11-15 19:16:44,201 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-15 19:16:44,202 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:44] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-15 19:16:44,245 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:44] "GET / HTTP/1.1" 200 -
+2025-11-15 19:16:44,528 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:16:44,781 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:16:44,790 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-15 19:16:44,791 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:16:44,813 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:44] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-15 19:16:44,817 - INFO - Mengambil data ultah dari cache.
+2025-11-15 19:16:44,818 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:44] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-15 19:16:45,790 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:16:45,791 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-15 19:16:45,791 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:16:46,970 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:16:46,970 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:46] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:16:50,576 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:16:54,463 - INFO - 127.0.0.1 - - [15/Nov/2025 19:16:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:00,607 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:05,273 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:10,581 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:15,546 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:20,579 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:25,273 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:30,574 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:35,274 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:40,575 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:45,276 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:50,577 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:17:55,278 - INFO - 127.0.0.1 - - [15/Nov/2025 19:17:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:10,702 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:14,459 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:19,763 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:24,459 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:29,763 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:32,020 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:32] "GET / HTTP/1.1" 200 -
+2025-11-15 19:18:32,368 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:32,628 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:18:32,649 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-15 19:18:32,676 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:18:35,399 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:18:35,400 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-15 19:18:35,401 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:18:36,211 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:18:36,212 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:36] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:18:38,573 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:43,272 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:48,576 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:53,275 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:18:58,574 - INFO - 127.0.0.1 - - [15/Nov/2025 19:18:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:03,273 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:09,618 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:13,277 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:18,576 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:23,272 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:28,219 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:32,289 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:37,588 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:43,272 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:48,576 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:53,275 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:19:58,576 - INFO - 127.0.0.1 - - [15/Nov/2025 19:19:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:03,272 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:07,668 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:13,277 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:18,577 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:23,271 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:28,648 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:33,275 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:38,577 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:20:52,280 - INFO - 127.0.0.1 - - [15/Nov/2025 19:20:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:21:52,585 - INFO - 127.0.0.1 - - [15/Nov/2025 19:21:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:22:52,285 - INFO - 127.0.0.1 - - [15/Nov/2025 19:22:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:23:05,222 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\scrapper_requests.py', reloading
+2025-11-15 19:23:05,519 - INFO -  * Restarting with stat

@@ -13,7 +13,6 @@ import logging # Tambahkan import logging
 from typing import List, Dict, Any
 from zoneinfo import ZoneInfo
 from requests.adapters import HTTPAdapter, Retry
-from fastapi import HTTPException
 
 load_dotenv()
 USER = os.getenv("SICYCA_USER")
@@ -327,7 +326,7 @@ def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
 
     sess = get_authenticated_session()
     if not sess:
-        raise HTTPException(status_code=401, detail="Gagal autentikasi ke Sicyca")
+        raise Exception(status_code=401, detail="Gagal autentikasi ke Sicyca")
 
     # --- coba ambil CSRF token ---
     token = None
@@ -361,11 +360,11 @@ def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
 
     except Exception as e:
         logging.error(f"Error saat scraping token: {e}")
-        raise HTTPException(status_code=500, detail=f"Gagal scrape token: {e}")
+        raise Exception(status_code=500, detail=f"Gagal scrape token: {e}")
 
 
     if not token:
-        raise HTTPException(status_code=403, detail="CSRF/Global token tidak ditemukan setelah scrape")
+        raise Exception(status_code=403, detail="CSRF/Global token tidak ditemukan setelah scrape")
 
     # --- panggil API ---
     api_url = urljoin(TARGET_URL, "/sicyca_api.php")
@@ -379,7 +378,7 @@ def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
     try:
         data_json = r.json()
     except json.JSONDecodeError:
-        raise HTTPException(status_code=502, detail="Invalid JSON dari Sicyca")
+        raise Exception(status_code=502, detail="Invalid JSON dari Sicyca")
 
     raw_list = data_json.get("data", [])
     if not isinstance(raw_list, list):
