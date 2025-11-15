@@ -129,8 +129,8 @@
               <tr>
                   <th>Nama</th>
                   <th>Prodi</th>
-                  <th>Tanggal Lahir</th>
-                  <th>Umur</th>
+                <th id="th-tgl-lahir">Tanggal Lahir</th>
+                <th id="th-umur">Umur</th>
               </tr>
           </thead>
           <tbody></tbody>
@@ -496,29 +496,59 @@ async function loadJadwal() {
     function renderUltah(data) {
         const tabelBody = document.querySelector('#tabel-ultah tbody');
         const tanggalEl = document.getElementById('tanggal-hari-ini');
+        // 1. BACA SETTING PRIVACY DARI LOCALSTORAGE
+    const isPrivacyOn = JSON.parse(localStorage.getItem('privacyOn') || 'false');
 
+    // 2. KONTROL HEADER TABEL (<th>)
+    const thUmur = document.getElementById('th-umur');
+    const thTgl = document.getElementById('th-tgl-lahir');
+    
+    // Tentukan colspan berdasarkan mode privacy (penting buat 'empty row')
+    let colspan = 4;
+
+    if (isPrivacyOn) {
+        if (thUmur) thUmur.style.display = 'none'; // Sembunyikan header "Umur"
+        if (thTgl) thTgl.textContent = 'Tanggal';  // Ubah header "Tanggal Lahir" -> "Tanggal"
+        colspan = 3; // Kalo mode private, tabelnya cuma 3 kolom
+    } else {
+        if (thUmur) thUmur.style.display = 'table-cell'; // Tampilkan header "Umur"
+        if (thTgl) thTgl.textContent = 'Tanggal Lahir'; // Balikin
+        colspan = 4;
+    }
+    // 3. ISI TANGGAL (Masih sama)
         if (tanggalEl) {
             tanggalEl.textContent = data.tanggal_hari_ini || 'Hari ini';
         }
         
         tabelBody.innerHTML = ''; // Bersihin tabel
-
+// 4. TAMPILKAN EMPTY ROW (Pake colspan yang udah bener)
         if (data.jumlah === 0 || !data.rows || data.rows.length === 0) {
             tabelBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 10px; color: #9CA3AF;">Tidak ada yang ulang tahun hari ini.</td></tr>';
             return;
         }
-
-        data.rows.forEach(mhs => {
-            const tr = document.createElement('tr');
-            tr.className = 'border-b border-gray-700'; 
-            tr.innerHTML = `
-                <td style="padding: 12px 15px;">${mhs.nama}</td>
-                <td style="padding: 12px 15px;">${mhs.prodi}</td>
-                <td style="padding: 12px 15px;">${mhs.tanggal_lahir}</td>
-                <td style="padding: 12px 15px;">${mhs.umur}</td>
-            `;
-            tabelBody.appendChild(tr);
-        });
+// 5. LOOPING DATA (DENGAN LOGIC PRIVACY)
+data.rows.forEach(mhs => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-gray-700'; 
+        
+        let tanggalDisplay = mhs.tanggal_lahir; // Default: "15 November 2005"
+        
+        if (isPrivacyOn) {
+            // "15 November 2005" -> ["15", "November", "2005"]
+            // -> ["15", "November"] -> "15 November"
+            tanggalDisplay = mhs.tanggal_lahir.split(' ').slice(0, 2).join(' ');
+        }
+        
+        // Buat HTML-nya, kolom 'Umur' ditentuin sama 'isPrivacyOn'
+        tr.innerHTML = `
+            <td style="padding: 12px 15px;">${mhs.nama}</td>
+            <td style="padding: 12px 15px;">${mhs.prodi}</td>
+            <td style="padding: 12px 15px;">${tanggalDisplay}</td>
+            
+            ${isPrivacyOn ? '' : `<td style="padding: 12px 15px;">${mhs.umur}</td>`}
+        `;
+        tabelBody.appendChild(tr);
+    });
     }
 </script>
 </body>

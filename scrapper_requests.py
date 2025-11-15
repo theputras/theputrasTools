@@ -418,7 +418,7 @@ def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
             rows.append({
                 "nama": rec["nama"],
                 "prodi": rec["prodi"],
-                "tanggal_lahir": tgl.isoformat(),
+                "tanggal_lahir": tgl.strftime("%d %B %Y"),
                 "umur": hitung_umur(tgl, today)
             })
 
