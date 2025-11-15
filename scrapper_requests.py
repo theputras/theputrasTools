@@ -10,7 +10,7 @@ import re
 from datetime import datetime, date, timedelta
 import threading
 import logging # Tambahkan import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from zoneinfo import ZoneInfo
 from requests.adapters import HTTPAdapter, Retry
 
@@ -384,7 +384,7 @@ def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
     if not isinstance(raw_list, list):
         raw_list = []
     # helper lokal (biar satu fungsi)
-    def parse_tanggal(s: str) -> date | None:
+    def parse_tanggal(s: str) -> Optional[date]:
         s = (s or "").strip()
         for fmt in ("%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y", "%d %m %Y", "%Y/%m/%d"):
             try:

@@ -10759,3 +10759,114 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-11-15 19:22:52,285 - INFO - 127.0.0.1 - - [15/Nov/2025 19:22:52] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-11-15 19:23:05,222 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\scrapper_requests.py', reloading
 2025-11-15 19:23:05,519 - INFO -  * Restarting with stat
+2025-11-15 19:28:26,910 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-15 19:28:26,917 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-15 19:28:26,917 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-15 19:28:26,917 - INFO - Scheduler started
+2025-11-15 19:28:26,918 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-15 19:28:26,919 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-15 19:28:26,946 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-15 19:28:26,946 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-15 19:28:26,948 - INFO -  * Restarting with stat
+2025-11-15 19:28:27,789 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-15 19:28:27,795 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-15 19:28:27,795 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-15 19:28:27,795 - INFO - Scheduler started
+2025-11-15 19:28:27,796 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-15 19:28:27,797 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-15 19:28:27,803 - WARNING -  * Debugger is active!
+2025-11-15 19:28:27,807 - INFO -  * Debugger PIN: 288-901-657
+2025-11-15 19:28:30,826 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:28:31,238 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:31] "GET / HTTP/1.1" 200 -
+2025-11-15 19:28:31,521 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:31] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:28:31,772 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-15 19:28:31,773 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-15 19:28:31,774 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-15 19:28:31,774 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-15 19:28:31,775 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-15 19:28:33,794 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-15 19:28:36,751 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-15 19:28:36,760 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-15 19:28:36,763 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-15 19:28:36,764 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-15 19:28:36,771 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-15 19:28:36,772 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:28:37,595 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:28:39,816 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:28:39,816 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:39] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-15 19:28:42,581 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:28:47,284 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:28:52,588 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:28:57,282 - INFO - 127.0.0.1 - - [15/Nov/2025 19:28:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:02,586 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:07,287 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:12,586 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:17,293 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:22,088 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:27,279 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:32,579 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:37,287 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:42,903 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:47,284 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:52,590 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:29:57,292 - INFO - 127.0.0.1 - - [15/Nov/2025 19:29:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:02,664 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:07,282 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:12,582 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:29,819 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:32,574 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:37,276 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:41,834 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:41] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:47,286 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:52,590 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:30:57,291 - INFO - 127.0.0.1 - - [15/Nov/2025 19:30:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:31:02,988 - INFO - 127.0.0.1 - - [15/Nov/2025 19:31:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:31:07,288 - INFO - 127.0.0.1 - - [15/Nov/2025 19:31:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:31:12,577 - INFO - 127.0.0.1 - - [15/Nov/2025 19:31:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:31:17,280 - INFO - 127.0.0.1 - - [15/Nov/2025 19:31:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:31:22,581 - INFO - 127.0.0.1 - - [15/Nov/2025 19:31:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:31:27,288 - INFO - 127.0.0.1 - - [15/Nov/2025 19:31:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:31:52,592 - INFO - 127.0.0.1 - - [15/Nov/2025 19:31:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:32:10,694 - INFO - 127.0.0.1 - - [15/Nov/2025 19:32:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:32:11,768 - INFO - 127.0.0.1 - - [15/Nov/2025 19:32:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:32:15,902 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-15 19:32:16,457 - INFO - 127.0.0.1 - - [15/Nov/2025 19:32:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-15 19:32:17,361 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-15 19:32:17,362 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-15 19:32:17,362 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-15 19:32:18,603 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-15 19:32:18,603 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-15 19:32:18,603 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-15 19:32:18,604 - INFO -    --> Payload: nim=23410100003, token=$2y$10$87FBr1R4HR8DSNFfLbYVuOi5X9s.XF4riPsZyT4My4JnsbOwfG9WS, ultah=True
+2025-11-15 19:32:19,430 - INFO - 127.0.0.1 - - [15/Nov/2025 19:32:19] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-15 19:39:09,812 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\scrapper_requests.py', reloading
+2025-11-15 19:39:09,921 - INFO -  * Restarting with stat
+2025-11-15 19:39:13,483 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-15 19:39:13,491 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-15 19:39:13,492 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-15 19:39:13,492 - INFO - Scheduler started
+2025-11-15 19:39:13,493 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-15 19:39:13,493 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-15 19:39:13,501 - WARNING -  * Debugger is active!
+2025-11-15 19:39:13,505 - INFO -  * Debugger PIN: 288-901-657
+2025-11-15 19:39:18,526 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\scrapper_requests.py', reloading
+2025-11-15 19:39:18,641 - INFO -  * Restarting with stat
+2025-11-15 19:39:19,962 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-15 19:39:19,968 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-15 19:39:19,968 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-15 19:39:19,968 - INFO - Scheduler started
+2025-11-15 19:39:19,969 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-15 19:39:19,970 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-15 19:39:19,978 - WARNING -  * Debugger is active!
+2025-11-15 19:39:19,982 - INFO -  * Debugger PIN: 288-901-657
