@@ -12484,3 +12484,243 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-11-16 17:38:29,455 - INFO - Downloading and converting to 807f189f-6de5-4a84-ac65-63a1b111aad9.mp4...
 2025-11-16 17:38:53,937 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 807f189f-6de5-4a84-ac65-63a1b111aad9.mp4 tidak ditemukan.
 2025-11-16 17:38:53,943 - INFO - 127.0.0.1 - - [16/Nov/2025 17:38:53] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 18:25:30,660 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 18:25:30,849 - INFO -  * Restarting with stat
+2025-11-16 18:25:32,059 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 18:25:32,068 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 18:25:32,068 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 18:25:32,069 - INFO - Scheduler started
+2025-11-16 18:25:32,070 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 18:25:32,070 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 18:25:32,081 - WARNING -  * Debugger is active!
+2025-11-16 18:25:32,086 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 18:25:39,142 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 18:25:39,272 - INFO -  * Restarting with stat
+2025-11-16 18:25:40,622 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 18:25:40,628 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 18:25:40,629 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 18:25:40,629 - INFO - Scheduler started
+2025-11-16 18:25:40,630 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 18:25:40,630 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 18:25:40,636 - WARNING -  * Debugger is active!
+2025-11-16 18:25:40,641 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 18:25:52,690 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 18:25:52,800 - INFO -  * Restarting with stat
+2025-11-16 18:25:53,793 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 18:25:53,799 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 18:25:53,800 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 18:25:53,800 - INFO - Scheduler started
+2025-11-16 18:25:53,801 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 18:25:53,801 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 18:25:53,808 - WARNING -  * Debugger is active!
+2025-11-16 18:25:53,812 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 18:25:55,824 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 18:25:55,926 - INFO -  * Restarting with stat
+2025-11-16 18:25:57,231 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 18:25:57,239 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 18:25:57,240 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 18:25:57,240 - INFO - Scheduler started
+2025-11-16 18:25:57,241 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 18:25:57,241 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 18:25:57,250 - WARNING -  * Debugger is active!
+2025-11-16 18:25:57,256 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 18:26:16,113 - INFO - [GUARD DEBUG] Token invalid (Signature has expired). Redirecting to login.
+2025-11-16 18:26:16,115 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:16] "[32mGET /sosmed-download HTTP/1.1[0m" 302 -
+2025-11-16 18:26:16,129 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:16] "GET /login HTTP/1.1" 200 -
+2025-11-16 18:26:16,365 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:16] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-11-16 18:26:22,903 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 18:26:23,311 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-16 18:26:23,312 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:23] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-16 18:26:23,361 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 18:26:23,392 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:23] "GET / HTTP/1.1" 200 -
+2025-11-16 18:26:23,626 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 18:26:23,847 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 18:26:23,848 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:23] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-16 18:26:23,850 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 18:26:23,852 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 18:26:23,855 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-16 18:26:23,856 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-16 18:26:23,859 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:23] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-11-16 18:26:24,667 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 18:26:24,686 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:24] "GET /tools HTTP/1.1" 200 -
+2025-11-16 18:26:25,014 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:25] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-11-16 18:26:25,513 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-16 18:26:25,546 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 18:26:25,565 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:25] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 18:26:25,902 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:25] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-11-16 18:26:27,415 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-16 18:26:27,457 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-16 18:26:27,459 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-16 18:26:27,460 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-16 18:26:27,473 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 18:26:27,474 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 18:26:27,476 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 18:26:29,181 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 18:26:29,200 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 18:26:30,837 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 18:26:30,838 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-16 18:26:30,842 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-16 18:26:31,616 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 18:26:31,619 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:31] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 18:26:31,838 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-16 18:26:31,839 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-16 18:26:31,839 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-16 18:26:31,839 - INFO -    --> Payload: nim=23410100003, token=$2y$10$v3Tihu4eJZd6z0KkfAalIukL56weavhmgpoMDQwy3X1BcWFayB/zi, ultah=True
+2025-11-16 18:26:32,703 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:32] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-16 18:26:33,321 - INFO - yt-dlp: Menemukan 14 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 18:26:33,325 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:33] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 18:26:46,794 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 18:26:46,971 - INFO -  * Restarting with stat
+2025-11-16 18:26:48,310 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 18:26:48,318 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 18:26:48,318 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 18:26:48,318 - INFO - Scheduler started
+2025-11-16 18:26:48,319 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 18:26:48,319 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 18:26:48,327 - WARNING -  * Debugger is active!
+2025-11-16 18:26:48,331 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 18:26:48,675 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 18:26:48,683 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 18:26:50,691 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 18:26:50,693 - INFO - 127.0.0.1 - - [16/Nov/2025 18:26:50] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 18:26:56,081 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 18:26:56,088 - INFO - Memulai konversi ke mp4 (720p) untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 18:26:59,249 - INFO - Downloading and converting to f6bad4c9-6591-486a-906c-9ac370d98c73.mp4...
+2025-11-16 18:27:27,094 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi f6bad4c9-6591-486a-906c-9ac370d98c73.mp4 tidak ditemukan.
+2025-11-16 18:27:27,096 - INFO - 127.0.0.1 - - [16/Nov/2025 18:27:27] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-17 04:22:09,607 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 04:22:09,620 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 04:22:09,621 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 04:22:09,621 - INFO - Scheduler started
+2025-11-17 04:22:09,634 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 04:22:09,634 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 04:22:14,160 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-17 04:22:14,160 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-17 04:22:14,163 - INFO -  * Restarting with stat
+2025-11-17 04:22:15,239 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 04:22:15,246 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 04:22:15,246 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 04:22:15,247 - INFO - Scheduler started
+2025-11-17 04:22:15,247 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 04:22:15,248 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 04:22:15,255 - WARNING -  * Debugger is active!
+2025-11-17 04:22:15,260 - INFO -  * Debugger PIN: 288-901-657
+2025-11-17 04:22:21,733 - INFO - [GUARD DEBUG] Token invalid (Signature has expired). Redirecting to login.
+2025-11-17 04:22:21,734 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:21] "[32mGET / HTTP/1.1[0m" 302 -
+2025-11-17 04:22:21,746 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:21] "GET /login HTTP/1.1" 200 -
+2025-11-17 04:22:22,026 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:22] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-17 04:22:37,211 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:22:37,533 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-17 04:22:37,537 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:37] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-17 04:22:37,666 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:22:37,732 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:37] "GET / HTTP/1.1" 200 -
+2025-11-17 04:22:38,311 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-17 04:22:38,312 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-17 04:22:38,313 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-17 04:22:38,313 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-17 04:22:38,314 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-17 04:22:38,613 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:22:38,672 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:38] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-17 04:22:39,581 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-17 04:22:43,610 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:22:43,688 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-17 04:22:43,696 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-17 04:22:43,697 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-17 04:22:43,697 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-17 04:22:43,705 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-17 04:22:43,721 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-17 04:22:43,722 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-17 04:22:46,951 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-17 04:22:46,952 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-17 04:22:46,952 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-17 04:22:47,778 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-17 04:22:47,778 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:47] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-17 04:22:48,920 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-17 04:22:48,921 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-17 04:22:48,921 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-17 04:22:48,921 - INFO -    --> Payload: nim=23410100003, token=$2y$10$UolS1csdZeHBKOjwzLbwzOtC6h7UXYWkP9DjOLzGneChA9SQEMlcC, ultah=True
+2025-11-17 04:22:49,585 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:22:49,868 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:49] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-17 04:22:54,584 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:22:58,309 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:22:59,744 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:22:59,754 - INFO - 127.0.0.1 - - [17/Nov/2025 04:22:59] "GET /account HTTP/1.1" 200 -
+2025-11-17 04:23:01,704 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:23:01,724 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:01] "GET / HTTP/1.1" 200 -
+2025-11-17 04:23:01,948 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:23:02,189 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-17 04:23:02,192 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-17 04:23:02,192 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-17 04:23:04,360 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-17 04:23:04,361 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:04] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-17 04:23:07,370 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:23:11,884 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:23:17,187 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:23:21,889 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:23:27,189 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:23:31,886 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:31] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 04:23:32,623 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:23:32,636 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:32] "GET /tools HTTP/1.1" 200 -
+2025-11-17 04:23:33,732 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:23:33,742 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:33] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 04:23:37,480 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:23:37,488 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u
+2025-11-17 04:23:41,243 - INFO - yt-dlp: Info diambil untuk 'Laptop AMD Ryzen PRO 8 Jutaan, Enteng 950-an Gram, Layar OLED: Review Axioo Hype-R X8 OLED'
+2025-11-17 04:23:41,245 - INFO - 127.0.0.1 - - [17/Nov/2025 04:23:41] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 04:23:44,166 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:23:44,175 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u...
+2025-11-17 04:23:46,225 - INFO - Downloading and converting to 015e220b-3639-4b56-bd4f-7a135d619300.mp4...
+2025-11-17 04:25:12,447 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 015e220b-3639-4b56-bd4f-7a135d619300.mp4 tidak ditemukan.
+2025-11-17 04:25:12,448 - INFO - 127.0.0.1 - - [17/Nov/2025 04:25:12] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-17 04:29:01,807 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-17 04:29:01,994 - INFO -  * Restarting with stat
+2025-11-17 04:29:14,963 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 04:29:14,971 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 04:29:14,973 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 04:29:14,973 - INFO - Scheduler started
+2025-11-17 04:29:14,986 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 04:29:14,987 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 04:29:14,996 - WARNING -  * Debugger is active!
+2025-11-17 04:29:15,000 - INFO -  * Debugger PIN: 288-901-657
+2025-11-17 04:29:26,105 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-17 04:29:26,382 - INFO -  * Restarting with stat
+2025-11-17 04:29:27,442 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 04:29:27,451 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 04:29:27,453 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 04:29:27,453 - INFO - Scheduler started
+2025-11-17 04:29:27,455 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 04:29:27,456 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 04:29:27,468 - WARNING -  * Debugger is active!
+2025-11-17 04:29:27,474 - INFO -  * Debugger PIN: 288-901-657
+2025-11-17 04:29:27,969 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:29:28,039 - INFO - 127.0.0.1 - - [17/Nov/2025 04:29:28] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 04:29:33,163 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:29:33,183 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u
+2025-11-17 04:29:37,409 - INFO - yt-dlp: Info diambil untuk 'Laptop AMD Ryzen PRO 8 Jutaan, Enteng 950-an Gram, Layar OLED: Review Axioo Hype-R X8 OLED'
+2025-11-17 04:29:37,411 - INFO - 127.0.0.1 - - [17/Nov/2025 04:29:37] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 04:29:41,242 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 04:29:41,249 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u...
+2025-11-17 04:29:43,025 - INFO - Downloading and converting to 681d4840-043f-44f8-a7ff-058ca4ffb225.mp4...
+2025-11-17 04:30:53,644 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 681d4840-043f-44f8-a7ff-058ca4ffb225.mp4 tidak ditemukan.
+2025-11-17 04:30:53,645 - INFO - 127.0.0.1 - - [17/Nov/2025 04:30:53] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -

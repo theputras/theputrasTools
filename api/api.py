@@ -171,7 +171,13 @@ def get_youtube_info():
 
     logging.info(f"Menerima permintaan yt-dlp (info) untuk: {url}")
 
-    ydl_opts = {'quiet': True, 'noplaylist': True}
+    ydl_opts = {
+        'quiet': True, 
+        'noplaylist': True,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+        }
+    }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -273,6 +279,9 @@ def request_conversion():
         'no_warnings': True,
         'postprocessors': [],
         'keepvideo': False, 
+        'http_headers': {  # <-- TAMBAHKAN BLOK INI
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+        } 
     }
 
     # 3. Setting konversi berdasarkan permintaan
