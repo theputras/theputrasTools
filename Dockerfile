@@ -21,7 +21,10 @@ RUN apt-get update && apt-get install -y ffmpeg
 EXPOSE 5000
 # Tentukan variabel lingkungan
 ENV FLASK_APP=app.py                                                                                                                                                                                             
-ENV FLASK_RUN_HOST=0.0.0.0                                                                                                                                                                                                                                                                                                                                                                                                        # Kunci timezone                                                                                                                                                                                                 RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
+ENV FLASK_RUN_HOST=0.0.0.0   
+
+# Kunci timezone                                                                                                                                                                                                 
+RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
 ENV TZ=Asia/Jakarta
 
 
