@@ -10957,3 +10957,1473 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-11-15 20:01:25,014 - INFO - [GUARD DEBUG] Token invalid (Session revoked). Redirecting to login.
 2025-11-15 20:01:25,015 - INFO - 127.0.0.1 - - [15/Nov/2025 20:01:25] "[32mGET / HTTP/1.1[0m" 302 -
 2025-11-15 20:01:25,180 - INFO - 127.0.0.1 - - [15/Nov/2025 20:01:25] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:07:53,189 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:07:53,196 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:07:53,196 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:07:53,196 - INFO - Scheduler started
+2025-11-16 15:07:53,209 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:07:53,209 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:07:54,593 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 15:07:54,594 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 15:07:54,596 - INFO -  * Restarting with stat
+2025-11-16 15:07:55,505 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:07:55,511 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:07:55,511 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:07:55,511 - INFO - Scheduler started
+2025-11-16 15:07:55,512 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:07:55,512 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:07:55,519 - WARNING -  * Debugger is active!
+2025-11-16 15:07:55,524 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:07:56,392 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:07:56,392 - INFO - 127.0.0.1 - - [16/Nov/2025 15:07:56] "[32mGET / HTTP/1.1[0m" 302 -
+2025-11-16 15:07:56,838 - INFO - 127.0.0.1 - - [16/Nov/2025 15:07:56] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:07:58,667 - INFO - 127.0.0.1 - - [16/Nov/2025 15:07:58] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-16 15:08:09,913 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:08:10,457 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-16 15:08:10,460 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:10] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-16 15:08:10,540 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:08:10,676 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:10] "GET / HTTP/1.1" 200 -
+2025-11-16 15:08:10,844 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:08:11,162 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:08:11,163 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:11] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-16 15:08:11,181 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 15:08:11,182 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 15:08:11,189 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-16 15:08:11,192 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-16 15:08:11,905 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-16 15:08:13,693 - INFO - User udah login, redirecting to index...
+2025-11-16 15:08:13,694 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:13] "[32mGET /login HTTP/1.1[0m" 302 -
+2025-11-16 15:08:13,767 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-16 15:08:13,798 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-16 15:08:13,800 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-16 15:08:13,800 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-16 15:08:13,818 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:08:13,821 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-16 15:08:13,821 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:08:14,049 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:08:14,059 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:14] "GET / HTTP/1.1" 200 -
+2025-11-16 15:08:14,613 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:08:14,949 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-16 15:08:14,950 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-16 15:08:14,950 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-16 15:08:14,950 - INFO -    --> Payload: nim=23410100003, token=$2y$10$5yFXXK.xVyGjG/XyGtsOueLJjYcXC/PxSJr5IKn8DpD/YKDLiwPVu, ultah=True
+2025-11-16 15:08:16,930 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:16] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-16 15:08:17,252 - INFO - Mengambil data ultah dari cache.
+2025-11-16 15:08:17,253 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:17] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-16 15:08:17,688 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:17] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:08:17,812 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:08:17,813 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-16 15:08:17,813 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:08:18,679 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:08:18,680 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:08:18,681 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:08:18,777 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:08:18,778 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:18] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:08:20,697 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:08:20,699 - INFO - 127.0.0.1 - - [16/Nov/2025 15:08:20] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:09:08,159 - INFO - 127.0.0.1 - - [16/Nov/2025 15:09:08] "[31m[1mGET /api/get-youtube-link HTTP/1.1[0m" 405 -
+2025-11-16 15:09:42,076 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:09:42,205 - INFO -  * Restarting with stat
+2025-11-16 15:09:43,113 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:09:43,119 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:09:43,120 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:09:43,120 - INFO - Scheduler started
+2025-11-16 15:09:43,121 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:09:43,121 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:09:43,128 - WARNING -  * Debugger is active!
+2025-11-16 15:09:43,132 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:09:51,171 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:09:51,317 - INFO -  * Restarting with stat
+2025-11-16 15:09:52,317 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:09:52,323 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:09:52,324 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:09:52,324 - INFO - Scheduler started
+2025-11-16 15:09:52,325 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:09:52,325 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:09:52,332 - WARNING -  * Debugger is active!
+2025-11-16 15:09:52,336 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:09:53,346 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:09:53,451 - INFO -  * Restarting with stat
+2025-11-16 15:09:54,308 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:09:54,314 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:09:54,314 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:09:54,314 - INFO - Scheduler started
+2025-11-16 15:09:54,315 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:09:54,316 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:09:54,322 - WARNING -  * Debugger is active!
+2025-11-16 15:09:54,327 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:10:23,519 - INFO - 127.0.0.1 - - [16/Nov/2025 15:10:23] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:10:30,500 - INFO - 127.0.0.1 - - [16/Nov/2025 15:10:30] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:10:31,180 - INFO - 127.0.0.1 - - [16/Nov/2025 15:10:31] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:10:31,476 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:10:31,477 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:10:31,478 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:10:34,706 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:10:34,707 - INFO - 127.0.0.1 - - [16/Nov/2025 15:10:34] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:10:40,002 - INFO - 127.0.0.1 - - [16/Nov/2025 15:10:40] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:10:54,421 - INFO - 127.0.0.1 - - [16/Nov/2025 15:10:54] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:10:54,501 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:10:54,502 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:10:54,502 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:10:56,656 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:10:56,657 - INFO - 127.0.0.1 - - [16/Nov/2025 15:10:56] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:11:08,915 - INFO - 127.0.0.1 - - [16/Nov/2025 15:11:08] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:11:16,391 - INFO - 127.0.0.1 - - [16/Nov/2025 15:11:16] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:11:17,254 - INFO - 127.0.0.1 - - [16/Nov/2025 15:11:17] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:11:18,687 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:11:18,695 - INFO - 127.0.0.1 - - [16/Nov/2025 15:11:18] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:12:06,295 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:06] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:12:06,597 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:06] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-16 15:12:12,522 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:12:12,523 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:12] "[32mGET / HTTP/1.1[0m" 302 -
+2025-11-16 15:12:12,839 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:12] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:12:19,845 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:12:20,106 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-16 15:12:20,108 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:20] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-16 15:12:20,148 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:12:20,163 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:20] "GET / HTTP/1.1" 200 -
+2025-11-16 15:12:20,420 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:12:20,559 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:12:20,560 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:12:20,560 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:12:20,568 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:12:20,575 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:12:20,578 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:20] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-16 15:12:24,186 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:12:24,191 - INFO - Membuat sesi global baru dari cookies file.
+2025-11-16 15:12:24,198 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-16 15:12:24,229 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:12:24,237 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:24] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:12:25,578 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:12:27,771 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-16 15:12:27,772 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-16 15:12:27,772 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-16 15:12:27,772 - INFO -    --> Payload: nim=23410100003, token=$2y$10$5yFXXK.xVyGjG/XyGtsOueLJjYcXC/PxSJr5IKn8DpD/YKDLiwPVu, ultah=True
+2025-11-16 15:12:28,603 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:28] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-16 15:12:30,562 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:12:31,057 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:31] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:12:34,792 - INFO - 127.0.0.1 - - [16/Nov/2025 15:12:34] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-11-16 15:13:51,817 - INFO - 127.0.0.1 - - [16/Nov/2025 15:13:51] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:14:05,196 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:14:09,185 - INFO - yt-dlp: Menemukan 8 format untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:14:09,187 - INFO - 127.0.0.1 - - [16/Nov/2025 15:14:09] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:17:14,021 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:17:14,143 - INFO -  * Restarting with stat
+2025-11-16 15:17:15,190 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:17:15,196 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:17:15,196 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:17:15,196 - INFO - Scheduler started
+2025-11-16 15:17:15,198 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:17:15,198 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:17:15,205 - WARNING -  * Debugger is active!
+2025-11-16 15:17:15,209 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:17:25,059 - INFO - User udah login, redirecting to index...
+2025-11-16 15:17:25,061 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:25] "[32mGET /login HTTP/1.1[0m" 302 -
+2025-11-16 15:17:25,570 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:17:25,584 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:25] "GET / HTTP/1.1" 200 -
+2025-11-16 15:17:25,804 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:17:26,107 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:17:26,108 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:17:26,108 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:17:27,633 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:17:27,641 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:27] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:17:28,923 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:17:28,944 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:28] "GET /log-program HTTP/1.1" 200 -
+2025-11-16 15:17:29,120 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:17:29,122 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:29] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:17:31,876 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:31] "[35m[1mGET /api/log HTTP/1.1[0m" 500 -
+2025-11-16 15:17:34,033 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:34] "[35m[1mGET /api/log HTTP/1.1[0m" 500 -
+2025-11-16 15:17:36,848 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:36] "[35m[1mGET /api/log HTTP/1.1[0m" 500 -
+2025-11-16 15:17:39,286 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:39] "[35m[1mGET /api/log HTTP/1.1[0m" 500 -
+2025-11-16 15:17:42,595 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:42] "[35m[1mGET /api/log HTTP/1.1[0m" 500 -
+2025-11-16 15:17:44,288 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:44] "[35m[1mGET /api/log HTTP/1.1[0m" 500 -
+2025-11-16 15:17:47,402 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:17:47,520 - INFO -  * Restarting with stat
+2025-11-16 15:17:48,437 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:17:48,444 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:17:48,444 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:17:48,445 - INFO - Scheduler started
+2025-11-16 15:17:48,445 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:17:48,446 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:17:48,452 - WARNING -  * Debugger is active!
+2025-11-16 15:17:48,456 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:17:48,486 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:48] "GET /api/log HTTP/1.1" 200 -
+2025-11-16 15:17:49,291 - INFO - 127.0.0.1 - - [16/Nov/2025 15:17:49] "GET /api/log HTTP/1.1" 200 -
+2025-11-16 15:17:51,473 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:17:51,785 - INFO -  * Restarting with stat
+2025-11-16 15:18:09,193 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:18:09,200 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:18:09,201 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:18:09,201 - INFO - Scheduler started
+2025-11-16 15:18:09,202 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:18:09,202 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:18:10,534 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 15:18:10,534 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 15:18:10,537 - INFO -  * Restarting with stat
+2025-11-16 15:18:11,360 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:18:11,366 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:18:11,367 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:18:11,367 - INFO - Scheduler started
+2025-11-16 15:18:11,368 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:18:11,368 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:18:11,374 - WARNING -  * Debugger is active!
+2025-11-16 15:18:11,377 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:18:12,288 - INFO - 127.0.0.1 - - [16/Nov/2025 15:18:12] "GET /api/log HTTP/1.1" 200 -
+2025-11-16 15:18:14,617 - INFO - 127.0.0.1 - - [16/Nov/2025 15:18:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:18:16,221 - INFO - 127.0.0.1 - - [16/Nov/2025 15:18:16] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:18:26,856 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:18:26,863 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:18:28,863 - INFO - yt-dlp: Menemukan 19 format unik untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:18:28,868 - INFO - 127.0.0.1 - - [16/Nov/2025 15:18:28] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:22:26,279 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:22:26,293 - INFO - 127.0.0.1 - - [16/Nov/2025 15:22:26] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:23:12,360 - INFO - 127.0.0.1 - - [16/Nov/2025 15:23:12] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:23:13,313 - INFO - 127.0.0.1 - - [16/Nov/2025 15:23:13] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:23:13,914 - INFO - 127.0.0.1 - - [16/Nov/2025 15:23:13] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:24:07,514 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:24:07,698 - INFO -  * Restarting with stat
+2025-11-16 15:24:09,190 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:24:09,198 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:24:09,198 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:24:09,198 - INFO - Scheduler started
+2025-11-16 15:24:09,199 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:24:09,199 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:24:09,206 - WARNING -  * Debugger is active!
+2025-11-16 15:24:09,210 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:24:09,219 - INFO - 127.0.0.1 - - [16/Nov/2025 15:24:09] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:24:15,229 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:24:15,239 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:24:17,578 - INFO - yt-dlp: Menemukan 19 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:24:17,580 - INFO - 127.0.0.1 - - [16/Nov/2025 15:24:17] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:28:34,386 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:28:34,651 - INFO -  * Restarting with stat
+2025-11-16 15:28:35,614 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:28:35,620 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:28:35,621 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:28:35,621 - INFO - Scheduler started
+2025-11-16 15:28:35,622 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:28:35,622 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:28:35,629 - WARNING -  * Debugger is active!
+2025-11-16 15:28:35,633 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:28:55,729 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:28:55,834 - INFO -  * Restarting with stat
+2025-11-16 15:28:56,902 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:28:56,908 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:28:56,908 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:28:56,908 - INFO - Scheduler started
+2025-11-16 15:28:56,909 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:28:56,910 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:28:56,916 - WARNING -  * Debugger is active!
+2025-11-16 15:28:56,920 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:29:22,856 - INFO - 127.0.0.1 - - [16/Nov/2025 15:29:22] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:29:25,689 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:29:25,695 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:29:28,083 - INFO - yt-dlp: Menemukan 19 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:29:28,084 - INFO - 127.0.0.1 - - [16/Nov/2025 15:29:28] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:30:24,552 - INFO - 127.0.0.1 - - [16/Nov/2025 15:30:24] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:30:49,449 - INFO - 127.0.0.1 - - [16/Nov/2025 15:30:49] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:30:50,858 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:30:50,869 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:30:52,818 - INFO - yt-dlp: Menemukan 19 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:30:52,819 - INFO - 127.0.0.1 - - [16/Nov/2025 15:30:52] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:33:00,650 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:33:00,661 - INFO - 127.0.0.1 - - [16/Nov/2025 15:33:00] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:33:07,283 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:33:07,293 - INFO - 127.0.0.1 - - [16/Nov/2025 15:33:07] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:33:08,124 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:33:08,136 - INFO - 127.0.0.1 - - [16/Nov/2025 15:33:08] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:33:17,709 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:33:17,724 - INFO - 127.0.0.1 - - [16/Nov/2025 15:33:17] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:33:48,138 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:33:48,147 - INFO - 127.0.0.1 - - [16/Nov/2025 15:33:48] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:33:49,701 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:33:49,707 - INFO - 127.0.0.1 - - [16/Nov/2025 15:33:49] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:34:05,633 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:34:05,649 - INFO - 127.0.0.1 - - [16/Nov/2025 15:34:05] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:34:43,536 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-11-16 15:34:43,680 - INFO -  * Restarting with stat
+2025-11-16 15:34:44,607 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:34:44,607 - INFO - Folder temporer dibuat di D:\Github\scrapSicyca\temp_downloads
+2025-11-16 15:34:44,613 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:34:44,613 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:34:44,614 - INFO - Scheduler started
+2025-11-16 15:34:44,615 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:34:44,615 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:34:44,636 - WARNING -  * Debugger is active!
+2025-11-16 15:34:44,642 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:35:17,816 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-11-16 15:35:17,917 - INFO -  * Restarting with stat
+2025-11-16 15:35:18,860 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:35:18,867 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:35:18,867 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:35:18,867 - INFO - Scheduler started
+2025-11-16 15:35:18,868 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:35:18,868 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:35:18,875 - WARNING -  * Debugger is active!
+2025-11-16 15:35:18,879 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:35:27,926 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-11-16 15:35:28,213 - INFO -  * Restarting with stat
+2025-11-16 15:35:29,225 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:35:29,229 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:35:29,233 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:35:29,233 - INFO - Added job "cleanup_temp_files" to job store "default"
+2025-11-16 15:35:29,234 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:35:29,234 - INFO - Scheduler started
+2025-11-16 15:35:29,235 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:35:29,235 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:35:29,244 - WARNING -  * Debugger is active!
+2025-11-16 15:35:29,249 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:36:00,412 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-11-16 15:36:00,568 - INFO -  * Restarting with stat
+2025-11-16 15:36:01,665 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:36:01,698 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:36:01,702 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:36:01,702 - INFO - Added job "cleanup_temp_files" to job store "default"
+2025-11-16 15:36:01,702 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:36:01,702 - INFO - Scheduler started
+2025-11-16 15:36:01,704 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:36:01,704 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:36:01,711 - WARNING -  * Debugger is active!
+2025-11-16 15:36:01,715 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:36:22,816 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:36:22,987 - INFO -  * Restarting with stat
+2025-11-16 15:36:23,922 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:36:23,926 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:36:23,929 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:36:23,929 - INFO - Added job "cleanup_temp_files" to job store "default"
+2025-11-16 15:36:23,929 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:36:23,929 - INFO - Scheduler started
+2025-11-16 15:36:23,930 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:36:23,931 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:36:23,937 - WARNING -  * Debugger is active!
+2025-11-16 15:36:23,941 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:36:27,966 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:36:28,069 - INFO -  * Restarting with stat
+2025-11-16 15:36:29,082 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:36:29,086 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:36:29,089 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:36:29,089 - INFO - Added job "cleanup_temp_files" to job store "default"
+2025-11-16 15:36:29,089 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:36:29,089 - INFO - Scheduler started
+2025-11-16 15:36:29,090 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:36:29,091 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:36:29,097 - WARNING -  * Debugger is active!
+2025-11-16 15:36:29,101 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:36:31,114 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:36:31,221 - INFO -  * Restarting with stat
+2025-11-16 15:37:53,502 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:37:53,507 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:37:53,510 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:37:53,510 - INFO - Added job "cleanup_temp_files" to job store "default"
+2025-11-16 15:37:53,510 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:37:53,510 - INFO - Scheduler started
+2025-11-16 15:37:53,511 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:37:53,511 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:37:54,866 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 15:37:54,866 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 15:37:54,868 - INFO -  * Restarting with stat
+2025-11-16 15:37:55,760 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:37:55,765 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:37:55,767 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:37:55,768 - INFO - Added job "cleanup_temp_files" to job store "default"
+2025-11-16 15:37:55,768 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:37:55,768 - INFO - Scheduler started
+2025-11-16 15:37:55,769 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:37:55,769 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:37:55,777 - WARNING -  * Debugger is active!
+2025-11-16 15:37:55,781 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:37:55,791 - INFO - 127.0.0.1 - - [16/Nov/2025 15:37:55] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:38:04,604 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:38:04,611 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:38:07,016 - INFO - yt-dlp: Menemukan 19 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:38:07,018 - INFO - 127.0.0.1 - - [16/Nov/2025 15:38:07] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:38:11,028 - INFO - [GUARD DEBUG] Token invalid (Token expired). Redirecting to login.
+2025-11-16 15:38:11,028 - INFO - 127.0.0.1 - - [16/Nov/2025 15:38:11] "[32mPOST /api/request-conversion HTTP/1.1[0m" 302 -
+2025-11-16 15:38:11,341 - INFO - 127.0.0.1 - - [16/Nov/2025 15:38:11] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:40:04,479 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:40:04,641 - INFO -  * Restarting with stat
+2025-11-16 15:40:16,027 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:40:16,033 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:40:16,034 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:40:16,034 - INFO - Scheduler started
+2025-11-16 15:40:16,035 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:40:16,035 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:40:17,400 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 15:40:17,400 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 15:40:17,403 - INFO -  * Restarting with stat
+2025-11-16 15:40:18,446 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:40:18,458 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:40:18,458 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:40:18,458 - INFO - Scheduler started
+2025-11-16 15:40:18,459 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:40:18,459 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:40:18,466 - WARNING -  * Debugger is active!
+2025-11-16 15:40:18,471 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:40:48,651 - INFO - 127.0.0.1 - - [16/Nov/2025 15:40:48] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:40:57,385 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:40:57,391 - INFO - 127.0.0.1 - - [16/Nov/2025 15:40:57] "[32mPOST /api/get-youtube-info HTTP/1.1[0m" 302 -
+2025-11-16 15:40:57,412 - INFO - 127.0.0.1 - - [16/Nov/2025 15:40:57] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:41:10,373 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:10] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:41:11,477 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:41:11,478 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:11] "[32mPOST /api/get-youtube-info HTTP/1.1[0m" 302 -
+2025-11-16 15:41:11,489 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:11] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:41:15,716 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:41:15,717 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:15] "[32mPOST /api/get-youtube-info HTTP/1.1[0m" 302 -
+2025-11-16 15:41:15,968 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:15] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:41:23,922 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:41:24,188 - INFO -  * Restarting with stat
+2025-11-16 15:41:25,256 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:41:25,262 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:41:25,262 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:41:25,263 - INFO - Scheduler started
+2025-11-16 15:41:25,264 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:41:25,264 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:41:25,272 - WARNING -  * Debugger is active!
+2025-11-16 15:41:25,276 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:41:26,288 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:41:26,458 - INFO -  * Restarting with stat
+2025-11-16 15:41:27,337 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:41:27,344 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:41:27,344 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:41:27,344 - INFO - Scheduler started
+2025-11-16 15:41:27,345 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:41:27,345 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:41:27,352 - WARNING -  * Debugger is active!
+2025-11-16 15:41:27,356 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:41:32,380 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:41:32,512 - INFO -  * Restarting with stat
+2025-11-16 15:41:33,421 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:41:33,426 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:41:33,427 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:41:33,427 - INFO - Scheduler started
+2025-11-16 15:41:33,428 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:41:33,428 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:41:33,435 - WARNING -  * Debugger is active!
+2025-11-16 15:41:33,439 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:41:34,448 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:41:34,559 - INFO -  * Restarting with stat
+2025-11-16 15:41:35,446 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:41:35,451 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:41:35,452 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:41:35,452 - INFO - Scheduler started
+2025-11-16 15:41:35,453 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:41:35,453 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:41:35,460 - WARNING -  * Debugger is active!
+2025-11-16 15:41:35,464 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:41:41,500 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:41:41,699 - INFO -  * Restarting with stat
+2025-11-16 15:41:42,710 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:41:42,716 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:41:42,717 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:41:42,717 - INFO - Scheduler started
+2025-11-16 15:41:42,718 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:41:42,718 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:41:42,725 - WARNING -  * Debugger is active!
+2025-11-16 15:41:42,729 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:41:43,738 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:41:43,870 - INFO -  * Restarting with stat
+2025-11-16 15:41:44,820 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:41:44,827 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:41:44,827 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:41:44,828 - INFO - Scheduler started
+2025-11-16 15:41:44,828 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:41:44,829 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:41:44,836 - WARNING -  * Debugger is active!
+2025-11-16 15:41:44,841 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:41:44,850 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:44] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:41:46,934 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:46] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:41:51,088 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:41:51,089 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:51] "[32mPOST /api/get-youtube-info HTTP/1.1[0m" 302 -
+2025-11-16 15:41:51,405 - INFO - 127.0.0.1 - - [16/Nov/2025 15:41:51] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:42:04,928 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:42:05,056 - INFO -  * Restarting with stat
+2025-11-16 15:42:06,121 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:42:06,127 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:42:06,127 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:42:06,128 - INFO - Scheduler started
+2025-11-16 15:42:06,129 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:42:06,129 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:42:06,135 - WARNING -  * Debugger is active!
+2025-11-16 15:42:06,139 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:42:09,087 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:42:09,088 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:09] "[32mPOST /api/get-youtube-info HTTP/1.1[0m" 302 -
+2025-11-16 15:42:09,340 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:09] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:42:19,195 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:19] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:42:20,030 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:20] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:42:21,487 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:21] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:42:23,123 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-16 15:42:23,124 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:23] "[32mGET /tools HTTP/1.1[0m" 302 -
+2025-11-16 15:42:23,423 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:23] "GET /login HTTP/1.1" 200 -
+2025-11-16 15:42:36,915 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:42:37,184 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-16 15:42:37,185 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:37] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-16 15:42:37,261 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:42:37,279 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:37] "GET / HTTP/1.1" 200 -
+2025-11-16 15:42:37,631 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:42:37,936 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:42:37,938 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 15:42:37,939 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 15:42:37,939 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-16 15:42:37,939 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-16 15:42:38,012 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:38] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-16 15:42:38,712 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-16 15:42:41,515 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-16 15:42:41,542 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-16 15:42:41,543 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-16 15:42:41,543 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-16 15:42:41,558 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:42:41,559 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:42:41,561 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:42:43,581 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:42:43,627 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:42:43,628 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:43] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:42:44,453 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:42:44,453 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-16 15:42:44,454 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-16 15:42:45,328 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-16 15:42:45,328 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-16 15:42:45,328 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-16 15:42:45,329 - INFO -    --> Payload: nim=23410100003, token=$2y$10$DJBrP6BYlMBATvBETFtSeetq6YgFWSCfwqInrae6rLTRU79NJ7jRq, ultah=True
+2025-11-16 15:42:45,417 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-11-16 15:42:45,540 - INFO -  * Restarting with stat
+2025-11-16 15:42:46,855 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:42:46,861 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:42:46,861 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:42:46,861 - INFO - Scheduler started
+2025-11-16 15:42:46,862 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:42:46,862 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:42:46,869 - WARNING -  * Debugger is active!
+2025-11-16 15:42:46,874 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:42:48,593 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:42:49,889 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:42:49,995 - INFO -  * Restarting with stat
+2025-11-16 15:42:50,853 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:42:50,859 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:42:50,860 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:42:50,860 - INFO - Scheduler started
+2025-11-16 15:42:50,861 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:42:50,861 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:42:50,867 - WARNING -  * Debugger is active!
+2025-11-16 15:42:50,871 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:42:53,962 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:42:57,640 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:42:57,907 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-11-16 15:42:58,014 - INFO -  * Restarting with stat
+2025-11-16 15:42:58,936 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:42:58,944 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:42:58,945 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:42:58,945 - INFO - Scheduler started
+2025-11-16 15:42:58,946 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:42:58,946 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:42:58,953 - WARNING -  * Debugger is active!
+2025-11-16 15:42:58,957 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:42:59,056 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:42:59,068 - INFO - 127.0.0.1 - - [16/Nov/2025 15:42:59] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:43:00,105 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:43:00,114 - INFO - 127.0.0.1 - - [16/Nov/2025 15:43:00] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:43:03,329 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:43:03,336 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:43:05,671 - INFO - yt-dlp: Menemukan 19 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:43:05,673 - INFO - 127.0.0.1 - - [16/Nov/2025 15:43:05] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:43:38,294 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:43:38,572 - INFO -  * Restarting with stat
+2025-11-16 15:43:39,559 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:43:39,565 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:43:39,566 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:43:39,566 - INFO - Scheduler started
+2025-11-16 15:43:39,567 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:43:39,567 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:43:39,573 - WARNING -  * Debugger is active!
+2025-11-16 15:43:39,578 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:43:55,691 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:43:55,869 - INFO -  * Restarting with stat
+2025-11-16 15:43:57,047 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:43:57,054 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:43:57,055 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:43:57,055 - INFO - Scheduler started
+2025-11-16 15:43:57,056 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:43:57,056 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:43:57,063 - WARNING -  * Debugger is active!
+2025-11-16 15:43:57,068 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:44:07,156 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:44:07,433 - INFO -  * Restarting with stat
+2025-11-16 15:44:08,687 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:44:08,760 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:44:08,805 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:44:08,807 - INFO - Scheduler started
+2025-11-16 15:44:08,808 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:44:08,809 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:44:08,816 - WARNING -  * Debugger is active!
+2025-11-16 15:44:08,821 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:44:23,986 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:44:24,246 - INFO -  * Restarting with stat
+2025-11-16 15:44:25,286 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:44:25,292 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:44:25,293 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:44:25,294 - INFO - Scheduler started
+2025-11-16 15:44:25,295 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:44:25,295 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:44:25,303 - WARNING -  * Debugger is active!
+2025-11-16 15:44:25,308 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:44:30,337 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:44:30,490 - INFO -  * Restarting with stat
+2025-11-16 15:44:32,143 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:44:32,150 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:44:32,150 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:44:32,150 - INFO - Scheduler started
+2025-11-16 15:44:32,151 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:44:32,151 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:44:32,159 - WARNING -  * Debugger is active!
+2025-11-16 15:44:32,164 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:45:11,630 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:45:11,739 - INFO -  * Restarting with stat
+2025-11-16 15:45:12,897 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:45:12,904 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:45:12,905 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:45:12,905 - INFO - Scheduler started
+2025-11-16 15:45:12,906 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:45:12,906 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:45:12,913 - WARNING -  * Debugger is active!
+2025-11-16 15:45:12,917 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:45:47,405 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:45:47,523 - INFO -  * Restarting with stat
+2025-11-16 15:46:34,780 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:46:34,787 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:46:34,788 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:46:34,788 - INFO - Scheduler started
+2025-11-16 15:46:34,788 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:46:34,789 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:46:36,146 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 15:46:36,146 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 15:46:36,148 - INFO -  * Restarting with stat
+2025-11-16 15:46:37,047 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:46:37,053 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:46:37,054 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:46:37,054 - INFO - Scheduler started
+2025-11-16 15:46:37,055 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:46:37,055 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:46:37,062 - WARNING -  * Debugger is active!
+2025-11-16 15:46:37,066 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:49:39,264 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:49:39,273 - INFO - 127.0.0.1 - - [16/Nov/2025 15:49:39] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:49:45,530 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:49:45,542 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:49:47,666 - INFO - yt-dlp: Menemukan 9 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:49:47,668 - INFO - 127.0.0.1 - - [16/Nov/2025 15:49:47] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:51:34,216 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:51:34,223 - INFO - 127.0.0.1 - - [16/Nov/2025 15:51:34] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:51:36,369 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:51:36,381 - INFO - 127.0.0.1 - - [16/Nov/2025 15:51:36] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:51:38,022 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:51:38,046 - INFO - 127.0.0.1 - - [16/Nov/2025 15:51:38] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:51:40,223 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:51:40,234 - INFO - 127.0.0.1 - - [16/Nov/2025 15:51:40] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:52:03,535 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:52:03,542 - INFO - 127.0.0.1 - - [16/Nov/2025 15:52:03] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:52:12,565 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:52:12,577 - INFO - 127.0.0.1 - - [16/Nov/2025 15:52:12] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:52:33,095 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:52:33,430 - INFO -  * Restarting with stat
+2025-11-16 15:52:34,610 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:52:34,618 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:52:34,619 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:52:34,619 - INFO - Scheduler started
+2025-11-16 15:52:34,620 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:52:34,620 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:52:34,628 - WARNING -  * Debugger is active!
+2025-11-16 15:52:34,633 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:52:36,659 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:52:36,799 - INFO -  * Restarting with stat
+2025-11-16 15:52:37,829 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:52:37,835 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:52:37,835 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:52:37,835 - INFO - Scheduler started
+2025-11-16 15:52:37,836 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:52:37,836 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:52:37,843 - WARNING -  * Debugger is active!
+2025-11-16 15:52:37,848 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:52:46,902 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:52:47,070 - INFO -  * Restarting with stat
+2025-11-16 15:52:47,976 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:52:47,982 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:52:47,983 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:52:47,983 - INFO - Scheduler started
+2025-11-16 15:52:47,984 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:52:47,984 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:52:47,991 - WARNING -  * Debugger is active!
+2025-11-16 15:52:47,996 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:53:01,059 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:53:01,173 - INFO -  * Restarting with stat
+2025-11-16 15:53:02,078 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 15:53:02,084 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 15:53:02,085 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 15:53:02,085 - INFO - Scheduler started
+2025-11-16 15:53:02,086 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 15:53:02,086 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 15:53:02,093 - WARNING -  * Debugger is active!
+2025-11-16 15:53:02,097 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 15:53:56,107 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:53:56,120 - INFO - 127.0.0.1 - - [16/Nov/2025 15:53:56] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:54:02,680 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:54:02,686 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 15:54:04,707 - INFO - yt-dlp: Menemukan 19 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 15:54:04,709 - INFO - 127.0.0.1 - - [16/Nov/2025 15:54:04] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 15:57:50,288 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:57:50,309 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:50] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:57:51,843 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:57:51,861 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:51] "GET / HTTP/1.1" 200 -
+2025-11-16 15:57:51,974 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 15:57:52,282 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 15:57:52,286 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:57:52,288 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:57:52,289 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 15:57:52,303 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 15:57:53,369 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:57:53,394 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:53] "GET /account HTTP/1.1" 200 -
+2025-11-16 15:57:55,563 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:57:55,564 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:55] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 15:57:55,580 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 15:57:55,582 - INFO - Membuat sesi global baru dari cookies file.
+2025-11-16 15:57:55,582 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-16 15:57:57,758 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:57:57,766 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:57] "GET /tools HTTP/1.1" 200 -
+2025-11-16 15:57:58,648 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-16 15:57:58,649 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-16 15:57:58,650 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-16 15:57:58,650 - INFO -    --> Payload: nim=23410100003, token=$2y$10$DJBrP6BYlMBATvBETFtSeetq6YgFWSCfwqInrae6rLTRU79NJ7jRq, ultah=True
+2025-11-16 15:57:58,998 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 15:57:59,007 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:59] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 15:57:59,488 - INFO - 127.0.0.1 - - [16/Nov/2025 15:57:59] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-16 15:59:54,612 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 15:59:54,815 - INFO -  * Restarting with stat
+2025-11-16 16:00:46,988 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:00:46,996 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:00:46,996 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:00:46,996 - INFO - Scheduler started
+2025-11-16 16:00:46,998 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:00:47,007 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:00:48,369 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 16:00:48,369 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 16:00:48,370 - INFO -  * Restarting with stat
+2025-11-16 16:00:49,244 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:00:49,250 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:00:49,251 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:00:49,251 - INFO - Scheduler started
+2025-11-16 16:00:49,252 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:00:49,252 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:00:49,258 - WARNING -  * Debugger is active!
+2025-11-16 16:00:49,263 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:00:51,914 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:00:51,926 - INFO - 127.0.0.1 - - [16/Nov/2025 16:00:51] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:00:51,997 - INFO - 127.0.0.1 - - [16/Nov/2025 16:00:51] "[33mGET /[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com) HTTP/1.1[0m" 404 -
+2025-11-16 16:00:52,008 - INFO - 127.0.0.1 - - [16/Nov/2025 16:00:52] "[33mGET /[https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js](https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js) HTTP/1.1[0m" 404 -
+2025-11-16 16:01:10,381 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:01:10,388 - INFO - 127.0.0.1 - - [16/Nov/2025 16:01:10] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:01:10,422 - INFO - 127.0.0.1 - - [16/Nov/2025 16:01:10] "[33mGET /[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com) HTTP/1.1[0m" 404 -
+2025-11-16 16:01:10,606 - INFO - 127.0.0.1 - - [16/Nov/2025 16:01:10] "[33mGET /[https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js](https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js) HTTP/1.1[0m" 404 -
+2025-11-16 16:01:20,588 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:01:20,596 - INFO - 127.0.0.1 - - [16/Nov/2025 16:01:20] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:01:20,631 - INFO - 127.0.0.1 - - [16/Nov/2025 16:01:20] "[33mGET /[https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js](https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js) HTTP/1.1[0m" 404 -
+2025-11-16 16:01:49,199 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:01:49,207 - INFO - 127.0.0.1 - - [16/Nov/2025 16:01:49] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:01:52,118 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:01:52,124 - INFO - Memulai konversi ke mp4 untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 16:02:21,350 - INFO - Konversi selesai: Soramimi Rock ｜ JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE [XvfsikklClA].mp4. Siap dikirim.
+2025-11-16 16:02:21,351 - INFO - 127.0.0.1 - - [16/Nov/2025 16:02:21] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-16 16:02:21,716 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:02:21,757 - INFO - 127.0.0.1 - - [16/Nov/2025 16:02:21] "GET /api/download-file/Soramimi%20Rock%20｜%20JKT48%20Special%20Concert%20FULL%20HOUSE%20%23JKT48FULLHOUSE%20[XvfsikklClA].mp4 HTTP/1.1" 200 -
+2025-11-16 16:02:32,021 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:02:32,028 - INFO - Memulai konversi ke webm untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 16:02:52,149 - INFO - Konversi selesai: Soramimi Rock ｜ JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE [XvfsikklClA].webm. Siap dikirim.
+2025-11-16 16:02:52,151 - INFO - 127.0.0.1 - - [16/Nov/2025 16:02:52] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-16 16:02:52,670 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:02:52,697 - INFO - 127.0.0.1 - - [16/Nov/2025 16:02:52] "GET /api/download-file/Soramimi%20Rock%20｜%20JKT48%20Special%20Concert%20FULL%20HOUSE%20%23JKT48FULLHOUSE%20[XvfsikklClA].webm HTTP/1.1" 200 -
+2025-11-16 16:03:37,791 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:03:37,799 - INFO - 127.0.0.1 - - [16/Nov/2025 16:03:37] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:03:51,152 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:03:51,162 - INFO - 127.0.0.1 - - [16/Nov/2025 16:03:51] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:03:52,255 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:03:52,264 - INFO - 127.0.0.1 - - [16/Nov/2025 16:03:52] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:01,147 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:01,155 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:01] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:03,111 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:03,122 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:03] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:08,071 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:04:08,077 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:04:08,078 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:04:08,078 - INFO - Scheduler started
+2025-11-16 16:04:08,079 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:04:08,079 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:04:09,433 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 16:04:09,433 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 16:04:09,434 - INFO -  * Restarting with stat
+2025-11-16 16:04:10,318 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:04:10,325 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:04:10,325 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:04:10,325 - INFO - Scheduler started
+2025-11-16 16:04:10,326 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:04:10,326 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:04:10,332 - WARNING -  * Debugger is active!
+2025-11-16 16:04:10,336 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:04:11,913 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:11,925 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:11] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:15,570 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:15,578 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:15] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:19,343 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:19,350 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:19] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:21,286 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:21,295 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:21] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:25,300 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:25,309 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:25] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:04:30,861 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:30,867 - INFO - Memulai konversi ke mp4 untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 16:04:37,774 - INFO - Konversi selesai: Soramimi Rock ｜ JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE [XvfsikklClA].mp4. Siap dikirim.
+2025-11-16 16:04:37,776 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:37] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-16 16:04:38,133 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:04:38,174 - INFO - 127.0.0.1 - - [16/Nov/2025 16:04:38] "GET /api/download-file/Soramimi%20Rock%20｜%20JKT48%20Special%20Concert%20FULL%20HOUSE%20%23JKT48FULLHOUSE%20[XvfsikklClA].mp4 HTTP/1.1" 200 -
+2025-11-16 16:12:06,512 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:12:06,521 - INFO - 127.0.0.1 - - [16/Nov/2025 16:12:06] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:12:09,607 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:12:09,615 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:12:12,534 - INFO - yt-dlp: Menemukan 19 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:12:12,537 - INFO - 127.0.0.1 - - [16/Nov/2025 16:12:12] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:13:52,432 - INFO - [GUARD DEBUG] Token invalid (Signature has expired). Redirecting to login.
+2025-11-16 16:13:52,433 - INFO - 127.0.0.1 - - [16/Nov/2025 16:13:52] "[32mGET /sosmed-download HTTP/1.1[0m" 302 -
+2025-11-16 16:13:52,449 - INFO - 127.0.0.1 - - [16/Nov/2025 16:13:52] "GET /login HTTP/1.1" 200 -
+2025-11-16 16:14:02,845 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:14:03,139 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-16 16:14:03,140 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:03] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-16 16:14:03,502 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:14:03,515 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:03] "GET / HTTP/1.1" 200 -
+2025-11-16 16:14:03,787 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 16:14:03,793 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 16:14:03,795 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 16:14:03,795 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 16:14:03,796 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-16 16:14:03,800 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-16 16:14:04,102 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:04] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-16 16:14:05,744 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-16 16:14:07,503 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:14:07,523 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:07] "GET /tools HTTP/1.1" 200 -
+2025-11-16 16:14:08,543 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:14:08,551 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:08] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:14:09,616 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-16 16:14:09,635 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-16 16:14:09,636 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-16 16:14:09,637 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-16 16:14:09,644 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 16:14:09,644 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 16:14:09,645 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 16:14:12,767 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 16:14:12,767 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:12] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 16:14:13,589 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 16:14:13,589 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-16 16:14:13,589 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-16 16:14:14,724 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-16 16:14:14,725 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-16 16:14:14,725 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-16 16:14:14,725 - INFO -    --> Payload: nim=23410100003, token=$2y$10$531hxRICVD1V7cvlJ3l9iekze9VzsJiaqj4UK8I4R43nUr8OaYvVW, ultah=True
+2025-11-16 16:14:15,555 - INFO - 127.0.0.1 - - [16/Nov/2025 16:14:15] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-16 16:19:21,655 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:19:21,892 - INFO -  * Restarting with stat
+2025-11-16 16:19:22,893 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:19:22,901 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:19:22,901 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:19:22,902 - INFO - Scheduler started
+2025-11-16 16:19:22,902 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:19:22,903 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:19:22,909 - WARNING -  * Debugger is active!
+2025-11-16 16:19:22,913 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:19:24,926 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:19:25,027 - INFO -  * Restarting with stat
+2025-11-16 16:19:25,930 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:19:25,938 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:19:25,938 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:19:25,939 - INFO - Scheduler started
+2025-11-16 16:19:25,939 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:19:25,940 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:19:25,946 - WARNING -  * Debugger is active!
+2025-11-16 16:19:25,950 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:19:26,960 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:19:27,071 - INFO -  * Restarting with stat
+2025-11-16 16:19:28,175 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:19:28,181 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:19:28,181 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:19:28,181 - INFO - Scheduler started
+2025-11-16 16:19:28,182 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:19:28,183 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:19:28,189 - WARNING -  * Debugger is active!
+2025-11-16 16:19:28,194 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:19:35,223 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:19:35,330 - INFO -  * Restarting with stat
+2025-11-16 16:19:36,256 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:19:36,263 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:19:36,264 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:19:36,264 - INFO - Scheduler started
+2025-11-16 16:19:36,265 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:19:36,265 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:19:36,271 - WARNING -  * Debugger is active!
+2025-11-16 16:19:36,275 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:19:37,284 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:19:37,412 - INFO -  * Restarting with stat
+2025-11-16 16:20:07,242 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:20:07,252 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:20:07,252 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:20:07,253 - INFO - Scheduler started
+2025-11-16 16:20:07,253 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:20:07,254 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:20:08,606 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 16:20:08,606 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 16:20:08,607 - INFO -  * Restarting with stat
+2025-11-16 16:20:09,481 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:20:09,488 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:20:09,488 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:20:09,489 - INFO - Scheduler started
+2025-11-16 16:20:09,490 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:20:09,490 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:20:09,496 - WARNING -  * Debugger is active!
+2025-11-16 16:20:09,501 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:20:21,802 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:20:21,817 - INFO - 127.0.0.1 - - [16/Nov/2025 16:20:21] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:20:23,744 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:20:23,754 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:20:26,133 - ERROR - Error yt-dlp internal: name 'ext' is not defined
+2025-11-16 16:20:26,136 - INFO - 127.0.0.1 - - [16/Nov/2025 16:20:26] "[35m[1mPOST /api/get-youtube-info HTTP/1.1[0m" 500 -
+2025-11-16 16:22:07,059 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:22:07,324 - INFO -  * Restarting with stat
+2025-11-16 16:22:08,470 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:22:08,476 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:22:08,477 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:22:08,477 - INFO - Scheduler started
+2025-11-16 16:22:08,478 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:22:08,478 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:22:08,485 - WARNING -  * Debugger is active!
+2025-11-16 16:22:08,489 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:22:12,514 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:22:12,622 - INFO -  * Restarting with stat
+2025-11-16 16:22:13,691 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:22:13,704 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:22:13,712 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:22:13,714 - INFO - Scheduler started
+2025-11-16 16:22:13,717 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:22:13,718 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:22:13,725 - WARNING -  * Debugger is active!
+2025-11-16 16:22:13,729 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:22:13,746 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:22:13,860 - INFO -  * Restarting with stat
+2025-11-16 16:22:14,732 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:22:14,742 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:22:14,744 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:22:14,744 - INFO - Scheduler started
+2025-11-16 16:22:14,745 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:22:14,746 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:22:14,752 - WARNING -  * Debugger is active!
+2025-11-16 16:22:14,756 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:22:19,783 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:22:19,879 - INFO -  * Restarting with stat
+2025-11-16 16:22:20,749 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:22:20,755 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:22:20,756 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:22:20,756 - INFO - Scheduler started
+2025-11-16 16:22:20,757 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:22:20,757 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:22:20,764 - WARNING -  * Debugger is active!
+2025-11-16 16:22:20,768 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:22:22,784 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:22:22,892 - INFO -  * Restarting with stat
+2025-11-16 16:22:27,136 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:22:27,142 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:22:27,142 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:22:27,143 - INFO - Scheduler started
+2025-11-16 16:22:27,144 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:22:27,144 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:22:28,494 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 16:22:28,494 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 16:22:28,495 - INFO -  * Restarting with stat
+2025-11-16 16:22:29,371 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:22:29,378 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:22:29,379 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:22:29,379 - INFO - Scheduler started
+2025-11-16 16:22:29,380 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:22:29,381 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:22:29,388 - WARNING -  * Debugger is active!
+2025-11-16 16:22:29,392 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:22:30,399 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:22:30,406 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:22:32,694 - INFO - yt-dlp: Menemukan 14 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:22:32,696 - INFO - 127.0.0.1 - - [16/Nov/2025 16:22:32] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:27:33,065 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:27:33,263 - INFO -  * Restarting with stat
+2025-11-16 16:27:34,464 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:27:34,470 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:27:34,471 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:27:34,471 - INFO - Scheduler started
+2025-11-16 16:27:34,473 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:27:34,473 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:27:34,480 - WARNING -  * Debugger is active!
+2025-11-16 16:27:34,484 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:28:42,705 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:28:42,719 - INFO - 127.0.0.1 - - [16/Nov/2025 16:28:42] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:28:42,754 - INFO - 127.0.0.1 - - [16/Nov/2025 16:28:42] "[33mGET /[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com) HTTP/1.1[0m" 404 -
+2025-11-16 16:28:42,756 - INFO - 127.0.0.1 - - [16/Nov/2025 16:28:42] "[33mGET /[https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js](https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js) HTTP/1.1[0m" 404 -
+2025-11-16 16:29:02,613 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:02,621 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:02] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:29:09,358 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:09,366 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:09] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:29:19,683 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:19,695 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:19] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:29:20,171 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:20,178 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:20] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:29:20,449 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:20,457 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:20] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:29:34,478 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:34,485 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:34] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:29:35,875 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:35,882 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:35] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:29:37,421 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:29:37,427 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:29:39,523 - INFO - yt-dlp: Menemukan 14 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:29:39,525 - INFO - 127.0.0.1 - - [16/Nov/2025 16:29:39] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:30:41,669 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:30:41,677 - INFO - Memulai konversi ke mkv untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 16:31:00,154 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:31:00,167 - INFO - 127.0.0.1 - - [16/Nov/2025 16:31:00] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:31:18,657 - INFO - Konversi selesai: Soramimi Rock ｜ JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE [XvfsikklClA].mkv. Siap dikirim.
+2025-11-16 16:31:18,659 - INFO - 127.0.0.1 - - [16/Nov/2025 16:31:18] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-16 16:37:17,525 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:37:17,648 - INFO -  * Restarting with stat
+2025-11-16 16:37:18,696 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:37:18,705 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:37:18,705 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:37:18,705 - INFO - Scheduler started
+2025-11-16 16:37:18,706 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:37:18,706 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:37:18,713 - WARNING -  * Debugger is active!
+2025-11-16 16:37:18,718 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:37:33,788 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:37:33,923 - INFO -  * Restarting with stat
+2025-11-16 16:37:35,078 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:37:35,085 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:37:35,086 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:37:35,086 - INFO - Scheduler started
+2025-11-16 16:37:35,087 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:37:35,087 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:37:35,095 - WARNING -  * Debugger is active!
+2025-11-16 16:37:35,099 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:37:52,187 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:37:52,393 - INFO -  * Restarting with stat
+2025-11-16 16:37:53,351 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:37:53,358 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:37:53,358 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:37:53,359 - INFO - Scheduler started
+2025-11-16 16:37:53,359 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:37:53,360 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:37:53,366 - WARNING -  * Debugger is active!
+2025-11-16 16:37:53,371 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:38:07,442 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:38:07,454 - INFO - 127.0.0.1 - - [16/Nov/2025 16:38:07] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:38:07,485 - INFO - 127.0.0.1 - - [16/Nov/2025 16:38:07] "[33mGET /[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com) HTTP/1.1[0m" 404 -
+2025-11-16 16:38:07,488 - INFO - 127.0.0.1 - - [16/Nov/2025 16:38:07] "[33mGET /[https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js](https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js) HTTP/1.1[0m" 404 -
+2025-11-16 16:38:25,421 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:38:25,429 - INFO - 127.0.0.1 - - [16/Nov/2025 16:38:25] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:38:31,305 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:38:31,313 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:38:34,521 - INFO - yt-dlp: Menemukan 14 format yang cocok untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:38:34,525 - INFO - 127.0.0.1 - - [16/Nov/2025 16:38:34] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:39:22,204 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:39:22,213 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/0aQbmoViyP0?si=L_DgCnkySBE36tPX
+2025-11-16 16:39:23,997 - INFO - yt-dlp: Menemukan 16 format yang cocok untuk 'Bernadya, JKT48 - Percik Kecil [Live at JKT48 Special Concert FULL HOUSE]'
+2025-11-16 16:39:23,999 - INFO - 127.0.0.1 - - [16/Nov/2025 16:39:23] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:44:24,313 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:44:26,589 - INFO -  * Restarting with stat
+2025-11-16 16:44:28,028 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:44:28,034 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:44:28,034 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:44:28,034 - INFO - Scheduler started
+2025-11-16 16:44:28,035 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:44:28,035 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:44:28,041 - WARNING -  * Debugger is active!
+2025-11-16 16:44:28,045 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:44:54,183 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:44:54,379 - INFO -  * Restarting with stat
+2025-11-16 16:44:55,636 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:44:55,644 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:44:55,644 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:44:55,644 - INFO - Scheduler started
+2025-11-16 16:44:55,645 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:44:55,645 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:44:55,653 - WARNING -  * Debugger is active!
+2025-11-16 16:44:55,657 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:45:04,689 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:45:04,795 - INFO -  * Restarting with stat
+2025-11-16 16:45:05,734 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:45:05,740 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:45:05,740 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:45:05,740 - INFO - Scheduler started
+2025-11-16 16:45:05,741 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:45:05,742 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:45:05,748 - WARNING -  * Debugger is active!
+2025-11-16 16:45:05,752 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:45:23,977 - INFO - [GUARD DEBUG] Token invalid (Signature has expired). Redirecting to login.
+2025-11-16 16:45:23,978 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:23] "[32mGET /sosmed-download HTTP/1.1[0m" 302 -
+2025-11-16 16:45:23,991 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:23] "GET /login HTTP/1.1" 200 -
+2025-11-16 16:45:33,369 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:45:33,640 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-16 16:45:33,642 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:33] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-16 16:45:34,003 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:45:34,035 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:34] "GET / HTTP/1.1" 200 -
+2025-11-16 16:45:34,142 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 16:45:34,219 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-16 16:45:34,221 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 16:45:34,222 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-16 16:45:34,223 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-16 16:45:34,223 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-16 16:45:34,453 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:34] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-16 16:45:36,052 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-16 16:45:39,470 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:45:39,480 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:39] "GET /tools HTTP/1.1" 200 -
+2025-11-16 16:45:39,714 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-16 16:45:40,023 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-16 16:45:40,044 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-16 16:45:40,045 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-16 16:45:40,046 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-16 16:45:40,057 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-16 16:45:40,058 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 16:45:40,059 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-16 16:45:41,267 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:45:41,288 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:41] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:45:41,636 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:41] "[33mGET /[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com) HTTP/1.1[0m" 404 -
+2025-11-16 16:45:41,638 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:41] "[33mGET /[https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js](https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js) HTTP/1.1[0m" 404 -
+2025-11-16 16:45:43,300 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 16:45:43,301 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:43] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-16 16:45:44,041 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-16 16:45:44,041 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-16 16:45:44,042 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-16 16:45:45,304 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-16 16:45:45,305 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-16 16:45:45,305 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-16 16:45:45,306 - INFO -    --> Payload: nim=23410100003, token=$2y$10$T0.vkr4SGOPlY9heKlQvVu8tIPK2ZBIaAJo2fRsJBjGsYf47XP6gq, ultah=True
+2025-11-16 16:45:46,158 - INFO - 127.0.0.1 - - [16/Nov/2025 16:45:46] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-16 16:46:01,762 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:46:01,771 - INFO - 127.0.0.1 - - [16/Nov/2025 16:46:01] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:46:06,424 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:46:06,434 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/0aQbmoViyP0?si=L_DgCnkySBE36tPX
+2025-11-16 16:46:09,783 - INFO - yt-dlp: Info diambil untuk 'Bernadya, JKT48 - Percik Kecil [Live at JKT48 Special Concert FULL HOUSE]'
+2025-11-16 16:46:09,785 - INFO - 127.0.0.1 - - [16/Nov/2025 16:46:09] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:46:58,424 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:46:58,432 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/0aQbmoViyP0?si=L_DgCnkySBE36tPX...
+2025-11-16 16:47:01,340 - INFO - Downloading and converting to 80213737-bf27-4895-9b20-4d3a21fdbb5e.mp4...
+2025-11-16 16:47:27,564 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 80213737-bf27-4895-9b20-4d3a21fdbb5e.mp4 tidak ditemukan.
+2025-11-16 16:47:27,564 - INFO - 127.0.0.1 - - [16/Nov/2025 16:47:27] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:47:36,813 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:47:36,820 - INFO - Memulai konversi ke mp4 (1080p) untuk https://youtu.be/0aQbmoViyP0?si=L_DgCnkySBE36tPX...
+2025-11-16 16:47:39,246 - INFO - Downloading and converting to 87a93327-6b4d-41b1-84d0-bf010c264586.mp4...
+2025-11-16 16:48:18,624 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 87a93327-6b4d-41b1-84d0-bf010c264586.mp4 tidak ditemukan.
+2025-11-16 16:48:18,625 - INFO - 127.0.0.1 - - [16/Nov/2025 16:48:18] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:48:36,418 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:48:36,424 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:48:38,989 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:48:38,993 - INFO - 127.0.0.1 - - [16/Nov/2025 16:48:38] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:48:45,085 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:48:45,091 - INFO - Memulai konversi ke mp4 (720p) untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 16:48:47,084 - INFO - Downloading and converting to d8a67fe8-cf66-49ac-b4c9-749fd134acb4.mp4...
+2025-11-16 16:49:12,928 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi d8a67fe8-cf66-49ac-b4c9-749fd134acb4.mp4 tidak ditemukan.
+2025-11-16 16:49:12,929 - INFO - 127.0.0.1 - - [16/Nov/2025 16:49:12] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:49:52,091 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:49:52,098 - INFO - 127.0.0.1 - - [16/Nov/2025 16:49:52] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:50:12,483 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:50:12,616 - INFO -  * Restarting with stat
+2025-11-16 16:50:13,663 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:50:13,672 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:50:13,672 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:50:13,672 - INFO - Scheduler started
+2025-11-16 16:50:13,673 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:50:13,674 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:50:13,681 - WARNING -  * Debugger is active!
+2025-11-16 16:50:13,686 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:50:15,702 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:50:15,798 - INFO -  * Restarting with stat
+2025-11-16 16:50:16,670 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:50:16,677 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:50:16,678 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:50:16,678 - INFO - Scheduler started
+2025-11-16 16:50:16,680 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:50:16,680 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:50:16,688 - WARNING -  * Debugger is active!
+2025-11-16 16:50:16,693 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:50:22,966 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:50:22,976 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/0aQbmoViyP0?si=L_DgCnkySBE36tPX
+2025-11-16 16:50:26,617 - INFO - yt-dlp: Info diambil untuk 'Bernadya, JKT48 - Percik Kecil [Live at JKT48 Special Concert FULL HOUSE]'
+2025-11-16 16:50:26,619 - INFO - 127.0.0.1 - - [16/Nov/2025 16:50:26] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:50:38,559 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:50:38,566 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/0aQbmoViyP0?si=L_DgCnkySBE36tPX...
+2025-11-16 16:50:40,903 - INFO - Downloading and converting to 6a8967e3-9889-4f78-b985-37fe4fc0b739.mp4...
+2025-11-16 16:51:06,507 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 6a8967e3-9889-4f78-b985-37fe4fc0b739.mp4 tidak ditemukan.
+2025-11-16 16:51:06,508 - INFO - 127.0.0.1 - - [16/Nov/2025 16:51:06] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:51:20,043 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:51:20,171 - INFO -  * Restarting with stat
+2025-11-16 16:51:21,139 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:51:21,146 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:51:21,146 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:51:21,146 - INFO - Scheduler started
+2025-11-16 16:51:21,147 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:51:21,147 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:51:21,154 - WARNING -  * Debugger is active!
+2025-11-16 16:51:21,158 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:51:24,658 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:51:24,673 - INFO - 127.0.0.1 - - [16/Nov/2025 16:51:24] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:51:28,356 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:51:28,365 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:51:30,077 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:51:30,080 - INFO - 127.0.0.1 - - [16/Nov/2025 16:51:30] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:51:32,598 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:51:32,606 - INFO - Memulai konversi ke mp4 untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 16:51:34,031 - INFO - Downloading and converting to 39d7a5ea-f269-4808-839d-af46a3ed3c35.mp4...
+2025-11-16 16:51:58,643 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 39d7a5ea-f269-4808-839d-af46a3ed3c35.mp4 tidak ditemukan.
+2025-11-16 16:51:58,643 - INFO - 127.0.0.1 - - [16/Nov/2025 16:51:58] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:52:30,500 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:52:33,274 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:52:33,280 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:52:33,281 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:52:33,281 - INFO - Scheduler started
+2025-11-16 16:52:33,282 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:52:33,283 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:52:34,639 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-16 16:52:34,640 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 16:52:34,642 - INFO -  * Restarting with stat
+2025-11-16 16:52:35,544 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:52:35,555 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:52:35,556 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:52:35,556 - INFO - Scheduler started
+2025-11-16 16:52:35,557 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:52:35,558 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:52:35,565 - WARNING -  * Debugger is active!
+2025-11-16 16:52:35,571 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:52:37,184 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:52:37,196 - INFO - 127.0.0.1 - - [16/Nov/2025 16:52:37] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-16 16:52:39,776 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:52:39,783 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:52:41,666 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:52:41,668 - INFO - 127.0.0.1 - - [16/Nov/2025 16:52:41] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:52:45,115 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:52:45,121 - INFO - Memulai konversi ke mp4 (720p) untuk https://www.youtube.com/watch?v=XvfsikklClA\...
+2025-11-16 16:52:46,588 - INFO - Downloading and converting to cc9563a2-6bb7-4610-9968-6128f6d4aeb2.mp4...
+2025-11-16 16:53:12,144 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi cc9563a2-6bb7-4610-9968-6128f6d4aeb2.mp4 tidak ditemukan.
+2025-11-16 16:53:12,145 - INFO - 127.0.0.1 - - [16/Nov/2025 16:53:12] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:53:25,822 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:53:25,832 - INFO - Memulai konversi ke mp4 (720p) untuk https://www.youtube.com/watch?v=XvfsikklClA\...
+2025-11-16 16:53:27,866 - INFO - Downloading and converting to a0fa90c8-3a45-42fb-b82c-ee055de3a3f8.mp4...
+2025-11-16 16:53:53,639 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi a0fa90c8-3a45-42fb-b82c-ee055de3a3f8.mp4 tidak ditemukan.
+2025-11-16 16:53:53,640 - INFO - 127.0.0.1 - - [16/Nov/2025 16:53:53] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:54:39,150 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:54:39,156 - INFO - Memulai konversi ke mp3 (best) untuk https://www.youtube.com/watch?v=XvfsikklClA\...
+2025-11-16 16:54:41,464 - INFO - Downloading and converting to 00775416-00ed-4d7e-897e-cfcbb7220341.mp3...
+2025-11-16 16:54:52,306 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 00775416-00ed-4d7e-897e-cfcbb7220341.mp3 tidak ditemukan.
+2025-11-16 16:54:52,308 - INFO - 127.0.0.1 - - [16/Nov/2025 16:54:52] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:56:35,151 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:56:35,393 - INFO -  * Restarting with stat
+2025-11-16 16:56:36,698 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:56:36,705 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:56:36,706 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:56:36,706 - INFO - Scheduler started
+2025-11-16 16:56:36,707 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:56:36,707 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:56:36,715 - WARNING -  * Debugger is active!
+2025-11-16 16:56:36,719 - INFO -  * Debugger PIN: 288-901-657
+2025-11-16 16:56:42,956 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:56:42,962 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=XvfsikklClA
+2025-11-16 16:56:44,765 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-16 16:56:44,768 - INFO - 127.0.0.1 - - [16/Nov/2025 16:56:44] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-16 16:56:50,453 - INFO - === Koneksi ke database berhasil ===
+2025-11-16 16:56:50,461 - INFO - Memulai konversi ke mp4 untuk https://www.youtube.com/watch?v=XvfsikklClA...
+2025-11-16 16:56:51,850 - INFO - Downloading and converting to e830c321-cba2-4e7d-8a10-36dc6fc88170.mp4...
+2025-11-16 16:57:19,673 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi e830c321-cba2-4e7d-8a10-36dc6fc88170.mp4 tidak ditemukan.
+2025-11-16 16:57:19,673 - INFO - 127.0.0.1 - - [16/Nov/2025 16:57:19] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-16 16:57:45,083 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-16 16:57:45,314 - INFO -  * Restarting with stat
+2025-11-16 16:57:46,313 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-16 16:57:46,319 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-16 16:57:46,320 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-16 16:57:46,320 - INFO - Scheduler started
+2025-11-16 16:57:46,321 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-16 16:57:46,321 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-16 16:57:46,327 - WARNING -  * Debugger is active!
+2025-11-16 16:57:46,331 - INFO -  * Debugger PIN: 288-901-657

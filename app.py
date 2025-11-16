@@ -106,7 +106,8 @@ app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
 if not app.secret_key:
     app.secret_key = 'fallback_secret_for_dev'  # Jangan pakai di prod!
     app.config['SECRET_KEY'] = app.secret_key  # Set ke config juga, biar current_app.config bisa akses
-  
+
+
 
 # IS_PRODUCTION = os.getenv("FLASK_ENV") == "production"
 
@@ -490,8 +491,11 @@ def log_program():
     return render_template('log_page.html', log_content=log_content)
 
 
-# Api
-
+@app.route('/sosmed-download')
+@login_required
+def sosmed_download():
+    """Menyajikan file HTML utama."""
+    return render_template('downloadSosmed.html')
 
 
 

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloader Social Media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans">
+    
+    <div 
+      class="container mx-auto p-6 pb-20" 
+      x-data="downloader()"
+    >
+        <h1 class="text-2xl font-semibold text-white mb-6">Sosmed Downloader</h1>
+        <a href="/tools" class="text-blue-400 hover:text-blue-300 mb-4 inline-block">&laquo; Back to Tools</a>
+        
+        <div class="bg-gray-800 rounded-lg shadow-md p-6">
+            <div class="flex space-x-4">
+                <input 
+                  type="text" 
+                  x-model="url"
+                  @keydown.enter="handleSubmit"
+                  placeholder="Tempel link YouTube..."
+                  class="flex-1 px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <button
+                  @click="handleSubmit"
+                  :disabled="loading || !url"
+                  class="flex justify-center items-center px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <svg x-show="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" ...>...</svg>
+                    <span x-text="loading ? 'Mengecek...' : 'Cek Link'"></span>
+                </button>
+            </div>
+            <template x-if="error">
+                <p x-text="error" class="text-red-400 text-sm mt-4"></p>
+            </template>
+        </div>
+
+        <template x-if="result && result.success">
+            <div class="mt-6 bg-gray-800 rounded-lg shadow-md overflow-hidden animate-fade-in">
+                
+                <div class="p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                        <img :src="result.thumbnail" alt="Thumbnail" class="w-full sm:w-48 rounded-md object-cover shadow-lg">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-white" x-text="result.title"></h3>
+                            <p class="text-sm text-gray-400 mt-2">
+                                Pilih resolusi/kualitas, lalu pilih format konversi.
+                                <strong class="text-yellow-400">Proses ini lambat dan makan CPU server!</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-700">
+                    <h4 class="text-base font-semibold text-white p-4">Opsi Video</h4>
+                    <div class="divide-y divide-gray-700">
+                        <template x-for="q in result.video_qualities" :key="q">
+                            <div class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <p class="font-medium text-white" x-text="q"></p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button @click="startConversion('mp4', q)" :disabled="converting" class="flex items-center justify-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-500 disabled:opacity-50">
+                                        <svg x-show="converting === 'mp4' + q" class="animate-spin -ml-1 mr-2 h-4 w-4" ...>...</svg>
+                                        <span x-text="converting === 'mp4' + q ? 'Proses...' : 'MP4'"></span>
+                                    </button>
+                                    <button @click="startConversion('mkv', q)" :disabled="converting" class="flex items-center justify-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-500 disabled:opacity-50">
+                                        <svg x-show="converting === 'mkv' + q" class="animate-spin -ml-1 mr-2 h-4 w-4" ...>...</svg>
+                                        <span x-text="converting === 'mkv' + q ? 'Proses...' : 'MKV'"></span>
+                                    </button>
+                                    <button @click="startConversion('mpeg', q)" :disabled="converting" class="flex items-center justify-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-500 disabled:opacity-50">
+                                        <svg x-show="converting === 'mpeg' + q" class="animate-spin -ml-1 mr-2 h-4 w-4" ...>...</svg>
+                                        <span x-text="converting === 'mpeg' + q ? 'Proses...' : 'MPEG'"></span>
+                                    </button>
+                                     <button @click="startConversion('webm_video', q)" :disabled="converting" class="flex items-center justify-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-500 disabled:opacity-50">
+                                        <svg x-show="converting === 'webm_video' + q" class="animate-spin -ml-1 mr-2 h-4 w-4" ...>...</svg>
+                                        <span x-text="converting === 'webm_video' + q ? 'Proses...' : 'WEBM'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-700">
+                    <h4 class="text-base font-semibold text-white p-4">Opsi Audio</h4>
+                     <div class="divide-y divide-gray-700">
+                        <template x-for="q in result.audio_qualities" :key="q.id">
+                            <div class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <p class="font-medium text-white" x-text="q.label"></p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button @click="startConversion('mp3', q.id)" :disabled="converting" class="flex items-center justify-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-500 disabled:opacity-50">
+                                        <svg x-show="converting === 'mp3' + q.id" class="animate-spin -ml-1 mr-2 h-4 w-4" ...>...</svg>
+                                        <span x-text="converting === 'mp3' + q.id ? 'Proses...' : 'MP3'"></span>
+                                    </button>
+                                    <button @click="startConversion('wav', q.id)" :disabled="converting" class="flex items-center justify-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-500 disabled:opacity-50">
+                                        <svg x-show="converting === 'wav' + q.id" class="animate-spin -ml-1 mr-2 h-4 w-4" ...>...</svg>
+                                        <span x-text="converting === 'wav' + q.id ? 'Proses...' : 'WAV'"></span>
+                                    </button>
+                                    <button @click="startConversion('webm_audio', q.id)" :disabled="converting" class="flex items-center justify-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-500 disabled:opacity-50">
+                                        <svg x-show="converting === 'webm_audio' + q.id" class="animate-spin -ml-1 mr-2 h-4 w-4" ...>...</svg>
+                                        <span x-text="converting === 'webm_audio' + q.id ? 'Proses...' : 'WEBM'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                
+            </div>
+        </template>
+        
+    </div>
+
+    {% include 'nativeNav.html' %}
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('downloader', () => ({
+                url: '',
+                loading: false,     // Buat 'Cek Link'
+                converting: null,   // Buat tombol individu, e.g. "mp41080p"
+                error: null,
+                result: null,       // Buat nampung info dari API Cepat
+
+                // 1. FUNGSI "CEK LINK" (API CEPAT)
+                async handleSubmit() {
+                    this.loading = true;
+                    this.error = null;
+                    this.result = null;
+                    
+                    if (!this.url.includes('youtube.com') && !this.url.includes('youtu.be')) {
+                        this.error = 'Hanya link YouTube yang didukung saat ini.';
+                        this.loading = false;
+                        return;
+                    }
+
+                    try {
+                        // Panggil API Cepat buat dapet info
+                        const response = await fetch('/api/get-youtube-info', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ url: this.url })
+                        });
+                        const data = await response.json();
+                        if (!response.ok || data.error) throw new Error(data.error);
+                        
+                        this.result = data; // Tampilkan list tombol
+
+                    } catch (err) {
+                        this.error = err.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+            
+                // 2. FUNGSI "KONVERSI" (API LAMBAT)
+                async startConversion(ext, quality) {
+                    if (!this.url) return;
+                    
+                    this.converting = ext + quality; // Set loading di tombol ini
+                    this.error = null; // Hapus error lama
+
+                    try {
+                        // Panggil API Lambat (konversi)
+                        const response = await fetch('/api/request-conversion', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                url: this.url, 
+                                ext: ext, 
+                                quality: quality 
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        if (!response.ok || data.error) {
+                            throw new Error(data.error || 'Konversi gagal.');
+                        }
+
+                        // Sukses! Trigger download
+                        const link = document.createElement('a');
+                        link.href = data.download_url;
+                        link.setAttribute('download', data.download_as);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                    } catch (err) {
+                        this.error = err.message; // Tampilkan error di box global
+                    } finally {
+                        this.converting = null; // Selesai loading
+                    }
+                }
+            }));
+        });
+
+        // ... (CSS Animasi fade-in) ...
+    </script>
+</body>
+</html>

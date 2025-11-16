@@ -1,8 +1,7 @@
-from flask import request, Response, jsonify
-import logging
-import base64  # Untuk encode image ke base64
-from flask import Blueprint
-import json
+from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for
+import json, yt_dlp, base64 , logging, os, uuid, urllib.parse
+from middleware.auth_quard import login_required
+from yt_dlp.utils import sanitize_filename
 
 
 # Impor SEMUA fungsi scraper
@@ -19,6 +18,7 @@ JADWAL_STATUS = None
 log_file = None
 _valid_role = None
 
+# Fungsi untuk inisialisasi variabel global
 def init_api(cache, major, execu, status, logfile, valid_role_func):
     global photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
     photo_cache = cache
@@ -28,7 +28,7 @@ def init_api(cache, major, execu, status, logfile, valid_role_func):
     log_file = logfile
     _valid_role = valid_role_func
 
-
+# mengecek status koneksi Sicyca
 @api_bp.route('/status_koneksi')
 def api_status():
     if get_session_status():
@@ -159,10 +159,213 @@ def api_search():
 
     return html_output  # bukan jsonify
 
+# Endpoint yt-dlp untuk mendapatkan link download YouTube
+@api_bp.route('/get-youtube-info', methods=['POST'])
+@login_required
+def get_youtube_info():
+    data = request.get_json()
+    url = data.get('url')
+    
+    if not url or ('youtube.com' not in url and 'youtu.be' not in url):
+        return jsonify({"error": "URL YouTube tidak valid"}), 400
+
+    logging.info(f"Menerima permintaan yt-dlp (info) untuk: {url}")
+
+    ydl_opts = {'quiet': True, 'noplaylist': True}
+
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            
+            title = info.get('title', 'video_tanpa_judul')
+            thumbnail = info.get('thumbnail')
+            
+            # 1. Ambil semua resolusi video-only (1080p, 720p, dll)
+            video_formats = [
+                f for f in info.get('formats', []) 
+                if f.get('vcodec') != 'none' and f.get('acodec') == 'none' and f.get('ext') in ['mp4', 'webm']
+            ]
+            # Ambil resolusi unik, urutkan dari besar ke kecil
+            resolutions = sorted(
+                list(set([f.get('height') for f in video_formats if f.get('height')])), 
+                reverse=True
+            )
+            # Format labelnya (e.g., "1080p", "720p")
+            video_qualities = [f"{r}p" for r in resolutions if r]
+            
+            # 2. Ambil video + audio (biasanya maks 720p)
+            combined_formats = [
+                f for f in info.get('formats', []) 
+                if f.get('vcodec') != 'none' and f.get('acodec') != 'none' and f.get('ext') in ['mp4', 'webm']
+            ]
+            combined_qualities = sorted(
+                list(set([f.get('height') for f in combined_formats if f.get('height')])),
+                reverse=True
+            )
+            # Gabungin semua kualitas video
+            all_video_qualities = sorted(list(set(video_qualities + [f"{r}p" for r in combined_qualities])), reverse=True)
+            # Kalo nggak ada, kasih default
+            if not all_video_qualities:
+                all_video_qualities = ['best']
 
 
+            # 3. Ambil kualitas audio
+            audio_formats = [
+                f for f in info.get('formats', []) 
+                if f.get('vcodec') == 'none' and f.get('acodec') != 'none' and f.get('ext') in ['m4a', 'webm']
+            ]
+            audio_bitrates = sorted(
+                list(set([f.get('abr') for f in audio_formats if f.get('abr')])),
+                reverse=True
+            )
+            # Format labelnya (e.g., "Best (128k)", "Medium (49k)")
+            audio_qualities = []
+            if audio_bitrates:
+                audio_qualities.append({'id': 'best', 'label': f"Best (≈{int(audio_bitrates[0])}k)"})
+                if len(audio_bitrates) > 1:
+                    audio_qualities.append({'id': 'medium', 'label': f"Medium (≈{int(audio_bitrates[-1])}k)"})
+            else:
+                audio_qualities.append({'id': 'best', 'label': 'Best Audio'})
 
+            
+            logging.info(f"yt-dlp: Info diambil untuk '{title}'")
+            
+            return jsonify({
+                "success": True,
+                "title": title, 
+                "thumbnail": thumbnail,
+                "video_qualities": all_video_qualities, # e.g., ["1080p", "720p", "480p"]
+                "audio_qualities": audio_qualities  # e.g., [{"id": "best", "label": "Best (126k)"}]
+            })
 
+    except yt_dlp.utils.DownloadError as e:
+        return jsonify({"error": f"Gagal mengambil info video. Mungkin video ini private atau dihapus."}), 500
+    except Exception as e:
+        return jsonify({"error": f"Terjadi kesalahan internal: {str(e)}"}), 500
+        
+# Endpoint yt-dlp untuk request konversi
+@api_bp.route('/request-conversion', methods=['POST'])
+@login_required
+def request_conversion():
+    data = request.get_json()
+    url = data.get('url')
+    ext_req = data.get('ext') # mp3, mkv, mp4, ...
+    quality = data.get('quality') # e.g., "1080p", "720p", "best"
+    
+    if not url or not ext_req or not quality:
+        return jsonify({"error": "URL, format, dan kualitas wajib diisi"}), 400
+    
+    temp_dir = current_app.config.get('TEMP_DOWNLOAD_DIR', '/app/temp_downloads')
+    
+    # 1. BIKIN NAMA FILE SESUAI PERMINTAAN LU
+    # Ini nama file SEMENTARA di server
+    unique_id = str(uuid.uuid4())
+    temp_server_filename = f"{unique_id}.{ext_req}"
+    temp_server_path = os.path.join(temp_dir, temp_server_filename)
+
+    logging.info(f"Memulai konversi ke {ext_req} ({quality}) untuk {url}...")
+    
+    # 2. Siapkan Opsi yt-dlp
+    ydl_opts = {
+        'outtmpl': temp_server_path, 
+        'noplaylist': True,
+        'quiet': True,
+        'no_warnings': True,
+        'postprocessors': [],
+        'keepvideo': False, 
+    }
+
+    # 3. Setting konversi berdasarkan permintaan
+    
+    # Format Kualitas (e.g., "1080p" -> "[height=1080]")
+    quality_selector = ""
+    if quality.endswith('p'):
+        height = quality[:-1] # "1080p" -> "1080"
+        quality_selector = f"[height={height}]"
+    
+    # Format yang diminta
+    if ext_req in ['mp3', 'wav', 'webm_audio']: # webm_audio = webm audio-only
+        if ext_req == 'webm_audio': ext_req = 'webm'
+        
+        # 'bestaudio' atau 'bestaudio[abr<=128]' dll
+        audio_quality_selector = "bestaudio"
+        if quality == 'medium':
+            audio_quality_selector = "bestaudio[abr<=128]" # Contoh
+        
+        ydl_opts['format'] = audio_quality_selector
+        if ext_req in ['mp3', 'wav']:
+            ydl_opts['postprocessors'].append({
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': ext_req,
+            })
+    
+    elif ext_req in ['mkv', 'mp4', 'mpeg', 'webm_video']: # webm_video = webm video
+        if ext_req == 'webm_video': ext_req = 'webm'
+        
+        # Ini adalah format string yang nge-merge (kayak log CMD lu)
+        ydl_opts['format'] = f"bestvideo{quality_selector}+bestaudio/best{quality_selector}"
+        
+        ydl_opts['postprocessors'].append({
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': ext_req,
+        })
+    else:
+        return jsonify({"error": "Format tidak didukung"}), 400
+
+    # 4. JALANKAN PROSES DOWNLOAD + KONVERSI (INI YANG LAMA!)
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            # Kita 'download=False' dulu cuma buat ngambil 'title' dan 'id'
+            info = ydl.extract_info(url, download=False)
+            title = info.get('title', 'video_tanpa_judul')
+            video_id = info.get('id', 'NA')
+            sanitized_title = sanitize_filename(title)
+            
+            # 5. BIKIN NAMA FILE ASLI (SESUAI PERMINTAAN)
+            download_as_filename = f"{sanitized_title} [{video_id}].{ext_req}"
+
+            # 6. SEKARANG BARU KITA DOWNLOAD
+            logging.info(f"Downloading and converting to {temp_server_filename}...")
+            ydl.download([url])
+            
+            if not os.path.exists(temp_server_path):
+                raise Exception(f"File hasil konversi {temp_server_filename} tidak ditemukan.")
+
+            logging.info(f"Konversi selesai: {temp_server_filename}. Siap dikirim sebagai {download_as_filename}")
+            
+            # 7. Kirim JSON
+            return jsonify({
+                "success": True,
+                "download_url": url_for('api.download_converted_file', filename=temp_server_filename),
+                "download_as": download_as_filename
+            })
+            
+    except Exception as e:
+        logging.error(f"yt-dlp GAGAL (mungkin timeout atau CPU limit): {str(e)}")
+        if os.path.exists(temp_server_path):
+            os.remove(temp_server_path)
+        return jsonify({"error": f"Konversi Gagal. Ini proses berat. ({str(e)})"}), 500
+
+# Endpoint untuk download file hasil konversi
+@api_bp.route('/download-file/<path:filename>') # <-- HARUS 'path:'
+@login_required
+def download_converted_file(filename):
+    # ... (Isi fungsinya udah bener dari kemarin)
+    # ... (Cek path traversal, kirim file, dll)
+    temp_dir = current_app.config.get('TEMP_DOWNLOAD_DIR', '/app/temp_downloads')
+    file_path = os.path.join(temp_dir, filename)
+    norm_temp_dir = os.path.normpath(temp_dir)
+    norm_file_path = os.path.normpath(file_path)
+
+    if not norm_file_path.startswith(norm_temp_dir):
+        return "Akses ditolak", 403
+    if not os.path.exists(file_path):
+        return "File tidak ditemukan", 404
+    try:
+        return send_from_directory(temp_dir, filename, as_attachment=True)
+    finally:
+        pass # Biarin cleanup job
+            
 # Untuk melihat log terus menerus
 @api_bp.route('/log')
 def api_log():
@@ -173,8 +376,8 @@ def api_log():
             return Response("".join(lines), mimetype='text/plain')
     return Response("Log file tidak ditemukan.", mimetype='text/plain', status=404)
 
-# Mengecek apakah jadwal ready atau error
 
+# Mengecek apakah jadwal ready atau error
 @api_bp.route('/jadwal-status')
 def api_jadwal_status():
     return jsonify(JADWAL_STATUS)
