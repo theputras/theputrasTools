@@ -255,105 +255,95 @@ def get_youtube_info():
 def request_conversion():
     data = request.get_json()
     url = data.get('url')
-    ext_req = data.get('ext') # mp3, mkv, mp4, ...
-    quality = data.get('quality') # e.g., "1080p", "720p", "best"
-    
+    ext_req = data.get('ext')
+    quality = data.get('quality')
+
     if not url or not ext_req or not quality:
         return jsonify({"error": "URL, format, dan kualitas wajib diisi"}), 400
-    
+
     temp_dir = current_app.config.get('TEMP_DOWNLOAD_DIR', '/app/temp_downloads')
-    
-    # 1. BIKIN NAMA FILE SESUAI PERMINTAAN LU
-    # Ini nama file SEMENTARA di server
     unique_id = str(uuid.uuid4())
-    temp_server_filename = f"{unique_id}.{ext_req}"
-    temp_server_path = os.path.join(temp_dir, temp_server_filename)
+
+    # TEMPLATE untuk yt-dlp
+    template_path = os.path.join(temp_dir, unique_id + ".%(ext)s")
+
+    # PATH final setelah konversi
+    final_filename = f"{unique_id}.{ext_req}"
+    final_path = os.path.join(temp_dir, final_filename)
 
     logging.info(f"Memulai konversi ke {ext_req} ({quality}) untuk {url}...")
-    
-    # 2. Siapkan Opsi yt-dlp
+
+    # SETUP yt-dlp
     ydl_opts = {
-        'outtmpl': temp_server_path, 
-        'noplaylist': True,
         'quiet': True,
+        'noplaylist': True,
         'no_warnings': True,
+        'outtmpl': template_path,
         'postprocessors': [],
-        'keepvideo': False, 
-        'http_headers': {  # <-- TAMBAHKAN BLOK INI
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
-        } 
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0'
+        }
     }
 
-    # 3. Setting konversi berdasarkan permintaan
-    
-    # Format Kualitas (e.g., "1080p" -> "[height=1080]")
+    # QUALITY selector
     quality_selector = ""
-    if quality.endswith('p'):
-        height = quality[:-1] # "1080p" -> "1080"
-        quality_selector = f"[height={height}]"
-    
-    # Format yang diminta
-    if ext_req in ['mp3', 'wav', 'webm_audio']: # webm_audio = webm audio-only
-        if ext_req == 'webm_audio': ext_req = 'webm'
-        
-        # 'bestaudio' atau 'bestaudio[abr<=128]' dll
-        audio_quality_selector = "bestaudio"
-        if quality == 'medium':
-            audio_quality_selector = "bestaudio[abr<=128]" # Contoh
-        
-        ydl_opts['format'] = audio_quality_selector
-        if ext_req in ['mp3', 'wav']:
-            ydl_opts['postprocessors'].append({
+    if quality.endswith("p"):
+        quality_selector = f"[height={quality.replace('p','')}]"
+
+    # AUDIO formats
+    if ext_req in ['mp3','wav','webm_audio']:
+        ydl_opts['format'] = "bestaudio/best"
+        if ext_req != 'webm_audio':
+            ydl_opts['postprocessors'] = [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': ext_req,
-            })
-    
-    elif ext_req in ['mkv', 'mp4', 'mpeg', 'webm_video']: # webm_video = webm video
-        if ext_req == 'webm_video': ext_req = 'webm'
-        
-        # Ini adalah format string yang nge-merge (kayak log CMD lu)
-        ydl_opts['format'] = f"bestvideo{quality_selector}+bestaudio/best{quality_selector}"
-        
-        ydl_opts['postprocessors'].append({
-            'key': 'FFmpegVideoConvertor',
-            'preferedformat': ext_req,
-        })
-    else:
-        return jsonify({"error": "Format tidak didukung"}), 400
+                'preferredquality': '192'
+            }]
 
-    # 4. JALANKAN PROSES DOWNLOAD + KONVERSI (INI YANG LAMA!)
+    # VIDEO formats
+    if ext_req in ['mp4','mkv','mpeg','webm_video']:
+        if ext_req == 'webm_video':
+            ext_req = 'webm'
+        ydl_opts['format'] = f"bestvideo{quality_selector}+bestaudio/best"
+        ydl_opts['postprocessors'] = [{
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': ext_req
+        }]
+
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            # Kita 'download=False' dulu cuma buat ngambil 'title' dan 'id'
-            info = ydl.extract_info(url, download=False)
-            title = info.get('title', 'video_tanpa_judul')
-            video_id = info.get('id', 'NA')
-            sanitized_title = sanitize_filename(title)
-            
-            # 5. BIKIN NAMA FILE ASLI (SESUAI PERMINTAAN)
-            download_as_filename = f"{sanitized_title} [{video_id}].{ext_req}"
+            info = ydl.extract_info(url, download=True)
 
-            # 6. SEKARANG BARU KITA DOWNLOAD
-            logging.info(f"Downloading and converting to {temp_server_filename}...")
-            ydl.download([url])
-            
-            if not os.path.exists(temp_server_path):
-                raise Exception(f"File hasil konversi {temp_server_filename} tidak ditemukan.")
+        # CARI file hasil konversi
+        temp_output = None
+        for ext in ['mp4','mkv','webm','mpeg','mp3','wav']:
+            candidate = os.path.join(temp_dir, f"{unique_id}.{ext}")
+            if os.path.exists(candidate):
+                temp_output = candidate
+                break
 
-            logging.info(f"Konversi selesai: {temp_server_filename}. Siap dikirim sebagai {download_as_filename}")
-            
-            # 7. Kirim JSON
-            return jsonify({
-                "success": True,
-                "download_url": url_for('api.download_converted_file', filename=temp_server_filename),
-                "download_as": download_as_filename
-            })
-            
+        if not temp_output:
+            raise Exception("FFmpeg gagal menghasilkan output.")
+
+        # RENAME file hasil
+        os.rename(temp_output, final_path)
+
+        # Buat nama file buat user
+        title = info.get('title', 'video')
+        video_id = info.get('id', 'NA')
+        sanitized_title = sanitize_filename(title)
+        download_as_filename = f"{sanitized_title} [{video_id}].{ext_req}"
+
+        return jsonify({
+            "success": True,
+            "download_url": url_for('api.download_converted_file', filename=final_filename, download_as=download_as_filename),
+            "download_as": download_as_filename
+        })
+
     except Exception as e:
-        logging.error(f"yt-dlp GAGAL (mungkin timeout atau CPU limit): {str(e)}")
-        if os.path.exists(temp_server_path):
-            os.remove(temp_server_path)
-        return jsonify({"error": f"Konversi Gagal. Ini proses berat. ({str(e)})"}), 500
+        logging.error(f"Konversi gagal: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 # Endpoint untuk download file hasil konversi
 @api_bp.route('/download-file/<path:filename>') # <-- HARUS 'path:'
@@ -370,8 +360,14 @@ def download_converted_file(filename):
         return "Akses ditolak", 403
     if not os.path.exists(file_path):
         return "File tidak ditemukan", 404
+    download_as = request.args.get('download_as')
     try:
-        return send_from_directory(temp_dir, filename, as_attachment=True)
+                return send_from_directory(
+            temp_dir,
+            filename,
+            as_attachment=True,
+            download_name=download_as or filename
+        )
     finally:
         pass # Biarin cleanup job
             

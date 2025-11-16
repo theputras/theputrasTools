@@ -18,6 +18,7 @@
         
         <div class="bg-gray-800 rounded-lg shadow-md p-6">
             <div class="flex space-x-4">
+  
                 <input 
                   type="text" 
                   x-model="url"
@@ -38,6 +39,39 @@
                 <p x-text="error" class="text-red-400 text-sm mt-4"></p>
             </template>
         </div>
+
+            <!-- PROGRESS AREA -->
+<div x-show="progress.active" class="mt-4 transition-all bg-gray-800 rounded-lg shadow-md p-6 display:none">
+    <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+        <div class="h-3 bg-blue-500 transition-all duration-300"
+             :style="`width: ${progress.value}%`"></div>
+    </div>
+    <p class="text-sm text-gray-300 mt-2" x-text="progress.text"></p>
+</div>
+        
+<!-- Placeholder untuk Instagram, TikTok, Facebook, Twitter, Dailymotion -->
+<template x-if="result && !result.success && result.platform">
+    <div class="mt-6 bg-gray-800 rounded-lg shadow-md p-6 text-center animate-fade-in">
+        
+        <h3 class="text-lg font-semibold text-white mb-2"
+            x-text="result.platform.toUpperCase()">
+        </h3>
+
+        <p class="text-gray-400 mb-4">
+            Downloader untuk platform ini belum diaktifkan.
+        </p>
+
+        <div class="space-y-2">
+            <button class="w-full py-2 bg-gray-700 text-gray-300 rounded-md cursor-not-allowed">
+                Download Video (coming soon)
+            </button>
+            <button class="w-full py-2 bg-gray-700 text-gray-300 rounded-md cursor-not-allowed">
+                Download Audio (coming soon)
+            </button>
+        </div>
+
+    </div>
+</template>
 
         <template x-if="result && result.success">
             <div class="mt-6 bg-gray-800 rounded-lg shadow-md overflow-hidden animate-fade-in">
@@ -114,7 +148,7 @@
         
     </div>
 
-    {% include 'nativeNav.html' %}
+    <!-- {% include 'nativeNav.html' %} -->
 
     <script>
         document.addEventListener('alpine:init', () => {
@@ -125,18 +159,39 @@
                 error: null,
                 result: null,       // Buat nampung info dari API Cepat
 
+            progress: {
+    active: false,
+    value: 0,
+    text: ''
+},
+getPlatform(url) {
+    url = url.toLowerCase();
+
+    if (url.includes('youtube.com') || url.includes('youtu.be')) return 'youtube';
+    if (url.includes('instagram.com')) return 'instagram';
+    if (url.includes('tiktok.com')) return 'tiktok';
+    if (url.includes('facebook.com') || url.includes('fb.watch')) return 'facebook';
+    if (url.includes('twitter.com') || url.includes('x.com')) return 'twitter';
+    if (url.includes('dailymotion.com') || url.includes('dai.ly')) return 'dailymotion';
+
+    return 'unknown';
+},
                 // 1. FUNGSI "CEK LINK" (API CEPAT)
                 async handleSubmit() {
                     this.loading = true;
                     this.error = null;
                     this.result = null;
                     
-                    if (!this.url.includes('youtube.com') && !this.url.includes('youtu.be')) {
-                        this.error = 'Hanya link YouTube yang didukung saat ini.';
-                        this.loading = false;
-                        return;
-                    }
+                        const platform = this.getPlatform(this.url);
 
+    if (platform === 'unknown') {
+        this.error = 'Link tidak dikenali. Tempel link YouTube / Instagram / TikTok / Facebook / Twitter / Dailymotion.';
+        this.loading = false;
+        return;
+    }
+
+    // YOUTUBE
+    if (platform === 'youtube') {
                     try {
                         // Panggil API Cepat buat dapet info
                         const response = await fetch('/api/get-youtube-info', {
@@ -154,7 +209,15 @@
                     } finally {
                         this.loading = false;
                     }
-                },
+                    return;
+                }
+                    // PLATFORM LAIN (placeholder dulu)
+    this.loading = false;
+    this.result = {
+        success: false,
+        platform: platform
+    };
+            },
             
                 // 2. FUNGSI "KONVERSI" (API LAMBAT)
                 async startConversion(ext, quality) {
@@ -162,8 +225,16 @@
                     
                     this.converting = ext + quality; // Set loading di tombol ini
                     this.error = null; // Hapus error lama
+                    
+                    
+    // TAMPILKAN PROGRESS BAR
+    this.progress.active = true;
+    this.progress.value = 5;
+    this.progress.text = "Menyiapkan konversi…";
 
                     try {
+                            // STEP 1 — Fake progress (menunggu server proses)
+        this.fakeProgressStart();
                         // Panggil API Lambat (konversi)
                         const response = await fetch('/api/request-conversion', {
                             method: 'POST',
@@ -179,7 +250,9 @@
                         if (!response.ok || data.error) {
                             throw new Error(data.error || 'Konversi gagal.');
                         }
-
+        // STEP 2 — Finalize progress
+        this.progress.value = 100;
+        this.progress.text = "Berhasil! Mengunduh file…";
                         // Sukses! Trigger download
                         const link = document.createElement('a');
                         link.href = data.download_url;
@@ -188,12 +261,41 @@
                         link.click();
                         document.body.removeChild(link);
                         
+                                // HILANGKAN PROGRESS BAR SETELAH 3 DETIK
+        setTimeout(() => {
+            this.progress.active = false;
+        }, 3000);
+                        
                     } catch (err) {
                         this.error = err.message; // Tampilkan error di box global
                     } finally {
                         this.converting = null; // Selesai loading
                     }
-                }
+                },
+                
+                fakeProgressStart() {
+    this.progress.value = 10;
+    this.progress.text = "Mengunduh video dan audio…";
+
+    let step = 10;
+
+    const timer = setInterval(() => {
+        if (!this.progress.active) {
+            clearInterval(timer);
+            return;
+        }
+
+        // Jangan sampai 100%
+        if (this.progress.value >= 85) {
+            this.progress.text = "Mengkonversi dengan FFmpeg…";
+            clearInterval(timer);
+            return;
+        }
+
+        this.progress.value += Math.floor(Math.random() * 7) + 3;
+    }, 600);
+}
+
             }));
         });
 

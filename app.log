@@ -12724,3 +12724,210 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-11-17 04:29:43,025 - INFO - Downloading and converting to 681d4840-043f-44f8-a7ff-058ca4ffb225.mp4...
 2025-11-17 04:30:53,644 - ERROR - yt-dlp GAGAL (mungkin timeout atau CPU limit): File hasil konversi 681d4840-043f-44f8-a7ff-058ca4ffb225.mp4 tidak ditemukan.
 2025-11-17 04:30:53,645 - INFO - 127.0.0.1 - - [17/Nov/2025 04:30:53] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-17 05:02:56,647 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 05:02:56,656 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 05:02:56,657 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 05:02:56,657 - INFO - Scheduler started
+2025-11-17 05:02:56,660 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 05:02:56,660 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 05:02:58,231 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-17 05:02:58,231 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-17 05:02:58,235 - INFO -  * Restarting with stat
+2025-11-17 05:02:59,370 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 05:02:59,379 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 05:02:59,379 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 05:02:59,380 - INFO - Scheduler started
+2025-11-17 05:02:59,381 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 05:02:59,381 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 05:02:59,389 - WARNING -  * Debugger is active!
+2025-11-17 05:02:59,395 - INFO -  * Debugger PIN: 288-901-657
+2025-11-17 05:03:04,735 - INFO - [GUARD DEBUG] Token invalid (Signature has expired). Redirecting to login.
+2025-11-17 05:03:04,738 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:04] "[32mPOST /api/get-youtube-info HTTP/1.1[0m" 302 -
+2025-11-17 05:03:05,131 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:05] "GET /login HTTP/1.1" 200 -
+2025-11-17 05:03:11,530 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-17 05:03:11,533 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:11] "[32mGET /sosmed-download HTTP/1.1[0m" 302 -
+2025-11-17 05:03:11,828 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:11] "GET /login HTTP/1.1" 200 -
+2025-11-17 05:03:41,750 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:03:42,457 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-17 05:03:42,459 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:42] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-17 05:03:42,588 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:03:42,730 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:42] "GET / HTTP/1.1" 200 -
+2025-11-17 05:03:43,958 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 05:03:44,280 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-17 05:03:44,282 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-17 05:03:44,282 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-17 05:03:44,283 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-17 05:03:44,283 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-17 05:03:44,343 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:44] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-17 05:03:46,471 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-17 05:03:49,245 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-17 05:03:49,655 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:03:49,677 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:49] "GET /tools HTTP/1.1" 200 -
+2025-11-17 05:03:50,598 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-17 05:03:50,608 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-17 05:03:50,609 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-17 05:03:50,609 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-17 05:03:50,616 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-17 05:03:50,617 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-17 05:03:50,617 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-17 05:03:51,664 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:03:51,672 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:51] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:03:53,761 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-17 05:03:53,761 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:53] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-17 05:03:54,622 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-17 05:03:54,622 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-17 05:03:54,623 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-17 05:03:55,442 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-17 05:03:55,442 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-17 05:03:55,443 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-17 05:03:55,443 - INFO -    --> Payload: nim=23410100003, token=$2y$10$7bditKAbt3uGlo7c38QSfeQKVP9ouPLUSCFmu6kIiZCV9SRmWTziS, ultah=True
+2025-11-17 05:03:55,754 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:03:55,763 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u
+2025-11-17 05:03:56,215 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:56] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-17 05:03:57,776 - INFO - yt-dlp: Info diambil untuk 'Laptop AMD Ryzen PRO 8 Jutaan, Enteng 950-an Gram, Layar OLED: Review Axioo Hype-R X8 OLED'
+2025-11-17 05:03:57,778 - INFO - 127.0.0.1 - - [17/Nov/2025 05:03:57] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 05:04:01,128 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:04:01,135 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u...
+2025-11-17 05:04:01,169 - ERROR - Konversi gagal: FFmpegVideoConvertorPP.__init__() got an unexpected keyword argument 'preferredformat'. Did you mean 'preferedformat'?
+2025-11-17 05:04:01,170 - INFO - 127.0.0.1 - - [17/Nov/2025 05:04:01] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -
+2025-11-17 05:04:21,222 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-17 05:04:21,363 - INFO -  * Restarting with stat
+2025-11-17 05:04:22,526 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 05:04:22,533 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 05:04:22,534 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 05:04:22,534 - INFO - Scheduler started
+2025-11-17 05:04:22,535 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 05:04:22,535 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 05:04:22,541 - WARNING -  * Debugger is active!
+2025-11-17 05:04:22,545 - INFO -  * Debugger PIN: 288-901-657
+2025-11-17 05:04:22,740 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:04:22,748 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u...
+2025-11-17 05:05:50,212 - INFO - 127.0.0.1 - - [17/Nov/2025 05:05:50] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-17 05:05:50,559 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:05:50,621 - INFO - 127.0.0.1 - - [17/Nov/2025 05:05:50] "GET /api/download-file/9e788da8-de28-48cc-a8c0-40cb7b550717.mp4 HTTP/1.1" 200 -
+2025-11-17 05:07:46,605 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-17 05:07:46,736 - INFO -  * Restarting with stat
+2025-11-17 05:11:52,480 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 05:11:52,491 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 05:11:52,495 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 05:11:52,498 - INFO - Scheduler started
+2025-11-17 05:11:52,509 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 05:11:52,514 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 05:11:52,563 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-17 05:11:52,569 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-17 05:11:52,576 - INFO -  * Restarting with stat
+2025-11-17 05:11:53,669 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-17 05:11:53,675 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-17 05:11:53,675 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-17 05:11:53,676 - INFO - Scheduler started
+2025-11-17 05:11:53,676 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-17 05:11:53,676 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-17 05:11:53,682 - WARNING -  * Debugger is active!
+2025-11-17 05:11:53,686 - INFO -  * Debugger PIN: 288-901-657
+2025-11-17 05:12:02,169 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:12:02,175 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/xbzKaKAbcMs?si=mZrUqODj0t0WF24u...
+2025-11-17 05:13:24,034 - INFO - 127.0.0.1 - - [17/Nov/2025 05:13:24] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-17 05:13:24,671 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:13:24,721 - INFO - 127.0.0.1 - - [17/Nov/2025 05:13:24] "GET /api/download-file/621de096-3425-441a-9509-8bd40007dee4.mp4?download_as=Laptop+AMD+Ryzen+PRO+8+Jutaan,+Enteng+950-an+Gram,+Layar+OLED：+Review+Axioo+Hype-R+X8+OLED+[xbzKaKAbcMs].mp4 HTTP/1.1" 200 -
+2025-11-17 05:15:05,772 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:15:05,788 - INFO - 127.0.0.1 - - [17/Nov/2025 05:15:05] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:16:51,696 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:16:51,716 - INFO - 127.0.0.1 - - [17/Nov/2025 05:16:51] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:17:06,200 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:17:06,207 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/xbzKaKAbcMs?si=LwRXNGVGMt0QL7ed
+2025-11-17 05:17:08,388 - INFO - yt-dlp: Info diambil untuk 'Laptop AMD Ryzen PRO 8 Jutaan, Enteng 950-an Gram, Layar OLED: Review Axioo Hype-R X8 OLED'
+2025-11-17 05:17:08,389 - INFO - 127.0.0.1 - - [17/Nov/2025 05:17:08] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 05:17:10,479 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:17:10,487 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/xbzKaKAbcMs?si=LwRXNGVGMt0QL7ed...
+2025-11-17 05:18:37,183 - INFO - 127.0.0.1 - - [17/Nov/2025 05:18:37] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-17 05:18:37,531 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:18:37,537 - INFO - 127.0.0.1 - - [17/Nov/2025 05:18:37] "GET /api/download-file/998e7a19-f0c6-4399-8231-1f0587206bd8.mp4?download_as=Laptop+AMD+Ryzen+PRO+8+Jutaan,+Enteng+950-an+Gram,+Layar+OLED：+Review+Axioo+Hype-R+X8+OLED+[xbzKaKAbcMs].mp4 HTTP/1.1" 200 -
+2025-11-17 05:19:46,508 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:19:46,518 - INFO - 127.0.0.1 - - [17/Nov/2025 05:19:46] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:20:24,984 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:24,993 - INFO - 127.0.0.1 - - [17/Nov/2025 05:20:24] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:20:27,765 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:27,775 - INFO - 127.0.0.1 - - [17/Nov/2025 05:20:27] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:20:28,344 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:28,354 - INFO - 127.0.0.1 - - [17/Nov/2025 05:20:28] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:20:28,946 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:28,959 - INFO - 127.0.0.1 - - [17/Nov/2025 05:20:28] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:20:29,338 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:29,347 - INFO - 127.0.0.1 - - [17/Nov/2025 05:20:29] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:20:29,605 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:29,614 - INFO - 127.0.0.1 - - [17/Nov/2025 05:20:29] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:20:32,026 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:32,033 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/XvfsikklClA?si=mNWJnsIBbKe5mKxo
+2025-11-17 05:20:33,712 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-17 05:20:33,715 - INFO - 127.0.0.1 - - [17/Nov/2025 05:20:33] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 05:20:36,063 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:20:36,077 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/XvfsikklClA?si=mNWJnsIBbKe5mKxo...
+2025-11-17 05:21:03,974 - INFO - 127.0.0.1 - - [17/Nov/2025 05:21:03] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-17 05:21:04,010 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:21:04,021 - INFO - 127.0.0.1 - - [17/Nov/2025 05:21:04] "GET /api/download-file/20974982-e85e-4783-8c3b-20ba15d010f4.mp4?download_as=Soramimi+Rock+｜+JKT48+Special+Concert+FULL+HOUSE+%23JKT48FULLHOUSE+[XvfsikklClA].mp4 HTTP/1.1" 200 -
+2025-11-17 05:28:46,426 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:28:46,436 - INFO - 127.0.0.1 - - [17/Nov/2025 05:28:46] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:28:59,625 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:28:59,634 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/XvfsikklClA?si=mNWJnsIBbKe5mKxo
+2025-11-17 05:29:01,570 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-17 05:29:01,572 - INFO - 127.0.0.1 - - [17/Nov/2025 05:29:01] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 05:29:05,945 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:29:05,951 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/XvfsikklClA?si=mNWJnsIBbKe5mKxo
+2025-11-17 05:29:07,452 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-17 05:29:07,454 - INFO - 127.0.0.1 - - [17/Nov/2025 05:29:07] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 05:31:41,443 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:31:41,460 - INFO - 127.0.0.1 - - [17/Nov/2025 05:31:41] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:06,418 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:06,424 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/XvfsikklClA?si=mNWJnsIBbKe5mKxo
+2025-11-17 05:32:09,983 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-17 05:32:09,985 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:09] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 05:32:38,835 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:38,846 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:38] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:40,370 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:40,378 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:40] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:40,957 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:40,969 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:40] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:41,418 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:41,426 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:41] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:41,683 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:41,705 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:41] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:59,155 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:59,164 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:59] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:59,647 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:59,663 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:59] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:32:59,944 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:32:59,960 - INFO - 127.0.0.1 - - [17/Nov/2025 05:32:59] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:33:00,221 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:00,238 - INFO - 127.0.0.1 - - [17/Nov/2025 05:33:00] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:33:00,521 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:00,538 - INFO - 127.0.0.1 - - [17/Nov/2025 05:33:00] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:33:01,299 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:01,306 - INFO - 127.0.0.1 - - [17/Nov/2025 05:33:01] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:33:01,782 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:01,788 - INFO - 127.0.0.1 - - [17/Nov/2025 05:33:01] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:33:02,266 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:02,291 - INFO - 127.0.0.1 - - [17/Nov/2025 05:33:02] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:33:02,686 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:02,699 - INFO - 127.0.0.1 - - [17/Nov/2025 05:33:02] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-17 05:33:15,316 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:15,322 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/XvfsikklClA?si=mNWJnsIBbKe5mKxo
+2025-11-17 05:33:17,578 - INFO - yt-dlp: Info diambil untuk 'Soramimi Rock | JKT48 Special Concert FULL HOUSE #JKT48FULLHOUSE'
+2025-11-17 05:33:17,582 - INFO - 127.0.0.1 - - [17/Nov/2025 05:33:17] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-17 05:33:27,406 - INFO - === Koneksi ke database berhasil ===
+2025-11-17 05:33:27,412 - INFO - Memulai konversi ke mp4 (720p) untuk https://youtu.be/XvfsikklClA?si=mNWJnsIBbKe5mKxo...
