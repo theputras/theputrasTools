@@ -39,14 +39,29 @@
                 <p x-text="error" class="text-red-400 text-sm mt-4"></p>
             </template>
         </div>
+<!-- Peringatan Refresh -->
+<template x-if="progress.active">
+    <div class="bg-yellow-500 text-black p-4 rounded-md mt-4">
+        <p>Proses download atau konversi sedang berjalan. Jika Anda refresh, proses ini akan terhenti!</p>
+    </div>
+</template>
+
 
             <!-- PROGRESS AREA -->
-<div x-show="progress.active" class="mt-4 transition-all bg-gray-800 rounded-lg shadow-md p-6 display:none">
-    <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
-        <div class="h-3 bg-blue-500 transition-all duration-300"
-             :style="`width: ${progress.value}%`"></div>
+<div x-show="progress.active" class="mt-4 transition-all bg-gray-800 rounded-lg shadow-md p-6">
+    <div class="flex justify-between mb-1">
+        <span class="text-sm font-medium text-blue-400" x-text="progress.statusText">Downloading...</span>
+        <span class="text-sm font-medium text-blue-400" x-text="Math.round(progress.value) + '%'"></span>
     </div>
-    <p class="text-sm text-gray-300 mt-2" x-text="progress.text"></p>
+    
+    <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+        <div class="h-3 transition-all duration-300"
+             :class="progress.statusText === 'Converting' ? 'bg-yellow-500 animate-pulse' : 'bg-blue-500'"
+             :style="`width: ${progress.value}%`">
+        </div>
+    </div>
+    
+    <p class="text-xs text-gray-400 mt-2 font-mono" x-text="progress.detailText"></p>
 </div>
         
 <!-- Placeholder untuk Instagram, TikTok, Facebook, Twitter, Dailymotion -->
@@ -152,18 +167,45 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('downloader', () => ({
+      Alpine.data('downloader', () => ({
                 url: '',
-                loading: false,     // Buat 'Cek Link'
-                converting: null,   // Buat tombol individu, e.g. "mp41080p"
+                loading: false,
+                converting: null, // Untuk disable tombol spesifik
                 error: null,
-                result: null,       // Buat nampung info dari API Cepat
+                result: null,
+                eventSource: null, // Simpan koneksi SSE
 
-            progress: {
-    active: false,
-    value: 0,
-    text: ''
-},
+                progress: {
+                    active: false,
+                    value: 0,
+                    statusText: 'Menunggu...',
+                    detailText: ''
+                },
+                init() {
+                    // 1. Event Listener: Saat user mau refresh/close tab
+                    window.addEventListener('beforeunload', (e) => {
+                        if (this.progress.active) {
+                            // Munculkan alert bawaan browser
+                            e.preventDefault();
+                            e.returnValue = 'Proses download sedang berjalan. Yakin ingin membatalkan?';
+                        }
+                    });
+
+                    // 2. Event Listener: Saat user BENAR-BENAR pergi (klik Yes)
+                    window.addEventListener('pagehide', () => {
+                        if (this.progress.active && this.currentTaskId) {
+                            this.killTask(this.currentTaskId);
+                        }
+                    });
+                },
+
+                // Fungsi untuk mengirim sinyal mati ke backend
+                killTask(taskId) {
+                    const data = JSON.stringify({ task_id: taskId });
+                    // Gunakan sendBeacon karena fetch biasa sering gagal saat tab ditutup
+                    navigator.sendBeacon('/api/cancel-task', data);
+                },
+
 getPlatform(url) {
     url = url.toLowerCase();
 
@@ -176,14 +218,81 @@ getPlatform(url) {
 
     return 'unknown';
 },
+        // Mulai mendengarkan SSE
+// --- FUNGSI BARU: Listen progress berdasarkan Task ID ---
+                startListeningToProgress(taskId) {
+    if (this.eventSource) {
+        this.eventSource.close();
+    }
+this.currentTaskId = taskId; // Simpan ID
+    this.progress.active = true;
+    this.progress.value = 0;
+    this.progress.statusText = "Menghubungkan...";
+    this.progress.detailText = "Mencari sinyal..."; // Ubah teks biar kelihatan beda
+
+    console.log("Memulai SSE ke:", `/api/progress/${taskId}`); // DEBUG 1
+
+    this.eventSource = new EventSource(`/api/progress/${taskId}`);
+    
+    this.eventSource.onmessage = (event) => {
+        // DEBUG 2: Cek apa data masuk ke browser?
+        console.log("Data SSE Masuk:", event.data); 
+
+        try {
+            const data = JSON.parse(event.data);
+
+            if (data.status === 'Finished') {
+                this.progress.value = 100;
+                this.progress.statusText = "Selesai!";
+                this.eventSource.close();
+                this.currentTaskId = null; // Clear ID
+                return;
+            }
+
+            if (data.status === 'Error') {
+                this.error = `Error: ${data.message}`;
+                this.progress.active = false;
+                this.eventSource.close();
+                this.currentTaskId = null; // Clear ID
+                return;
+            }
+
+            // Update tampilan
+            this.progress.value = parseFloat(data.progress) || 0; // Pastikan float
+            this.progress.statusText = data.status;
+
+            if (data.status === 'Downloading') {
+                this.progress.detailText = `Speed: ${data.speed} | Size: ${data.size} | ETA: ${data.eta}`;
+            } else if (data.status === 'Converting') {
+               this.progress.detailText = data.text || "Sedang memproses konversi format (Mohon tunggu)...";
+                        } else {
+                            this.progress.detailText = "";
+                        }
+        } catch (e) {
+            console.error("Error parsing JSON:", e);
+        }
+    };
+
+    this.eventSource.onerror = (err) => {
+        console.log("Koneksi SSE bermasalah (mungkin selesai/putus).");
+    };
+},
+
+        checkProgressOnLoad() {
+            const storedProgress = JSON.parse(sessionStorage.getItem('progress_active'));
+            if (storedProgress && storedProgress.active) {
+                this.progress.active = true;
+                this.progress.value = storedProgress.progress;
+                this.progress.text = `Download masih berjalan: ${this.progress.value}%`;
+            }
+        },
                 // 1. FUNGSI "CEK LINK" (API CEPAT)
                 async handleSubmit() {
                     this.loading = true;
                     this.error = null;
                     this.result = null;
-                    
-                        const platform = this.getPlatform(this.url);
 
+                        const platform = this.getPlatform(this.url);
     if (platform === 'unknown') {
         this.error = 'Link tidak dikenali. Tempel link YouTube / Instagram / TikTok / Facebook / Twitter / Dailymotion.';
         this.loading = false;
@@ -224,35 +333,37 @@ getPlatform(url) {
                     if (!this.url) return;
                     
                     this.converting = ext + quality; // Set loading di tombol ini
-                    this.error = null; // Hapus error lama
-                    
-                    
-    // TAMPILKAN PROGRESS BAR
-    this.progress.active = true;
-    this.progress.value = 5;
-    this.progress.text = "Menyiapkan konversi…";
+                  this.error = null;
+
+                    // GENERATE UUID di Frontend
+                    const taskId = crypto.randomUUID(); 
+                    console.log('Task ID:', taskId);
+                    // Langsung mulai dengarkan progress SEBELUM request dikirim
+                    this.startListeningToProgress(taskId);
 
                     try {
-                            // STEP 1 — Fake progress (menunggu server proses)
-        this.fakeProgressStart();
+                            
                         // Panggil API Lambat (konversi)
                         const response = await fetch('/api/request-conversion', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ 
+                           body: JSON.stringify({ 
                                 url: this.url, 
                                 ext: ext, 
-                                quality: quality 
+                                quality: quality,
+                                task_id: taskId // <-- PENTING: Kirim ID ke backend
                             })
                         });
-                        
                         const data = await response.json();
+                        // Tutup koneksi SSE karena proses backend sudah selesai (return success)
+                        if (this.eventSource) this.eventSource.close();
+                        this.currentTaskId = null; // Tugas selesai
                         if (!response.ok || data.error) {
                             throw new Error(data.error || 'Konversi gagal.');
                         }
         // STEP 2 — Finalize progress
         this.progress.value = 100;
-        this.progress.text = "Berhasil! Mengunduh file…";
+                        this.progress.statusText = "Mengunduh File...";
                         // Sukses! Trigger download
                         const link = document.createElement('a');
                         link.href = data.download_url;
@@ -261,40 +372,24 @@ getPlatform(url) {
                         link.click();
                         document.body.removeChild(link);
                         
-                                // HILANGKAN PROGRESS BAR SETELAH 3 DETIK
-        setTimeout(() => {
-            this.progress.active = false;
-        }, 3000);
+// Reset tampilan setelah 3 detik
+                        setTimeout(() => {
+                            this.progress.active = false;
+                            this.converting = false;
+                        }, 3000);
                         
                     } catch (err) {
                         this.error = err.message; // Tampilkan error di box global
+                        this.progress.active = false;
+                        this.converting = false;
+                        this.currentTaskId = null;
+                        if (this.eventSource) this.eventSource.close();
                     } finally {
                         this.converting = null; // Selesai loading
                     }
                 },
                 
-                fakeProgressStart() {
-    this.progress.value = 10;
-    this.progress.text = "Mengunduh video dan audio…";
-
-    let step = 10;
-
-    const timer = setInterval(() => {
-        if (!this.progress.active) {
-            clearInterval(timer);
-            return;
-        }
-
-        // Jangan sampai 100%
-        if (this.progress.value >= 85) {
-            this.progress.text = "Mengkonversi dengan FFmpeg…";
-            clearInterval(timer);
-            return;
-        }
-
-        this.progress.value += Math.floor(Math.random() * 7) + 3;
-    }, 600);
-}
+                
 
             }));
         });

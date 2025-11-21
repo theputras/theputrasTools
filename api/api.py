@@ -1,5 +1,5 @@
-from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for
-import json, yt_dlp, base64 , logging, os, uuid, urllib.parse
+from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context
+import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
 
@@ -27,7 +27,68 @@ def init_api(cache, major, execu, status, logfile, valid_role_func):
     JADWAL_STATUS = status
     log_file = logfile
     _valid_role = valid_role_func
+    
+    
+# Fungsi untuk membersihkan kode warna ANSI (seperti \u001b[0;32m)
+def strip_ansi(text):
+    if not text: return ""
+    ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
+    return ansi_escape.sub('', text)
+# Dictionary global untuk menyimpan progress download
+download_progress = {}
+# Fungsi Hook untuk menangkap progress dari yt-dlp internal
+def my_hook(d, task_id):
+    if task_id in download_progress and download_progress[task_id].get('cancelled', False):
+            print(f"[HOOK] Membunuh task {task_id} karena dibatalkan user.")
+            raise yt_dlp.utils.DownloadError("Dibatalkan oleh User")
+    if d['status'] == 'downloading':
+        # Ambil data raw
+# 1. Ambil Data Raw
+        raw_p = d.get('_percent_str', '0%')
+        raw_s = d.get('_speed_str', 'N/A')
+        raw_size = d.get('_total_bytes_str', 'N/A')
+        raw_eta = d.get('_eta_str', 'N/A')
 
+        # 2. Bersihkan (Strip ANSI)
+        clean_p = strip_ansi(raw_p).replace('%', '').strip()
+        clean_s = strip_ansi(raw_s).strip()
+        clean_size = strip_ansi(raw_size).strip()
+        clean_eta = strip_ansi(raw_eta).strip()
+
+        # Coba konversi ke float
+        try:
+            progress_val = float(clean_p)
+        except ValueError:
+            progress_val = 0.0
+        print(f"[DEBUG HOOK] Raw: {raw_p} -> Clean: {progress_val}% | Speed: {clean_s}")
+        
+       # 5. Simpan ke Global Dict
+        download_progress[task_id] = {
+            "progress": progress_val,
+            "speed": clean_s,
+            "size": clean_size,
+            "eta": clean_eta,
+            "status": "Downloading"
+        }
+    elif d['status'] == 'finished':
+        download_progress[task_id] = {
+            "progress": 100,
+            "status": "Converting",
+            "text": "Sedang memproses konversi..."
+        }
+        
+# Hook khusus untuk memantau FFmpeg/Konversi
+def my_postprocessor_hook(d, task_id):
+    if task_id not in download_progress:
+        return
+
+    if d['status'] == 'started':
+        download_progress[task_id]['status'] = 'Converting'
+        download_progress[task_id]['text'] = 'Sedang mengonversi video (FFmpeg)...'
+    
+    elif d['status'] == 'finished':
+        download_progress[task_id]['status'] = 'Converting'
+        download_progress[task_id]['text'] = 'Finalisasi file...'
 # mengecek status koneksi Sicyca
 @api_bp.route('/status_koneksi')
 def api_status():
@@ -257,10 +318,17 @@ def request_conversion():
     url = data.get('url')
     ext_req = data.get('ext')
     quality = data.get('quality')
+    # TAMBAHAN: Terima task_id dari frontend
+    task_id = data.get('task_id')
 
     if not url or not ext_req or not quality:
         return jsonify({"error": "URL, format, dan kualitas wajib diisi"}), 400
-
+    if not task_id:
+            # Fallback kalau frontend lupa kirim (tapi progress ga bakal jalan)
+            task_id = str(uuid.uuid4())
+    
+        # Inisialisasi status di global dict
+    download_progress[task_id] = {"progress": 0, "status": "Starting"}
     temp_dir = current_app.config.get('TEMP_DOWNLOAD_DIR', '/app/temp_downloads')
     unique_id = str(uuid.uuid4())
 
@@ -278,7 +346,11 @@ def request_conversion():
         'quiet': True,
         'noplaylist': True,
         'no_warnings': True,
+        'no_color': True,
         'outtmpl': template_path,
+        'progress_hooks': [lambda d: my_hook(d, task_id)],
+        'postprocessor_hooks': [lambda d: my_postprocessor_hook(d, task_id)], 
+        'postprocessors': [], # (Biarkan yang bawah tetap kosong/default)
         'postprocessors': [],
         'http_headers': {
             'User-Agent': 'Mozilla/5.0'
@@ -333,7 +405,9 @@ def request_conversion():
         video_id = info.get('id', 'NA')
         sanitized_title = sanitize_filename(title)
         download_as_filename = f"{sanitized_title} [{video_id}].{ext_req}"
-
+        # BERSIHKAN progress dictionary setelah selesai
+        if task_id in download_progress:
+            del download_progress[task_id]
         return jsonify({
             "success": True,
             "download_url": url_for('api.download_converted_file', filename=final_filename, download_as=download_as_filename),
@@ -341,10 +415,58 @@ def request_conversion():
         })
 
     except Exception as e:
+        if task_id in download_progress:
+             download_progress[task_id] = {"status": "Error", "message": str(e)}
+             # Jangan langsung dihapus biar frontend bisa baca errornya sebentar
         logging.error(f"Konversi gagal: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+# Endpoint untuk membatalkan task yg sedang berjalan
+@api_bp.route('/cancel-task', methods=['POST'])
+def cancel_task():
+    # force=True agar bisa baca text/plain dari sendBeacon
+    data = request.get_json(force=True, silent=True) 
+    if not data:
+        return "No data", 400
+        
+    task_id = data.get('task_id')
+    if task_id and task_id in download_progress:
+        # Set flag cancelled jadi True
+        download_progress[task_id]['cancelled'] = True
+        download_progress[task_id]['status'] = 'Cancelled'
+        logging.info(f"Menerima sinyal kill untuk task: {task_id}")
+        return jsonify({"status": "cancelled"})
+    
+    return jsonify({"status": "not_found"}), 404
 
+# Route untuk mengirim progress ke frontend via SSE
+@api_bp.route('/progress/<task_id>', methods=['GET'])
+def progress(task_id):
+    # Generator function
+    def generate():
+        while True:
+            # Cek apakah task_id ada di memori
+            if task_id in download_progress:
+                data = download_progress[task_id]
+                # Kirim data sebagai SSE
+                yield f"data: {json.dumps(data)}\n\n"
+                
+                # Jika status error, stop stream
+                if data.get('status') == 'Error':
+                    break
+            else:
+                # Jika task_id hilang (berarti sudah selesai atau belum mulai), kirim keep-alive atau selesai
+                # Kita asumsikan kalau hilang tiba-tiba saat stream jalan berarti selesai/dihapus endpoint utama
+                yield f"data: {json.dumps({'progress': 100, 'status': 'Finished'})}\n\n"
+                break
+            
+            time.sleep(0.5) # Update setiap 0.5 detik
+
+    # UPDATE DISINI: Tambahkan headers anti-buffering
+    response = Response(stream_with_context(generate()), content_type='text/event-stream')
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['X-Accel-Buffering'] = 'no' # Penting buat Nginx/Proxy
+    return response
 # Endpoint untuk download file hasil konversi
 @api_bp.route('/download-file/<path:filename>') # <-- HARUS 'path:'
 @login_required
