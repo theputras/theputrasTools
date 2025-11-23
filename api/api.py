@@ -39,7 +39,7 @@ download_progress = {}
 # Fungsi Hook untuk menangkap progress dari yt-dlp internal
 def my_hook(d, task_id):
     if task_id in download_progress and download_progress[task_id].get('cancelled', False):
-            print(f"[HOOK] Membunuh task {task_id} karena dibatalkan user.")
+            logging.info(f"[HOOK] Membunuh task {task_id} karena dibatalkan user.")
             raise yt_dlp.utils.DownloadError("Dibatalkan oleh User")
     if d['status'] == 'downloading':
         # Ambil data raw
@@ -60,7 +60,7 @@ def my_hook(d, task_id):
             progress_val = float(clean_p)
         except ValueError:
             progress_val = 0.0
-        print(f"[DEBUG HOOK] Raw: {raw_p} -> Clean: {progress_val}% | Speed: {clean_s}")
+        logging.debug(f"[DEBUG HOOK] Raw: {raw_p} -> Clean: {progress_val}% | Speed: {clean_s}")
         
        # 5. Simpan ke Global Dict
         download_progress[task_id] = {
