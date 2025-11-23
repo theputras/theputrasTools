@@ -230,13 +230,13 @@ this.currentTaskId = taskId; // Simpan ID
     this.progress.statusText = "Menghubungkan...";
     this.progress.detailText = "Mencari sinyal..."; // Ubah teks biar kelihatan beda
 
-    console.log("Memulai SSE ke:", `/api/progress/${taskId}`); // DEBUG 1
+    // console.log("Memulai SSE ke:", `/api/progress/${taskId}`); // DEBUG 1
 
     this.eventSource = new EventSource(`/api/progress/${taskId}`);
     
     this.eventSource.onmessage = (event) => {
         // DEBUG 2: Cek apa data masuk ke browser?
-        console.log("Data SSE Masuk:", event.data); 
+        // console.log("Data SSE Masuk:", event.data); 
 
         try {
             const data = JSON.parse(event.data);
@@ -341,7 +341,7 @@ this.currentTaskId = taskId; // Simpan ID
 
                     // GENERATE UUID di Frontend
                     const taskId = crypto.randomUUID(); 
-                    console.log('Task ID:', taskId);
+                    // console.log('Task ID:', taskId);
                     // Langsung mulai dengarkan progress SEBELUM request dikirim
                     this.startListeningToProgress(taskId);
 
