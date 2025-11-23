@@ -242,12 +242,16 @@ this.currentTaskId = taskId; // Simpan ID
             const data = JSON.parse(event.data);
 
             if (data.status === 'Finished') {
-                this.progress.value = 100;
-                this.progress.statusText = "Selesai!";
-                this.eventSource.close();
-                this.currentTaskId = null; // Clear ID
-                return;
-            }
+                                // PERBAIKAN: Paksa visual ke 100% dulu
+                                this.progress.value = 100;
+                                this.progress.statusText = "Selesai! Mengunduh...";
+                                this.progress.detailText = "File siap.";
+                                
+                                // Tutup koneksi
+                                this.eventSource.close();
+                                this.currentTaskId = null; 
+                                return;
+                            }
 
             if (data.status === 'Error') {
                 this.error = `Error: ${data.message}`;
