@@ -15112,3 +15112,78 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 
 2025-11-23 16:56:47,457 - WARNING -  * Debugger is active!
 2025-11-23 16:56:47,464 - INFO -  * Debugger PIN: 288-901-657
+2025-11-23 17:43:31,410 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 17:43:31,419 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 17:43:31,419 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 17:43:31,419 - INFO - Scheduler started
+2025-11-23 17:43:31,421 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 17:43:31,421 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 17:43:31,439 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-23 17:43:31,440 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-23 17:43:31,441 - INFO -  * Restarting with stat
+2025-11-23 17:43:32,555 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 17:43:32,563 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 17:43:32,563 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 17:43:32,563 - INFO - Scheduler started
+2025-11-23 17:43:32,564 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 17:43:32,564 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 17:43:32,571 - WARNING -  * Debugger is active!
+2025-11-23 17:43:32,576 - INFO -  * Debugger PIN: 288-901-657
+2025-11-23 17:43:34,116 - INFO - [GUARD DEBUG] Token invalid (Signature has expired). Redirecting to login.
+2025-11-23 17:43:34,117 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:34] "[32mGET /sosmed-download HTTP/1.1[0m" 302 -
+2025-11-23 17:43:34,140 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:34] "GET /login HTTP/1.1" 200 -
+2025-11-23 17:43:46,048 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 17:43:46,269 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-23 17:43:46,270 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:46] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-23 17:43:46,642 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 17:43:46,681 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:46] "GET / HTTP/1.1" 200 -
+2025-11-23 17:43:46,984 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-23 17:43:46,987 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-23 17:43:46,996 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-23 17:43:46,997 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-23 17:43:46,997 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-23 17:43:46,997 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-23 17:43:47,314 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:47] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-23 17:43:48,513 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 17:43:48,533 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:48] "GET /tools HTTP/1.1" 200 -
+2025-11-23 17:43:48,536 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-23 17:43:50,333 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-23 17:43:50,341 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-23 17:43:50,342 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-23 17:43:50,342 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-23 17:43:50,348 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-23 17:43:50,365 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-23 17:43:50,366 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-23 17:43:51,280 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 17:43:51,296 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:51] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-23 17:43:52,520 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-23 17:43:52,520 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:52] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-23 17:43:53,378 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-23 17:43:53,378 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-23 17:43:53,378 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-23 17:43:54,179 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-23 17:43:54,180 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-23 17:43:54,180 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-23 17:43:54,180 - INFO -    --> Payload: nim=23410100003, token=$2y$10$rMRKdcjjyyOC1KNXs3LcsuaS90KHpGeLUIEgsRO2LO7bjEFZa94Ri, ultah=True
+2025-11-23 17:43:55,012 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:55] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-23 17:43:55,801 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 17:43:55,809 - INFO - Menerima permintaan yt-dlp (info) untuk: https://www.youtube.com/watch?v=JXUsGzD__PU
+2025-11-23 17:43:58,976 - INFO - yt-dlp: Info diambil untuk 'Selalu Ada di Nadimu dan Dengar Hatimu Original Soundtrack From "JUMBO” Live at FFI 2025'
+2025-11-23 17:43:58,977 - INFO - 127.0.0.1 - - [23/Nov/2025 17:43:58] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-23 17:44:01,422 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 17:44:01,428 - INFO - Memulai konversi ke mp4 (1080p) untuk https://www.youtube.com/watch?v=JXUsGzD__PU...
+2025-11-23 17:44:01,703 - INFO - 127.0.0.1 - - [23/Nov/2025 17:44:01] "GET /api/progress/1f46d928-35bf-46cd-877c-1ce93e436317 HTTP/1.1" 200 -
+2025-11-23 17:44:13,929 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 17:44:13,972 - INFO - 127.0.0.1 - - [23/Nov/2025 17:44:13] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-23 17:44:14,291 - INFO - Menerima sinyal kill untuk task: 1f46d928-35bf-46cd-877c-1ce93e436317
+2025-11-23 17:44:14,292 - INFO - 127.0.0.1 - - [23/Nov/2025 17:44:14] "POST /api/cancel-task HTTP/1.1" 200 -
+2025-11-23 17:44:14,845 - INFO - [HOOK] Membunuh task 1f46d928-35bf-46cd-877c-1ce93e436317 karena dibatalkan user.
+2025-11-23 17:44:14,845 - ERROR - Konversi gagal: Dibatalkan oleh User
+2025-11-23 17:44:14,847 - INFO - 127.0.0.1 - - [23/Nov/2025 17:44:14] "[35m[1mPOST /api/request-conversion HTTP/1.1[0m" 500 -

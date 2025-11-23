@@ -249,17 +249,15 @@ this.currentTaskId = taskId; // Simpan ID
                                 
                                 // Tutup koneksi
                                 this.eventSource.close();
-                                this.currentTaskId = null; 
                                 return;
                             }
 
-            if (data.status === 'Error') {
-                this.error = `Error: ${data.message}`;
-                this.progress.active = false;
-                this.eventSource.close();
-                this.currentTaskId = null; // Clear ID
-                return;
-            }
+                            if (data.status === 'Error' || data.status === 'Cancelled') {
+                                this.error = data.status === 'Cancelled' ? 'Dibatalkan.' : `Error: ${data.message}`;
+                                this.progress.active = false;
+                                this.eventSource.close();
+                                return;
+                            }
 
             // Update tampilan
             this.progress.value = parseFloat(data.progress) || 0; // Pastikan float
@@ -389,6 +387,7 @@ this.currentTaskId = taskId; // Simpan ID
                         this.currentTaskId = null;
                         if (this.eventSource) this.eventSource.close();
                     } finally {
+                        this.currentTaskId = null;
                         this.converting = null; // Selesai loading
                     }
                 },
