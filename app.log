@@ -14970,3 +14970,47 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-11-21 09:53:35,822 - INFO - 127.0.0.1 - - [21/Nov/2025 09:53:35] "POST /api/request-conversion HTTP/1.1" 200 -
 2025-11-21 09:53:38,239 - INFO - === Koneksi ke database berhasil ===
 2025-11-21 09:53:38,306 - INFO - 127.0.0.1 - - [21/Nov/2025 09:53:38] "GET /api/download-file/2e83d10e-771c-434d-860c-30b8fa678440.mp4?download_as=Cup+of+Joe+performs+＂Multo＂+LIVE+on+Wish+107.5+Bus+[YGNOrGlYSmk].mp4 HTTP/1.1" 200 -
+2025-11-23 16:32:51,358 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:32:51,402 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:32:51,403 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:32:51,403 - INFO - Scheduler started
+2025-11-23 16:32:51,414 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:32:51,414 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 16:32:51,493 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-23 16:32:51,493 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-23 16:32:51,496 - INFO -  * Restarting with stat
+2025-11-23 16:32:53,468 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:32:53,482 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:32:53,482 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:32:53,483 - INFO - Scheduler started
+2025-11-23 16:32:53,484 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:32:53,485 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 16:32:53,499 - WARNING -  * Debugger is active!
+2025-11-23 16:32:53,528 - INFO -  * Debugger PIN: 288-901-657
+2025-11-23 16:33:34,701 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\app.py', reloading
+2025-11-23 16:33:34,869 - INFO -  * Restarting with stat
+2025-11-23 16:33:38,000 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:33:38,016 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:33:38,017 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:33:38,017 - INFO - Scheduler started
+2025-11-23 16:33:38,019 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:33:38,019 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 16:33:38,035 - WARNING -  * Debugger is active!
+2025-11-23 16:33:38,045 - INFO -  * Debugger PIN: 288-901-657
+2025-11-23 16:33:44,290 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:33:44,305 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:33:44,305 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:33:44,306 - INFO - Scheduler started
+2025-11-23 16:33:44,308 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:33:44,308 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
