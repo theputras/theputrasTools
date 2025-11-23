@@ -15014,3 +15014,101 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-11-23 16:33:44,308 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
 
+2025-11-23 16:49:42,876 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:49:42,889 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:49:42,890 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:49:42,890 - INFO - Scheduler started
+2025-11-23 16:49:42,892 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:49:42,892 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 16:49:42,933 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-23 16:49:42,934 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-23 16:49:42,937 - INFO -  * Restarting with stat
+2025-11-23 16:49:45,312 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:49:45,384 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:49:45,411 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:49:45,437 - INFO - Scheduler started
+2025-11-23 16:49:45,471 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:49:45,479 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 16:49:45,507 - WARNING -  * Debugger is active!
+2025-11-23 16:49:45,549 - INFO -  * Debugger PIN: 288-901-657
+2025-11-23 16:49:45,636 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-11-23 16:49:45,640 - INFO - 127.0.0.1 - - [23/Nov/2025 16:49:45] "[32mGET / HTTP/1.1[0m" 302 -
+2025-11-23 16:49:46,862 - INFO - 127.0.0.1 - - [23/Nov/2025 16:49:46] "GET /login HTTP/1.1" 200 -
+2025-11-23 16:49:47,705 - INFO - 127.0.0.1 - - [23/Nov/2025 16:49:47] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-23 16:49:56,198 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 16:49:56,713 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-11-23 16:49:56,714 - INFO - 127.0.0.1 - - [23/Nov/2025 16:49:56] "POST /api/auth/login HTTP/1.1" 200 -
+2025-11-23 16:49:57,049 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 16:49:57,176 - INFO - 127.0.0.1 - - [23/Nov/2025 16:49:57] "GET / HTTP/1.1" 200 -
+2025-11-23 16:49:57,984 - INFO - 127.0.0.1 - - [23/Nov/2025 16:49:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-11-23 16:49:58,289 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-11-23 16:49:58,308 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-23 16:49:58,308 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-11-23 16:49:58,309 - INFO - Memulai proses login baru untuk sesi global...
+2025-11-23 16:49:58,309 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-11-23 16:49:58,421 - INFO - 127.0.0.1 - - [23/Nov/2025 16:49:58] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-11-23 16:49:59,414 - INFO - 2. [Login] Mengirim kredensial...
+2025-11-23 16:50:01,165 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-11-23 16:50:01,175 - INFO -    --> Login dan proses SSO berhasil.
+2025-11-23 16:50:01,176 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-11-23 16:50:01,176 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-11-23 16:50:01,183 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-11-23 16:50:01,183 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-23 16:50:01,184 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-11-23 16:50:01,400 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 16:50:01,440 - INFO - 127.0.0.1 - - [23/Nov/2025 16:50:01] "GET /tools HTTP/1.1" 200 -
+2025-11-23 16:50:03,355 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-23 16:50:03,356 - INFO - Menggunakan sesi global yang ada di memori.
+2025-11-23 16:50:03,357 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-11-23 16:50:04,190 - INFO -    --> Sesi Sicyca masih valid.
+2025-11-23 16:50:04,191 - INFO - 127.0.0.1 - - [23/Nov/2025 16:50:04] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-11-23 16:50:04,399 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-11-23 16:50:04,400 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-11-23 16:50:04,400 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-11-23 16:50:04,401 - INFO -    --> Payload: nim=23410100003, token=$2y$10$jdDdycas1qWvnO.sx3QyOO9GzyYVQjniTjRdQSjqMLheZNNiH2Xaa, ultah=True
+2025-11-23 16:50:05,216 - INFO - 127.0.0.1 - - [23/Nov/2025 16:50:05] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-11-23 16:50:11,000 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 16:50:11,023 - INFO - 127.0.0.1 - - [23/Nov/2025 16:50:11] "GET /sosmed-download HTTP/1.1" 200 -
+2025-11-23 16:50:16,401 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 16:50:16,411 - INFO - Menerima permintaan yt-dlp (info) untuk: https://youtu.be/YUZns_EwsjE?si=tyCRvciTwUmmEU4y
+2025-11-23 16:50:21,429 - INFO - yt-dlp: Info diambil untuk 'PENJUAL INI BIKIN INDOMIE AJA GAGAL?! NYOBAIN MAKANAN TERBURUK DARI REKOMENDASI SUBSCRIBER -SAD FOOD'
+2025-11-23 16:50:21,431 - INFO - 127.0.0.1 - - [23/Nov/2025 16:50:21] "POST /api/get-youtube-info HTTP/1.1" 200 -
+2025-11-23 16:50:24,704 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 16:50:24,711 - INFO - Memulai konversi ke mp4 (240p) untuk https://youtu.be/YUZns_EwsjE?si=tyCRvciTwUmmEU4y...
+2025-11-23 16:50:24,997 - INFO - 127.0.0.1 - - [23/Nov/2025 16:50:24] "GET /api/progress/526fecfb-57e6-41bc-bf02-0a24eba89185 HTTP/1.1" 200 -
+2025-11-23 16:51:28,677 - INFO - 127.0.0.1 - - [23/Nov/2025 16:51:28] "POST /api/request-conversion HTTP/1.1" 200 -
+2025-11-23 16:51:29,047 - INFO - === Koneksi ke database berhasil ===
+2025-11-23 16:51:29,244 - INFO - 127.0.0.1 - - [23/Nov/2025 16:51:29] "GET /api/download-file/dcc1d958-40f3-40ad-87f5-29c3eef35a54.mp4?download_as=PENJUAL+INI+BIKIN+INDOMIE+AJA+GAGAL？!+NYOBAIN+MAKANAN+TERBURUK+DARI+REKOMENDASI+SUBSCRIBER+-SAD+FOOD+[YUZns_EwsjE].mp4 HTTP/1.1" 200 -
+2025-11-23 16:56:07,425 - INFO -  * Detected change in 'D:\\Github\\scrapSicyca\\api\\api.py', reloading
+2025-11-23 16:56:07,641 - INFO -  * Restarting with stat
+2025-11-23 16:56:45,829 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:56:45,846 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:56:45,847 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:56:45,847 - INFO - Scheduler started
+2025-11-23 16:56:45,849 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:56:45,849 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 16:56:45,875 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.105:5000
+2025-11-23 16:56:45,875 - INFO - [33mPress CTRL+C to quit[0m
+2025-11-23 16:56:45,877 - INFO -  * Restarting with stat
+2025-11-23 16:56:47,429 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-11-23 16:56:47,441 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-11-23 16:56:47,442 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-11-23 16:56:47,442 - INFO - Scheduler started
+2025-11-23 16:56:47,444 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-11-23 16:56:47,444 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-11-23 16:56:47,457 - WARNING -  * Debugger is active!
+2025-11-23 16:56:47,464 - INFO -  * Debugger PIN: 288-901-657

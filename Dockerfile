@@ -29,4 +29,4 @@ ENV TZ=Asia/Jakarta
 
 
 # Jalankan aplikasi Flask menggunakan Gunicorn untuk produksi
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "-w", "1", "-k", "gthread", "--threads", "8", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "-w", "1", "-k", "gthread", "--threads", "8", "--timeout", "300","app:app"]

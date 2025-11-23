@@ -407,6 +407,14 @@ def request_conversion():
         download_as_filename = f"{sanitized_title} [{video_id}].{ext_req}"
         # BERSIHKAN progress dictionary setelah selesai
         if task_id in download_progress:
+            # 1. Kasih tau SSE kalau proses sudah FINISHED secara eksplisit
+            download_progress[task_id]['status'] = 'Finished'
+            download_progress[task_id]['progress'] = 100
+            download_progress[task_id]['text'] = 'Selesai! Mengirim file...'
+            
+            # 2. Tidur sebentar (1 detik) biar SSE sempat kirim data 'Finished' ini ke browser
+            time.sleep(1)
+            # 3. Baru hapus datanya
             del download_progress[task_id]
         return jsonify({
             "success": True,
