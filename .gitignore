@@ -4,3 +4,4 @@ node_modules/
 Database E-GBHM.sql
 .env
 jadwal.json
+__pycache__/

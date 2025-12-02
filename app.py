@@ -497,6 +497,12 @@ def sosmed_download():
     """Menyajikan file HTML utama."""
     return render_template('downloadSosmed.html')
 
+@app.route('/krs_kuliah')
+@login_required
+def krs_kuliah():
+    """Menyajikan file HTML utama."""
+    return render_template('krsKuliah.html')
+
 
 
 # if __name__ == "__main__":
