@@ -417,8 +417,24 @@ def account_page():
     # Nanti kita bikin file account.html
     return render_template('account.html')
 
+# Route untuk reset session scraper (hapus cookies.json)
+@app.route('/reset-scraper-session')
+@login_required
+def reset_scraper_session():
+    cookie_file = 'cookies.json'
+    try:
+        if os.path.exists(cookie_file):
+            os.remove(cookie_file)
+            logging.info("User me-reset session scraper (cookies.json dihapus).")
+        else:
+            logging.warning("User mencoba reset session, tapi cookies.json tidak ditemukan.")
+    except Exception as e:
+        logging.error(f"Gagal menghapus cookies.json: {e}")
 
+    # Kembali ke home setelah hapus
+    return redirect(url_for('index'))
 
+# Route untuk refresh jadwal manual
 @app.route('/refresh-jadwal')
 @login_required
 def refresh_jadwal_route():

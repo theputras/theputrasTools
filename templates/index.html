@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans">
     <div class="container mx-auto p-6 pb-20">
@@ -45,7 +46,7 @@
 <button id="login-face-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
     Login with Face
 </button> -->
-            <a href="/refresh-jadwal" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+            <a href="{{ url_for('refresh_jadwal_route') }}" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
                 &#x21bb; Refresh Jadwal
             </a>
 
@@ -98,6 +99,11 @@
                     Connection Error
                 </span>
             </template>
+            <a href="{{ url_for('reset_scraper_session') }}" 
+   class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm" 
+   onclick="return confirm('Yakin ingin mereset session scraper? Ini akan memaksa sistem login ulang ke SICYCA saat scraping berikutnya.')">
+   <i class="fas fa-eraser"></i> Reset Session Scraper
+</a>
         </div>
 
         <!-- AREA Jadwal Matkul -->

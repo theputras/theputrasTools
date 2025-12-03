@@ -25,6 +25,7 @@ JKT = ZoneInfo(TZ)
 TARGET_URL = "https://sicyca.dinamika.ac.id"
 GATE_ROOT = "https://gate.dinamika.ac.id"
 COOKIES_FILE = "cookies.json"
+API_SICYCA = "/sicyca_api.php"
 
 _session_lock = threading.Lock()
 _authenticated_session = None
@@ -367,7 +368,7 @@ def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
         raise Exception(status_code=403, detail="CSRF/Global token tidak ditemukan setelah scrape")
 
     # --- panggil API ---
-    api_url = urljoin(TARGET_URL, "/sicyca_api.php")
+    api_url = urljoin(TARGET_URL, API_SICYCA)
     payload = {"nim": USER, "token": token, "ultah": True}
     logging.info("Memanggil API Sicyca untuk data ulang tahun...")
     logging.info(f"   --> API URL: {api_url}")
