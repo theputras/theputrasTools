@@ -10,3 +10,6 @@ README.md
 app-dev.py
 flask_session
 *.pyc
+jadwal.json
+Database E-GBHM.sql
+cookies.json
