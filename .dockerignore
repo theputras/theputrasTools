@@ -1,4 +1,5 @@
 __pycache__
+**/__pycache__
 venv
 .env
 .git
@@ -7,3 +8,5 @@ docker-compose.yml
 Dockerfile
 README.md
 app-dev.py
+flask_session
+*.pyc

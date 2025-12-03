@@ -15410,3 +15410,250 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-12-02 10:44:08,034 - INFO - 127.0.0.1 - - [02/Dec/2025 10:44:08] "GET /krs_kuliah?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
 2025-12-02 10:44:56,970 - INFO - === Koneksi ke database berhasil ===
 2025-12-02 10:44:57,185 - INFO - 127.0.0.1 - - [02/Dec/2025 10:44:57] "GET /krs_kuliah HTTP/1.1" 200 -
+2025-12-03 07:43:31,367 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-03 07:43:31,393 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-03 07:43:31,393 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-03 07:43:31,393 - INFO - Scheduler started
+2025-12-03 07:43:31,401 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-03 07:43:31,401 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-03 07:43:32,665 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.47.120:5000
+2025-12-03 07:43:32,666 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 07:43:32,669 - INFO -  * Restarting with stat
+2025-12-03 07:43:34,057 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-03 07:43:34,066 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-03 07:43:34,067 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-03 07:43:34,067 - INFO - Scheduler started
+2025-12-03 07:43:34,069 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-03 07:43:34,069 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-03 07:43:34,079 - WARNING -  * Debugger is active!
+2025-12-03 07:43:34,087 - INFO -  * Debugger PIN: 288-901-657
+2025-12-03 07:43:35,734 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-12-03 07:43:35,735 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:35] "[32mGET / HTTP/1.1[0m" 302 -
+2025-12-03 07:43:36,036 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:36] "GET /login HTTP/1.1" 200 -
+2025-12-03 07:43:36,955 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:36] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-12-03 07:43:47,503 - INFO - === Koneksi ke database berhasil ===
+2025-12-03 07:43:48,252 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-12-03 07:43:48,254 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:48] "POST /api/auth/login HTTP/1.1" 200 -
+2025-12-03 07:43:49,250 - INFO - === Koneksi ke database berhasil ===
+2025-12-03 07:43:49,503 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:49] "GET / HTTP/1.1" 200 -
+2025-12-03 07:43:49,725 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:43:49,733 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-12-03 07:43:49,735 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-12-03 07:43:49,736 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-12-03 07:43:49,737 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:43:49,737 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:43:50,068 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:50] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-12-03 07:43:50,655 - INFO - 2. [Login] Mengirim kredensial...
+2025-12-03 07:43:52,529 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-12-03 07:43:52,560 - INFO -    --> Login dan proses SSO berhasil.
+2025-12-03 07:43:52,562 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-12-03 07:43:52,562 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-12-03 07:43:52,575 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:43:52,576 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:43:52,578 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:43:55,826 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:43:56,180 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:43:56,190 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:56] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-03 07:43:56,807 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:43:56,808 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:43:56,808 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:43:59,038 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:43:59,038 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:43:59,038 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:43:59,809 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:43:59,809 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:43:59,812 - ERROR - Error di endpoint /fetch-data-ultah: Exception() takes no keyword arguments
+2025-12-03 07:43:59,813 - INFO - 127.0.0.1 - - [03/Dec/2025 07:43:59] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-03 07:44:00,664 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:05,236 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:07,921 - INFO - === Koneksi ke database berhasil ===
+2025-12-03 07:44:08,081 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:08] "GET / HTTP/1.1" 200 -
+2025-12-03 07:44:08,223 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:08,226 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-12-03 07:44:08,226 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:08,227 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:08,532 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:09,962 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:09,963 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:09,963 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:10,543 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:12,372 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:12,373 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:44:12,373 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:44:13,335 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:44:13,336 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:44:13,336 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:13,338 - ERROR - Error di endpoint /fetch-data-ultah: Exception() takes no keyword arguments
+2025-12-03 07:44:13,339 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:13] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-03 07:44:13,666 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:14,876 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:14,877 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:14,877 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:17,069 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:17,070 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:44:17,070 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:44:17,832 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:44:17,832 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:44:17,834 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:18,664 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:19,402 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:19,404 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:19] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-03 07:44:23,871 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:28,358 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:31,834 - INFO - === Koneksi ke database berhasil ===
+2025-12-03 07:44:31,946 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:31] "GET / HTTP/1.1" 200 -
+2025-12-03 07:44:32,055 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:32,063 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-12-03 07:44:32,065 - ERROR -    --> Gagal memuat cookies.json, file rusak atau format salah.
+2025-12-03 07:44:32,069 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:33,586 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:33,587 - ERROR -    --> Gagal memuat cookies.json, file rusak atau format salah.
+2025-12-03 07:44:33,587 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:44:33,587 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:44:34,061 - INFO - 2. [Login] Mengirim kredensial...
+2025-12-03 07:44:35,788 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-12-03 07:44:35,804 - INFO -    --> Login dan proses SSO berhasil.
+2025-12-03 07:44:35,805 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-12-03 07:44:35,805 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-12-03 07:44:35,817 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:35,817 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:35,818 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:37,921 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:38,799 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:38,800 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:38,801 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:39,602 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:39,602 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:39] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-03 07:44:41,077 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:41,078 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:44:41,078 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:44:41,850 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:44:41,850 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:44:41,852 - ERROR - Error di endpoint /fetch-data-ultah: Exception() takes no keyword arguments
+2025-12-03 07:44:41,857 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:41] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-03 07:44:42,665 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:47,359 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:50,046 - INFO - === Koneksi ke database berhasil ===
+2025-12-03 07:44:50,113 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:50] "GET / HTTP/1.1" 200 -
+2025-12-03 07:44:50,253 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:50,256 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-12-03 07:44:50,257 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:50,258 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:50,577 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:51,977 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:51,978 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:51,978 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:52,678 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:54,355 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:54,355 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:44:54,355 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:44:55,108 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:44:55,109 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:44:55,109 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:55,111 - ERROR - Error di endpoint /fetch-data-ultah: Exception() takes no keyword arguments
+2025-12-03 07:44:55,112 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:55] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-03 07:44:55,661 - INFO - 127.0.0.1 - - [03/Dec/2025 07:44:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:44:56,529 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:56,530 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:44:56,530 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:44:58,859 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:44:58,860 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:44:58,860 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:44:59,592 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:44:59,592 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:44:59,594 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:00,660 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:01,090 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:01,092 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:01] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-03 07:45:05,663 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:09,963 - INFO - === Koneksi ke database berhasil ===
+2025-12-03 07:45:10,123 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:10] "GET / HTTP/1.1" 200 -
+2025-12-03 07:45:10,328 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:10,648 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-12-03 07:45:10,649 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:45:10,650 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:10,662 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:12,284 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:12,285 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:45:12,285 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:13,276 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:14,646 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:14,646 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:45:14,646 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:45:15,358 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:15,481 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:45:15,481 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:45:15,481 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:15,483 - ERROR - Error di endpoint /fetch-data-ultah: Exception() takes no keyword arguments
+2025-12-03 07:45:15,484 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:15] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-03 07:45:17,341 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:17,342 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:45:17,342 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:19,621 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:19,622 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:45:19,622 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:45:20,389 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:45:20,389 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:45:20,391 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:20,661 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:21,900 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:21,902 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:21] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-03 07:45:25,665 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:30,071 - INFO - === Koneksi ke database berhasil ===
+2025-12-03 07:45:30,176 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:30] "GET / HTTP/1.1" 200 -
+2025-12-03 07:45:30,293 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:30,597 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-12-03 07:45:30,598 - ERROR -    --> Gagal memuat cookies.json, file rusak atau format salah.
+2025-12-03 07:45:30,598 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:32,078 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:32,079 - ERROR -    --> Gagal memuat cookies.json, file rusak atau format salah.
+2025-12-03 07:45:32,079 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:45:32,079 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:45:32,479 - INFO - 2. [Login] Mengirim kredensial...
+2025-12-03 07:45:34,214 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-12-03 07:45:34,229 - INFO -    --> Login dan proses SSO berhasil.
+2025-12-03 07:45:34,230 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-12-03 07:45:34,231 - INFO -    --> Membuat sesi bersih dan memuat cookies baru...
+2025-12-03 07:45:34,238 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:45:34,245 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:34,246 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:35,661 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:37,227 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:37,228 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:37] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-03 07:45:38,015 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:38,016 - INFO -    --> Cookies berhasil dimuat dari file.
+2025-12-03 07:45:38,016 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-03 07:45:40,311 - WARNING -    --> Sesi Sicyca sudah tidak valid.
+2025-12-03 07:45:40,312 - INFO - Memulai proses login baru untuk sesi global...
+2025-12-03 07:45:40,312 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-03 07:45:40,661 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:40,970 - ERROR -    --> Proses login gagal: Gagal menemukan form login.
+2025-12-03 07:45:40,971 - ERROR - Gagal total mendapatkan sesi terotentikasi.
+2025-12-03 07:45:40,972 - ERROR - Error di endpoint /fetch-data-ultah: Exception() takes no keyword arguments
+2025-12-03 07:45:40,973 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:40] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-03 07:45:45,593 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:51,046 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:45:55,657 - INFO - 127.0.0.1 - - [03/Dec/2025 07:45:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:00,355 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:05,597 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:10,291 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:15,748 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:20,353 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:26,020 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:30,456 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:35,657 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:40,354 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:45,656 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:50,351 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:46:55,656 - INFO - 127.0.0.1 - - [03/Dec/2025 07:46:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:47:00,353 - INFO - 127.0.0.1 - - [03/Dec/2025 07:47:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:47:05,655 - INFO - 127.0.0.1 - - [03/Dec/2025 07:47:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:47:10,676 - INFO - 127.0.0.1 - - [03/Dec/2025 07:47:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-03 07:47:36,662 - INFO - 127.0.0.1 - - [03/Dec/2025 07:47:36] "GET /api/jadwal-status HTTP/1.1" 200 -
