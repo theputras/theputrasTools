@@ -9,14 +9,6 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_RUN_HOST=0.0.0.0
-      - SICYCA_USER=23410100003
-      - DB_HOST=172.16.3.3
-      - DB_PORT=3306
-      - DB_USERNAME=theputras
-      - DB_PASSWORD=tpmroot1204
-      - DB_DATABASE=theputras
-      - SICYCA_PASS=368010
-      - SECRET_KEY=fa1c6b4ef8dc9e7a9a8b1f81e924a1b33fdc2294a03b4cd6a4f4c6cfdb6a8f4e
       - PREFERRED_URL_SCHEME=https
     volumes:
       - .:/app  # Optional: This mounts your local app directory to the container's /app
