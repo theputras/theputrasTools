@@ -23,7 +23,7 @@ def login_required(view_func):
         if not access_token or not refresh_token:
             logging.info("[GUARD] Token(s) missing. Redirecting to login.")
             # Pastiin kita clear cookie-nya kalo mau redirect
-            resp = make_response(redirect(url_for('login_page')))
+            resp = make_response(redirect(url_for('login_page', next=request.url)))
             session.clear()
             resp.set_cookie("access_token", "", expires=0)
             resp.set_cookie("refresh_token", "", expires=0)

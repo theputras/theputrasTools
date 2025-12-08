@@ -20,7 +20,7 @@ from models.auth_api import auth_bp
 from flask_cors import CORS
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import scrape_data
+from scrapper_requests import scrape_data, reset_session_memory
 from middleware.auth_quard import login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
 from models.auth_api import _revoke_refresh_token, _revoke_all_user_sessions
@@ -141,9 +141,11 @@ majorID = { "39010": "D3 Sistem Informasi", "41010": "S1 Sistem Informasi", "410
 def _valid_role(x):
     return x in ("mahasiswa", "staff")
 
+def get_current_status():
+    return JADWAL_STATUS
 
 
-init_api(photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role)
+init_api(photo_cache, majorID, executor, get_current_status, log_file, _valid_role)
 app.register_blueprint(api_bp, url_prefix='/api')
 
 # Jalankan scraper dan simpan hasilnya ke file JSON
@@ -296,7 +298,8 @@ def login_page():
 
             # Kalo token ADA dan VALID, lempar ke index
             logging.info(f"User udah login, redirecting to index...")
-            return redirect(url_for('index'))
+            next_url = request.args.get('next')
+            return redirect(next_url or url_for('index'))
         
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
             # Kalo token ada tapi RUSAK atau EXPIRED
@@ -423,15 +426,20 @@ def account_page():
 def reset_scraper_session():
     cookie_file = 'cookies.json'
     try:
-        if os.path.exists(cookie_file):
-            os.remove(cookie_file)
-            logging.info("User me-reset session scraper (cookies.json dihapus).")
-        else:
-            logging.warning("User mencoba reset session, tapi cookies.json tidak ditemukan.")
+            # 1. Hapus File di Disk
+            if os.path.exists(cookie_file):
+                os.remove(cookie_file)
+                logging.info("User me-reset session scraper (cookies.json dihapus).")
+            else:
+                logging.warning("User mencoba reset session, tapi cookies.json tidak ditemukan.")
+                
+            # 2. Hapus Sesi di Memory (RAM) <-- INI KUNCI FIX-NYA
+            reset_session_memory()
+            
     except Exception as e:
-        logging.error(f"Gagal menghapus cookies.json: {e}")
-
-    # Kembali ke home setelah hapus
+            logging.error(f"Gagal menghapus cookies.json: {e}")
+    
+        # Kembali ke home setelah hapus
     return redirect(url_for('index'))
 
 # Route untuk refresh jadwal manual

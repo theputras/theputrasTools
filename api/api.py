@@ -14,17 +14,17 @@ api_bp = Blueprint('api', __name__)
 photo_cache = None
 majorID = None
 executor = None
-JADWAL_STATUS = None
+get_jadwal_status_func = None
 log_file = None
 _valid_role = None
 
 # Fungsi untuk inisialisasi variabel global
-def init_api(cache, major, execu, status, logfile, valid_role_func):
-    global photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
+def init_api(cache, major, execu, status_getter, logfile, valid_role_func):
+    global photo_cache, majorID, executor, get_jadwal_status_func, log_file, _valid_role
     photo_cache = cache
     majorID = major
     executor = execu
-    JADWAL_STATUS = status
+    get_jadwal_status_func = status_getter
     log_file = logfile
     _valid_role = valid_role_func
     
@@ -114,7 +114,10 @@ def api_search():
     if not df_mahasiswa.empty:
         for _, row in df_mahasiswa.iterrows():
             nim = row.get('NIM', '')
-            prodi_name = majorID.get(nim[2:7], 'Prodi Tidak Dikenal') if nim and len(nim) >= 7 else 'Prodi Tidak Dikenal'
+            if majorID:
+                prodi_name = majorID.get(nim[2:7], 'Prodi Tidak Dikenal') if nim and len(nim) >= 7 else 'Prodi Tidak Dikenal'
+            else:
+                prodi_name = 'Sistem Belum Siap'
             combined_results.append({
                 'Tipe': 'Mahasiswa',
                 'Nama': row.get('Nama'),
@@ -515,7 +518,10 @@ def api_log():
 # Mengecek apakah jadwal ready atau error
 @api_bp.route('/jadwal-status')
 def api_jadwal_status():
-    return jsonify(JADWAL_STATUS)
+    # Panggil fungsinya untuk dapat data terbaru realtime
+    if get_jadwal_status_func:
+        return jsonify(get_jadwal_status_func())
+    return jsonify({"status": "unknown", "message": "Status belum diinisialisasi"})
 
 # Mendapatkan foto mahasiswa atau staff dalam base64
 @api_bp.route('/photo/<role>/<id_>', methods=['GET'])

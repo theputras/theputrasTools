@@ -136,9 +136,17 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.redirect) {
+        if (data.redirect || data.success) {
             // Sukses, biarin aja disabled, halaman bakal redirect
-            window.location.href = data.redirect;
+            // 1. Cek apakah ada parameter 'next' di URL browser
+        const urlParams = new URLSearchParams(window.location.search);
+        const nextUrl = urlParams.get('next');
+
+        // 2. Prioritas redirect: 
+        //    a. Ke 'next' url (halaman terakhir)
+        //    b. Ke 'data.redirect' (dari backend, biasanya '/')
+        //    c. Default ke '/' (Home)
+        window.location.href = nextUrl || data.redirect || '/';
         } else if (data.error) {
             // Gagal, balikin tombol ke semula
             errorEl.textContent = data.error;
