@@ -5,7 +5,7 @@ from yt_dlp.utils import sanitize_filename
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca, fetch_data_ultah
+from scrapper_requests import   search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
 
@@ -593,6 +593,84 @@ def fetch_data_ultah_route():
 def data_ultah_alias():
     return fetch_data_ultah_route() # Panggil fungsi di atas biar logikanya sama
     
+@api_bp.route('/krs-data', methods=['GET'])
+@login_required
+def api_krs_data():
+    """
+    Endpoint untuk mengambil data KRS mahasiswa yang sedang login.
+    """
+    logging.info("API: Menerima request untuk data KRS")
+    try:
+        # Panggil fungsi scraper (DataFrame)
+        df_krs = scrape_krs()
+
+        if df_krs.empty:
+            logging.warning("API: Data KRS kosong atau gagal diambil.")
+            return jsonify({
+                "success": False,
+                "message": "Data KRS tidak ditemukan atau sesi Sicyca habis.",
+                "data": []
+            })
+        
+        # Convert DataFrame ke List of Dictionaries (JSON friendly)
+        # orient='records' bikin jadi [{col1:val1, col2:val2}, ...]
+        krs_list = df_krs.to_dict(orient='records')
+        
+        logging.info(f"API: Berhasil mengambil {len(krs_list)} data KRS.")
+        return jsonify({
+            "success": True,
+            "data": krs_list
+        })
+        
+    except Exception as e:
+        logging.error(f"API Error (KRS): {e}")
+        return jsonify({
+            "success": False, 
+            "message": f"Terjadi kesalahan server: {str(e)}",
+            "data": []
+        }), 500
+
+@api_bp.route('/krs-detail', methods=['POST'])
+@login_required
+def api_krs_detail():
+    """
+    Endpoint dinamis untuk mengambil detail KRS.
+    Frontend mengirim payload JSON:
+    {
+        "type": "kehadiran",  # nilai / matakuliah / materikuliah / kehadiranprak
+        "mk": "12345",
+        "kls": "P1",
+        "grup": "A",          # Opsional (untuk praktek)
+        "nik": "123"          # Opsional (untuk materi)
+    }
+    """
+    data = request.get_json()
+    req_type = data.get('type')
+    
+    if not req_type:
+        return jsonify({"success": False, "message": "Parameter 'type' wajib diisi."}), 400
+
+    # Mapping parameter frontend ke parameter Sicyca URL (?t=...)
+    # Sesuai JS: t=kehadiran, t=kehadiranprak, t=nilai, t=matakuliah, t=materikuliah
+    
+    params = {
+        "t": req_type
+    }
+    
+    # Masukkan parameter lain jika ada
+    if data.get('mk'): params['mk'] = data.get('mk')
+    if data.get('kls'): params['kls'] = data.get('kls')
+    if data.get('grup'): params['grup'] = data.get('grup')
+    if data.get('nik'): params['nik'] = data.get('nik') # Untuk materi kuliah
+
+    # Panggil Scraper
+    result = scrape_krs_detail(params)
+    
+    
+    status_code = 200 if result.get("success") else 500
+    return jsonify(result), status_code
+
+
 @api_bp.route('/jadwal-list', methods=['GET'])
 def api_jadwal_list():
     """

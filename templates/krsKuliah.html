@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartu Rencana Studi (KRS)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        /* Custom scrollbar untuk tabel modal */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1f2937; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; 
+        }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans">
+
+    <div class="container mx-auto p-4 md:p-8" x-data="krsApp()">
+        
+        <div class="bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+            <div class="flex justify-between items-start mb-4">
+                <h1 class="text-2xl font-bold text-white">Kartu Rencana Studi</h1>
+                
+                <div x-show="isLoading">
+                    <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                        <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Memuat Data...
+                    </span>
+                </div>
+                <div x-show="!isLoading && !error" x-cloak>
+                    <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+                        <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
+                        Data Terupdate
+                    </span>
+                </div>
+            </div>
+
+            <a href="/tools" class="text-blue-400 hover:text-blue-300 mb-4 inline-block transition-colors duration-200">
+                &laquo; Back to Tools
+            </a>
+
+            <div x-show="error" x-cloak class="bg-red-500/10 border border-red-500 text-red-400 p-4 rounded-md mb-4">
+                <p x-text="error"></p>
+                <button @click="fetchKRS()" class="mt-2 text-sm underline hover:text-red-300">Coba lagi</button>
+            </div>
+
+            <div class="overflow-x-auto rounded-lg border border-gray-700" x-show="!isLoading && !error" x-cloak>
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-700 text-gray-200 uppercase text-xs font-semibold tracking-wider">
+                        <tr>
+                            <th class="p-3 border-b border-gray-600">Hari</th>
+                            <th class="p-3 border-b border-gray-600">Waktu</th>
+                            <th class="p-3 border-b border-gray-600">Matakuliah (Kelas)</th>
+                            <th class="p-3 border-b border-gray-600">Ruang</th>
+                            <th class="p-3 border-b border-gray-600 text-center">SKS</th>
+                            <th class="p-3 border-b border-gray-600 text-center">Nilai</th>
+                            <th class="p-3 border-b border-gray-600 text-center">Min</th>
+                            <th class="p-3 border-b border-gray-600">Kehadiran</th>
+                            <th class="p-3 border-b border-gray-600">Ket</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700 text-sm">
+                        <template x-for="(item, index) in krsData" :key="index">
+                            <tr class="hover:bg-gray-750 transition-colors">
+                                <td class="p-3 text-white" x-text="item.Hari"></td>
+                                <td class="p-3 text-gray-300 whitespace-nowrap" x-text="item.Waktu"></td>
+                                
+                                <td class="p-3">
+                                    <template x-if="item.param_mk">
+                                        <button 
+                                            @click="openModal('matakuliah', item)"
+                                            class="text-blue-400 hover:text-blue-300 font-medium text-left hover:underline">
+                                            <span x-text="item.Matakuliah"></span>
+                                        </button>
+                                    </template>
+                                    <template x-if="!item.param_mk">
+                                        <span x-text="item.Matakuliah" class="text-gray-300"></span>
+                                    </template>
+                                </td>
+
+                                <td class="p-3 text-gray-300" x-text="item.Ruang"></td>
+                                <td class="p-3 text-center text-white font-bold" x-text="item.SKS"></td>
+
+                                <td class="p-3 text-center">
+                                    <template x-if="item.Nilai && item.Nilai !== '-'">
+                                        <button 
+                                            @click="openModal('nilai', item)"
+                                            class="text-blue-400 hover:text-blue-300 hover:underline">
+                                            Detail
+                                        </button>
+                                    </template>
+                                    <template x-if="!item.Nilai || item.Nilai === '-'">
+                                        <span class="text-gray-500">-</span>
+                                    </template>
+                                </td>
+
+                                <td class="p-3 text-center text-gray-400" x-text="item['Nilai Minimal']"></td>
+
+                                <td class="p-3">
+                                    <template x-if="item.Kehadiran && item.Kehadiran !== '-'">
+                                        <button 
+                                            @click="openModal('kehadiran', item)"
+                                            class="text-blue-400 hover:text-blue-300 hover:underline"
+                                            x-text="item.Kehadiran">
+                                        </button>
+                                    </template>
+                                    <template x-if="!item.Kehadiran || item.Kehadiran === '-'">
+                                        <span class="text-gray-500">-</span>
+                                    </template>
+                                </td>
+
+                                <td class="p-3 text-gray-400" x-text="item.Keterangan"></td>
+                            </tr>
+                        </template>
+                        
+                        <tr x-show="krsData.length === 0">
+                            <td colspan="9" class="p-6 text-center text-gray-500">
+                                Tidak ada data KRS ditemukan atau sesi habis.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div x-show="modal.open" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
+             x-cloak>
+            
+            <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-gray-700"
+                 @click.away="closeModal()">
+                
+                <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-750">
+                    <h3 class="text-lg font-bold text-white" x-text="modal.title"></h3>
+                    <button @click="closeModal()" class="text-gray-400 hover:text-white focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <div class="p-6 overflow-y-auto custom-scroll flex-grow">
+                    
+                    <div x-show="modal.loading" class="flex justify-center items-center py-10">
+                        <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+
+                    <div x-show="!modal.loading && modal.error" class="text-red-400 text-center py-4 bg-red-900/20 rounded border border-red-500/30">
+                        <p x-text="modal.error"></p>
+                    </div>
+
+                    <div x-show="!modal.loading && !modal.error">
+                        
+                        <template x-if="modal.data && modal.data.tables && modal.data.tables.length > 0">
+                            <div>
+                                <template x-for="(tbl, idx) in modal.data.tables" :key="idx">
+                                    <div class="mb-8 last:mb-0">
+                                        <h4 class="text-md font-bold text-blue-300 mb-2 pb-1 border-b border-gray-700 flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                            <span x-text="tbl.title"></span>
+                                        </h4>
+
+                                        <div class="overflow-x-auto rounded border border-gray-600 shadow-sm">
+                                            <table class="w-full text-sm text-left">
+                                                <thead class="bg-gray-700 text-gray-200">
+                                                    <tr>
+                                                        <template x-for="head in tbl.headers">
+                                                            <th class="p-2 border-b border-gray-600 whitespace-nowrap font-semibold" x-text="head"></th>
+                                                        </template>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-700 bg-gray-800">
+                                                    <template x-for="row in tbl.rows">
+                                                        <tr class="hover:bg-gray-700/50 transition-colors">
+                                                            <template x-for="head in tbl.headers">
+                                                                <td class="p-2 text-gray-300 border-r border-gray-700 last:border-r-0">
+                                                                    <template x-if="row[head + '_link']">
+                                                                        <a :href="row[head + '_link']" target="_blank" class="text-blue-400 hover:underline" x-text="row[head]"></a>
+                                                                    </template>
+                                                                    <template x-if="!row[head + '_link']">
+                                                                        <span x-text="row[head]"></span>
+                                                                    </template>
+                                                                </td>
+                                                            </template>
+                                                        </tr>
+                                                    </template>
+                                                    <template x-if="!tbl.rows || tbl.rows.length === 0">
+                                                        <tr>
+                                                            <td :colspan="tbl.headers.length" class="p-3 text-center text-gray-500 italic">Data kosong.</td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template x-if="modal.data && modal.data.type === 'text'">
+                            <div class="prose prose-invert max-w-none">
+                                <pre class="whitespace-pre-wrap text-sm font-mono bg-gray-900 p-4 rounded" x-text="modal.data.content"></pre>
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+
+                <div class="bg-gray-750 p-3 text-right border-t border-gray-700">
+                    <button @click="closeModal()" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded text-sm font-medium transition">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function krsApp() {
+            return {
+                krsData: [],
+                isLoading: true,
+                error: null,
+                modal: {
+                    open: false,
+                    loading: false,
+                    title: '',
+                    error: null,
+                    data: null
+                },
+
+                init() {
+                    this.fetchKRS();
+                },
+
+                // Fungsi bantu handle Response Auth
+                handleResponse(res) {
+                    if (res.status === 401) {
+                        // Redirect ke login jika session mati
+                        window.location.href = '/'; 
+                        throw new Error("Sesi berakhir. Mengalihkan ke login...");
+                    }
+                    if (!res.ok) {
+                        throw new Error(`HTTP Error: ${res.status}`);
+                    }
+                    return res.json();
+                },
+
+                fetchKRS() {
+                    this.isLoading = true;
+                    this.error = null;
+                    fetch('/api/krs-data')
+                        .then(res => this.handleResponse(res))
+                        .then(data => {
+                            if (data.success) {
+                                this.krsData = data.data;
+                            } else {
+                                this.error = data.message || "Gagal memuat data KRS.";
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            // Kalau error karena redirect login, pesan ini mungkin tidak terbaca karena halaman reload
+                            if(err.message.includes('Sesi berakhir')) return;
+                            this.error = "Gagal memuat data. Kemungkinan sesi habis, silakan refresh.";
+                        })
+                        .finally(() => {
+                            this.isLoading = false;
+                        });
+                },
+
+                openModal(type, item) {
+                    this.modal.open = true;
+                    this.modal.loading = true;
+                    this.modal.error = null;
+                    this.modal.data = null;
+                    
+                    let mkName = item.Matakuliah || "Matakuliah";
+                    if(type === 'matakuliah') this.modal.title = `Detail: ${mkName}`;
+                    if(type === 'nilai') this.modal.title = `Detail Nilai: ${mkName}`;
+                    if(type === 'kehadiran') this.modal.title = `Detail Kehadiran: ${mkName}`;
+
+                    const payload = {
+                        type: type,
+                        mk: item.param_mk,   
+                        kls: item.param_kls, 
+                        grup: item.param_grup 
+                    };
+
+                    if (!payload.mk || !payload.kls) {
+                        // Khusus untuk type Nilai/Kehadiran mungkin tidak butuh mk/kls lengkap jika url beda
+                        // Tapi untuk case ini kita samakan logicnya
+                        // Jika fetch detail gagal karena param, backend akan handle atau return error
+                    }
+
+                    fetch('/api/krs-detail', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(res => this.handleResponse(res)) // Pakai handler auth
+                    .then(data => {
+                        if (data.success) {
+                            this.modal.data = data;
+                        } else {
+                            this.modal.error = data.message || "Gagal mengambil detail.";
+                        }
+                    })
+                    .catch(err => {
+                        if(err.message.includes('Sesi berakhir')) return;
+                        this.modal.error = "Terjadi kesalahan koneksi atau sesi habis.";
+                    })
+                    .finally(() => {
+                        this.modal.loading = false;
+                    });
+                },
+
+                closeModal() {
+                    this.modal.open = false;
+                    setTimeout(() => {
+                        this.modal.data = null; 
+                    }, 300);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -262,6 +262,250 @@ def scrape_data():
         logging.error(f"Error saat scraping jadwal: {e}")
         return pd.DataFrame()
 
+def scrape_krs():
+    logging.info("\n--- Memulai Scraping KRS ---")
+    sess = get_authenticated_session()
+    if not sess: return pd.DataFrame()
+
+    krs_url = urljoin(TARGET_URL, "/akademik/krs")
+    try:
+        resp = sess.get(krs_url, timeout=30, headers={"Referer": TARGET_URL})
+        # if "gate.dinamika.ac.id" in resp.url or "/login" in resp.url:
+        #     reset_session_memory()
+        #     return pd.DataFrame()
+
+        soup = BeautifulSoup(resp.text, "lxml")
+        table = soup.find("table", id="tableView")
+        # Fallback logic tetep sama...
+        if not table:
+             text_node = soup.find(string=re.compile(r'KARTU RENCANA STUDI', re.IGNORECASE))
+             if text_node:
+                target_div = text_node.find_parent("div", class_="tabletitle")
+                if target_div: table = target_div.find_next("table")
+        
+        if not table: return pd.DataFrame()
+
+        data = []
+        rows = table.find_all("tr")
+        
+        for tr in rows:
+            cols = tr.find_all("td")
+            if not cols or len(cols) < 10: continue
+
+            # --- UPDATE: AMBIL PARAMETER ONCLICK ---
+            # Kita butuh 'mk', 'kls', 'grup' dari fungsi JS: showModal...(kelas, kode_mk, ...)
+            # Contoh: showModalMatakuliah('P1','36934','Pemrograman Mobile Lanjut');
+            
+            param_mk = ""
+            param_kls = ""
+            param_grup = ""
+            
+            # Cari link di kolom Matakuliah (index 2)
+            link_mk = cols[2].find("a")
+            if link_mk and link_mk.get("onclick"):
+                onclick_text = link_mk.get("onclick")
+                # Regex untuk ambil argument di dalam tanda kutip
+                # Matches: 'P1', '36934', ...
+                args = re.findall(r"'([^']*)'", onclick_text)
+                
+                # Pola parameter sicyca biasanya: (kelas, mk, nama_mk) ATAU (kelas, mk, grup, nama_mk)
+                # Kita coba ambil amannya
+                if len(args) >= 2:
+                    param_kls = args[0]
+                    param_mk = args[1]
+                # Kadang grup ada di arg ke-2 atau 3 tergantung fungsi, tapi MK & Kelas yg utama
+
+            row_data = {
+                "Hari": cols[0].get_text(strip=True),
+                "Waktu": cols[1].get_text(strip=True),
+                "Matakuliah": cols[2].get_text(strip=True),
+                # Skip Brilian (Index 3)
+                "Ruang": cols[4].get_text(strip=True),
+                "SKS": cols[5].get_text(strip=True),
+                "Nilai": cols[6].get_text(strip=True), 
+                "Nilai Minimal": cols[7].get_text(strip=True),
+                "Kehadiran": cols[8].get_text(strip=True),
+                "Keterangan": cols[9].get_text(strip=True),
+                
+                # Tambahkan Hidden Params buat Frontend fetch detail
+                "param_mk": param_mk,
+                "param_kls": param_kls,
+                "param_grup": param_grup 
+            }
+            data.append(row_data)
+
+        df = pd.DataFrame(data)
+        return df
+
+    except Exception as e:
+        logging.error(f"Error KRS: {e}")
+        return pd.DataFrame()
+
+def scrape_krs_detail(params: Dict[str, str]) -> Dict[str, Any]:
+    """
+    Mengambil detail KRS. Menangani struktur Tabel murni (Nilai/Kehadiran) 
+    dan struktur Campuran (Matakuliah: Info Dosen + Tabel Peserta).
+    """
+    logging.info(f"\n--- Scraping KRS Detail: {params} ---")
+    sess = get_authenticated_session()
+    if not sess:
+        return {"success": False, "message": "Gagal mendapatkan sesi valid."}
+
+    proxy_url = urljoin(TARGET_URL, "/table-proxy/")
+    
+    try:
+        resp = sess.get(proxy_url, params=params, timeout=20, headers={"Referer": TARGET_URL})
+        
+        # # Cek Redirect (Session Expired)
+        # if "gate.dinamika.ac.id" in resp.url or "/login" in resp.url:
+        #     reset_session_memory()
+        #     return {"success": False, "message": "Sesi kedaluwarsa. Silakan refresh."}
+
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "lxml")
+        ada_prak = soup.find(string=re.compile(r"Group\s*Prak", re.IGNORECASE))
+        
+        # Tentukan judul dinamis buat Tabel Mahasiswa
+        judul_tabel_mhs = "Data Praktikum Mahasiswa" if ada_prak else "Data Peserta Mahasiswa"
+        # =================================================================
+        # --- 1. AMBIL METADATA (Untuk kasus t=matakuliah) ---
+        # Mencari teks di body yang bukan bagian dari tabel, lalu cari pola "Label: Value"
+        metadata = {}
+        full_text = soup.get_text(separator="\n")
+        
+        # Regex sederhana untuk menangkap "Label: Value" (misal: "Dosen: Budi")
+        # Kita batasi agar tidak mengambil isi tabel
+        lines = full_text.split('\n')
+        for line in lines:
+            if ":" in line:
+                parts = line.split(":", 1)
+                key = parts[0].strip()
+                val = parts[1].strip()
+                # Filter supaya gak ambil sampah (key terlalu panjang biasanya bukan label)
+                if len(key) < 50 and val: 
+                    metadata[key] = val
+        
+        # =================================================================
+        # --- 2. AMBIL TABEL ---
+        tables_list = []
+        html_tables = soup.find_all("table")
+        
+        for table in html_tables:
+            # --- Coba Cari Judul Tabel ---
+            # Cari elemen text sebelumnya (misal "PESERTA KULIAH")
+            title = ""
+            
+            # Logic: Mundur ke elemen sebelumnya sampai ketemu text yang bukan kosong
+            prev_el = table.previous_sibling
+            while prev_el:
+                if isinstance(prev_el, str) and prev_el.strip():
+                    title = prev_el.strip()
+                    found_title = prev_el.strip()
+                    title = found_title
+                    break
+                if hasattr(prev_el, 'get_text') and prev_el.get_text(strip=True):
+                    found_title = prev_el.get_text(strip=True)
+                    title = prev_el.get_text(strip=True)
+                    title = found_title
+                    break
+                prev_el = prev_el.previous_sibling
+            
+            # Bersihkan judul (kadang kebawa tanda baca aneh)
+            title = re.sub(r'[^\w\s]', '', title).strip() or "Detail"
+# --- Parse Header ---
+            headers = []
+            thead = table.find("thead")
+            if thead:
+                headers = [th.get_text(strip=True) for th in thead.find_all("th")]
+            
+            if not headers:
+                first_tr = table.find("tr")
+                if first_tr:
+                    headers = [ele.get_text(strip=True) for ele in first_tr.find_all(["th", "td"])]
+
+            # Fallback nama kolom
+            headers = [h if h else f"Kolom {i+1}" for i, h in enumerate(headers)]
+
+            # =============================================================
+            # [LOGIC TITLE] PENENTUAN JUDUL TABEL
+            # =============================================================
+            # Gabung header jadi string lowercase buat pengecekan
+            headers_str = " ".join(headers).lower()
+
+            if "nim" in headers_str or "nama" in headers_str:
+                # Ini pasti tabel daftar mahasiswa -> Pakai judul dinamis
+                title = judul_tabel_mhs
+            elif "dosen" in headers_str or "matakuliah" in headers_str or "sks" in headers_str:
+                # Ini tabel metadata (yang isinya rows group prak tadi)
+                title = "Detail Mata Kuliah"
+            else:
+                # Fallback title (mencoba cari judul dari text sebelumnya seperti kode lama)
+                title = "Data Lainnya"
+                prev_el = table.previous_sibling
+                while prev_el:
+                    if isinstance(prev_el, str) and prev_el.strip():
+                        title = prev_el.strip()
+                        break
+                    if hasattr(prev_el, 'get_text') and prev_el.get_text(strip=True):
+                        title = prev_el.get_text(strip=True)
+                        break
+                    prev_el = prev_el.previous_sibling
+                title = re.sub(r'[^\w\s]', '', title).strip() or "Tabel Data"
+            # --- Parse Rows ---
+            rows_data = []
+            all_trs = table.find_all("tr")
+            
+            # Skip header row?
+            start_idx = 0
+            # Jika headers diambil dari tr pertama dan tidak ada thead, skip tr pertama
+            if not thead and all_trs and headers:
+                # Cek apakah tr pertama isinya sama persis dengan headers
+                first_tr_text = [e.get_text(strip=True) for e in all_trs[0].find_all(["th", "td"])]
+                if first_tr_text == headers:
+                    start_idx = 1
+
+            tbody = table.find("tbody")
+            tr_source = tbody.find_all("tr") if tbody else all_trs[start_idx:]
+
+            for tr in tr_source:
+                cols = tr.find_all("td")
+                if not cols: continue
+                # Skip baris kosong
+                if len(cols) == 1 and not cols[0].get_text(strip=True): continue
+
+                row_obj = {}
+                for idx, td in enumerate(cols):
+                    val = td.get_text(strip=True)
+                    link = td.find("a")
+                    
+                    if idx < len(headers):
+                        col_name = headers[idx]
+                        row_obj[col_name] = val
+                        if link and link.get("href"):
+                            row_obj[f"{col_name}_link"] = link.get("href")
+                
+                if row_obj:
+                    rows_data.append(row_obj)
+            
+            # Masukkan ke list tables jika ada isinya
+            if headers or rows_data:
+                tables_list.append({
+                    "title": title,
+                    "headers": headers,
+                    "rows": rows_data
+                })
+        
+        # --- 3. RETURN HASIL ---
+        return {
+            "success": True,
+            "metadata": metadata,
+            "tables": tables_list # ARRAY of tables
+        }
+
+    except Exception as e:
+        logging.error(f"Error scrape krs detail: {e}")
+        return {"success": False, "message": str(e)}
+
 def _generic_search(endpoint, query, label):
     """Helper function untuk search mhs/staff agar tidak duplikasi kode"""
     logging.info(f"\n--- Cari {label}: '{query}' ---")
