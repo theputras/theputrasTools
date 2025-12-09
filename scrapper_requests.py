@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 from requests.adapters import HTTPAdapter, Retry
 
 load_dotenv()
+proxy_url = os.getenv("HTTP_PROXY_URL")
 USER = os.getenv("SICYCA_USER")
 PASS = os.getenv("SICYCA_PASS")
 if not USER or not PASS:
@@ -50,6 +51,12 @@ def create_session():
     adapter = HTTPAdapter(max_retries=retries)
     s.mount("https://", adapter)
     s.mount("http://", adapter)
+    if proxy_url:
+        s.proxies = {
+            "http": proxy_url,
+            "https": proxy_url
+        }
+        logging.info(f"   --> Menggunakan Proxy: {proxy_url}")
     s.headers.update({
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
     })

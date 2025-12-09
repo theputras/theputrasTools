@@ -20376,3 +20376,188 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-12-08 18:27:41,071 - INFO - 127.0.0.1 - - [08/Dec/2025 18:27:41] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-08 18:27:46,655 - INFO - 127.0.0.1 - - [08/Dec/2025 18:27:46] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-08 18:27:51,352 - INFO - 127.0.0.1 - - [08/Dec/2025 18:27:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-08 18:27:56,664 - INFO - 127.0.0.1 - - [08/Dec/2025 18:27:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-08 18:28:01,475 - INFO - 127.0.0.1 - - [08/Dec/2025 18:28:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:07:59,339 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-09 08:07:59,365 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-09 08:07:59,366 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-09 08:07:59,366 - INFO - Scheduler started
+2025-12-09 08:07:59,368 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-09 08:07:59,368 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-09 08:08:00,642 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.34.22:5000
+2025-12-09 08:08:00,643 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-09 08:08:00,647 - INFO -  * Restarting with stat
+2025-12-09 08:08:02,075 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-09 08:08:02,088 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-09 08:08:02,088 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-09 08:08:02,088 - INFO - Scheduler started
+2025-12-09 08:08:02,090 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-09 08:08:02,090 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-09 08:08:02,099 - WARNING -  * Debugger is active!
+2025-12-09 08:08:02,104 - INFO -  * Debugger PIN: 288-901-657
+2025-12-09 08:08:02,116 - INFO - [GUARD DEBUG] Token invalid (Signature has expired). Redirecting to login.
+2025-12-09 08:08:02,117 - INFO - 127.0.0.1 - - [09/Dec/2025 08:08:02] "[32mGET / HTTP/1.1[0m" 302 -
+2025-12-09 08:08:02,292 - INFO - 127.0.0.1 - - [09/Dec/2025 08:08:02] "GET /login HTTP/1.1" 200 -
+2025-12-09 08:08:02,711 - INFO - 127.0.0.1 - - [09/Dec/2025 08:08:02] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-12-09 08:08:59,264 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:08:59,922 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-12-09 08:08:59,923 - INFO - 127.0.0.1 - - [09/Dec/2025 08:08:59] "POST /api/auth/login HTTP/1.1" 200 -
+2025-12-09 08:09:00,275 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:09:00,385 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:00] "GET / HTTP/1.1" 200 -
+2025-12-09 08:09:01,312 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:01,625 - INFO - Memulai pengecekan status sesi di latar belakang...
+2025-12-09 08:09:01,626 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-12-09 08:09:01,626 - INFO - Membuat sesi baru...
+2025-12-09 08:09:01,627 - WARNING -    --> Cookies sudah kedaluwarsa.
+2025-12-09 08:09:01,627 - INFO - 1. [Login] Mengakses Gate untuk mendapatkan form...
+2025-12-09 08:09:01,634 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:01] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-12-09 08:09:02,102 - INFO - 2. [Login] Mengirim kredensial...
+2025-12-09 08:09:03,772 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-12-09 08:09:03,783 - INFO -    --> Login dan proses SSO berhasil.
+2025-12-09 08:09:03,783 - INFO -    --> Cookies baru berhasil disimpan ke cookies.json
+2025-12-09 08:09:03,784 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:09:03,784 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:09:03,784 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:03] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-09 08:09:03,784 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:09:03,785 - INFO - Mencoba scrape global_token dari Halaman Dashboard Sicyca...
+2025-12-09 08:09:04,311 - INFO -    --> Global token (JS var) berhasil di-parse dari HTML.
+2025-12-09 08:09:04,312 - INFO - Memanggil API Sicyca untuk data ulang tahun...
+2025-12-09 08:09:04,312 - INFO -    --> API URL: https://sicyca.dinamika.ac.id/sicyca_api.php
+2025-12-09 08:09:04,312 - INFO -    --> Payload: nim=23410100003, token=$2y$10$dLKlc.PFX1jbAEcg3qGlmuuUngtu7GpMGGa8bbmDahiIzic0ogWIO, ultah=True
+2025-12-09 08:09:05,027 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:05] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-09 08:09:06,605 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:11,310 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:16,605 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:21,303 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:26,897 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:31,359 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:31] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:36,657 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:41,608 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:41] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:46,654 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:51,356 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:09:56,653 - INFO - 127.0.0.1 - - [09/Dec/2025 08:09:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:10:01,356 - INFO - 127.0.0.1 - - [09/Dec/2025 08:10:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:10:06,659 - INFO - 127.0.0.1 - - [09/Dec/2025 08:10:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:10:11,352 - INFO - 127.0.0.1 - - [09/Dec/2025 08:10:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:10:16,653 - INFO - 127.0.0.1 - - [09/Dec/2025 08:10:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:10:22,171 - INFO - 127.0.0.1 - - [09/Dec/2025 08:10:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:10:45,679 - INFO - 127.0.0.1 - - [09/Dec/2025 08:10:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:11:45,489 - INFO - 127.0.0.1 - - [09/Dec/2025 08:11:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:12:45,667 - INFO - 127.0.0.1 - - [09/Dec/2025 08:12:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:13:45,393 - INFO - 127.0.0.1 - - [09/Dec/2025 08:13:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:14:45,667 - INFO - 127.0.0.1 - - [09/Dec/2025 08:14:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:15:45,360 - INFO - 127.0.0.1 - - [09/Dec/2025 08:15:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:16:45,666 - INFO - 127.0.0.1 - - [09/Dec/2025 08:16:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:16:48,564 - INFO - 127.0.0.1 - - [09/Dec/2025 08:16:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:16:51,604 - INFO - 127.0.0.1 - - [09/Dec/2025 08:16:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:16:56,301 - INFO - 127.0.0.1 - - [09/Dec/2025 08:16:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 08:16:57,732 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:16:57,807 - INFO - 127.0.0.1 - - [09/Dec/2025 08:16:57] "GET /tools HTTP/1.1" 200 -
+2025-12-09 08:17:00,993 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:17:01,170 - INFO - 127.0.0.1 - - [09/Dec/2025 08:17:01] "GET /krs_kuliah HTTP/1.1" 200 -
+2025-12-09 08:17:01,523 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:17:01,589 - INFO - API: Menerima request untuk data KRS
+2025-12-09 08:17:01,590 - INFO - 
+--- Memulai Scraping KRS ---
+2025-12-09 08:17:01,590 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:17:01,590 - INFO -    --> Memeriksa validitas sesi ke server...
+2025-12-09 08:17:03,255 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:17:04,149 - INFO - API: Berhasil mengambil 10 data KRS.
+2025-12-09 08:17:04,149 - INFO - 127.0.0.1 - - [09/Dec/2025 08:17:04] "GET /api/krs-data HTTP/1.1" 200 -
+2025-12-09 08:17:08,437 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:17:08,687 - INFO - 
+--- Scraping KRS Detail: {'t': 'matakuliah', 'mk': '36897', 'kls': 'P1'} ---
+2025-12-09 08:17:08,687 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:17:08,688 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:17:09,560 - INFO - 127.0.0.1 - - [09/Dec/2025 08:17:09] "POST /api/krs-detail HTTP/1.1" 200 -
+2025-12-09 08:17:48,441 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:17:48,565 - INFO - 
+--- Scraping KRS Detail: {'t': 'matakuliah', 'mk': '37246', 'kls': 'P1'} ---
+2025-12-09 08:17:48,566 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:17:48,566 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:17:49,360 - INFO - 127.0.0.1 - - [09/Dec/2025 08:17:49] "POST /api/krs-detail HTTP/1.1" 200 -
+2025-12-09 08:17:54,888 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:17:54,978 - INFO - 
+--- Scraping KRS Detail: {'t': 'kehadiran', 'mk': '37246', 'kls': 'P1'} ---
+2025-12-09 08:17:54,978 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:17:54,979 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:17:55,785 - INFO - 127.0.0.1 - - [09/Dec/2025 08:17:55] "POST /api/krs-detail HTTP/1.1" 200 -
+2025-12-09 08:18:14,105 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:18:14,242 - INFO - 
+--- Scraping KRS Detail: {'t': 'kehadiran', 'mk': '36933', 'kls': 'P1'} ---
+2025-12-09 08:18:14,242 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:18:14,242 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:18:15,048 - INFO - 127.0.0.1 - - [09/Dec/2025 08:18:15] "POST /api/krs-detail HTTP/1.1" 200 -
+2025-12-09 08:18:19,536 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:18:19,649 - INFO - 
+--- Scraping KRS Detail: {'t': 'kehadiran', 'mk': '37246', 'kls': 'P1'} ---
+2025-12-09 08:18:19,649 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:18:19,649 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:18:20,376 - INFO - 127.0.0.1 - - [09/Dec/2025 08:18:20] "POST /api/krs-detail HTTP/1.1" 200 -
+2025-12-09 08:18:23,957 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:18:24,026 - INFO - 
+--- Scraping KRS Detail: {'t': 'kehadiran', 'mk': '36895', 'kls': 'P1'} ---
+2025-12-09 08:18:24,026 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:18:24,027 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:18:24,747 - INFO - 127.0.0.1 - - [09/Dec/2025 08:18:24] "POST /api/krs-detail HTTP/1.1" 200 -
+2025-12-09 08:18:37,103 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:18:37,170 - INFO - 
+--- Scraping KRS Detail: {'t': 'kehadiran', 'mk': '36934', 'kls': 'P1'} ---
+2025-12-09 08:18:37,170 - INFO -    --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...
+2025-12-09 08:18:37,171 - INFO - Menggunakan sesi global yang ada di memori.
+2025-12-09 08:18:37,892 - INFO - 127.0.0.1 - - [09/Dec/2025 08:18:37] "POST /api/krs-detail HTTP/1.1" 200 -
+2025-12-09 08:18:44,676 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:18:44,748 - INFO - 127.0.0.1 - - [09/Dec/2025 08:18:44] "GET /tools HTTP/1.1" 200 -
+2025-12-09 08:18:47,860 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:18:47,929 - INFO - 127.0.0.1 - - [09/Dec/2025 08:18:47] "GET /account HTTP/1.1" 200 -
+2025-12-09 08:18:53,273 - INFO - === Koneksi ke database berhasil ===
+2025-12-09 08:18:53,453 - INFO - 127.0.0.1 - - [09/Dec/2025 08:18:53] "GET /tools HTTP/1.1" 200 -
+2025-12-09 08:39:19,042 - INFO - [GUARD DEBUG] Token invalid (Token expired). Redirecting to login.
+2025-12-09 08:39:19,043 - INFO - 127.0.0.1 - - [09/Dec/2025 08:39:19] "[32mGET / HTTP/1.1[0m" 302 -
+2025-12-09 08:39:19,294 - INFO - 127.0.0.1 - - [09/Dec/2025 08:39:19] "GET /login HTTP/1.1" 200 -
+2025-12-09 08:56:13,423 - INFO - [GUARD] Token(s) missing. Redirecting to login.
+2025-12-09 08:56:13,431 - INFO - 127.0.0.1 - - [09/Dec/2025 08:56:13] "[32mGET / HTTP/1.1[0m" 302 -
+2025-12-09 08:56:13,674 - INFO - 127.0.0.1 - - [09/Dec/2025 08:56:13] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2025-12-09 09:35:52,267 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2025-12-09 09:35:52,623 - INFO -  * Restarting with stat
+2025-12-09 09:35:57,512 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-09 09:35:57,520 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-09 09:35:57,521 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-09 09:35:57,521 - INFO - Scheduler started
+2025-12-09 09:35:57,522 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-09 09:35:57,522 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-09 09:35:57,530 - WARNING -  * Debugger is active!
+2025-12-09 09:35:57,535 - INFO -  * Debugger PIN: 288-901-657
+2025-12-09 09:36:44,746 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2025-12-09 09:36:44,865 - INFO -  * Restarting with stat
+2025-12-09 09:36:46,351 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-09 09:36:46,360 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-09 09:36:46,360 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-09 09:36:46,360 - INFO - Scheduler started
+2025-12-09 09:36:46,362 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-09 09:36:46,362 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-09 09:36:46,369 - WARNING -  * Debugger is active!
+2025-12-09 09:36:46,374 - INFO -  * Debugger PIN: 288-901-657
+2025-12-09 09:37:08,476 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2025-12-09 09:37:08,618 - INFO -  * Restarting with stat
+2025-12-09 09:37:09,621 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-09 09:37:09,631 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-09 09:37:09,631 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-09 09:37:09,631 - INFO - Scheduler started
+2025-12-09 09:37:09,632 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-09 09:37:09,632 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-09 09:37:09,639 - WARNING -  * Debugger is active!
+2025-12-09 09:37:09,644 - INFO -  * Debugger PIN: 288-901-657
