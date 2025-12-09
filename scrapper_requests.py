@@ -15,10 +15,10 @@ from controller.GateController import get_authenticated_session, reset_session_u
 
 load_dotenv()
 proxy_url = os.getenv("HTTP_PROXY_URL")
-USER = os.getenv("SICYCA_USER")
-PASS = os.getenv("SICYCA_PASS")
-if not USER or not PASS:
-    raise SystemExit("Set SICYCA_USER dan SICYCA_PASS di .env")
+# USER = os.getenv("SICYCA_USER")
+# PASS = os.getenv("SICYCA_PASS")
+# if not USER or not PASS:
+#     raise SystemExit("Set SICYCA_USER dan SICYCA_PASS di .env")
 # === ENV & TZ ===
 TZ = os.getenv("TIMEZONE", "Asia/Jakarta")
 JKT = ZoneInfo(TZ)
