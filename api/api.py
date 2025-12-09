@@ -1,11 +1,12 @@
-from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context
+from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session
 import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, get_session_status, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail
+from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi
+from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
 
@@ -92,10 +93,21 @@ def my_postprocessor_hook(d, task_id):
 # mengecek status koneksi Sicyca
 @api_bp.route('/status_koneksi')
 def api_status():
-    if get_session_status():
+    # 1. Ambil user_id dari session flask yang sedang login
+    user_id = session.get('user_id')
+    
+    # 2. Panggil fungsi dengan parameter user_id
+    # Hasilnya sekarang berupa dict: {'active': True/False, 'message': '...'}
+    status_result = get_session_status(user_id)
+    
+    # 3. Cek key 'active' dari dictionary result
+    if status_result.get('active'):
         return jsonify({"status": "ready", "message": "Koneksi Sicyca aman."})
     else:
-        return jsonify({"status": "error", "message": "Koneksi Sicyca gagal. Cookie mungkin tidak valid. Coba lakukan pencarian untuk login ulang."})
+        return jsonify({
+            "status": "error", 
+            "message": "Koneksi Sicyca gagal atau User belum login. Coba refresh halaman atau login ulang."
+        })
 
 # Untuk mencari mahasiswa atau staff
 @api_bp.route('/search', methods=['POST'])
@@ -611,7 +623,8 @@ def api_krs_data():
                 "message": "Data KRS tidak ditemukan atau sesi Sicyca habis.",
                 "data": []
             })
-        
+        masa_studi_text = fetch_masa_studi()
+
         # Convert DataFrame ke List of Dictionaries (JSON friendly)
         # orient='records' bikin jadi [{col1:val1, col2:val2}, ...]
         krs_list = df_krs.to_dict(orient='records')
@@ -619,7 +632,8 @@ def api_krs_data():
         logging.info(f"API: Berhasil mengambil {len(krs_list)} data KRS.")
         return jsonify({
             "success": True,
-            "data": krs_list
+            "data_krs": krs_list,
+            "masa_studi": masa_studi_text
         })
         
     except Exception as e:

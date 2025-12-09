@@ -1,18 +1,17 @@
 # scrapper_requests.py
-
 import os, json, time
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from dotenv import load_dotenv
-from urllib.parse import urljoin, urlparse, quote
+from urllib.parse import urljoin, quote
 import re
 from datetime import datetime, date, timedelta
-import threading
-import logging # Tambahkan import logging
+import logging
 from typing import List, Dict, Any, Optional
 from zoneinfo import ZoneInfo
-from requests.adapters import HTTPAdapter, Retry
+from flask import session, has_request_context
+from controller.GateController import get_authenticated_session, reset_session_user
 
 load_dotenv()
 proxy_url = os.getenv("HTTP_PROXY_URL")
@@ -29,9 +28,6 @@ COOKIES_FILE = "cookies.json"
 API_SICYCA = "/sicyca_api.php"
 
 # === STATE MANAGEMENT ===
-_session_lock = threading.Lock()
-_authenticated_session = None
-_last_validity_check = 0  # Timestamp kapan terakhir kali cek ke /dashboard
 VALIDITY_CHECK_INTERVAL = 300  # Cek validitas ke server max 5 menit sekali
 
 # # === HTTP session (retry) ===
@@ -44,210 +40,42 @@ VALIDITY_CHECK_INTERVAL = 300  # Cek validitas ke server max 5 menit sekali
 _cache_data: Dict[str, Any] = {}
 _cache_expire_at: float = 0.0
 
-def create_session():
-    """Membuat session baru dengan konfigurasi Retry dan Header standar."""
-    s = requests.Session()
-    retries = Retry(total=3, backoff_factor=0.3, status_forcelist=[429, 500, 502, 503, 504])
-    adapter = HTTPAdapter(max_retries=retries)
-    s.mount("https://", adapter)
-    s.mount("http://", adapter)
-    if proxy_url:
-        s.proxies = {
-            "http": proxy_url,
-            "https": proxy_url
-        }
-        logging.info(f"   --> Menggunakan Proxy: {proxy_url}")
-    s.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
-    })
-    return s
 
-def reset_session_memory():
-    """Membersihkan sesi global di memori agar dipaksa login ulang/baca file."""
-    global _authenticated_session, _last_validity_check
-    with _session_lock:
-        _authenticated_session = None
-        _last_validity_check = 0
-    logging.info("   --> [RESET] Memory sesi scraper telah dikosongkan.")
 
 def _midnight_epoch() -> float:
     now = datetime.now(JKT)
     midnight_tomorrow = datetime(now.year, now.month, now.day, tzinfo=JKT) + timedelta(days=1)
     return midnight_tomorrow.timestamp()
 
-def save_cookies(session):
-    data_to_save = { 
-    "cookies": session.cookies.get_dict(), 
-    "last_access_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-    }
-    try:
-        with open(COOKIES_FILE, 'w') as f:
-            json.dump(data_to_save, f)
-        logging.info("   --> Cookies baru berhasil disimpan ke cookies.json")
-    except Exception as e:
-            logging.error(f"   --> Gagal simpan cookies: {e}")
 
-def load_cookies(session):
-    if not os.path.exists(COOKIES_FILE): return False
-    try:
-        with open(COOKIES_FILE, 'r') as f:
-            data = json.load(f)
-            last_time = datetime.strptime(data['last_access_time'], "%Y-%m-%d %H:%M:%S")
-            if (datetime.now() - last_time) > timedelta(minutes=30):
-                logging.warning("   --> Cookies sudah kedaluwarsa.")
-                return False
-            session.cookies.update(data.get("cookies", {}))
-            logging.info("   --> Cookies berhasil dimuat dari file.")
-            return True
-    except (json.JSONDecodeError, KeyError):
-        logging.error("   --> Gagal memuat cookies.json, file rusak atau format salah.")
-        return False
-
-def check_session_validity(session, force_check=False):
-    logging.info("   --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...")
-    global _last_validity_check
-        
-    now = time.time()
-        # Jika belum 5 menit sejak cek terakhir, anggap masih valid (kecuali dipaksa)
-    if not force_check and (now - _last_validity_check < VALIDITY_CHECK_INTERVAL):
-            return True
-    
-    logging.info("   --> Memeriksa validitas sesi ke server...")
-    dashboard_url = urljoin(TARGET_URL, "/dashboard")
-    try:
-            response = session.get(dashboard_url, allow_redirects=True, timeout=10)
-            # Cek apakah URL akhir masih di dashboard (tidak terlempar ke login gate)
-            if response.status_code == 200 and "/dashboard" in response.url:
-                _last_validity_check = now
-                return True
-    except requests.RequestException: 
-        pass
-
-# GANTI FUNGSI LAMA DENGAN INI
-# def check_session_validity(session):
-#     logging.info("   --> Memeriksa validitas sesi dengan mengakses Sicyca Dashboard...")
-#     dashboard_url = urljoin(TARGET_URL, "/dashboard")
-#     try:
-#         response = session.get(dashboard_url, allow_redirects=True, timeout=15)
-#         response.raise_for_status()
-
-#         # --- Cek yang DIBUAT LEBIH KETAT ---
-#         parsed_url = urlparse(response.url)
-
-#         # Cek domainnya (netloc) HARUS sicyca, BUKAN gate
-#         is_sicyca_domain = "sicyca.dinamika.ac.id" in parsed_url.netloc
-#         # Cek path-nya HARUS diawali /dashboard
-#         is_dashboard_path = parsed_url.path.startswith("/dashboard")
-
-#         # Kalo dua-duanya bener, baru valid
-#         if is_sicyca_domain and is_dashboard_path:
-#             logging.info("   --> Sesi Sicyca masih valid (di domain sicyca & path /dashboard).")
-#             return True
-#         else:
-#             # Kalo di-redirect ke gate, itu pasti tidak valid
-#             if "gate.dinamika.ac.id" in parsed_url.netloc:
-#                 logging.warning(f"   --> Sesi tidak valid, di-redirect ke {response.url}")
-#             else:
-#                 logging.warning(f"   --> Sesi Sicyca tidak valid (URL akhir: {response.url}).")
-#             return False
-
-#     except requests.RequestException as e:
-#         logging.error(f"   --> Error saat cek validitas: {e}")
-#         pass # Lanjut ke return False
-
-#     logging.warning("   --> Sesi Sicyca sudah tidak valid (RequestException).")
-#     return False
-
-def login_gateDinamika(session):
-    try:
-        logging.info("1. [Login] Mengakses Gate untuk mendapatkan form...")
-        r = session.get(GATE_ROOT, allow_redirects=True, timeout=30)
-        r.raise_for_status()
-        soup = BeautifulSoup(r.text, "lxml")
-        form = soup.find("form")
-        if not form: raise Exception("Gagal menemukan form login.")
-        action_url = urljoin(r.url, form.get("action") or r.url)
-        payload = {inp.get("name"): inp.get("value", "") for inp in form.find_all("input") if inp.get("name")}
-        user_keys, pass_keys = ["username", "user", "userid"], ["password", "pass"]
-        for key in user_keys:
-            if key in payload: payload[key] = USER
-        for key in pass_keys:
-            if key in payload: payload[key] = PASS
-        headers = {"Referer": r.url, "Origin": f"{urlparse(r.url).scheme}://{urlparse(r.url).netloc}"}
-        logging.info("2. [Login] Mengirim kredensial...")
-        resp = session.post(action_url, data=payload, allow_redirects=True, timeout=30, headers=headers)
-        resp.raise_for_status()
-        logging.info("3. [Login] Menangani alur redirect SSO...")
-        html, cur_url = resp.text, resp.url
-        
-        # Handle SSO Redirects
-        for i in range(5):
-            soup = BeautifulSoup(html, "lxml")
-            form = soup.find("form")
-            if not form: break
-            action_url = urljoin(cur_url, form.get("action") or cur_url)
-            payload2 = {inp.get("name"): inp.get("value", "") for inp in form.find_all("input") if inp.get("name")}
-            r2 = session.post(action_url, data=payload2, allow_redirects=True, timeout=30, headers={"Referer": cur_url})
-            r2.raise_for_status()
-            html, cur_url = r2.text, r2.url
-        if "sicyca.dinamika.ac.id" in cur_url or "gate.dinamika.ac.id" in cur_url:
-            logging.info("   --> Login dan proses SSO berhasil.")
-            return True
-        else:
-            raise Exception("Gagal mendarat di domain yang benar setelah SSO.")
-    except Exception as e:
-        logging.error(f"   --> Proses login gagal: {e}")
-        return False
-
-def get_authenticated_session():
-    global _authenticated_session
-    with _session_lock:
-        if _authenticated_session and check_session_validity(_authenticated_session):
-            logging.info("Menggunakan sesi global yang ada di memori.")
-            return _authenticated_session
-        
-        # 2. Jika tidak ada, buat baru
-        logging.info("Membuat sesi baru...")
-        new_session = create_session()
-        
-        # 3. Coba load dari file cookies
-        if load_cookies(new_session):
-            # Paksa cek ke server karena kita baru muat dari file
-            if check_session_validity(new_session, force_check=True):
-                _authenticated_session = new_session
-                return _authenticated_session
-        
-        # 4. Login ulang jika cookie file mati
-        if login_gateDinamika(new_session):
-            save_cookies(new_session) 
-            _authenticated_session = new_session
-            # Reset timer validitas agar tidak langsung dicek lagi
-            global _last_validity_check
-            _last_validity_check = time.time()
-            return _authenticated_session
-            
-        return None
-
-# Fungsi cek status sesi tanpa memicu login baru
-def get_session_status():
+# === HELPER: DETEKSI USER ID OTOMATIS ===
+def _get_current_user_id(explicit_id=None):
     """
-    Fungsi ringan untuk memeriksa status cookie yang tersimpan tanpa
-    memicu login baru. Mengembalikan True jika valid, False jika tidak.
+    Menentukan User ID mana yang dipakai untuk scraping.
+    Prioritas:
+    1. Parameter explicit (jika dikirim manual)
+    2. Flask Session (jika dipanggil user via web/API)
+    3. Default '1' (jika dipanggil Scheduler/Background job)
     """
-    logging.info("Memulai pengecekan status sesi di latar belakang...")
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"})
+    if explicit_id:
+        return explicit_id
     
-    # Coba muat cookie dan periksa validitasnya
-    if load_cookies(session) and check_session_validity(session):
-        return True
-    get_authenticated_session()
-    return _authenticated_session is not None and check_session_validity(_authenticated_session)
+    if has_request_context():
+        # Sedang diakses via Browser/API
+        uid = session.get('user_id')
+        if uid:
+            return uid
+        logging.warning("[Scraper] Request context ada, tapi tidak ada user_id di session.")
     
+    # Fallback untuk Scheduler / Bot (Default User ID 1)
+    # Pastikan User ID 1 sudah di-seed di database!
+    logging.info("[Scraper] Menggunakan User ID default (1) untuk proses ini.")
+    return 1
 
-def scrape_data():
+def scrape_data(user_id=None):
     logging.info("\n--- Memulai Scraping Jadwal ---")
-    sess = get_authenticated_session()
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
     if not sess: return pd.DataFrame()
     try:
         akademik_url = urljoin(TARGET_URL, "/akademik")
@@ -269,9 +97,10 @@ def scrape_data():
         logging.error(f"Error saat scraping jadwal: {e}")
         return pd.DataFrame()
 
-def scrape_krs():
+def scrape_krs(user_id=None):
     logging.info("\n--- Memulai Scraping KRS ---")
-    sess = get_authenticated_session()
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
     if not sess: return pd.DataFrame()
 
     krs_url = urljoin(TARGET_URL, "/akademik/krs")
@@ -348,13 +177,69 @@ def scrape_krs():
         logging.error(f"Error KRS: {e}")
         return pd.DataFrame()
 
-def scrape_krs_detail(params: Dict[str, str]) -> Dict[str, Any]:
+
+def fetch_masa_studi(user_id=None) -> str:
+    """
+    Mengambil data Masa Studi dari API Sicyca.
+    Returns: String masa studi (contoh: "2021/2022 Ganjil - 2024/2025 Genap") atau strip "-" jika gagal.
+    """
+    logging.info("\n--- Mengambil Data Masa Studi ---")
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
+    if not sess:
+        return "-"
+
+    # 1. Ambil Token (Logic copas dari fetch_data_ultah agar konsisten)
+    token = None
+    try:
+        r = sess.get(GATE_ROOT, timeout=15)
+        match = re.search(r'var global_token\s*=\s*"([^"]+)"', r.text)
+        if match:
+            token = match.group(1)
+        else:
+            meta_match = re.search(r'name="csrf-token"\s+content="([^"]+)"', r.text)
+            if meta_match: token = meta_match.group(1)
+    except Exception as e:
+        logging.error(f"Gagal ambil token untuk masa studi: {e}")
+        return "-"
+
+    if not token:
+        logging.warning("Token tidak ditemukan saat fetch masa studi.")
+        return "-"
+
+    # 2. Request ke API
+    try:
+        api_url = urljoin(TARGET_URL, API_SICYCA)
+        # Payload sesuai request kamu
+        payload = {
+            "nim": USER,
+            "token": token,
+            "masa_studi": True 
+        }
+        
+        resp = sess.post(api_url, data=payload, timeout=10)
+        resp.raise_for_status()
+        
+        # Sicyca API biasanya return JSON: {"status":..., "data": "ISI DATA"}
+        json_resp = resp.json()
+        
+        # Ambil value dari key 'data'
+        masa_studi = json_resp.get("data", "-")
+        logging.info(f"   --> Masa studi didapat: {masa_studi}")
+        return masa_studi
+
+    except Exception as e:
+        logging.error(f"Error fetch masa studi: {e}")
+        return "-"
+        
+def scrape_krs_detail(params: Dict[str, str], user_id=None) -> Dict[str, Any]:
     """
     Mengambil detail KRS. Menangani struktur Tabel murni (Nilai/Kehadiran) 
     dan struktur Campuran (Matakuliah: Info Dosen + Tabel Peserta).
     """
     logging.info(f"\n--- Scraping KRS Detail: {params} ---")
-    sess = get_authenticated_session()
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
     if not sess:
         return {"success": False, "message": "Gagal mendapatkan sesi valid."}
 
@@ -513,10 +398,11 @@ def scrape_krs_detail(params: Dict[str, str]) -> Dict[str, Any]:
         logging.error(f"Error scrape krs detail: {e}")
         return {"success": False, "message": str(e)}
 
-def _generic_search(endpoint, query, label):
+def _generic_search(endpoint, query, label, user_id=None) -> pd.DataFrame:
     """Helper function untuk search mhs/staff agar tidak duplikasi kode"""
     logging.info(f"\n--- Cari {label}: '{query}' ---")
-    sess = get_authenticated_session()
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
     if not sess: return pd.DataFrame()
     try:
         search_url = urljoin(TARGET_URL, f"{endpoint}?q={quote(query)}")
@@ -547,14 +433,15 @@ def search_mahasiswa(query):
 def search_staff(query):
     return _generic_search("/komunitas/staff/", query, "Staff")
 
-def fetch_photo_from_sicyca(role, id_):
+def fetch_photo_from_sicyca(role, id_, user_id=None):
     """
     Fetch foto dari Sicyca menggunakan session authenticated.
     role: 'mahasiswa' atau 'staff'
     id_: NIM (untuk mahasiswa) atau NIK (untuk staff)
     Returns: bytes of image content, or None if failed.
     """
-    sess = get_authenticated_session()
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
     if not sess:
         logging.error(f"   --> Gagal fetch foto {role}/{id_}: Session tidak valid.")
         return None
@@ -586,7 +473,7 @@ def fetch_photo_from_sicyca(role, id_):
         
     
         
-def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
+def fetch_data_ultah(force_refresh: bool = False, user_id=None) -> Dict[str, Any]:
     """
     Satu fungsi untuk:
     - call API SICYCA (pakai env SICYCA_USER & SICYCA_TOKEN)
@@ -603,8 +490,8 @@ def fetch_data_ultah(force_refresh: bool = False) -> Dict[str, Any]:
     if not force_refresh and time.time() <= _cache_expire_at and _cache_data:
         logging.info("Mengambil data ultah dari cache.")
         return _cache_data
-
-    sess = get_authenticated_session()
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
     if not sess:
         raise Exception(status_code=401, detail="Gagal autentikasi ke Sicyca")
 

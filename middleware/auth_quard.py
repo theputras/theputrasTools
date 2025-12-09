@@ -8,30 +8,72 @@ from flask import current_app as app
 import logging
 from connection import get_connection
 
-JAKARTA_TZ = pytz.timezone(os.getenv("TIMEZONE"))
+JAKARTA_TZ = pytz.timezone(os.getenv("TIMEZONE", "Asia/Jakarta"))
 
 def login_required(view_func):
     @wraps(view_func)
     def wrapped_view(*args, **kwargs):
-        print("[GUARD DEBUG] Session keys:", list(session.keys()))
-
-        # 2. SEKARANG KITA BUTUH KEDUA TOKEN
+        # 1. AMBIL TOKEN
         access_token = session.get('access_token') or request.cookies.get('access_token')
-        refresh_token = request.cookies.get('refresh_token') # <-- AMBIL INI JUGA
+        refresh_token = request.cookies.get('refresh_token')
 
-        # Kalo salah satu token aja nggak ada, pasti logout
+        # Jika salah satu tidak ada, redirect login
         if not access_token or not refresh_token:
-            logging.info("[GUARD] Token(s) missing. Redirecting to login.")
-            # Pastiin kita clear cookie-nya kalo mau redirect
             resp = make_response(redirect(url_for('login_page', next=request.url)))
             session.clear()
             resp.set_cookie("access_token", "", expires=0)
             resp.set_cookie("refresh_token", "", expires=0)
             return resp
 
+        secret = current_app.config.get('SECRET_KEY') or app.secret_key
+
+        # 2. === VALIDASI REFRESH TOKEN (UUID) KE DATABASE ===
+        # Kita TIDAK pakai jwt.decode() karena refresh_token kamu adalah UUID string.
+        conn = None
+        cursor = None
+        refresh_valid = False
+        
         try:
-            # 3. DECODE ACCESS TOKEN (JWT)
-            secret = current_app.config.get('SECRET_KEY') or app.secret_key
+            conn = get_connection()
+            if conn:
+                cursor = conn.cursor(dictionary=True)
+                # Cek apakah token ada, tidak revoked, dan belum expired
+                cursor.execute(
+                    "SELECT user_id, expires_at, revoked FROM user_sessions WHERE refresh_token = %s", 
+                    (refresh_token,)
+                )
+                session_data = cursor.fetchone()
+                
+                if session_data:
+                    # Cek Status Revoked
+                    if session_data['revoked'] == 1:
+                        logging.warning(f"[GUARD] Refresh token revoked. Logout.")
+                    # Cek Expired (expires_at di DB vs Sekarang)
+                    elif session_data['expires_at'] < datetime.now():
+                        logging.info(f"[GUARD] Refresh token expired database time. Logout.")
+                        # Opsional: Set revoked=1 di sini biar database bersih
+                    else:
+                        # Token Valid!
+                        refresh_valid = True
+                else:
+                     logging.warning(f"[GUARD] Refresh token tidak ditemukan di DB.")
+
+        except Exception as e:
+            logging.error(f"[GUARD] DB Check Error: {e}")
+        finally:
+            if cursor: cursor.close()
+            if conn: conn.close()
+
+        # Jika Refresh Token Invalid secara Database -> TENDANG
+        if not refresh_valid:
+            resp = make_response(redirect(url_for('login_page', next=request.url)))
+            session.clear()
+            resp.set_cookie("access_token", "", expires=0)
+            resp.set_cookie("refresh_token", "", expires=0)
+            return resp
+
+        # 3. === VALIDASI ACCESS TOKEN (JWT) ===
+        try:
             payload = jwt.decode(
                 access_token,
                 secret,
@@ -40,62 +82,32 @@ def login_required(view_func):
                 leeway=30
             )
             
-            # Cek kalo udah expired
+            # Cek expired JWT
             exp_time = datetime.fromtimestamp(payload['exp'], JAKARTA_TZ)
             if exp_time < datetime.now(JAKARTA_TZ):
                 raise jwt.ExpiredSignatureError("Token expired")
-
-            # 4. === INI BAGIAN BARU: VALIDASI KE DATABASE ===
-            user_id = payload['sub']
-            session_status = None
-            conn = None
-            cursor = None
-            try:
-                conn = get_connection()
-                if conn:
-                    cursor = conn.cursor(dictionary=True)
-                    # Cek pake refresh_token DAN user_id
-                    cursor.execute(
-                        "SELECT revoked FROM user_sessions WHERE refresh_token = %s AND user_id = %s", 
-                        (refresh_token, user_id)
-                    )
-                    session_status = cursor.fetchone()
-                else:
-                    logging.error("[GUARD] DB connection failed.")
-            except Exception as e:
-                logging.error(f"[GUARD] DB check error: {e}")
-            finally:
-                if cursor: cursor.close()
-                if conn: conn.close()
-
-            # 5. CEK HASIL DARI DATABASE
-            if not session_status:
-                # Skenario aneh: Token JWT-nya valid, 
-                # tapi refresh_token-nya nggak ada di DB
-                logging.warning(f"[GUARD] Session not found in DB for user {user_id}. Forcing logout.")
-                raise jwt.InvalidTokenError("Session not in DB")
-
-            if session_status['revoked'] == 1:
-                # INI DIA! Session-nya di-revoke (misal dari 'Logout All')
-                logging.warning(f"[GUARD] Session revoked for user {user_id}. Forcing logout.")
-                raise jwt.InvalidTokenError("Session revoked")
             
-            # === AKHIR DARI BAGIAN BARU ===
-
-            # Kalo lolos semua cek di atas, baru kita aman
+            # Simpan user info ke global object 'g'
             g.user = payload
 
-        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
-            logging.info(f"[GUARD DEBUG] Token invalid ({e}). Redirecting to login.")
-            # Kalo token-nya bermasalah (expired, revoked, dll), 
-            # kita bersihin dan redirect
-            resp = make_response(redirect(url_for('login_page')))
+        except jwt.ExpiredSignatureError:
+            logging.info("[GUARD] Access Token Expired.")
+            # TODO: Di sini idealnya kita lakukan Auto-Refresh Access Token 
+            # karena Refresh Token (di langkah 2) sudah terbukti VALID.
+            # Tapi untuk sekarang, redirect login dulu biar aman.
+            resp = make_response(redirect(url_for('login_page', next=request.url)))
             session.clear()
             resp.set_cookie("access_token", "", expires=0)
-            resp.set_cookie("refresh_token", "", expires=0)
             return resp
 
-        # Lolos
+        except jwt.InvalidTokenError as e:
+            logging.warning(f"[GUARD] Access Token Rusak: {e}")
+            resp = make_response(redirect(url_for('login_page', next=request.url)))
+            session.clear()
+            resp.set_cookie("access_token", "", expires=0)
+            return resp
+
+        # Lolos semua pengecekan
         return view_func(*args, **kwargs)
         
     return wrapped_view

@@ -20,7 +20,8 @@ from models.auth_api import auth_bp
 from flask_cors import CORS
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import scrape_data, reset_session_memory
+from scrapper_requests import scrape_data
+from controller.GateController import reset_session_user
 from middleware.auth_quard import login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
 from models.auth_api import _revoke_refresh_token, _revoke_all_user_sessions
@@ -434,7 +435,7 @@ def reset_scraper_session():
                 logging.warning("User mencoba reset session, tapi cookies.json tidak ditemukan.")
                 
             # 2. Hapus Sesi di Memory (RAM) <-- INI KUNCI FIX-NYA
-            reset_session_memory()
+            reset_session_user()
             
     except Exception as e:
             logging.error(f"Gagal menghapus cookies.json: {e}")
