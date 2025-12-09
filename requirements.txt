@@ -16,3 +16,4 @@ flask-cors
 webauthn
 yt-dlp
 gunicorn
+pysocks
