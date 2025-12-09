@@ -24868,3 +24868,27 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-12-09 15:13:44,994 - INFO - 127.0.0.1 - - [09/Dec/2025 15:13:44] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-09 15:14:45,305 - INFO - 127.0.0.1 - - [09/Dec/2025 15:14:45] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-09 15:15:45,001 - INFO - 127.0.0.1 - - [09/Dec/2025 15:15:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-09 15:16:48,076 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-09 15:16:48,085 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-09 15:16:48,085 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-09 15:16:48,086 - INFO - Scheduler started
+2025-12-09 15:16:48,087 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-09 15:16:48,087 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-09 15:16:48,106 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.34.22:5000
+2025-12-09 15:16:48,107 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-09 15:16:48,108 - INFO -  * Restarting with stat
+2025-12-09 15:16:49,237 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-09 15:16:49,247 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-09 15:16:49,247 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-09 15:16:49,247 - INFO - Scheduler started
+2025-12-09 15:16:49,248 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-09 15:16:49,248 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-09 15:16:49,257 - WARNING -  * Debugger is active!
+2025-12-09 15:16:49,262 - INFO -  * Debugger PIN: 288-901-657

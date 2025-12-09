@@ -29,16 +29,23 @@ _active_sessions = {}
 gate_user_model = GateUser()
 gate_session_model = GateSession()
 
+# controller/GateController.py
+
 def create_session_obj():
-    """Membuat session request baru."""
+    """Membuat session request baru dengan konfigurasi standar."""
     s = requests.Session()
     retries = Retry(total=3, backoff_factor=0.3, status_forcelist=[429, 500, 502, 503, 504])
     adapter = HTTPAdapter(max_retries=retries)
     s.mount("https://", adapter)
     s.mount("http://", adapter)
     
-    if PROXY_URL:
+    # HANYA gunakan proxy jika stringnya valid dan tidak kosong
+    if PROXY_URL and len(PROXY_URL) > 5:
+        logging.info(f"Menggunakan Proxy: {PROXY_URL}")
         s.proxies = { "http": PROXY_URL, "https": PROXY_URL }
+    else:
+        # Pastikan proxies kosong (Direct Connection)
+        s.proxies = {}
     
     s.headers.update({
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
