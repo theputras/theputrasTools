@@ -1,0 +1,1250 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!--
+I was here since 08/11/2016
+-->
+<title>Sistem Informasi Cyber Campus - Universitas Dinamika</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta name="description" content="Sistem Informasi Cyber Campus. Sistem Informasi Akademik Mahasiswa Universitas Dinamika (STIKOM Surabaya)"/>
+<meta name="keywords" content="sistem informasi, cyber campus, mahasiswa, sistem informasi akademik, universitas dinamika, undika, STIKOM, STIKOM Surabaya, sicyca"/>
+<meta name="copyright" content="Copyright 2012 STIKOM Surabaya"/>
+<link rel="shortcut icon" href="https://sicyca.dinamika.ac.id/static/img/icon-stikom.png" />
+
+<link rel="stylesheet" href="https://sicyca.dinamika.ac.id/static/css/default.min.css?v=oUWmxGVN" type="text/css" />
+<!-- <link rel="stylesheet" href="https://sicyca.dinamika.ac.id/static/css/default.css" type="text/css" /> -->
+<link rel="stylesheet" href="https://sicyca.dinamika.ac.id/static/css/tab.css" type="text/css" />
+<link rel="stylesheet" href="https://sicyca.dinamika.ac.id/static/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="https://sicyca.dinamika.ac.id/static/css/sso.css" type="text/css" />
+<link rel="stylesheet" href="https://sicyca.dinamika.ac.id/static/css/reset.css" type="text/css" />
+
+
+<script type="text/javascript" language="javascript" src="https://sicyca.dinamika.ac.id/static/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://sicyca.dinamika.ac.id/static/js/bootstrap-modal.js"></script>
+<script type="text/javascript" language="javascript" src="https://sicyca.dinamika.ac.id/static/js/jquery-ui.js"></script>
+<script type="text/javascript" language="javascript" src="https://sicyca.dinamika.ac.id/static/js/init.js"></script>
+
+</head>
+<body>
+<script type="text/javascript">
+var uid = '90541';
+var wid = '273060';
+
+$(document).ready(function(){
+    SetBaseurl('https://sicyca.dinamika.ac.id');
+    SetServerDay('Rabu, 10 Desember 2025');
+    SetServerHour('09');
+    SetServerMinute('41');
+    SetServerSecond('51');    
+    SetShowMessage(true);    
+    startClockTimer();     
+
+    //gimana klo ajax???
+
+    /*            $.get("https://sicyca.dinamika.ac.id/photo/s_23410100003.jpg" , function(data){       
+                var elementFoto = $('<img class="profpic" width="65" src="https://sicyca.dinamika.ac.id/photo/s_23410100003.jpg" alt="profile picture" />');
+                $(elementFoto).load(function(){
+                    $("#profpicTarget").html(elementFoto);         
+                });                                            
+            });     
+        */
+         
+    //cekEmail();
+            
+});
+
+function hasSubmitFeedback(data)
+{
+    $("#popupContent").html( $('Thank you...') );
+    showMessage = false;
+    setTimeout(function(){
+        if(data == "1") // logout habis ini
+            window.location.href = 'https://sicyca.dinamika.ac.id/?logout';
+        else
+            window.location.href = 'https://sicyca.dinamika.ac.id/dashboard';
+    },100);                       
+}    
+</script>
+	<!-- HEADER START-->
+	<div id="firstheader">
+		<div id="firstheaderimage"></div>
+	</div>
+	
+	<!-- STIKOM APPS SINGLE SIGN ON -->
+	<!--
+	<div id="sso_header" style="background-color:#0d1c36;height:28px; display:block;">
+		<img id="sso_logo"  style="display:block; position:relative; left:5px; top:5px;margin-right:50px;float: left;" src="https://sicyca.dinamika.ac.id/static/img/sso/gate.png" />		
+		<ol style="margin-left:100px">
+			<li style="list-style-type:none;float:left; display:block; height:28px;">
+				<a href="#" style="text-decoration:none;display:block; background-color:#193565; height:28px; padding-right:12px; padding-left:12px;color:#ffffff;font-weight:bold; font-size:13px;line-height:26px" >Sicyca</a>
+			</li>
+		</ol>			
+	</div>	
+	
+	-->
+	
+	<!-- Tambahan ATW & sat = -->
+	
+
+
+
+
+    <!-- STIKOM APPS SINGLE SIGN ON HEADER -->
+    <div id="sso_header">
+		<a id="sso_logo" href="https://gate.dinamika.ac.id"> </a>		<ol class="sso_menu">
+          
+			
+					<li class="sso_menu_selected"> 
+						<a href="https://sicyca.dinamika.ac.id" >Sicyca</a>
+					</li>
+					<li>
+						<a href="http://ppta.dinamika.ac.id"  >PPTA</a>
+					</li>
+					<li>
+						<a href="http://eresources.dinamika.ac.id"  >E-resource</a>
+					</li>
+					<li >
+						<a href="http://library.dinamika.ac.id/"  >Perpustakaan</a>
+					</li>
+					
+        </ol> 
+		
+			<ul class="dropdown">
+				<li><a href="#">Lainnya<span class="moreicon"></span></a>
+					<ul class="sub_menu">
+						<li><a href="http://blog.dinamika.ac.id/">Blog Dosen</a></li>
+						<li><a href="http://www.dinamika.ac.id/">Website UNDIKA</a></li>                                                   
+						<li><a href="http://jurnal.dinamika.ac.id/">Jurnal UNDIKA</a></li> 
+					</ul>
+				</li>           
+			</ul>                       
+					
+				
+		
+		
+		<div class="sso_logincontent">
+						<a class="loginLink" href="https://gate.dinamika.ac.id"> <span class="homewhiteminiicon"></span>  Stikomapps</a> 
+						</div> 		
+		
+    </div>      
+    <!-- STIKOM APPS SINGLE SIGN ON -->   	
+	
+    <div id="secondheader">
+        <div class="content" style="position:relative;" >
+            <div style="height:100px;width:300px;padding-left:20px; padding-top:0px;position:absolute;left:0px;top:0px">
+                <img style="margin-top:11px;" src="https://sicyca.dinamika.ac.id/static/img/logo sicyca.png" alt="logo sicyca" height="55" />                
+                <div id="currentTime"></div>
+            </div>
+            <div style="position:absolute;right:0px; top:7px; width: 366px; height:92px">   
+                
+                <div style="float: left;width: 294px">
+				
+                    <div class="profpicfield nama">Putra Nur Muhammad</div>
+                    <div class="profpicfield nim">23410100003</div>
+                    <div class="profpicfield nim">23410100003@dinamika.ac.id</div>
+                    <div class="profpicfield actionprofile"><a href="https://sicyca.dinamika.ac.id/biodata">Data Lengkap</a> 
+					
+					| <a href="https://sicyca.dinamika.ac.id/logout.php" >Log Out</a>					</div>
+                </div>                                                                  
+                <div id="profpicTarget" style="float: right;width: 71px;background-color: white;height:86px">                                                                                   
+                    <img class="profpic" width="65" src="https://gate.dinamika.ac.id/api/foto_profil/23410100003" alt="profile picture" />                </div>            
+                                                  
+            </div>
+        </div>
+    </div>
+	
+	<!-- HEADER END-->    <!-- MENU NAVIGATION -->
+    <div id="thirdheader" style="
+        height: 32px;
+        background-color: #0061af;
+        padding: 8px 0px 0px;
+        width: auto;
+    ">
+        <ul id="menulist" style="
+            display: flex;
+            justify-content: left;
+            margin: auto 20px;
+            position: absolute;
+            bottom: auto;
+            list-style: none;
+        ">
+                                            <li class="selected">
+                    <a href="https://sicyca.dinamika.ac.id/dashboard" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">Dashboard</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/dashboard" class="selected">
+                                    Dashboard                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/dashboard/sskm" class="">
+                                        Detail SSKM                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/akademik" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">Akademik</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/akademik" class="">
+                                    Jadwal                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/konversi" class="">
+                                        Konversi Kurikulum                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/krs" class="">
+                                        KRS                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/khs" class="">
+                                        KHS                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/sisa-mk" class="">
+                                        Sisa Matakuliah                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/jadwal-ujian" class="">
+                                        Jadwal Ujian                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/histori" class="">
+                                        Histori                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/materi" class="">
+                                        Materi Kuliah                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/kalender" class="">
+                                        Kalender Akademik                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/akademik/administrasi" class="">
+                                        Administrasi Mahasiswa                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/pdf/?t=raport" class="">
+                                        Raport                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/mbkm" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">MBKM</a>
+                    <ul>
+                                                                                            </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/keuangan" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">Keuangan</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/keuangan" class="">
+                                    Info                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/keuangan/jadwal-pembayaran-keu" class="">
+                                        Jadwal Pembayaran                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/keuangan/spp" class="">
+                                        SPP                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/keuangan/sp" class="">
+                                        SP                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/keuangan/sema" class="">
+                                        Sema                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/keuangan/denda" class="">
+                                        Denda Pelanggaran                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/perpustakaan" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">Perpustakaan</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/perpustakaan" class="">
+                                    Info                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/perpustakaan/peminjaman" class="">
+                                        Peminjaman Buku                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/perpustakaan/rata-rata-kunjungan" class="">
+                                        Rata-rata kunjungan                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/perpustakaan/rata-rata-peminjaman" class="">
+                                        Rata-rata peminjaman                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/perpustakaan/peminjaman-ruang" class="">
+                                        Peminjaman Ruangan                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/perpustakaan/usulan-pustaka" class="">
+                                        Usulan Pustaka                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/perpustakaan/jurnal" class="">
+                                        Akses Database Jurnal Internasional                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/ppkp" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">PPKP</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/ppkp" class="">
+                                    Upload Form Bimbingan                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppkp/upload-laporan" class="">
+                                        Upload Laporan                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/ppta" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">PPTA</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/ppta" class="">
+                                    Status TA                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppta/proposal" class="">
+                                        Status Proposal/Buku                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppta/jadwal-dosen-pembimbing" class="">
+                                        Jadwal Pembimbing                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppta/dokumen" class="">
+                                        Dokumen Pendukung                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppta/usulan" class="">
+                                        Usulan Topik                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppta/ta-per-angkatan" class="">
+                                        Judul TA                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppta/daftar-proposal" class="">
+                                        Daftar Proposal TA                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/ppta/daftar-sidang" class="">
+                                        Daftar Sidang TA                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/toefl/daftar" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">TOEFL</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/toefl/daftar" class="">
+                                    Daftar TOEFL                                </a>
+                            </li>
+                                                                    </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/komunitas" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">Komunitas</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/komunitas" class="">
+                                    Cari                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/komunitas/mahasiswa" class="">
+                                        Mahasiswa                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/komunitas/staff" class="">
+                                        Staff                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/komunitas/ultah-staff" class="">
+                                        Ulang Tahun Staff                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/komunitas/ultah-mahasiswa" class="">
+                                        Ulang Tahun Mahasiswa                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                                            <li class="">
+                    <a href="https://sicyca.dinamika.ac.id/page/angket-visi-misi/index.php?user=446170505541537" style="
+                        height: 16px;
+                        display: block;
+                        text-decoration: none;
+                        padding: .6em 1.2em .8em;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: white;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    ">Angket</a>
+                    <ul>
+                                                                            <li>
+                                <a href="https://sicyca.dinamika.ac.id/page/angket-visi-misi/index.php?user=446170505541537" class="">
+                                    Angket Visi dan Misi                                </a>
+                            </li>
+                                                                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/dashboard/angket-dosen" class="">
+                                        Angket Dosen Matakuliah                                    </a>
+                                </li>
+                                                                                            <li>
+                                    <a href="https://sicyca.dinamika.ac.id/dashboard/angket-dosen-sfh" class="">
+                                        Angket Dosen SFH                                    </a>
+                                </li>
+                                                                        </ul>
+                </li>
+                    </ul>
+        <a onclick="showFeedback();" href="javascript:void(0)" class="feedback">Feedback</a>   
+    </div>
+    <div id="submenuheader" style="display:flex; justify-content:center; overflow-y:auto;">
+        <div class="">
+            <div id="sublinkcontent"></div>
+        </div>
+    </div>  
+    <!-- MENU NAVIGATION -->
+<!-- ini modal detail-->
+<div class="modal hide" id="VoteModal" >    
+    
+    
+    <form name="myform" action="https://sicyca.dinamika.ac.id/json/?t=feedback" method="post" target="dummyPost">    
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">x</a>
+            <h3 id="popupTitleAngket" >Isi Angket New Sicyca</h3>
+        </div>
+        <div id="popupContentAngket" class="modal-body">
+    
+            <p>Terima kasih anda telah menggunakan new sicyca versi Beta.</p>
+            <p>Demi kemajuan dan kenyamanan anda kami berharap anda dapat memberi masukan dan saran terhadap new sicyca ini.</p>
+            <p>Saran dan kritik anda sangat kami harapkan.</p>
+                         
+                <textarea id="comment" name="comment" style="height: 150px; width: 652px;"></textarea>    
+                <input type="hidden" name="logoutAfterSubmit" id="logoutAfterSubmit" value="0" />
+                              
+                    
+        </div>                
+        <div class="modal-footer" style="text-align:right">        
+            <button id="saveFeedback" type="submit"  class="bluishBtn button_small">Save Feedback</button>       
+        </div>   
+    </form>  
+    <iframe name="dummyPost" style="width: 1px; height: 1px; opacity: 0" ></iframe>               
+</div>      
+
+<div id="dashboardcontainer">
+    <div class="progressContainer">
+        <div class="progressTable">
+            <div class="left"></div>
+            <div class="center">
+                <div id="divMainProgress" class="mainProgress" style="width:0px;"><span class="walking"> Semester 5</span></div>
+                <div onclick="ShowDetailMKTempuh();" id="divSubProgress" class="subProgress_large" style="width:0px;">
+                    <span class="subProgressTextHolder">
+                        87 SKS                    </span>
+
+                </div>
+                <div style="position: absolute;width: 100%;top:24px;left:6px;z-index: 8; ">
+                                    </div>
+                <div class="dividerContainer">
+                    <div class="dummy " title="Semester 1"  ipk="3.78" ips="3.78" ipp="3.78" ipkgap="" ipsgap="" ippgap="" status=""  style="left: 5px;width:95px; ">&nbsp;</div><div class="divider" style="left: 98.75px;">&nbsp;</div><div class="dividerup"  style="left: 98.75px;">&nbsp;</div><div class="dummy " title="Semester 2"  ipk="3.83" ips="3.89" ipp="3.82" ipkgap="0.05" ipsgap="0.11" ippgap="0.04" status=""  style="left: 98.75px;width:95px; ">&nbsp;</div><div class="divider" style="left: 192.5px;">&nbsp;</div><div class="dividerup"  style="left: 192.5px;">&nbsp;</div><div class="dummy " title="Semester 3"  ipk="3.75" ips="3.75" ipp="3.45" ipkgap="-0.08" ipsgap="-0.14" ippgap="-0.37" status=""  style="left: 192.5px;width:95px; ">&nbsp;</div><div class="divider" style="left: 286.25px;">&nbsp;</div><div class="dividerup"  style="left: 286.25px;">&nbsp;</div><div class="dummy " title="Semester 4"  ipk="3.66" ips="3.41" ipp="3.45" ipkgap="-0.09" ipsgap="-0.34" ippgap="0" status=""  style="left: 286.25px;width:95px; ">&nbsp;</div>                    <div class="batasLulus" style="left: 760px;">&nbsp;</div>
+                </div>
+            </div>
+            <div class="right"></div>
+        </div>
+
+        <div class="small_connectorContainer" style="top:-3px;">
+            <div class="ProgressNote">
+                <div class="Left">
+                    <span class="masastudi"></span>   Masa studi
+                    <span class="skslulus"></span>   SKS tempuh
+
+                    
+
+                    <span class="batasLulus"></span>   Batas studi normal
+
+                </div>
+                <div class="Right"><span>Ket: </span>Mouse hover untuk detail</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- ini buat icon notif -->
+
+        
+
+                    <!-- klo ga ada icon notif -->
+            <div style="height: 8px;">&nbsp;</div>
+        
+        
+        <div class="boxtitledashboard" ><span class="square">&nbsp;</span>JADWAL HARI INI<span id="debug"></span></div>
+        <div class="timelinecontainer ">
+            <div class="navleft">
+                <div class="jam"></div>
+                <div class="jadwal-nav-left" onclick="SlideToRight();"></div>
+            </div>
+            <div class="timeSliderContent">
+                <div class="left-fader"></div>
+
+                
+
+                <div id="divTimeContent" class="timeContent">
+                      <div class="center-time-mark" style="left:375.66666666667px;"></div>                      <div class="timename">
+                          <span>07:00</span>
+                          <span>08:00</span>
+                          <span>09:00</span>
+                          <span>10:00</span>
+                          <span>11:00</span>
+                          <span>12:00</span>
+                          <span>13:00</span>
+                          <span>14:00</span>
+                          <span>15:00</span>
+                          <span>16:00</span>
+                          <span>17:00</span>
+                          <span>18:00</span>
+                          <span>19:00</span>
+                          <span>20:00</span>
+                          <span>21:00</span>
+                          <span>22:00</span>
+                      </div>
+                      <div class="timeEvent">
+
+<div class="event" style="width:350px;left:910px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> B406 </span>    <span class="matkul"> Manajemen Proyek Sistem Informasi </span></div><div class="event" style="width:350px;left:70px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> B402 </span>    <span class="matkul"> Analisis dan Perancangan Sistem Informasi </span></div><div class="event" style="width:280px;left:560px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> Lab. De Morgan </span>    <span class="matkul"> Analisis dan Perancangan Sistem Informasi </span></div>
+                      </div>
+                </div>
+                <div class="right-fader"></div>
+            </div>
+            <div class="navright">
+                <div class="jadwal-nav-right" onclick="SlideToLeft()"></div>
+            </div>
+        </div>
+
+        <div class="" style="width: 100%;">
+            <a class="sicycalink " style="width: 100px; float:right; display: inline-block;position: relative;top:-20px" href="https://sicyca.dinamika.ac.id/akademik">Jadwal minggu ini</a>
+        </div>
+
+
+        <div style="height: 8px;">&nbsp;</div>
+
+        <table cellpadding="0" cellspacing="0" style="width:884px">
+            <tr>
+                <td width="32%">
+                    <div class="boxtitledashboard" ><span class="square">&nbsp;</span>NILAI UJIAN<span id="debug"></span></div>
+                    <div class="tabset_content_dashboard">
+                        <div style="height: 8px;">&nbsp;</div>
+                        <table class="tabtable" style="width:100%;height:25px;">
+                            <tr>
+                                <th style="width: 133px;height: 20px">Matakuliah</th>
+                                <th style="width: 122px;height: 20px">NILAI</th>
+                            </tr>
+                        </table>
+                        <div id="listUjian" style="width:97%;padding-top:8px;padding-left:8px;height: 114px; overflow: scroll;overflow-x: hidden;position: relative">
+                            <div class="loadingdiv">&nbsp;</div>
+                        </div>
+                        <div class="tabfooter">  <a onclick="ShowDetailNilaiUjian();return false;" href="javascript:void(0)">Detail Nilai Ujian Lainnya &raquo; </a></div>
+                    </div>
+                    <div class="Left">
+                        <span class="uas"></span>   Nilai UAS&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="uts"></span>   Nilai UTS
+
+
+                    </div>
+					<br/>
+                </td>
+<!--
+				<td width="2%"></td>
+                <td width="32%">
+                    <div class="boxtitledashboard" ><span class="square">&nbsp;</span>NILAI PRAKTIKUM<span id="debug"></span></div>
+                    <div class="tabset_content_dashboard">
+                        <div style="height: 8px;">&nbsp;</div>
+                        <table class="tabtable" style="width:100%;height:25px;">
+                            <tr>
+                                <th style="width: 133px;height: 20px">Praktikum</th>
+                                <th style="width: 122px;height: 20px">Pert</th>
+                                <th style="width: 122px;height: 20px">Nilai</th>
+                            </tr>
+                        </table>
+                        <div id="listPrak" style="width:97%;padding-top:8px;padding-left:8px;height: 127px; overflow: scroll;overflow-x: hidden;position: relative">
+                            <div class="loadingdiv">&nbsp;</div>
+                        </div>
+
+
+                        <div class="tabfooter">  <a onclick="ShowDetailNilaiPraktikum();return false;" href="javascript:void(0)">Detail Nilai Praktikum Lainnya &raquo; </a></div>
+                    </div>
+
+                </td>
+-->
+                <td width="2%"></td>
+                <td width="32%" >
+
+                    <div class="boxtitledashboard" ><span class="square">&nbsp;</span>SSKM<span id="debug"></span></div>
+                    <div class="tabset_content_dashboard">
+
+
+                        
+                            <div style="width:100%; height: 150px;padding-top: 0px;" id="SSKMgraph"></div>
+                            
+                            <span style="float: left">&nbsp;&nbsp;Perolehan SSKM : &nbsp;</span>
+                            <div class="progressback">
+                                                                <div class="progressblue" style="width: 125px;color: white">
+                                    100%
+                                </div>
+                            </div>
+                            
+
+
+                        <div class="tabfooter">  <a href="https://sicyca.dinamika.ac.id/dashboard/sskm">Detail SSKM &raquo; </a></div>
+                    </div>
+
+                </td>
+				<td width="2%"></td>
+                <td width="32%" ></td>
+            </tr>
+        </table>
+
+
+
+
+
+
+    </div>
+</div>
+
+
+<!-- ini modal detail-->
+<div class="modal hide" id="DetailSSKMModal" >
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3 id="popupTitle" ></h3>
+    </div>
+    <div id="popupContent" class="modal-body">
+        <div class="loadingdiv">&nbsp;</div>
+    </div>
+    <div class="modal-footer" style="text-align:right">
+        <button type="button" data-dismiss="modal" class="bluishBtn button_small">Close</button>
+    </div>
+</div>
+
+
+
+<!-- ini modal detail-->
+<div class="modal hide" id="mainAlertPrak" >
+    <div class="modal-header">
+        <a class="close" onclick="jumpToMenuAngket();">x</a>
+        <h3>ISI ANGKET PRAKTIKUM</h3>
+    </div>
+    <div class="modal-body">
+        <p>PERHATIAN!</p>
+        <p>Anda masih memiliki tunggakan mengisi angket praktikum sebanyak 0 kelas.<br/>
+        Batas akhir mengisi angket adalah tanggal <br/>
+        Untuk mengisi angket, silahkan klik menu angket dosen setelah menekan tombol OK atau di menu Dashboard->Angket dosen.<br/>
+        Isilah angket dengan jujur karena meskipun online, KERAHASIAAN jawaban Anda tetap TERJAMIN.</p>
+        <p>TERIMA KASIH :)</p>
+    </div>
+    <div class="modal-footer" style="text-align:right">
+        <button type="button" onclick="jumpToMenuAngket();" class="bluishBtn button_small">OK, Isi angket sekarang</button>
+    </div>
+</div>
+
+<div class="modal hide" id="mainAlert" >
+    <div class="modal-header">
+        <a class="close" onclick="jumpToMenuAngket();">x</a>
+        <h3>ISI ANGKET DOSEN</h3>
+    </div>
+    <div class="modal-body">
+        <!--<p>PERHATIAN!</p>-->
+        <!--<p>Anda masih memiliki tunggakan mengisi angket dosen SFH sebanyak 0 kelas.<br/>
+        Batas akhir mengisi angket adalah tanggal <br/>
+        Untuk mengisi angket, silahkan klik menu angket dosen setelah menekan tombol OK atau di menu Dashboard->Angket dosen.
+        Apabila mhs mengisi angket, maka akan mendapat point SSKM bidang managerialship sebesar 1 untuk tiap kelas.<br/>
+        Isilah angket dengan jujur karena meskipun online, KERAHASIAAN jawaban Anda tetap TERJAMIN.</p>
+        <p>Penambahan poin SSKM dapat langsung dicek di menu Dashboard->Detail SSKM.<br/>
+        TERIMA KASIH :)</p>-->
+		<p>Hai semua, kamu dimohon berpartisipasi untuk isi angket ini ya, ada 0 kelas. Angket ini sebagai feedback untuk perbaikan SFH <br/>
+		Batas akhir mengisi angket adalah tanggal <br/>
+        Untuk mengisi angket, silahkan klik menu angket dosen setelah menekan tombol OK atau di menu Dashboard->Angket dosen.
+         poin SSKM akan menjadi milik kamu setelah angket ini kamu isi.<br/>
+        Isilah angket dengan jujur karena meskipun online, KERAHASIAAN jawaban kamu tetap TERJAMIN.</p>
+        <p>Penambahan poin SSKM dapat langsung dicek di menu Dashboard->Detail SSKM.<br/>
+        TERIMA KASIH :)</p>
+    </div>
+    <div class="modal-footer" style="text-align:right">
+        <button type="button" onclick="jumpToMenuAngket();" class="bluishBtn button_small">OK, Isi angket sekarang</button>
+    </div>
+</div>
+
+<div class="modal hide" id="mainAlertSfh" >
+    <div class="modal-header">
+        <a class="close" onclick="jumpToMenuAngketSfh();">x</a>
+        <h3>ISI ANGKET DOSEN SFH (School From Home)</h3>
+    </div>
+    <div class="modal-body">
+		<p>Hai semua, kamu dimohon berpartisipasi untuk isi angket ini ya, ada 0 kelas. Angket ini sebagai feedback untuk perbaikan SFH <br/>
+		Batas akhir mengisi angket adalah tanggal <br/>
+        Untuk mengisi angket, silahkan klik menu angket dosen setelah menekan tombol OK atau di menu Dashboard->Angket dosen.
+         poin SSKM akan menjadi milik kamu setelah angket ini kamu isi.<br/>
+        Isilah angket dengan jujur karena meskipun online, KERAHASIAAN jawaban kamu tetap TERJAMIN.</p>
+        <p>Penambahan poin SSKM dapat langsung dicek di menu Dashboard->Detail SSKM.<br/>
+        TERIMA KASIH :)</p>
+    </div>
+    <div class="modal-footer" style="text-align:right">
+        <button type="button" onclick="jumpToMenuAngketSfh();" class="bluishBtn button_small">OK, Isi angket sekarang</button>
+    </div>
+</div>
+
+<div class="modal hide" id="mainBrilian" >
+    <div class="modal-header">
+        <a class="close" onclick="jumpToMenuBrilian();">x</a>
+        <h3>ISI ANGKET BRILIAN</h3>
+    </div>
+    <div class="modal-body">
+        <p>PERHATIAN!</p>
+        <p>Silakan Anda mengisi angket BRILIAN..<br/>
+        Batas akhir mengisi angket adalah tanggal .<br/>
+        Isilah angket dengan jujur karena meskipun online, KERAHASIAAN jawaban Anda tetap TERJAMIN.<br/>
+		Isilah angket ini sebagai bentuk kesadaran Anda guna perbaikan pembelajaran di STIKOM mendatang.</p>
+        <p>TERIMA KASIH :)</p>
+    </div>
+    <div class="modal-footer" style="text-align:right">
+        <button type="button" onclick="jumpToMenuBrilian();" class="bluishBtn button_small">OK, Isi angket sekarang</button>
+    </div>
+</div>
+
+<div class="modal hide" id="mainAngketAI" >
+    <div class="modal-header">
+        <a class="close">x</a><!-- onclick="jumpToMenuBrilian();"-->
+        <h3>KUESIONER AKREDITASI INSTITUT</h3>
+    </div>
+    <div class="modal-body">
+        <p>Kolega Mahasiswa yang saya hormati dan saya banggakan,</p>
+        <p>Dalam rangka mempersiapkan Akreditasi Institusi, saya mohon bantuan dan kerjasama dari kolega Mahasiswa untuk mengisi angket
+		sosialisasi Visi, Misi dan Tujuan Institut Bisnis dan Informatika Stikom Surabaya (selanjutnya disebut Stikom Surabaya),
+		berikut ini disampaikan kuesioner untuk  evaluasi upaya yang dilakukan Stikom Surabaya dalam mengukur tingkat kepuasan
+		mahasiswa terhadap pelayanan akademik di Stikom Surabaya.<br/><br />
+        Mohon waktu sekitar 5 menit untuk dapat mengisi kuesioner singkat berikut ini.<br /><br />
+		Terima kasih atas perhatian dan kerjasamanya.<br/></p>
+		<p>Tim Akreditasi Institusi</p>
+
+    </div>
+    <div class="modal-footer" style="text-align:right">
+        <button type="button" onclick="jumpToMenuBrilian();" class="bluishBtn button_small">OK, Isi angket sekarang</button>
+    </div>
+</div>
+
+<div class="modal hide" id="sebelumUjianAlert">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3 id="sebelumUjianAlertTitle" >Pengumuman Ujian</h3>
+    </div>
+    <div class="modal-body" id="parent-element" style="overflow-y: scroll; max-height: 26rem;">
+        <div style="display: flex; width: 100%; justify-content: center;">
+            <img class="" src="https://sicyca.dinamika.ac.id/static/img/Poster_Pengumuman_Ujian.jpeg" style="max-height: 26rem;">
+        </div>
+    </div>
+    <div class="modal-footer" style="text-align:right">
+        <button type="button" data-dismiss="modal" class="bluishBtn button_small">Tutup</button>
+    </div>
+</div>
+
+<!--
+<div class="modal hide" id="mainPengumumanAak" >
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>PENGUMUMAN AAK</h3>
+    </div>
+    <div class="modal-body">
+        <p>UAS akan dilaksanakan tgl 5-18 Januari 2017, Mahasiswa yang kehadiran kuliah kurang dari 75% tidak diperbolehkan mengikuti UAS/Ujian Akhir.<br />
+		Mohon selalu cek kehadiran kuliah Saudara, jika terdapat ketidak sesuaian data, segera klarifikasi ke dosen pengampu matakuliah masing-masing atau BAAK.<br />
+		Pengajuan Dispensasi Presensi Kuliah karena Kegiatan Mahasiswa,  BAAK terima paling lambat tanggal 14 Desember 2016. Lebih dari tanggal tersebut, pengajuan dispensasi ditolak.<br />
+Sedangkan dispensasi presensi kuliah karena sakit, masih bisa BAAK terima sampai minggu terakhir perkuliahan.</p>
+<br /><br />
+<p>Terima kasih - BAAK</p>
+
+    </div>
+    <div class="modal-footer" style="text-align:right">
+		<button type="button" data-dismiss="modal" class="bluishBtn button_small">Close</button>
+    </div>
+</div>
+-->
+
+
+    
+
+
+
+<!-- ini hanya ada di dashboard saja  -->
+<link rel="stylesheet" href="https://sicyca.dinamika.ac.id/static/css/tipsy.css" type="text/css" />
+<script src="https://sicyca.dinamika.ac.id/static/js/highcharts.js"></script>
+<script type="text/javascript" language="javascript" src="https://sicyca.dinamika.ac.id/static/js/jquery.event.drag-1.5.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://sicyca.dinamika.ac.id/static/js/jquery.tipsy.js"></script>
+<script type="text/javascript" language="javascript" src="https://sicyca.dinamika.ac.id/static/js/jquery.hdxtipsy.js"></script>
+<!-- ini hanya ada di dashboard saja  -->
+<script type="text/javascript" >
+    var last = 0;
+    var lastDrag = 0;
+    var chart;
+
+
+    function jumpToMenuAngket()
+    {
+        window.location.href = 'https://sicyca.dinamika.ac.id/dashboard/angket-dosen';
+		//window.location.href = 'https://sicyca.dinamika.ac.id/dashboard/angket-dosen-sfh';
+    }
+	
+	function jumpToMenuAngketSfh()
+    {        
+		window.location.href = 'https://sicyca.dinamika.ac.id/dashboard/angket-dosen-sfh';
+    }
+
+	function jumpToMenuBrilian()
+    {
+        window.location.href = 'https://sicyca.dinamika.ac.id/dashboard/angket-brilian';
+    }
+
+    function SlideToLeft() {
+        var targetSlide = lastDrag - 500;
+        if(targetSlide > 25)
+            targetSlide = 25;
+        if(targetSlide < -1500)
+            targetSlide = -1500;
+
+        $("#divTimeContent").stop().animate({
+                left: targetSlide
+            }, 500, function(){
+                lastDrag = targetSlide;
+        });
+        return false;
+    }
+    function SlideToRight(){
+        var targetSlide = lastDrag + 500;
+        if(targetSlide > 25)
+            targetSlide = 25;
+        if(targetSlide < -1500)
+            targetSlide = -1500;
+        $("#divTimeContent").stop().animate({
+                left: targetSlide
+            }, 500, function(){
+                lastDrag = targetSlide;
+        });
+        return false;
+    }
+    function ShowDetailNilaiUjian(){
+        $("#popupTitle").html("DETAIL NILAI UJIAN");
+        $("#DetailSSKMModal").modal('show');
+        $("#popupContent").html( $('<div class="loadingdiv">&nbsp;</div>') );
+        $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=nilaiujian" , function(data){
+            $(".loadingdiv").hide();
+            $("#popupContent").html(data);
+
+            var modalHeight = $(".modal").height();
+            var marginTop = -(modalHeight/2);
+            $(".modal").css('marginTop', marginTop + 'px');
+        });
+    }
+    function ShowDetailNilaiPraktikum(){
+        $("#popupTitle").html("DETAIL NILAI Praktikum");
+        $("#DetailSSKMModal").modal('show');
+        $("#popupContent").html( $('<div class="loadingdiv">&nbsp;</div>') );
+        $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=nilaipraktikum" , function(data){
+            $(".loadingdiv").hide();
+            $("#popupContent").html(data);
+
+            var modalHeight = $(".modal").height();
+            var marginTop = -(modalHeight/2);
+            $(".modal").css('marginTop', marginTop + 'px');
+        });
+    }
+    function ShowDetailMKTempuh(){
+        $("#popupTitle").html("Detail Matakuliah Tempuh");
+        $("#DetailSSKMModal").modal('show');
+        $("#popupContent").html( $('<div class="loadingdiv">&nbsp;</div>') );
+        $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=mktempuh" , function(data){
+            $(".loadingdiv").hide();
+            $("#popupContent").html(data);
+
+            var modalHeight = $(".modal").height();
+            var marginTop = -(modalHeight/2);
+            $(".modal").css('marginTop', marginTop + 'px');
+        });
+    }
+    function ShowDetailMKUlang(){
+        $("#popupTitle").html("Detail Matakuliah Ulang");
+        $("#DetailSSKMModal").modal('show');
+        $("#popupContent").html( $('<div class="loadingdiv">&nbsp;</div>') );
+        $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=mkulang" , function(data){
+            $(".loadingdiv").hide();
+            $("#popupContent").html(data);
+            var modalHeight = $(".modal").height();
+            var marginTop = -(modalHeight/2);
+            $(".modal").css('marginTop', marginTop + 'px');
+        });
+    }
+    function ShowDetailMKPerbaikan(){
+        $("#popupTitle").html("Detail Matakuliah Perbaikan");
+        $("#DetailSSKMModal").modal('show');
+        $("#popupContent").html( $('<div class="loadingdiv">&nbsp;</div>') );
+        $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=mkperbaikan" , function(data){
+            $(".loadingdiv").hide();
+            $("#popupContent").html(data);
+
+            var modalHeight = $(".modal").height();
+            var marginTop = -(modalHeight/2);
+            $(".modal").css('marginTop', marginTop + 'px');
+        });
+    }
+    function nextAnim($elem) {
+        $elem.eq(0).fadeIn(400,function(){
+                    nextAnim($elem.slice(1));  // slice off the first element
+        });
+    }
+    $(document).ready(function(){
+        $(".walking").hide();
+        $(".event").hide();
+        $(".subProgress_2").hide();
+        $(".subProgress_3").hide();
+        $(".subProgressTextHolder").hide();
+        var docHeight = $(document).height() * 0.8;
+        $(".modal").css('maxHeight', docHeight + 'px');
+        $("#divMainProgress").animate({
+            width:375        },600,function(){
+            $(".walking").fadeIn('fast');
+            $("#divSubProgress").animate({
+                width:454.16666666667            },400,function(){
+
+                $(".subProgress_2").fadeIn('fast');
+                $(".subProgress_3").fadeIn('fast');
+                $(".subProgressTextHolder").fadeIn('fast');
+                nextAnim($(".event"));
+                var targetSlide = -140;if(targetSlide > 25)    targetSlide = 25;if(targetSlide < -1500)    targetSlide = -1500;$("#divTimeContent").animate({        left: targetSlide    }, 1500, function(){        lastDrag = targetSlide;});            });
+
+        });
+        $("#divTimeContent").bind('dragstart',function( event ){
+            last =  event.offsetX - lastDrag;
+            return true;
+        }).bind('drag',function(event){
+            var targetDrag = event.offsetX - last;
+            if(targetDrag > 25)
+                targetDrag = 25;
+            if(targetDrag < -1500)
+                targetDrag = -1500;
+            $(this).css({
+                left: targetDrag //event.offsetX - last
+            });
+            lastDrag = targetDrag; //event.offsetX - last;
+        })
+        $(".dummy").tipsy();
+        $(".progressdot").hdxtipsy();
+
+
+        
+		
+		
+		
+
+
+        //sskm graph
+        //chart init
+                    chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'SSKMgraph',
+                    backgroundColor:'#F0F0F0',
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false ,
+                },
+                title: {
+                    text: 'Perolehan SSKM Mahasiswa '
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'IPK',
+                        align: 'high'
+                    }
+                },
+                tooltip: {
+                    formatter: function() {
+                        return this.point.name + ' : '+ this.y ;
+                    },
+                    followPointer: false,
+                    followTouchMove: false,
+                    distance: -12,
+                },
+                plotOptions: {
+                    pie: {
+                        size:'110%',
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function(){
+                                return this.y;
+                            },
+                            distance: -15,
+                            style: {
+                                color: 'white',
+                            },
+                        },
+                        showInLegend: true,
+                        events: {
+                            click: function(event) {
+                                var pointName = event.point.name ;
+
+                                // $("#popupTitle").html("DETAIL SSKM BIDANG "+ pointName);
+                                $("#popupTitle").html("DETAIL SSKM");
+                                $("#DetailSSKMModal").modal('show');
+                                $("#popupContent").html( $('<div class="loadingdiv">&nbsp;</div>') );
+                                $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=sskm&b=" + pointName.substring(7,8) , function(data){
+                                    $(".loadingdiv").hide();
+                                    $("#popupContent").html(data);
+
+                                    var modalHeight = $(".modal").height();
+                                    var marginTop = -(modalHeight/2);
+                                    //$(".modal").css('marginTop', marginTop + 'px');
+                                });
+
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: 0,
+                    y: 25,
+                    width: 100,
+                    borderWidth: 1,
+                    backgroundColor: '#FFFFFF',
+                    shadow: true
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Browser share',
+                    data: [
+                            
+                            {
+                                name: 'Perolehan',
+                                y: 309,
+                                // color: '#056AF7',
+                            },
+                            {
+                                name: 'Kekurangan',
+                                y: 0,
+                                // color: '#d1534f',
+                            },
+                                                      ]
+                    }]
+                });
+        
+
+        $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=dashboard_nilai_ujian" , function(data){
+            $("#listUjian .loadingdiv").hide();
+            $("#listUjian").html(data);
+            $(".progressdot").hdxtipsy();
+        });
+
+        $.get("https://sicyca.dinamika.ac.id/table-proxy/?t=dashboard_nilai_praktikum" , function(data){
+            $("#listPrak .loadingdiv").hide();
+            $("#listPrak").html(data);
+            $(".progressdot").hdxtipsy();
+        });
+    });
+</script>
+
+<style>
+    .modal-body p {
+        color: black;
+    }
+    figure {
+        display: block;
+    }
+    /* .ck.ck-toolbar.ck-toolbar_grouping {
+        border: none;
+    }
+    .ck.ck-content.ck-read-only {
+        border: none;
+    }
+    .ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-blurred {
+        border: none;
+    } */
+</style>
+<!-- <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+    .create(document.getElementById('deskripsi'), {
+        toolbar: []
+    })
+    .then(editor => {
+        // editor.isReadOnly = true;
+        editor.enableReadOnlyMode( 'my-feature-id' ); 
+        // const toolbarElement = editor.ui.view.toolbar.element;
+        // toolbarElement.style.display = 'none';
+    })
+    .catch(err => {
+        console.error(err);
+    })
+</script> -->
+<!-- FOOTER START -->
+<div id="footerpartner">
+    <div id="footershadow"></div>
+    <div class="content" style="padding-top: 12px;height: auto !important">
+        <table style="width: 100%;border-collapse:collapse; padding-left:20px; padding-right:20px">
+            <tr>
+                <td style="color: white;font-size: 12px; ">
+                    Copyright &copy; 2012 PPTI
+                    <br/>
+                    <img alt="sosmed" src="https://sicyca.dinamika.ac.id/static/img/logo_ist.png" />
+                    <br/>
+                    <br/>
+                    Powered by:
+                    <br/>
+                    <img alt="sosmed" src="https://sicyca.dinamika.ac.id/static/img/logo_hdx.png" />
+
+                </td>
+                <td valign="top" align="right">
+                    <h1>Universitas Dinamika</h1>
+                    <p>Jl. Raya Kedung Baruk 98, Surabaya 60298</p>
+                    <p>Telp. 031 - 8721731, Fax. 031 - 8710218</p>
+                    <p>Email : info@dinamika.ac.id</p>
+                    <p>Website : http://www.dinamika.ac.id</p>
+                    <br/>
+                    <div style="width:100%;position:relative">
+                        <div style="width: 216px; position:absolute; right:0px; top:5px;">
+                            <table >
+                                <tr>
+                                    <td><a href="http://www.facebook.com/pagestikomsurabaya"><img alt="sosmed" src="https://sicyca.dinamika.ac.id/static/img/sosmed_01.png" /></a></td>
+<!--									<td><a href="http://www.flickr.com/photos/stikomsurabaya/"><img alt="sosmed" src="/static/img/sosmed_02.png" /></a></td>
+-->
+                                    <td><a href="http://twitter.com/stikomsurabaya/"><img alt="sosmed" src="https://sicyca.dinamika.ac.id/static/img/sosmed_03.png" /></a></td>
+                                    <td><a href="http://www.youtube.com/stikomsurabaya/"><img alt="sosmed" src="https://sicyca.dinamika.ac.id/static/img/sosmed_04.png" /></a></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<!-- FOOTER END -->
+</body>
+</html>

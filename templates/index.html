@@ -123,21 +123,82 @@
         </div>
     </div>
 </div>
-        <div class="bg-gray-800 rounded-lg shadow-md p-6 mt-6 overflow-x-auto" x-data="{ lastUpdate: '' }">
+<!--- AREA ULANG TAHUN -->
+<div class="bg-gray-800 rounded-lg shadow-md p-6 mb-6" x-data="ultahApp()">
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fas fa-birthday-cake text-pink-500"></i>
+            <span>Ulang Tahun Hari Ini - <span class="text-blue-400" x-text="tanggal_hari_ini || '...'"></span></span>
+        </h2>
 
-          <h3>Ulang Tahun hari ini - <span class="text-blue-400 font-semibold" id="tanggal-hari-ini"></span></h3>
-      <table border="1" cellpadding="8" cellspacing="0" id="tabel-ultah" class="mx-auto">
-          <thead>
-              <tr>
-                  <th>Nama</th>
-                  <th>Prodi</th>
-                <th id="th-tgl-lahir">Tanggal Lahir</th>
-                <th id="th-umur">Umur</th>
-              </tr>
-          </thead>
-          <tbody></tbody>
-      </table>
+        <div class="flex items-center gap-2">
+            <div x-show="isLoading">
+                <span class="flex items-center text-xs font-semibold bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                    <svg class="animate-spin h-3 w-3 mr-2 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Memuat...
+                </span>
+            </div>
+            <div x-show="isUpdating" x-cloak>
+                <span class="flex items-center text-xs font-semibold bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
+                    <svg class="animate-spin h-3 w-3 mr-2" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+                    Menyegarkan...
+                </span>
+            </div>
+            <div x-show="!isLoading && !isUpdating && !error" x-cloak>
+                <span class="flex items-center text-xs font-semibold bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+                    <span class="h-2 w-2 mr-2 rounded-full bg-green-500"></span>
+                    Updated
+                </span>
+            </div>
+             <div x-show="error" x-cloak>
+                <span class="flex items-center text-xs font-semibold bg-red-500/20 text-red-400 px-3 py-1 rounded-full" x-text="error"></span>
+            </div>
         </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+            <thead>
+                <tr class="text-gray-400 border-b border-gray-600">
+                    <th class="p-3">Nama</th>
+                    <th class="p-3">Prodi</th>
+                    <th class="p-3">Tanggal Lahir</th>
+                    <th class="p-3 text-center">Umur</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-300">
+                
+                <tr x-show="isLoading && rows.length === 0">
+                    <td colspan="4" class="p-6 text-center text-gray-500 italic">Sedang mengambil data...</td>
+                </tr>
+
+                <template x-for="(mhs, index) in rows" :key="index">
+                    <tr class="border-b border-gray-700 hover:bg-gray-700/50 transition">
+                        <td class="p-3 font-medium text-white" x-text="mhs.nama"></td>
+                        <td class="p-3 text-gray-400" x-text="mhs.prodi"></td>
+                        <td class="p-3">
+                            <span x-text="formatPrivacyDate(mhs.tanggal_lahir)"></span>
+                        </td>
+                        <td class="p-3 text-center font-bold text-blue-400">
+                            <span x-text="isPrivacyOn ? 'XX' : mhs.umur"></span>
+                        </td>
+                    </tr>
+                </template>
+
+                <tr x-show="!isLoading && rows.length === 0">
+                    <td colspan="4" class="p-6 text-center text-gray-500 italic">
+                        Tidak ada yang ulang tahun hari ini (atau data kosong).
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
     </div>
     {% include 'nativeNav.html' %}
     <!-- <script>
@@ -462,96 +523,104 @@ async function loadJadwal() {
     }
 
     // --- FUNGSI LAMA: Load Data Ultah (Dimodif dikit) ---
-    async function loadUlangTahun() {
-        const cacheKey = 'dataUltah';
-        const tabelBody = document.querySelector('#tabel-ultah tbody');
-        const tanggalEl = document.getElementById('tanggal-hari-ini');
-        if (!tabelBody) return; // Stop kalo tabel nggak ada
+function ultahApp() {
+    return {
+        isLoading: false,
+        isUpdating: false,
+        rows: [],
+        tanggal_hari_ini: '',
+        error: null,
+        isPrivacyOn: false,
 
-        // Coba ambil dari cache dulu
-        const cachedData = isCacheValid(cacheKey);
-        if (cachedData) {
-            // console.log("Ultah: Load dari LocalStorage Cache.");
-            renderUltah(cachedData); // Tampilkan dari cache
-            return; // Selesai
-        }
+        init() {
+            // Setup Privacy Listener
+            this.isPrivacyOn = window.isPrivacyOnGlobal || false;
+            window.addEventListener('privacy-changed', (e) => {
+                this.isPrivacyOn = e.detail;
+            });
 
-        // Kalo nggak ada cache / basi, fetch baru
-        // console.log("Ultah: Fetch dari /api/fetch-data-ultah");
-        try {
-            const response = await fetch('/api/fetch-data-ultah'); 
-            if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
-            const data = await response.json();
+            // LOGIC UTAMA: Cek Cache dulu, kalau valid STOP. Kalau expired baru Fetch.
+            this.checkAndLoadData();
+        },
 
-            // Sukses! Simpen ke cache
-            setCache(cacheKey, data, 3600 * 6);
-            // Tampilkan ke HTML
-            renderUltah(data);
+        formatPrivacyDate(fullDate) {
+            if (!this.isPrivacyOn) return fullDate;
+            if (!fullDate) return '-';
+            const parts = fullDate.split(' ');
+            return parts.length >= 2 ? parts.slice(0, 2).join(' ') : fullDate;
+        },
 
-        } catch (error) {
-            console.error("Gagal fetch data ultah:", error);
-            tabelBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 10px; color: #F87171;">Gagal memuat data ultah.</td></tr>`;
+        checkAndLoadData() {
+            try {
+                const cached = localStorage.getItem('dataUltah');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    
+                    // 1. Cek Timestamp (Apakah data ini dari Hari Ini?)
+                    const savedDate = new Date(parsed.timestamp);
+                    const today = new Date();
+                    
+                    const isSameDay = savedDate.getDate() === today.getDate() &&
+                                      savedDate.getMonth() === today.getMonth() &&
+                                      savedDate.getFullYear() === today.getFullYear();
+
+                    // 2. Jika Hari SAMA dan Data Valid -> PAKAI CACHE & JANGAN FETCH
+                    if (isSameDay && parsed.data && !parsed.data.error) {
+                        console.log("Menggunakan Cache Ultah (Data hari ini masih valid)");
+                        this.rows = parsed.data.rows;
+                        this.tanggal_hari_ini = parsed.data.tanggal_hari_ini;
+                        return; // <--- BERHENTI DI SINI, JANGAN FETCH
+                    }
+                }
+            } catch (e) {
+                console.error("Cache error:", e);
+                localStorage.removeItem('dataUltah');
+            }
+
+            // 3. Kalau tidak ada cache atau sudah ganti hari -> FETCH BARU
+            console.log("Cache usang atau kosong, mengambil data baru...");
+            this.fetchUltah();
+        },
+
+        fetchUltah() {
+            // Set loading state
+            if (this.rows.length === 0) {
+                this.isLoading = true;
+            } else {
+                this.isUpdating = true; // Refresh background jika data lama ada tapi expired
+            }
+            this.error = null;
+
+            fetch('/api/fetch-data-ultah')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.error) {
+                        this.rows = data.rows;
+                        this.tanggal_hari_ini = data.tanggal_hari_ini;
+                        
+                        // SIMPAN KE STORAGE
+                        // Struktur: { timestamp: 12345, data: {respon_backend_utuh} }
+                        const storageObject = {
+                            timestamp: new Date().getTime(), 
+                            data: data 
+                        };
+
+                        localStorage.setItem('dataUltah', JSON.stringify(storageObject));
+                    } else {
+                        if(this.rows.length === 0) this.error = data.message;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    if(this.rows.length === 0) this.error = "Gagal koneksi.";
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                    this.isUpdating = false;
+                });
         }
     }
-
-    // --- FUNGSI BARU: Render HTML Ultah (Biar rapi) ---
-    function renderUltah(data) {
-        const tabelBody = document.querySelector('#tabel-ultah tbody');
-        const tanggalEl = document.getElementById('tanggal-hari-ini');
-        // 1. BACA SETTING PRIVACY DARI LOCALSTORAGE
-    const isPrivacyOn = JSON.parse(localStorage.getItem('privacyOn') || 'false');
-
-    // 2. KONTROL HEADER TABEL (<th>)
-    const thUmur = document.getElementById('th-umur');
-    const thTgl = document.getElementById('th-tgl-lahir');
-    
-    // Tentukan colspan berdasarkan mode privacy (penting buat 'empty row')
-    let colspan = 4;
-
-    if (isPrivacyOn) {
-        if (thUmur) thUmur.style.display = 'none'; // Sembunyikan header "Umur"
-        if (thTgl) thTgl.textContent = 'Tanggal';  // Ubah header "Tanggal Lahir" -> "Tanggal"
-        colspan = 3; // Kalo mode private, tabelnya cuma 3 kolom
-    } else {
-        if (thUmur) thUmur.style.display = 'table-cell'; // Tampilkan header "Umur"
-        if (thTgl) thTgl.textContent = 'Tanggal Lahir'; // Balikin
-        colspan = 4;
-    }
-    // 3. ISI TANGGAL (Masih sama)
-        if (tanggalEl) {
-            tanggalEl.textContent = data.tanggal_hari_ini || 'Hari ini';
-        }
-        
-        tabelBody.innerHTML = ''; // Bersihin tabel
-// 4. TAMPILKAN EMPTY ROW (Pake colspan yang udah bener)
-        if (data.jumlah === 0 || !data.rows || data.rows.length === 0) {
-            tabelBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 10px; color: #9CA3AF;">Tidak ada yang ulang tahun hari ini.</td></tr>';
-            return;
-        }
-// 5. LOOPING DATA (DENGAN LOGIC PRIVACY)
-data.rows.forEach(mhs => {
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-gray-700'; 
-        
-        let tanggalDisplay = mhs.tanggal_lahir; // Default: "15 November 2005"
-        
-        if (isPrivacyOn) {
-            // "15 November 2005" -> ["15", "November", "2005"]
-            // -> ["15", "November"] -> "15 November"
-            tanggalDisplay = mhs.tanggal_lahir.split(' ').slice(0, 2).join(' ');
-        }
-        
-        // Buat HTML-nya, kolom 'Umur' ditentuin sama 'isPrivacyOn'
-        tr.innerHTML = `
-            <td style="padding: 12px 15px;">${mhs.nama}</td>
-            <td style="padding: 12px 15px;">${mhs.prodi}</td>
-            <td style="padding: 12px 15px;">${tanggalDisplay}</td>
-            
-            ${isPrivacyOn ? '' : `<td style="padding: 12px 15px;">${mhs.umur}</td>`}
-        `;
-        tabelBody.appendChild(tr);
-    });
-    }
+}
 </script>
 </body>
 </html>
