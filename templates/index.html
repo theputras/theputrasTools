@@ -124,7 +124,7 @@
     </div>
 </div>
 <!--- AREA ULANG TAHUN -->
-<div class="bg-gray-800 rounded-lg shadow-md p-6 mb-6" x-data="ultahApp()">
+<div class="bg-gray-800 rounded-lg shadow-md p-6 mt-6 mb-6" x-data="ultahApp()">
     
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
         <h2 class="text-xl font-bold text-white flex items-center gap-2">
@@ -167,13 +167,14 @@
                     <th class="p-3">Nama</th>
                     <th class="p-3">Prodi</th>
                     <th class="p-3">Tanggal Lahir</th>
-                    <th class="p-3 text-center">Umur</th>
+                    
+                    <th class="p-3 text-center" x-show="!isPrivacyOn">Umur</th>
                 </tr>
             </thead>
             <tbody class="text-gray-300">
                 
                 <tr x-show="isLoading && rows.length === 0">
-                    <td colspan="4" class="p-6 text-center text-gray-500 italic">Sedang mengambil data...</td>
+                    <td :colspan="isPrivacyOn ? 3 : 4" class="p-6 text-center text-gray-500 italic">Sedang mengambil data...</td>
                 </tr>
 
                 <template x-for="(mhs, index) in rows" :key="index">
@@ -183,15 +184,14 @@
                         <td class="p-3">
                             <span x-text="formatPrivacyDate(mhs.tanggal_lahir)"></span>
                         </td>
-                        <td class="p-3 text-center font-bold text-blue-400">
-                            <span x-text="isPrivacyOn ? 'XX' : mhs.umur"></span>
-                        </td>
+                        
+                        <td class="p-3 text-center font-bold text-blue-400" x-show="!isPrivacyOn" x-text="mhs.umur"></td>
                     </tr>
                 </template>
 
                 <tr x-show="!isLoading && rows.length === 0">
-                    <td colspan="4" class="p-6 text-center text-gray-500 italic">
-                        Tidak ada yang ulang tahun hari ini (atau data kosong).
+                    <td :colspan="isPrivacyOn ? 3 : 4" class="p-6 text-center text-gray-500 italic">
+                        Tidak ada yang ulang tahun hari ini.
                     </td>
                 </tr>
 
@@ -524,103 +524,106 @@ async function loadJadwal() {
 
     // --- FUNGSI LAMA: Load Data Ultah (Dimodif dikit) ---
 function ultahApp() {
-    return {
-        isLoading: false,
-        isUpdating: false,
-        rows: [],
-        tanggal_hari_ini: '',
-        error: null,
-        isPrivacyOn: false,
+        return {
+            isLoading: false,
+            isUpdating: false,
+            rows: [],
+            tanggal_hari_ini: '',
+            error: null,
+            // Init state privacy langsung dari LocalStorage agar tidak kedip
+            isPrivacyOn: localStorage.getItem('privacyOn') === 'true',
 
-        init() {
-            // Setup Privacy Listener
-            this.isPrivacyOn = window.isPrivacyOnGlobal || false;
-            window.addEventListener('privacy-changed', (e) => {
-                this.isPrivacyOn = e.detail;
-            });
-
-            // LOGIC UTAMA: Cek Cache dulu, kalau valid STOP. Kalau expired baru Fetch.
-            this.checkAndLoadData();
-        },
-
-        formatPrivacyDate(fullDate) {
-            if (!this.isPrivacyOn) return fullDate;
-            if (!fullDate) return '-';
-            const parts = fullDate.split(' ');
-            return parts.length >= 2 ? parts.slice(0, 2).join(' ') : fullDate;
-        },
-
-        checkAndLoadData() {
-            try {
-                const cached = localStorage.getItem('dataUltah');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    
-                    // 1. Cek Timestamp (Apakah data ini dari Hari Ini?)
-                    const savedDate = new Date(parsed.timestamp);
-                    const today = new Date();
-                    
-                    const isSameDay = savedDate.getDate() === today.getDate() &&
-                                      savedDate.getMonth() === today.getMonth() &&
-                                      savedDate.getFullYear() === today.getFullYear();
-
-                    // 2. Jika Hari SAMA dan Data Valid -> PAKAI CACHE & JANGAN FETCH
-                    if (isSameDay && parsed.data && !parsed.data.error) {
-                        console.log("Menggunakan Cache Ultah (Data hari ini masih valid)");
-                        this.rows = parsed.data.rows;
-                        this.tanggal_hari_ini = parsed.data.tanggal_hari_ini;
-                        return; // <--- BERHENTI DI SINI, JANGAN FETCH
-                    }
-                }
-            } catch (e) {
-                console.error("Cache error:", e);
-                localStorage.removeItem('dataUltah');
-            }
-
-            // 3. Kalau tidak ada cache atau sudah ganti hari -> FETCH BARU
-            console.log("Cache usang atau kosong, mengambil data baru...");
-            this.fetchUltah();
-        },
-
-        fetchUltah() {
-            // Set loading state
-            if (this.rows.length === 0) {
-                this.isLoading = true;
-            } else {
-                this.isUpdating = true; // Refresh background jika data lama ada tapi expired
-            }
-            this.error = null;
-
-            fetch('/api/fetch-data-ultah')
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.error) {
-                        this.rows = data.rows;
-                        this.tanggal_hari_ini = data.tanggal_hari_ini;
-                        
-                        // SIMPAN KE STORAGE
-                        // Struktur: { timestamp: 12345, data: {respon_backend_utuh} }
-                        const storageObject = {
-                            timestamp: new Date().getTime(), 
-                            data: data 
-                        };
-
-                        localStorage.setItem('dataUltah', JSON.stringify(storageObject));
-                    } else {
-                        if(this.rows.length === 0) this.error = data.message;
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    if(this.rows.length === 0) this.error = "Gagal koneksi.";
-                })
-                .finally(() => {
-                    this.isLoading = false;
-                    this.isUpdating = false;
+            init() {
+                // Listener untuk perubahan realtime dari tombol di luar component
+                window.addEventListener('privacy-changed', (e) => {
+                    this.isPrivacyOn = e.detail;
                 });
+
+                // Cek Cache Data Ultah
+                this.checkAndLoadData();
+            },
+
+            formatPrivacyDate(fullDate) {
+                if (!this.isPrivacyOn) return fullDate;
+                if (!fullDate) return '-';
+                
+                // Format: "10 Desember 2004" -> Split spasi
+                const parts = fullDate.split(' ');
+                // Ambil 2 kata pertama (Tanggal & Bulan), abaikan Tahun
+                if (parts.length >= 2) {
+                    return parts.slice(0, 2).join(' '); 
+                }
+                return fullDate;
+            },
+
+            checkAndLoadData() {
+                try {
+                    const cached = localStorage.getItem('dataUltah');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        
+                        // Cek Timestamp (Validitas Hari Ini)
+                        const savedDate = new Date(parsed.timestamp);
+                        const today = new Date();
+                        
+                        const isSameDay = savedDate.getDate() === today.getDate() &&
+                                          savedDate.getMonth() === today.getMonth() &&
+                                          savedDate.getFullYear() === today.getFullYear();
+
+                        // Jika data valid dan masih hari yang sama -> PAKAI CACHE
+                        if (isSameDay && parsed.data && !parsed.data.error) {
+                            console.log("Menggunakan Cache Ultah (Data hari ini masih valid)");
+                            this.rows = parsed.data.rows;
+                            this.tanggal_hari_ini = parsed.data.tanggal_hari_ini;
+                            return; 
+                        }
+                    }
+                } catch (e) {
+                    console.error("Cache error:", e);
+                    localStorage.removeItem('dataUltah');
+                }
+
+                // Jika cache tidak valid/kosong -> FETCH BARU
+                console.log("Cache usang/kosong, mengambil data baru...");
+                this.fetchUltah();
+            },
+
+            fetchUltah() {
+                if (this.rows.length === 0) {
+                    this.isLoading = true;
+                } else {
+                    this.isUpdating = true;
+                }
+                this.error = null;
+
+                fetch('/api/fetch-data-ultah')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.error) {
+                            this.rows = data.rows;
+                            this.tanggal_hari_ini = data.tanggal_hari_ini;
+                            
+                            // Simpan struktur utuh ke LocalStorage
+                            const storageObject = {
+                                timestamp: new Date().getTime(), 
+                                data: data 
+                            };
+                            localStorage.setItem('dataUltah', JSON.stringify(storageObject));
+                        } else {
+                            if(this.rows.length === 0) this.error = data.message;
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        if(this.rows.length === 0) this.error = "Gagal koneksi.";
+                    })
+                    .finally(() => {
+                        this.isLoading = false;
+                        this.isUpdating = false;
+                    });
+            }
         }
     }
-}
 </script>
 </body>
 </html>
