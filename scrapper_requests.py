@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from dotenv import load_dotenv
-from urllib.parse import urljoin, quote
+from urllib.parse import urljoin, quote, unquote
 import re
 from datetime import datetime, date, timedelta
 import logging
@@ -12,6 +12,7 @@ from typing import List, Dict, Any, Optional
 from zoneinfo import ZoneInfo
 from flask import session, has_request_context
 from controller.GateController import get_authenticated_session, reset_session_user
+from models.gate import GateUser
 
 load_dotenv()
 proxy_url = os.getenv("HTTP_PROXY_URL")
@@ -29,6 +30,7 @@ API_SICYCA = "/sicyca_api.php"
 
 # === STATE MANAGEMENT ===
 VALIDITY_CHECK_INTERVAL = 300  # Cek validitas ke server max 5 menit sekali
+gate_user_model = GateUser()
 
 # # === HTTP session (retry) ===
 # _session = requests.Session()
@@ -72,6 +74,26 @@ def _get_current_user_id(explicit_id=None):
     logging.info("[Scraper] Menggunakan User ID default (1) untuk proses ini.")
     return 1
 
+# === HELPER: AMBIL CREDENTIALS (NIM & TOKEN) ===
+def _get_api_params(user_id, session_obj):
+    """
+    Mengambil NIM (User Sicyca) dan Token (XSRF) untuk payload API.
+    """
+    # 1. Ambil NIM dari Database
+    # Return: (id, gate_username, gate_password)
+    _, nim, _ = gate_user_model.get_credentials_by_user_id(user_id)
+    
+    if not nim:
+        logging.error(f"Gagal mengambil NIM untuk User ID {user_id}")
+        return None, None
+
+    # 2. Ambil Token dari Cookie (XSRF-TOKEN)
+    # Token di cookie biasanya URL Encoded, jadi perlu di-unquote
+    raw_token = session_obj.cookies.get("XSRF-TOKEN", "")
+    token = unquote(raw_token) if raw_token else ""
+    
+    return nim, token
+
 def scrape_data(user_id=None):
     logging.info("\n--- Memulai Scraping Jadwal ---")
     target_user = _get_current_user_id(user_id)
@@ -97,140 +119,125 @@ def scrape_data(user_id=None):
         logging.error(f"Error saat scraping jadwal: {e}")
         return pd.DataFrame()
 
-def scrape_krs(user_id=None):
-    logging.info("\n--- Memulai Scraping KRS ---")
+def scrape_krs(user_id=None) -> pd.DataFrame:
     target_user = _get_current_user_id(user_id)
-    sess = get_authenticated_session(target_user)
-    if not sess: return pd.DataFrame()
+    
+    # Loop Maksimal 2x (Percobaan 1 -> Gagal -> Reset Session -> Percobaan 2)
+    for attempt in range(2):
+        s = get_authenticated_session(target_user)
+        if not s: 
+            if attempt == 0: continue # Coba lagi (siapa tau glitch)
+            return pd.DataFrame()
 
-    krs_url = urljoin(TARGET_URL, "/akademik/krs")
-    try:
-        resp = sess.get(krs_url, timeout=30, headers={"Referer": TARGET_URL})
-        # if "gate.dinamika.ac.id" in resp.url or "/login" in resp.url:
-        #     reset_session_memory()
-        #     return pd.DataFrame()
-
-        soup = BeautifulSoup(resp.text, "lxml")
-        table = soup.find("table", id="tableView")
-        # Fallback logic tetep sama...
-        if not table:
-             text_node = soup.find(string=re.compile(r'KARTU RENCANA STUDI', re.IGNORECASE))
-             if text_node:
-                target_div = text_node.find_parent("div", class_="tabletitle")
-                if target_div: table = target_div.find_next("table")
-        
-        if not table: return pd.DataFrame()
-
-        data = []
-        rows = table.find_all("tr")
-        
-        for tr in rows:
-            cols = tr.find_all("td")
-            if not cols or len(cols) < 10: continue
-
-            # --- UPDATE: AMBIL PARAMETER ONCLICK ---
-            # Kita butuh 'mk', 'kls', 'grup' dari fungsi JS: showModal...(kelas, kode_mk, ...)
-            # Contoh: showModalMatakuliah('P1','36934','Pemrograman Mobile Lanjut');
+        try:
+            logging.info(f"[KRS] Memulai Scraping KRS (Percobaan {attempt+1})...")
             
-            param_mk = ""
-            param_kls = ""
-            param_grup = ""
+            # Request Halaman KRS
+            url_krs = f"{TARGET_URL}/akademik/krs.php"
+            r = s.get(url_krs, timeout=30)
             
-            # Cari link di kolom Matakuliah (index 2)
-            link_mk = cols[2].find("a")
-            if link_mk and link_mk.get("onclick"):
-                onclick_text = link_mk.get("onclick")
-                # Regex untuk ambil argument di dalam tanda kutip
-                # Matches: 'P1', '36934', ...
-                args = re.findall(r"'([^']*)'", onclick_text)
+            # Cek apakah terlempar ke Login?
+            if "login" in r.url.lower() or "gate.dinamika.ac.id" in r.url.lower():
+                raise Exception("Session expired (Redirected to Login)")
+
+            soup = BeautifulSoup(r.text, "html.parser")
+            
+            # --- LOGIKA PARSING (Dari kode lama) ---
+            # Cari tabel yang berisi jadwal/KRS
+            # Biasanya tabel KRS ada class 'table-hover' atau 'table-striped'
+            tabel = soup.find('table', class_='table-hover') 
+            if not tabel:
+                # Coba selector lain jika layout berubah
+                tabel = soup.find('table', class_='table-striped')
+            
+            if not tabel:
+                # Jika tabel tidak ketemu, mungkin session bermasalah?
+                raise Exception("Tabel KRS tidak ditemukan (Mungkin session invalid)")
+
+            # Parsing Data Tabel
+            data_rows = []
+            tbody = tabel.find('tbody')
+            if tbody:
+                tr_list = tbody.find_all('tr')
+                for tr in tr_list:
+                    tds = tr.find_all('td')
+                    # Pastikan baris memiliki data (bukan header/kosong)
+                    if len(tds) >= 7: 
+                        # Contoh index (sesuaikan dengan kolom asli Sicyca):
+                        # 0: No, 1: Kode, 2: Matakuliah, 3: SKS, 4: Kelas, 5: Hari, 6: Jam, 7: Ruang
+                        row_data = {
+                            "Kode": tds[1].get_text(strip=True),
+                            "Matakuliah": tds[2].get_text(strip=True),
+                            "SKS": tds[3].get_text(strip=True),
+                            "Kelas": tds[4].get_text(strip=True),
+                            "Hari": tds[5].get_text(strip=True),
+                            "Jam": tds[6].get_text(strip=True),
+                            "Ruang": tds[7].get_text(strip=True) if len(tds) > 7 else "-"
+                        }
+                        data_rows.append(row_data)
+            
+            # Jika berhasil dapat data, return langsung
+            if data_rows:
+                logging.info(f"[KRS] Berhasil ambil {len(data_rows)} data.")
+                return pd.DataFrame(data_rows)
+            else:
+                # Tabel ada tapi kosong? (Mungkin emang gak ambil KRS)
+                logging.warning("[KRS] Tabel ditemukan tapi data kosong.")
+                return pd.DataFrame()
+
+        except Exception as e:
+            logging.warning(f"[KRS] Gagal Percobaan {attempt+1}: {e}")
+            
+            # === KUNCI PERBAIKAN: RESET SESSION ===
+            # Jika gagal di percobaan pertama, kita HAPUS session dari memori
+            # agar 'get_authenticated_session' dipaksa login ulang di loop berikutnya.
+            if attempt == 0:
+                logging.info(f"[KRS] Mereset session User {target_user} dan mencoba ulang...")
+                reset_session_user(target_user)
+                time.sleep(1) # Jeda dikit
+            else:
+                logging.error("[KRS] Gagal total setelah retry.")
                 
-                # Pola parameter sicyca biasanya: (kelas, mk, nama_mk) ATAU (kelas, mk, grup, nama_mk)
-                # Kita coba ambil amannya
-                if len(args) >= 2:
-                    param_kls = args[0]
-                    param_mk = args[1]
-                # Kadang grup ada di arg ke-2 atau 3 tergantung fungsi, tapi MK & Kelas yg utama
-
-            row_data = {
-                "Hari": cols[0].get_text(strip=True),
-                "Waktu": cols[1].get_text(strip=True),
-                "Matakuliah": cols[2].get_text(strip=True),
-                # Skip Brilian (Index 3)
-                "Ruang": cols[4].get_text(strip=True),
-                "SKS": cols[5].get_text(strip=True),
-                "Nilai": cols[6].get_text(strip=True), 
-                "Nilai Minimal": cols[7].get_text(strip=True),
-                "Kehadiran": cols[8].get_text(strip=True),
-                "Keterangan": cols[9].get_text(strip=True),
-                
-                # Tambahkan Hidden Params buat Frontend fetch detail
-                "param_mk": param_mk,
-                "param_kls": param_kls,
-                "param_grup": param_grup 
-            }
-            data.append(row_data)
-
-        df = pd.DataFrame(data)
-        return df
-
-    except Exception as e:
-        logging.error(f"Error KRS: {e}")
-        return pd.DataFrame()
+    return pd.DataFrame()
 
 
 def fetch_masa_studi(user_id=None) -> str:
-    """
-    Mengambil data Masa Studi dari API Sicyca.
-    Returns: String masa studi (contoh: "2021/2022 Ganjil - 2024/2025 Genap") atau strip "-" jika gagal.
-    """
-    logging.info("\n--- Mengambil Data Masa Studi ---")
+    # Logic sama, tapi kalau bisa tambahkan retry juga
     target_user = _get_current_user_id(user_id)
-    sess = get_authenticated_session(target_user)
-    if not sess:
-        return "-"
+    
+    for attempt in range(2):
+        s = get_authenticated_session(target_user)
+        if not s: return "-"
 
-    # 1. Ambil Token (Logic copas dari fetch_data_ultah agar konsisten)
-    token = None
-    try:
-        r = sess.get(GATE_ROOT, timeout=15)
-        match = re.search(r'var global_token\s*=\s*"([^"]+)"', r.text)
-        if match:
-            token = match.group(1)
-        else:
-            meta_match = re.search(r'name="csrf-token"\s+content="([^"]+)"', r.text)
-            if meta_match: token = meta_match.group(1)
-    except Exception as e:
-        logging.error(f"Gagal ambil token untuk masa studi: {e}")
-        return "-"
+        try:
+            logging.info(f"--- Mengambil Data Masa Studi (Percobaan {attempt+1}) ---")
+            nim, token = _get_api_params(target_user, s)
+            if not nim: return "-"
 
-    if not token:
-        logging.warning("Token tidak ditemukan saat fetch masa studi.")
-        return "-"
-
-    # 2. Request ke API
-    try:
-        api_url = urljoin(TARGET_URL, API_SICYCA)
-        # Payload sesuai request kamu
-        payload = {
-            "nim": USER,
-            "token": token,
-            "masa_studi": True 
-        }
-        
-        resp = sess.post(api_url, data=payload, timeout=10)
-        resp.raise_for_status()
-        
-        # Sicyca API biasanya return JSON: {"status":..., "data": "ISI DATA"}
-        json_resp = resp.json()
-        
-        # Ambil value dari key 'data'
-        masa_studi = json_resp.get("data", "-")
-        logging.info(f"   --> Masa studi didapat: {masa_studi}")
-        return masa_studi
-
-    except Exception as e:
-        logging.error(f"Error fetch masa studi: {e}")
-        return "-"
+            payload = {"nim": nim, "token": token, "masa_studi": True}
+            
+            r = s.post(f"{TARGET_URL}{API_SICYCA}", data=payload, timeout=10)
+            
+            if r.status_code == 200:
+                try:
+                    data = r.json()
+                    res = data.get("masa_studi", "-") if isinstance(data, dict) else str(data)
+                    logging.info(f"    --> Masa studi didapat: {res}")
+                    return str(res)
+                except:
+                    return r.text.strip()
+            
+            # Jika gagal status code (misal 401/403/500)
+            if attempt == 0:
+                reset_session_user(target_user)
+                
+        except Exception as e:
+            if attempt == 0:
+                reset_session_user(target_user)
+            else:
+                logging.error(f"[Masa Studi] Error: {e}")
+                
+    return "-"
         
 def scrape_krs_detail(params: Dict[str, str], user_id=None) -> Dict[str, Any]:
     """
@@ -501,6 +508,10 @@ def fetch_data_ultah(force_refresh: bool = False, user_id=None) -> Dict[str, Any
     # 2. Fallback: Parse dari Halaman (INI YANG DIGANTI)
     logging.info("Mencoba scrape global_token dari Halaman Dashboard Sicyca...")
     try:
+        # Ambil NIM dan Token
+        nim, token = _get_api_params(target_user, sess)
+        if not nim:
+            return {"error": True, "message": "NIM tidak ditemukan", "rows": []}
         # Akses halaman utama Sicyca (TARGET_URL)
         r = sess.get(GATE_ROOT, timeout=15)
         r.raise_for_status()
@@ -535,10 +546,10 @@ def fetch_data_ultah(force_refresh: bool = False, user_id=None) -> Dict[str, Any
 
     # --- panggil API ---
     api_url = urljoin(TARGET_URL, API_SICYCA)
-    payload = {"nim": USER, "token": token, "ultah": True}
+    payload = {"nim": nim, "token": token, "ultah": True}
     logging.info("Memanggil API Sicyca untuk data ulang tahun...")
     logging.info(f"   --> API URL: {api_url}")
-    logging.info(f"   --> Payload: nim={USER}, token={token}, ultah=True")
+    logging.info(f"   --> Payload: nim={nim}, token={token}, ultah=True")
     r = sess.post(api_url, data=payload, timeout=10)
     r.raise_for_status()
 
@@ -588,12 +599,5 @@ def fetch_data_ultah(force_refresh: bool = False, user_id=None) -> Dict[str, Any
                 "tanggal_lahir": tgl.strftime("%d %B %Y"),
                 "umur": hitung_umur(tgl, today)
             })
-
-    # 3) simpan cache & return
-    _cache_data = {
-        "tanggal_hari_ini": now.strftime("%d %B %Y"),
-        "jumlah": len(rows),
-        "rows": rows
-    }
-    _cache_expire_at = _midnight_epoch()
-    return _cache_data
+    result = {"message": f"{len(rows)} ulang tahun hari ini.","tanggal_hari_ini": now.strftime("%d %B %Y"), "rows": rows}
+    return result
