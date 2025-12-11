@@ -10,7 +10,11 @@
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 flex items-center justify-center min-h-screen font-sans">
 
-  <div x-data="{ showPassword: false }" class="bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-lg w-full max-w-md p-8 border border-gray-700">
+  <div x-data="{ showPassword: false }" 
+       class="relative w-full max-w-md p-8 sm:p-10
+              bg-gray-900/60 backdrop-blur-sm backdrop-saturate-200 
+              rounded-[2.5rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.7)]
+              border border-white/10 border-t-white/20 ring-1 ring-white/5">
     
     <div class="text-center mb-8">
       <h1 class="text-3xl font-bold text-white tracking-tight">Selamat Datang</h1>

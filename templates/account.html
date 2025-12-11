@@ -41,19 +41,68 @@
         </button>
         
     </div>
+    <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-700">
+    <span class="flex flex-col">
+        <span class="font-medium text-white">Reset Local Storage</span>
+        <span class="text-sm text-gray-400">Hapus cache browser & setting lokal.</span>
+    </span>
     
+    <button type="button"
+       class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm transition flex items-center gap-2" 
+       x-data 
+       @click="async () => {
+           // 1. Panggil Confirm Custom
+           const yakin = await window.showConfirm(
+               'Hapus Local Storage?', 
+               'Ini akan menghapus semua cache jadwal dan pengaturan privasi di browser ini.',
+               'danger'
+           );
+
+           // 2. Jika User klik 'Ya'
+           if (yakin) {
+               localStorage.clear();
+               window.showAlert('success', 'Berhasil dihapus! Merefresh halaman...');
+               setTimeout(() => window.location.href = '/account', 1500);
+           }
+       }">
+       <i class="fas fa-trash-can"></i> Reset
+    </button>
+</div>
+
 <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-700">
-                <span class="flex flex-col">
-                    <span class="font-medium text-white">Reset Session Gate</span>
-                    <span class="text-sm text-gray-400">Hapus session scraper (cookies.json) jika error.</span>
-                </span>
-                
-                <a href="{{ url_for('reset_scraper_session') }}" 
-                   class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm transition flex items-center gap-2" 
-                   onclick="return confirm('Yakin ingin mereset session scraper? Ini akan memaksa sistem login ulang ke SICYCA saat scraping berikutnya.')">
-                   <i class="fas fa-eraser"></i> Reset
-                </a>
-            </div>
+    <span class="flex flex-col">
+        <span class="font-medium text-white">Reset Session Gate</span>
+        <span class="text-sm text-gray-400">Hapus session scraper jika error.</span>
+    </span>
+    
+    <button type="button"
+       class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm transition flex items-center gap-2" 
+       x-data
+       @click="async () => {
+           const yakin = await window.showConfirm(
+               'Reset Session Scraper?',
+               'Sistem akan dipaksa login ulang ke Sicyca pada proses berikutnya. Lakukan jika data tidak muncul.',
+               'danger'
+           );
+
+           if (yakin) {
+               window.showAlert('info', 'Mereset session...');
+               
+               // Fetch ke endpoint Flask lu (sesuaikan route aslinya)
+               fetch('{{ url_for('reset_scraper_session') }}')
+                   .then(res => {
+                       if(res.ok) {
+                           window.showAlert('success', 'Session berhasil direset!');
+                       } else {
+                           window.showAlert('error', 'Gagal mereset session.');
+                       }
+                   })
+                   .catch(() => window.showAlert('error', 'Terjadi kesalahan koneksi.'));
+           }
+       }">
+       <i class="fas fa-eraser"></i> Reset
+    </button>
+</div>
 </div>
 <div class="mt-6 bg-gray-800 rounded-lg shadow-md p-6 flex flex-wrap gap-4">
              <a href="{{ url_for('logout_page') }}" 
@@ -70,6 +119,18 @@
     </div>
 
     {% include 'nativeNav.html' %}
-
+<script>
+// Ganti onclick yang tadi panjang jadi gini:
+function handleReset() {
+    if(confirm('Yakin reset?')) {
+        localStorage.clear();
+        // Panggil Alert Custom
+        window.showAlert('success', 'Cache berhasil dibersihkan!');
+        
+        setTimeout(() => {
+            window.location.href = '/account';
+        }, 1000); // Delay dikit biar alert kelihatan
+    }
+}</script>
 </body>
 </html>
