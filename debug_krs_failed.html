@@ -35,10 +35,10 @@ var wid = '273060';
 
 $(document).ready(function(){
     SetBaseurl('https://sicyca.dinamika.ac.id');
-    SetServerDay('Rabu, 10 Desember 2025');
-    SetServerHour('09');
-    SetServerMinute('41');
-    SetServerSecond('51');    
+    SetServerDay('Kamis, 11 Desember 2025');
+    SetServerHour('08');
+    SetServerMinute('52');
+    SetServerSecond('54');    
     SetShowMessage(true);    
     startClockTimer();     
 
@@ -604,7 +604,7 @@ function hasSubmitFeedback(data)
                 
 
                 <div id="divTimeContent" class="timeContent">
-                      <div class="center-time-mark" style="left:375.66666666667px;"></div>                      <div class="timename">
+                      <div class="center-time-mark" style="left:261.33333333333px;"></div>                      <div class="timename">
                           <span>07:00</span>
                           <span>08:00</span>
                           <span>09:00</span>
@@ -624,7 +624,7 @@ function hasSubmitFeedback(data)
                       </div>
                       <div class="timeEvent">
 
-<div class="event" style="width:350px;left:910px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> B406 </span>    <span class="matkul"> Manajemen Proyek Sistem Informasi </span></div><div class="event" style="width:350px;left:70px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> B402 </span>    <span class="matkul"> Analisis dan Perancangan Sistem Informasi </span></div><div class="event" style="width:280px;left:560px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> Lab. De Morgan </span>    <span class="matkul"> Analisis dan Perancangan Sistem Informasi </span></div>
+<div class="event" style="width:466.66666666667px;left:70px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> B505 </span>    <span class="matkul"> Pemrograman Web Lanjut </span></div><div class="event" style="width:280px;left:560px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> Lab. De Morgan </span>    <span class="matkul"> Pemrograman Web Lanjut </span></div><div class="event" style="width:350px;left:910px">    <span class="dosen"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>    <span class="ruang"> M403 </span>    <span class="matkul"> Sistem Pendukung Keputusan </span></div>
                       </div>
                 </div>
                 <div class="right-fader"></div>
@@ -1030,7 +1030,7 @@ Sedangkan dispensasi presensi kuliah karena sakit, masih bisa BAAK terima sampai
                 $(".subProgress_3").fadeIn('fast');
                 $(".subProgressTextHolder").fadeIn('fast');
                 nextAnim($(".event"));
-                var targetSlide = -140;if(targetSlide > 25)    targetSlide = 25;if(targetSlide < -1500)    targetSlide = -1500;$("#divTimeContent").animate({        left: targetSlide    }, 1500, function(){        lastDrag = targetSlide;});            });
+                var targetSlide = -280;if(targetSlide > 25)    targetSlide = 25;if(targetSlide < -1500)    targetSlide = -1500;$("#divTimeContent").animate({        left: targetSlide    }, 1500, function(){        lastDrag = targetSlide;});            });
 
         });
         $("#divTimeContent").bind('dragstart',function( event ){
@@ -1054,6 +1054,7 @@ Sedangkan dispensasi presensi kuliah karena sakit, masih bisa BAAK terima sampai
         
 		
 		
+					$("#defaultAlert").modal('show');
 		
 
 
@@ -1170,7 +1171,21 @@ Sedangkan dispensasi presensi kuliah karena sakit, masih bisa BAAK terima sampai
     });
 </script>
 
-<style>
+		<div class="modal hide" id="defaultAlert" >
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">x</a>
+				<h3 id="defaultAlertTitle" >Pengumuman</h3>
+			</div>
+			<!-- <div class="modal-body" id="defaultAlertContent" style="max-height: 23rem; overflow-y: scroll;"> -->
+			<div class="modal-body" id="parent-element" style="overflow-y: scroll; max-height: 25rem">
+				<!-- <textarea id="deskripsi"></textarea> -->
+				<p><span style="color:hsl(0,75%,60%);"><i><strong>NEW WA BAAK : 0821-1596-7676</strong></i><strong> | Email : </strong></span><a href="mailto:baak@dinamika.ac.id"><span style="color:hsl(0,75%,60%);"><strong>baak@dinamika.ac.id</strong></span></a></p><p><strong>Informasi Layanan Akademik (BAAK), silahkan klik : </strong><a href="https://linktr.ee/BAAK_Dinamika"><strong>https://linktr.ee/BAAK_Dinamika</strong></a><br>(Informasi tsb tentang : Buku Pedoman, Perwalian, Perkuliahan, MBKM, Beasiswa, Toefl, Yudisium, Contoh Surat Permohonan, dll) dapat dilihat pada link di atas.</p><p>Informasi seputar akademik (pengumuman, perkuliahan, dll) bisa dilihat di Gate (halaman depan sebelum kiri login).</p><hr><p>Info Test Toefl Undika:</p><p>Telah dibuka pendaftaran ‘<span style="color:hsl(240,75%,60%);"><strong>Dinamika English Proficiency Test’</strong></span> (test toefl buat syarat yudisium) , silahkan baca prosedur dan jadwal test di sicyca – Toefl.</p><p>&nbsp;Terima kasih – BAAK 24-11-2025</p>			</div>
+			<div class="modal-footer" style="text-align:right">
+				<button type="button" data-dismiss="modal" class="bluishBtn button_small">OK, Terima Kasih</button>
+			</div>
+		</div>
+
+		<style>
     .modal-body p {
         color: black;
     }

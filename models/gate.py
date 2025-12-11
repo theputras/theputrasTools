@@ -132,3 +132,29 @@ class GateSession:
         finally:
             cursor.close()
             conn.close()
+    # --- TAMBAHAN BARU: DELETE SESSION ---
+    def delete_session_by_user_id(self, user_id):
+        """
+        Menghapus sesi dari tabel gate_sessions berdasarkan user_id (Parent User).
+        """
+        conn = self._get_connection()
+        if not conn: return False
+        
+        cursor = conn.cursor()
+        try:
+            # Hapus session milik gate_user yang terhubung dengan user_id ini
+            query = """
+                DELETE s 
+                FROM gate_sessions s
+                INNER JOIN gate_users u ON s.gate_user_id = u.id
+                WHERE u.user_id = %s
+            """
+            cursor.execute(query, (user_id,))
+            conn.commit()
+            return True
+        except Exception as e:
+            logging.error(f"[GateSession] Gagal delete session user {user_id}: {e}")
+            return False
+        finally:
+            cursor.close()
+            conn.close()

@@ -30516,3 +30516,1409 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-12-10 10:27:42,684 - INFO - 127.0.0.1 - - [10/Dec/2025 10:27:42] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-10 10:27:48,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:27:48] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-10 10:27:53,349 - INFO - 127.0.0.1 - - [10/Dec/2025 10:27:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:27:58,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:27:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:03,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:08,662 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:13,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:18,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:23,349 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:28,658 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:33,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:38,658 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:43,353 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:48,841 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:53,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:28:58,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:28:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:03,346 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:08,660 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:13,352 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:18,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:23,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:28,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:33,353 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:38,655 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:43,353 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:29:48,658 - INFO - 127.0.0.1 - - [10/Dec/2025 10:29:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:30:36,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:30:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:31:36,657 - INFO - 127.0.0.1 - - [10/Dec/2025 10:31:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:32:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 10:32:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:33:36,664 - INFO - 127.0.0.1 - - [10/Dec/2025 10:33:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:34:36,363 - INFO - 127.0.0.1 - - [10/Dec/2025 10:34:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:35:36,659 - INFO - 127.0.0.1 - - [10/Dec/2025 10:35:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:35:39,723 - INFO - 127.0.0.1 - - [10/Dec/2025 10:35:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:35:42,984 - INFO - 127.0.0.1 - - [10/Dec/2025 10:35:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:35:47,686 - INFO - 127.0.0.1 - - [10/Dec/2025 10:35:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:35:52,989 - INFO - 127.0.0.1 - - [10/Dec/2025 10:35:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:35:58,356 - INFO - 127.0.0.1 - - [10/Dec/2025 10:35:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:03,650 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:08,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:13,655 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:18,351 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:23,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:28,351 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:33,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:38,352 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:43,652 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:48,352 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:36:53,652 - INFO - 127.0.0.1 - - [10/Dec/2025 10:36:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:37:27,992 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:37:30,184 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:37:30,310 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:30] "GET / HTTP/1.1" 200 -
+2025-12-10 10:37:30,549 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:37:30,553 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:30] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:37:35,853 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:37:41,356 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:41] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:37:46,650 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:37:51,352 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:37:56,652 - INFO - 127.0.0.1 - - [10/Dec/2025 10:37:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:01,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:06,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:11,353 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:16,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:21,353 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:26,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:30,551 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:34,260 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:38:34,385 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:34] "GET / HTTP/1.1" 200 -
+2025-12-10 10:38:34,577 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:34,579 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:34] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:38:39,881 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:42,049 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:38:42,415 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:42] "GET / HTTP/1.1" 200 -
+2025-12-10 10:38:42,565 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:42,871 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:42] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:38:47,870 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:52,566 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:38:58,657 - INFO - 127.0.0.1 - - [10/Dec/2025 10:38:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:03,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:08,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:13,349 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:18,361 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:23,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:28,649 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:33,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:38,648 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:43,349 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:48,658 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:53,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:56,013 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:39:56,208 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:56] "GET / HTTP/1.1" 200 -
+2025-12-10 10:39:56,361 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:39:56,364 - INFO - 127.0.0.1 - - [10/Dec/2025 10:39:56] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:40:01,663 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:07,355 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:12,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:17,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:22,650 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:27,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:32,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:37,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:42,658 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:47,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:52,660 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:40:57,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:40:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:41:02,652 - INFO - 127.0.0.1 - - [10/Dec/2025 10:41:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:41:36,360 - INFO - 127.0.0.1 - - [10/Dec/2025 10:41:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:33,862 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:34,859 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:42:35,012 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:35] "GET / HTTP/1.1" 200 -
+2025-12-10 10:42:35,232 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:35,537 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:35] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:42:40,740 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:42,753 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:42:42,953 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:42] "GET / HTTP/1.1" 200 -
+2025-12-10 10:42:43,158 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:43,464 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:43] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:42:48,461 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:50,416 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:42:50,546 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:50] "GET / HTTP/1.1" 200 -
+2025-12-10 10:42:50,694 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:51,000 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:51] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:42:55,367 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:42:55,533 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:55] "GET / HTTP/1.1" 200 -
+2025-12-10 10:42:55,686 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:42:55,688 - INFO - 127.0.0.1 - - [10/Dec/2025 10:42:55] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:43:00,991 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:05,687 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:10,908 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:11,221 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:43:11,375 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-12-10 10:43:11,376 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:11] "[32mGET /refresh-jadwal HTTP/1.1[0m" 302 -
+2025-12-10 10:43:11,377 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-12-10 10:43:11,377 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2025-12-10 10:43:11,378 - INFO - Membuat objek session baru...
+2025-12-10 10:43:12,099 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:43:12,100 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:43:12,599 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:12] "GET / HTTP/1.1" 200 -
+2025-12-10 10:43:12,609 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-10 10:43:13,078 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:13,081 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:13] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:43:14,157 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:43:14,615 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-10 10:43:14,616 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-10 10:43:18,355 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:18,851 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2025-12-10 10:43:18,853 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2025-12-10 10:43:18,853 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2025-12-10 10:43:18,855 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2025-12-10 10:43:18,963 - INFO - 2. [Login] Mengirim kredensial...
+2025-12-10 10:43:20,874 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-12-10 10:43:20,875 - INFO -    --> Login dan proses SSO berhasil.
+2025-12-10 10:43:20,876 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2025-12-10 10:43:21,449 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:43:23,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:23,792 - ERROR - Error saat scraping jadwal: Tidak ketemu div 'JADWAL KEGIATAN MINGGU INI'.
+2025-12-10 10:43:23,795 - WARNING - Scraping jadwal tidak menghasilkan data.
+2025-12-10 10:43:23,795 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-12-10 10:43:28,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:33,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:38,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:43,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:47,778 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:53,698 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:43:58,351 - INFO - 127.0.0.1 - - [10/Dec/2025 10:43:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:03,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:08,355 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:13,663 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:18,370 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:23,659 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:28,346 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:33,661 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:38,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:43,661 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:44:48,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:44:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:00,365 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:02,781 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:02,795 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:45:02,928 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:02] "[32mGET /refresh-jadwal HTTP/1.1[0m" 302 -
+2025-12-10 10:45:02,929 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-12-10 10:45:02,934 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-12-10 10:45:02,935 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2025-12-10 10:45:03,958 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-12-10 10:45:03,974 - INFO - Jadwal berhasil disimpan (10 entri) pada Wednesday, 10 December 2025 10:45:03.
+2025-12-10 10:45:03,976 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-12-10 10:45:04,080 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:45:04,267 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:04] "GET / HTTP/1.1" 200 -
+2025-12-10 10:45:04,508 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:04,814 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:04] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:45:10,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:14,500 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:15,674 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:45:15,851 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:15] "[32mGET /refresh-jadwal HTTP/1.1[0m" 302 -
+2025-12-10 10:45:15,851 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2025-12-10 10:45:15,852 - INFO - 
+--- Memulai Scraping Jadwal ---
+2025-12-10 10:45:15,852 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2025-12-10 10:45:16,334 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:45:16,474 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:16] "GET / HTTP/1.1" 200 -
+2025-12-10 10:45:16,662 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:16,689 - INFO -    --> Scraping jadwal berhasil, 10 data ditemukan.
+2025-12-10 10:45:16,690 - INFO - Jadwal berhasil disimpan (10 entri) pada Wednesday, 10 December 2025 10:45:16.
+2025-12-10 10:45:16,690 - INFO - === SCRAPING JADWAL SELESAI ===
+2025-12-10 10:45:16,966 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:16] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:45:22,659 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:26,662 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:27,046 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:45:27,286 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:27] "GET / HTTP/1.1" 200 -
+2025-12-10 10:45:27,742 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:27,743 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:27] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:45:33,349 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:38,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:42,444 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:43,138 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:45:43,394 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:43] "GET / HTTP/1.1" 200 -
+2025-12-10 10:45:43,855 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:43,860 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:43] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:45:48,555 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:52,489 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:45:52,620 - INFO - [GUARD] Access Token Expired.
+2025-12-10 10:45:52,622 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:52] "[32mGET / HTTP/1.1[0m" 302 -
+2025-12-10 10:45:52,633 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:52] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2025-12-10 10:45:53,453 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-12-10 10:45:54,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:45:59,355 - INFO - 127.0.0.1 - - [10/Dec/2025 10:45:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:04,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:09,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:14,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:15,380 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:46:16,094 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-12-10 10:46:16,096 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:16] "POST /api/auth/login HTTP/1.1" 200 -
+2025-12-10 10:46:16,545 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:46:16,684 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:16] "GET / HTTP/1.1" 200 -
+2025-12-10 10:46:17,098 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:17,100 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:17] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-10 10:46:17,109 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:17] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-12-10 10:46:17,688 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:46:17,841 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-10 10:46:19,128 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:20,140 - INFO - Token ditemukan via regex global_token. ($2y$10$cM.2li8jpXQXefQ.5fwPXueRp6hdgRe9eox6TyQBA7DBaakT9NHZC)
+2025-12-10 10:46:20,140 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2025-12-10 10:46:21,001 - INFO - [ULTAH] Berhasil memproses 4 data.
+2025-12-10 10:46:21,003 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:21] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-10 10:46:22,345 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:24,659 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:27,645 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:29,349 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:32,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:34,661 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:37,648 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:39,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:42,343 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:44,661 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:47,648 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:49,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:52,343 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:54,658 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:57,650 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:46:59,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:46:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:02,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:04,660 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:07,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:09,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:12,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:12] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:14,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:17,649 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:19,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:47:36,662 - INFO - 127.0.0.1 - - [10/Dec/2025 10:47:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:48:36,364 - INFO - 127.0.0.1 - - [10/Dec/2025 10:48:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:48:36,657 - INFO - 127.0.0.1 - - [10/Dec/2025 10:48:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:49:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:49:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:49:36,668 - INFO - 127.0.0.1 - - [10/Dec/2025 10:49:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:50:36,372 - INFO - 127.0.0.1 - - [10/Dec/2025 10:50:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:50:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 10:50:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:51:36,353 - INFO - 127.0.0.1 - - [10/Dec/2025 10:51:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:51:36,669 - INFO - 127.0.0.1 - - [10/Dec/2025 10:51:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:51:40,350 - INFO - 127.0.0.1 - - [10/Dec/2025 10:51:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:51:44,657 - INFO - 127.0.0.1 - - [10/Dec/2025 10:51:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:51:49,356 - INFO - 127.0.0.1 - - [10/Dec/2025 10:51:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:51:54,663 - INFO - 127.0.0.1 - - [10/Dec/2025 10:51:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:51:59,348 - INFO - 127.0.0.1 - - [10/Dec/2025 10:51:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:04,655 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:08,552 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:13,856 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:18,550 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:23,852 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:28,552 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:33,855 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:38,556 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:43,852 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:48,552 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:53,853 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:52:58,549 - INFO - 127.0.0.1 - - [10/Dec/2025 10:52:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:03,861 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:08,559 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:13,864 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:18,557 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:23,858 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:28,552 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:33,861 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:38,554 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:43,861 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:48,558 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:53,862 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:53:58,554 - INFO - 127.0.0.1 - - [10/Dec/2025 10:53:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:03,862 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:08,552 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:13,861 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:18,555 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:23,860 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:28,559 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:34,659 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:39,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:44,655 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:49,359 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:54,659 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:54:59,357 - INFO - 127.0.0.1 - - [10/Dec/2025 10:54:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:04,672 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:09,355 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:14,659 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:19,353 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:24,656 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:29,354 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:55:36,666 - INFO - 127.0.0.1 - - [10/Dec/2025 10:55:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:56:36,364 - INFO - 127.0.0.1 - - [10/Dec/2025 10:56:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:56:36,655 - INFO - 127.0.0.1 - - [10/Dec/2025 10:56:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:56:59,711 - INFO - 127.0.0.1 - - [10/Dec/2025 10:56:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:57:03,558 - INFO - 127.0.0.1 - - [10/Dec/2025 10:57:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:57:06,182 - INFO - === Koneksi ke database berhasil ===
+2025-12-10 10:57:06,365 - INFO - [GUARD] Access Token Expired.
+2025-12-10 10:57:06,369 - INFO - 127.0.0.1 - - [10/Dec/2025 10:57:06] "[32mGET / HTTP/1.1[0m" 302 -
+2025-12-10 10:57:06,395 - INFO - 127.0.0.1 - - [10/Dec/2025 10:57:06] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2025-12-10 10:57:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 10:57:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:58:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 10:58:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 10:59:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 10:59:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:00:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 11:00:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:01:38,743 - INFO - 127.0.0.1 - - [10/Dec/2025 11:01:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:02:36,648 - INFO - 127.0.0.1 - - [10/Dec/2025 11:02:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:03:36,648 - INFO - 127.0.0.1 - - [10/Dec/2025 11:03:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:04:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 11:04:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:05:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 11:05:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:06:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 11:06:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:07:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 11:07:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:08:36,646 - INFO - 127.0.0.1 - - [10/Dec/2025 11:08:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:09:36,646 - INFO - 127.0.0.1 - - [10/Dec/2025 11:09:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:10:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 11:10:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:11:36,645 - INFO - 127.0.0.1 - - [10/Dec/2025 11:11:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:12:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 11:12:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:13:36,666 - INFO - 127.0.0.1 - - [10/Dec/2025 11:13:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:14:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 11:14:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:15:36,647 - INFO - 127.0.0.1 - - [10/Dec/2025 11:15:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:16:36,661 - INFO - 127.0.0.1 - - [10/Dec/2025 11:16:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:17:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 11:17:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:18:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 11:18:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:19:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 11:19:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:20:36,655 - INFO - 127.0.0.1 - - [10/Dec/2025 11:20:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:21:36,354 - INFO - 127.0.0.1 - - [10/Dec/2025 11:21:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:22:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 11:22:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:23:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 11:23:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:24:36,657 - INFO - 127.0.0.1 - - [10/Dec/2025 11:24:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:25:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 11:25:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:26:36,355 - INFO - 127.0.0.1 - - [10/Dec/2025 11:26:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:27:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 11:27:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:28:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 11:28:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:29:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 11:29:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:30:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 11:30:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:31:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 11:31:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:32:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 11:32:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:33:36,658 - INFO - 127.0.0.1 - - [10/Dec/2025 11:33:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:34:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 11:34:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:35:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 11:35:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:36:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 11:36:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:37:36,646 - INFO - 127.0.0.1 - - [10/Dec/2025 11:37:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:38:36,647 - INFO - 127.0.0.1 - - [10/Dec/2025 11:38:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:39:36,660 - INFO - 127.0.0.1 - - [10/Dec/2025 11:39:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:40:36,657 - INFO - 127.0.0.1 - - [10/Dec/2025 11:40:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:41:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 11:41:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:42:36,647 - INFO - 127.0.0.1 - - [10/Dec/2025 11:42:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:43:36,646 - INFO - 127.0.0.1 - - [10/Dec/2025 11:43:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:44:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 11:44:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:45:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 11:45:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:46:36,648 - INFO - 127.0.0.1 - - [10/Dec/2025 11:46:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:47:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 11:47:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:48:36,648 - INFO - 127.0.0.1 - - [10/Dec/2025 11:48:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:49:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 11:49:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:50:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 11:50:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:51:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 11:51:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:52:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 11:52:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:53:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 11:53:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:54:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 11:54:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:55:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 11:55:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:56:37,599 - INFO - 127.0.0.1 - - [10/Dec/2025 11:56:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:57:36,665 - INFO - 127.0.0.1 - - [10/Dec/2025 11:57:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:58:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 11:58:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 11:59:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 11:59:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:00:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 12:00:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:01:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:01:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:02:36,687 - INFO - 127.0.0.1 - - [10/Dec/2025 12:02:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:03:36,354 - INFO - 127.0.0.1 - - [10/Dec/2025 12:03:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:04:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 12:04:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:05:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:05:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:06:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 12:06:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:07:36,352 - INFO - 127.0.0.1 - - [10/Dec/2025 12:07:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:08:36,647 - INFO - 127.0.0.1 - - [10/Dec/2025 12:08:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:09:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 12:09:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:10:36,662 - INFO - 127.0.0.1 - - [10/Dec/2025 12:10:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:11:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:11:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:12:36,655 - INFO - 127.0.0.1 - - [10/Dec/2025 12:12:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:13:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 12:13:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:14:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 12:14:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:15:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 12:15:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:16:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 12:16:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:17:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:17:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:18:36,647 - INFO - 127.0.0.1 - - [10/Dec/2025 12:18:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:19:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 12:19:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:20:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 12:20:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:21:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 12:21:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:22:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 12:22:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:23:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 12:23:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:24:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 12:24:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:25:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:25:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:26:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 12:26:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:27:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 12:27:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:28:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 12:28:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:29:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 12:29:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:30:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 12:30:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:31:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:31:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:32:36,655 - INFO - 127.0.0.1 - - [10/Dec/2025 12:32:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:33:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 12:33:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:34:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 12:34:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:35:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 12:35:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:36:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 12:36:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:37:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 12:37:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:38:36,647 - INFO - 127.0.0.1 - - [10/Dec/2025 12:38:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:39:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 12:39:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:40:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 12:40:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:41:36,343 - INFO - 127.0.0.1 - - [10/Dec/2025 12:41:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:42:36,656 - INFO - 127.0.0.1 - - [10/Dec/2025 12:42:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:43:36,353 - INFO - 127.0.0.1 - - [10/Dec/2025 12:43:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:44:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 12:44:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:45:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:45:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:46:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 12:46:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:47:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 12:47:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:48:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 12:48:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:49:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 12:49:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:50:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 12:50:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:51:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 12:51:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:52:36,657 - INFO - 127.0.0.1 - - [10/Dec/2025 12:52:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:53:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 12:53:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:54:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 12:54:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:55:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:55:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:56:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 12:56:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:57:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 12:57:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:58:36,655 - INFO - 127.0.0.1 - - [10/Dec/2025 12:58:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 12:59:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 12:59:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:00:36,649 - INFO - 127.0.0.1 - - [10/Dec/2025 13:00:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:01:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 13:01:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:02:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 13:02:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:03:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 13:03:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:04:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 13:04:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:05:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 13:05:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:06:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 13:06:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:07:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 13:07:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:08:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 13:08:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:09:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 13:09:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:10:36,646 - INFO - 127.0.0.1 - - [10/Dec/2025 13:10:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:11:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 13:11:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:12:36,659 - INFO - 127.0.0.1 - - [10/Dec/2025 13:12:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:13:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 13:13:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:14:36,658 - INFO - 127.0.0.1 - - [10/Dec/2025 13:14:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:15:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 13:15:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:16:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 13:16:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:17:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 13:17:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:18:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 13:18:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:19:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 13:19:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:20:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 13:20:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:21:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 13:21:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:22:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 13:22:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:23:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 13:23:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:24:36,656 - INFO - 127.0.0.1 - - [10/Dec/2025 13:24:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:25:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 13:25:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:26:36,656 - INFO - 127.0.0.1 - - [10/Dec/2025 13:26:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:27:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 13:27:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:28:36,659 - INFO - 127.0.0.1 - - [10/Dec/2025 13:28:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:29:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 13:29:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:30:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 13:30:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:31:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 13:31:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:32:36,656 - INFO - 127.0.0.1 - - [10/Dec/2025 13:32:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:33:36,352 - INFO - 127.0.0.1 - - [10/Dec/2025 13:33:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:34:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 13:34:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:35:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 13:35:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:36:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 13:36:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:37:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 13:37:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:38:36,661 - INFO - 127.0.0.1 - - [10/Dec/2025 13:38:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:39:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 13:39:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:40:36,657 - INFO - 127.0.0.1 - - [10/Dec/2025 13:40:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:41:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 13:41:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:42:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 13:42:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:43:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 13:43:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:44:36,652 - INFO - 127.0.0.1 - - [10/Dec/2025 13:44:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:45:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 13:45:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:46:36,655 - INFO - 127.0.0.1 - - [10/Dec/2025 13:46:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:47:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 13:47:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:48:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 13:48:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:49:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 13:49:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:50:36,662 - INFO - 127.0.0.1 - - [10/Dec/2025 13:50:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:51:36,345 - INFO - 127.0.0.1 - - [10/Dec/2025 13:51:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:52:36,654 - INFO - 127.0.0.1 - - [10/Dec/2025 13:52:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:53:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 13:53:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:54:36,646 - INFO - 127.0.0.1 - - [10/Dec/2025 13:54:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:55:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 13:55:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:56:36,658 - INFO - 127.0.0.1 - - [10/Dec/2025 13:56:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:57:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 13:57:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:58:36,666 - INFO - 127.0.0.1 - - [10/Dec/2025 13:58:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 13:59:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 13:59:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:00:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 14:00:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:01:36,346 - INFO - 127.0.0.1 - - [10/Dec/2025 14:01:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:02:36,647 - INFO - 127.0.0.1 - - [10/Dec/2025 14:02:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:03:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 14:03:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:04:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 14:04:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:05:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 14:05:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:06:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 14:06:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:07:36,351 - INFO - 127.0.0.1 - - [10/Dec/2025 14:07:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:08:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 14:08:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:09:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 14:09:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:10:36,656 - INFO - 127.0.0.1 - - [10/Dec/2025 14:10:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:11:36,347 - INFO - 127.0.0.1 - - [10/Dec/2025 14:11:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:12:36,648 - INFO - 127.0.0.1 - - [10/Dec/2025 14:12:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:13:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 14:13:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:14:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 14:14:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:15:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 14:15:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:16:36,660 - INFO - 127.0.0.1 - - [10/Dec/2025 14:16:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:17:36,354 - INFO - 127.0.0.1 - - [10/Dec/2025 14:17:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:18:36,655 - INFO - 127.0.0.1 - - [10/Dec/2025 14:18:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:19:36,349 - INFO - 127.0.0.1 - - [10/Dec/2025 14:19:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:20:36,650 - INFO - 127.0.0.1 - - [10/Dec/2025 14:20:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:21:36,350 - INFO - 127.0.0.1 - - [10/Dec/2025 14:21:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:22:36,651 - INFO - 127.0.0.1 - - [10/Dec/2025 14:22:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:23:36,353 - INFO - 127.0.0.1 - - [10/Dec/2025 14:23:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:24:36,648 - INFO - 127.0.0.1 - - [10/Dec/2025 14:24:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:25:36,348 - INFO - 127.0.0.1 - - [10/Dec/2025 14:25:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-10 14:26:36,653 - INFO - 127.0.0.1 - - [10/Dec/2025 14:26:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:10,306 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:28:10,327 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:28:10,328 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:28:10,328 - INFO - Scheduler started
+2025-12-11 08:28:10,329 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:28:10,330 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:28:10,356 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.46.58:5000
+2025-12-11 08:28:10,356 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-11 08:28:10,358 - INFO -  * Restarting with stat
+2025-12-11 08:28:11,706 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:28:11,716 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:28:11,716 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:28:11,716 - INFO - Scheduler started
+2025-12-11 08:28:11,718 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:28:11,718 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:28:11,728 - WARNING -  * Debugger is active!
+2025-12-11 08:28:11,736 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:28:17,689 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:17] "[32mGET / HTTP/1.1[0m" 302 -
+2025-12-11 08:28:17,942 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:17] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2025-12-11 08:28:18,614 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:18] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-12-11 08:28:22,183 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:28:22,956 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-12-11 08:28:22,958 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:22] "POST /api/auth/login HTTP/1.1" 200 -
+2025-12-11 08:28:26,154 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:28:26,940 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:26] "GET / HTTP/1.1" 200 -
+2025-12-11 08:28:27,177 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:32,461 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:33,817 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:28:34,104 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:34] "GET / HTTP/1.1" 200 -
+2025-12-11 08:28:34,359 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:34,670 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:34] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:28:34,674 - INFO - Membuat objek session baru...
+2025-12-11 08:28:34,679 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:34] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-12-11 08:28:35,231 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:28:35,362 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 08:28:35,928 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:28:36,180 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-11 08:28:36,181 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-11 08:28:39,291 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2025-12-11 08:28:39,292 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2025-12-11 08:28:39,292 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2025-12-11 08:28:39,293 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2025-12-11 08:28:39,366 - INFO - 2. [Login] Mengirim kredensial...
+2025-12-11 08:28:39,642 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:41,921 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-12-11 08:28:41,922 - INFO -    --> Login dan proses SSO berhasil.
+2025-12-11 08:28:41,923 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2025-12-11 08:28:44,198 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:28:44,639 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:46,092 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:28:46,326 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 08:28:47,046 - INFO - Token ditemukan via regex global_token. ($2y$10$ia2qqwjnyAGKxb76i8rdYexLTaS3eVVj8qmAMERs4ErR4bGoulKlq)
+2025-12-11 08:28:47,047 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2025-12-11 08:28:47,469 - INFO - [ULTAH] Berhasil memproses 6 data.
+2025-12-11 08:28:47,471 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:47] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-11 08:28:49,664 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:54,353 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:28:59,651 - INFO - 127.0.0.1 - - [11/Dec/2025 08:28:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:04,361 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:09,657 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:14,356 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:19,656 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:24,358 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:29,662 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:34,363 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:39,659 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:44,356 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:49,656 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:29:54,358 - INFO - 127.0.0.1 - - [11/Dec/2025 08:29:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:30:16,656 - INFO - 127.0.0.1 - - [11/Dec/2025 08:30:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:05,073 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:07,650 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:31:08,050 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:08] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:31:14,200 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:31:14,637 - INFO - User me-reset session scraper (cookies.json dihapus).
+2025-12-11 08:31:14,638 - ERROR - Gagal menghapus cookies.json: reset_session_user() missing 1 required positional argument: 'user_id'
+2025-12-11 08:31:14,639 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:14] "[32mGET /reset-scraper-session HTTP/1.1[0m" 302 -
+2025-12-11 08:31:15,264 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:31:15,400 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:15] "GET / HTTP/1.1" 200 -
+2025-12-11 08:31:16,860 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:16,866 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:16] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:31:22,364 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:27,662 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:32,360 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:37,667 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:42,360 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:48,688 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:52,361 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:31:57,666 - INFO - 127.0.0.1 - - [11/Dec/2025 08:31:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:32:02,363 - INFO - 127.0.0.1 - - [11/Dec/2025 08:32:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:32:06,849 - INFO - 127.0.0.1 - - [11/Dec/2025 08:32:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:32:11,546 - INFO - 127.0.0.1 - - [11/Dec/2025 08:32:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:32:17,653 - INFO - 127.0.0.1 - - [11/Dec/2025 08:32:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:32:26,573 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:32:26,800 - INFO - 127.0.0.1 - - [11/Dec/2025 08:32:26] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:36:44,859 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\app.py', reloading
+2025-12-11 08:36:45,072 - INFO -  * Restarting with stat
+2025-12-11 08:36:53,615 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:36:53,625 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:36:53,625 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:36:53,626 - INFO - Scheduler started
+2025-12-11 08:36:53,638 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:36:53,639 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:36:53,650 - WARNING -  * Debugger is active!
+2025-12-11 08:36:53,656 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:36:54,131 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:36:54,136 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:36:54,218 - INFO - 127.0.0.1 - - [11/Dec/2025 08:36:54] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:36:54,244 - INFO - 127.0.0.1 - - [11/Dec/2025 08:36:54] "GET / HTTP/1.1" 200 -
+2025-12-11 08:36:54,987 - INFO - 127.0.0.1 - - [11/Dec/2025 08:36:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:36:55,291 - INFO - 127.0.0.1 - - [11/Dec/2025 08:36:55] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:37:00,662 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:07,182 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:09,987 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:12,418 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:37:12,752 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:12] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:37:23,624 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:37:23,721 - WARNING - User mencoba reset session, tapi cookies.json tidak ditemukan.
+2025-12-11 08:37:23,721 - INFO - Sesi memori untuk User ID 1 berhasil di-reset.
+2025-12-11 08:37:23,721 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:23] "[32mGET /reset-scraper-session HTTP/1.1[0m" 302 -
+2025-12-11 08:37:24,148 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:37:24,216 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:24] "GET / HTTP/1.1" 200 -
+2025-12-11 08:37:25,186 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:25,188 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:25] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:37:30,373 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:35,662 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:40,357 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:45,656 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:50,352 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:37:55,655 - INFO - 127.0.0.1 - - [11/Dec/2025 08:37:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:00,359 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:05,656 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:10,366 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:15,673 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:20,353 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:25,666 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:30,356 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:35,658 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:40,353 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:38:45,680 - INFO - 127.0.0.1 - - [11/Dec/2025 08:38:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:39:16,374 - INFO - 127.0.0.1 - - [11/Dec/2025 08:39:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:40:16,676 - INFO - 127.0.0.1 - - [11/Dec/2025 08:40:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:41:12,103 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\models\\gate.py', reloading
+2025-12-11 08:41:12,284 - INFO -  * Restarting with stat
+2025-12-11 08:41:13,576 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:41:13,585 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:41:13,586 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:41:13,586 - INFO - Scheduler started
+2025-12-11 08:41:13,588 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:41:13,588 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:41:13,596 - WARNING -  * Debugger is active!
+2025-12-11 08:41:13,601 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:41:16,619 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\models\\gate.py', reloading
+2025-12-11 08:41:16,744 - INFO -  * Restarting with stat
+2025-12-11 08:41:18,002 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:41:18,013 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:41:18,014 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:41:18,014 - INFO - Scheduler started
+2025-12-11 08:41:18,016 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:41:18,016 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:41:18,024 - WARNING -  * Debugger is active!
+2025-12-11 08:41:18,033 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:41:18,045 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:41:37,115 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\controller\\GateController.py', reloading
+2025-12-11 08:41:37,267 - INFO -  * Restarting with stat
+2025-12-11 08:41:38,276 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:41:38,285 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:41:38,286 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:41:38,286 - INFO - Scheduler started
+2025-12-11 08:41:38,287 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:41:38,287 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:41:38,293 - WARNING -  * Debugger is active!
+2025-12-11 08:41:38,299 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:41:46,275 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:41:46,519 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:41:47,454 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:41:47,907 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:47] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:41:53,739 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:41:53,843 - WARNING - User mencoba reset session, tapi cookies.json tidak ditemukan.
+2025-12-11 08:41:55,200 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:41:55,396 - INFO - [Reset Session] Sesi database User 1 berhasil dihapus.
+2025-12-11 08:41:55,396 - INFO - Sesi memori untuk User ID 1 berhasil di-reset.
+2025-12-11 08:41:55,397 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:55] "[32mGET /reset-scraper-session HTTP/1.1[0m" 302 -
+2025-12-11 08:41:57,033 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:41:58,069 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:58] "GET / HTTP/1.1" 200 -
+2025-12-11 08:41:58,900 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:41:58,908 - INFO - 127.0.0.1 - - [11/Dec/2025 08:41:58] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:42:04,355 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:09,665 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:14,357 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:19,659 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:24,363 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:29,676 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:34,355 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:39,655 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:44,354 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:49,705 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:54,355 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:42:59,664 - INFO - 127.0.0.1 - - [11/Dec/2025 08:42:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:43:16,366 - INFO - 127.0.0.1 - - [11/Dec/2025 08:43:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:44:05,026 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\app.py', reloading
+2025-12-11 08:44:05,181 - INFO -  * Restarting with stat
+2025-12-11 08:44:24,092 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:44:24,117 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:44:24,118 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:44:24,118 - INFO - Scheduler started
+2025-12-11 08:44:24,120 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:44:24,120 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:44:24,141 - WARNING -  * Debugger is active!
+2025-12-11 08:44:24,158 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:44:24,201 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:44:25,003 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:44:25,003 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:44:25,211 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:25] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:44:25,212 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:25] "GET / HTTP/1.1" 200 -
+2025-12-11 08:44:26,182 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:44:26,434 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:44:26,491 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:44:26,740 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:44:58,185 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:44:58,606 - INFO - 127.0.0.1 - - [11/Dec/2025 08:44:58] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:45:15,334 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:45:15,793 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:45:16,178 - INFO - [Reset Session] Sesi database User 1 berhasil dihapus.
+2025-12-11 08:45:16,178 - INFO - [Reset Scraper] Sesi untuk User ID 1 berhasil di-reset sepenuhnya (DB & RAM).
+2025-12-11 08:45:16,179 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:16] "[32mGET /reset-scraper-session HTTP/1.1[0m" 302 -
+2025-12-11 08:45:16,625 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:45:16,823 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:16] "GET / HTTP/1.1" 200 -
+2025-12-11 08:45:17,357 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:17,360 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:17] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:45:22,362 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:27,609 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:28,561 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:45:28,831 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:28] "GET / HTTP/1.1" 200 -
+2025-12-11 08:45:28,977 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:29,283 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:29] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:45:34,666 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:39,358 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:44,663 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:49,361 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:54,662 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:45:59,361 - INFO - 127.0.0.1 - - [11/Dec/2025 08:45:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:46:04,717 - INFO - 127.0.0.1 - - [11/Dec/2025 08:46:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:46:09,363 - INFO - 127.0.0.1 - - [11/Dec/2025 08:46:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:46:14,662 - INFO - 127.0.0.1 - - [11/Dec/2025 08:46:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:46:19,361 - INFO - 127.0.0.1 - - [11/Dec/2025 08:46:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:46:24,666 - INFO - 127.0.0.1 - - [11/Dec/2025 08:46:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:46:30,111 - INFO - 127.0.0.1 - - [11/Dec/2025 08:46:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:47:16,876 - INFO - 127.0.0.1 - - [11/Dec/2025 08:47:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:47:48,797 - INFO - 127.0.0.1 - - [11/Dec/2025 08:47:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:47:49,052 - INFO - 127.0.0.1 - - [11/Dec/2025 08:47:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:47:51,253 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:47:51,474 - INFO - 127.0.0.1 - - [11/Dec/2025 08:47:51] "GET / HTTP/1.1" 200 -
+2025-12-11 08:47:55,692 - INFO - 127.0.0.1 - - [11/Dec/2025 08:47:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:47:55,693 - INFO - 127.0.0.1 - - [11/Dec/2025 08:47:55] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:47:58,372 - INFO - 127.0.0.1 - - [11/Dec/2025 08:47:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:48:03,675 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:48:07,963 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:48:09,435 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:09] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:48:22,591 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:48:22,606 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:48:22,606 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:48:22,607 - INFO - Scheduler started
+2025-12-11 08:48:22,609 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:48:22,609 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:48:22,634 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.46.58:5000
+2025-12-11 08:48:22,635 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-11 08:48:22,637 - INFO -  * Restarting with stat
+2025-12-11 08:48:24,739 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:48:24,760 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:48:24,761 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:48:24,762 - INFO - Scheduler started
+2025-12-11 08:48:24,764 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:48:24,765 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:48:24,786 - WARNING -  * Debugger is active!
+2025-12-11 08:48:24,797 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:48:24,816 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:24] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:48:29,118 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:29] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:48:33,038 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:48:37,966 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:48:38,373 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:48:38,451 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:38] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:48:44,308 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:48:44,751 - INFO - User logging out from ALL devices...
+2025-12-11 08:48:44,751 - INFO - Revoking all sessions for user_id: 1
+2025-12-11 08:48:46,196 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:48:46,341 - INFO - Revoke All: Berhasil me-revoke 53 sesi untuk user_id 1.
+2025-12-11 08:48:46,343 - INFO - Current session cleared. Redirecting to login.
+2025-12-11 08:48:46,343 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:46] "[32mGET /logout-all HTTP/1.1[0m" 302 -
+2025-12-11 08:48:46,428 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:46] "GET /login HTTP/1.1" 200 -
+2025-12-11 08:48:53,046 - INFO - 127.0.0.1 - - [11/Dec/2025 08:48:53] "GET /login HTTP/1.1" 200 -
+2025-12-11 08:49:05,850 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:06,157 - WARNING - [GUARD] Refresh token revoked. Logout.
+2025-12-11 08:49:06,159 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:06] "[32mGET /account HTTP/1.1[0m" 302 -
+2025-12-11 08:49:06,164 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:06] "GET /login?next=http://localhost:5000/account HTTP/1.1" 200 -
+2025-12-11 08:49:07,530 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:07] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-12-11 08:49:35,815 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:37,167 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-12-11 08:49:37,168 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:37] "POST /api/auth/login HTTP/1.1" 200 -
+2025-12-11 08:49:38,644 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:38,991 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:38] "GET /account HTTP/1.1" 200 -
+2025-12-11 08:49:49,438 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:49,807 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:49] "GET / HTTP/1.1" 200 -
+2025-12-11 08:49:49,975 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:49:50,278 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:50] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:49:50,279 - INFO - Membuat objek session baru...
+2025-12-11 08:49:50,284 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:50] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-12-11 08:49:51,268 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:51,438 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 08:49:52,073 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:52,294 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2025-12-11 08:49:52,294 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2025-12-11 08:49:52,883 - INFO - 2. [Login] Mengirim kredensial...
+2025-12-11 08:49:55,366 - INFO - 3. [Login] Menangani alur redirect SSO...
+2025-12-11 08:49:55,366 - INFO -    --> Login dan proses SSO berhasil.
+2025-12-11 08:49:55,367 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2025-12-11 08:49:55,648 - INFO - 127.0.0.1 - - [11/Dec/2025 08:49:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:49:56,388 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:57,937 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:49:58,271 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 08:49:59,007 - INFO - Token ditemukan via regex global_token. ($2y$10$rL9qTx7L01XbwZ8V8O7ZS.2/f0oZ6Lo36wSI6tARvmQw78NmSClRK)
+2025-12-11 08:49:59,008 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2025-12-11 08:50:00,163 - INFO - [ULTAH] Berhasil memproses 6 data.
+2025-12-11 08:50:00,164 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:00] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-11 08:50:01,303 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:04,294 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:50:04,387 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:04] "GET / HTTP/1.1" 200 -
+2025-12-11 08:50:04,829 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:04,830 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:04] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 08:50:10,350 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:15,651 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:20,348 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:25,686 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:30,359 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:35,651 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:40,349 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:45,653 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:51,370 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:50:55,656 - INFO - 127.0.0.1 - - [11/Dec/2025 08:50:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:51:00,350 - INFO - 127.0.0.1 - - [11/Dec/2025 08:51:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:51:05,653 - INFO - 127.0.0.1 - - [11/Dec/2025 08:51:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:51:17,491 - INFO - 127.0.0.1 - - [11/Dec/2025 08:51:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:52:16,652 - INFO - 127.0.0.1 - - [11/Dec/2025 08:52:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:52:50,093 - INFO - 127.0.0.1 - - [11/Dec/2025 08:52:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:52:51,112 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:52:51,228 - INFO - 127.0.0.1 - - [11/Dec/2025 08:52:51] "GET /tools HTTP/1.1" 200 -
+2025-12-11 08:52:57,619 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:52:58,020 - INFO - 127.0.0.1 - - [11/Dec/2025 08:52:58] "GET /krs_kuliah HTTP/1.1" 200 -
+2025-12-11 08:52:58,999 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:52:59,212 - INFO - API: Menerima request untuk data KRS
+2025-12-11 08:52:59,213 - INFO - [KRS] Request List (Attempt 1)...
+2025-12-11 08:53:01,267 - WARNING - [KRS] Error attempt 1: Tabel KRS tidak ditemukan
+2025-12-11 08:53:01,268 - INFO - [KRS] Request List (Attempt 2)...
+2025-12-11 08:53:02,124 - INFO - [KRS] Berhasil ambil 10 data.
+2025-12-11 08:53:02,526 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:53:02,672 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 08:53:03,873 - INFO - Token ditemukan via regex global_token. ($2y$10$rL9qTx7L01XbwZ8V8O7ZS.2/f0oZ6Lo36wSI6tARvmQw78NmSClRK)
+2025-12-11 08:53:05,233 - INFO -     --> Masa studi JSON: {'smt_skrg': 5, 'sisa_smt': 3}
+2025-12-11 08:53:05,250 - INFO - API: Berhasil mengambil 10 data KRS.
+2025-12-11 08:53:05,252 - INFO - 127.0.0.1 - - [11/Dec/2025 08:53:05] "GET /api/krs-data HTTP/1.1" 200 -
+2025-12-11 08:56:37,689 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 08:56:37,821 - INFO -  * Restarting with stat
+2025-12-11 08:56:39,261 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:56:39,269 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:56:39,269 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:56:39,269 - INFO - Scheduler started
+2025-12-11 08:56:39,270 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:56:39,270 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:56:39,278 - WARNING -  * Debugger is active!
+2025-12-11 08:56:39,282 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:56:39,916 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:56:40,020 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:40] "GET /krs_kuliah HTTP/1.1" 200 -
+2025-12-11 08:56:40,334 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:56:40,414 - INFO - API: Menerima request untuk data KRS
+2025-12-11 08:56:40,415 - INFO - Membuat objek session baru...
+2025-12-11 08:56:40,741 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:56:40,809 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 08:56:41,050 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:56:41,115 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-11 08:56:41,116 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-11 08:56:41,442 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:56:41,534 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:41] "GET /tools HTTP/1.1" 200 -
+2025-12-11 08:56:43,748 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:56:43,831 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:43] "GET / HTTP/1.1" 200 -
+2025-12-11 08:56:44,204 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:56:44,427 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:56:44,597 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:44] "[35m[1mGET /api/status_koneksi HTTP/1.1[0m" 500 -
+2025-12-11 08:56:45,364 - INFO - Session User 1 RESTORED dari Database & VALID.
+2025-12-11 08:56:45,365 - INFO - [KRS] Request List (Attempt 1)...
+2025-12-11 08:56:49,646 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:56:54,730 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:56:59,648 - INFO - 127.0.0.1 - - [11/Dec/2025 08:56:59] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:00,452 - INFO - [KRS] Berhasil ambil 10 data.
+2025-12-11 08:57:02,423 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 08:57:02,494 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 08:57:03,272 - INFO - Token ditemukan via regex global_token. ($2y$10$rL9qTx7L01XbwZ8V8O7ZS.2/f0oZ6Lo36wSI6tARvmQw78NmSClRK)
+2025-12-11 08:57:04,139 - INFO -     --> Masa studi JSON: {'smt_skrg': 5, 'sisa_smt': 3}
+2025-12-11 08:57:04,145 - INFO - API: Berhasil mengambil 10 data KRS.
+2025-12-11 08:57:04,146 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:04] "GET /api/krs-data HTTP/1.1" 200 -
+2025-12-11 08:57:04,646 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:09,344 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:09] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:13,525 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 08:57:14,357 - INFO -  * Restarting with stat
+2025-12-11 08:57:15,769 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 08:57:15,790 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 08:57:15,800 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 08:57:15,803 - INFO - Scheduler started
+2025-12-11 08:57:15,839 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 08:57:15,844 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 08:57:15,853 - WARNING -  * Debugger is active!
+2025-12-11 08:57:15,858 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 08:57:15,897 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:19,355 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:24,648 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:29,345 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:34,647 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:39,775 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:57:44,647 - INFO - 127.0.0.1 - - [11/Dec/2025 08:57:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:58:16,345 - INFO - 127.0.0.1 - - [11/Dec/2025 08:58:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 08:59:16,652 - INFO - 127.0.0.1 - - [11/Dec/2025 08:59:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:00:16,370 - INFO - 127.0.0.1 - - [11/Dec/2025 09:00:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:00:25,654 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:00:25,929 - INFO -  * Restarting with stat
+2025-12-11 09:00:27,236 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:00:27,244 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:00:27,244 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:00:27,244 - INFO - Scheduler started
+2025-12-11 09:00:27,245 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:00:27,245 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:00:27,253 - WARNING -  * Debugger is active!
+2025-12-11 09:00:27,257 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:00:28,268 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:00:28,410 - INFO -  * Restarting with stat
+2025-12-11 09:01:14,574 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:01:14,582 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:01:14,582 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:01:14,583 - INFO - Scheduler started
+2025-12-11 09:01:14,584 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:01:14,584 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:01:14,598 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.46.58:5000
+2025-12-11 09:01:14,598 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-11 09:01:14,600 - INFO -  * Restarting with stat
+2025-12-11 09:01:15,572 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:01:15,580 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:01:15,580 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:01:15,580 - INFO - Scheduler started
+2025-12-11 09:01:15,581 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:01:15,581 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:01:15,589 - WARNING -  * Debugger is active!
+2025-12-11 09:01:15,594 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:01:15,603 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:17,314 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:01:17,315 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:01:17,624 - ERROR - Error check status koneksi: name 'g' is not defined
+2025-12-11 09:01:17,624 - ERROR - Error check status koneksi: name 'g' is not defined
+2025-12-11 09:01:17,626 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:17] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:01:17,627 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:17] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:01:19,916 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:24,345 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:29,646 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:34,343 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:34,697 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:01:34,938 - INFO -  * Restarting with stat
+2025-12-11 09:01:36,081 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:01:36,089 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:01:36,090 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:01:36,090 - INFO - Scheduler started
+2025-12-11 09:01:36,091 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:01:36,091 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:01:36,099 - WARNING -  * Debugger is active!
+2025-12-11 09:01:36,104 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:01:39,647 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:40,126 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:01:40,281 - INFO -  * Restarting with stat
+2025-12-11 09:01:41,570 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:01:41,578 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:01:41,579 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:01:41,579 - INFO - Scheduler started
+2025-12-11 09:01:41,580 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:01:41,580 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:01:41,587 - WARNING -  * Debugger is active!
+2025-12-11 09:01:41,592 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:01:42,017 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:01:42,094 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:42] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:01:44,511 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:44] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:48,498 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:01:49,345 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:49] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:49,634 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:49] "GET / HTTP/1.1" 200 -
+2025-12-11 09:01:50,521 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:01:51,599 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:01:51,906 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:51] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:01:55,220 - INFO - 127.0.0.1 - - [11/Dec/2025 09:01:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:02:00,645 - INFO - 127.0.0.1 - - [11/Dec/2025 09:02:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:02:06,297 - INFO - 127.0.0.1 - - [11/Dec/2025 09:02:06] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:02:10,646 - INFO - 127.0.0.1 - - [11/Dec/2025 09:02:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:02:15,347 - INFO - 127.0.0.1 - - [11/Dec/2025 09:02:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:02:19,775 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:02:20,007 - INFO -  * Restarting with stat
+2025-12-11 09:05:26,275 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:05:26,284 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:05:26,285 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:05:26,286 - INFO - Scheduler started
+2025-12-11 09:05:26,289 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:05:26,290 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:05:26,305 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.46.58:5000
+2025-12-11 09:05:26,306 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-11 09:05:26,307 - INFO -  * Restarting with stat
+2025-12-11 09:05:27,254 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:05:27,263 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:05:27,264 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:05:27,264 - INFO - Scheduler started
+2025-12-11 09:05:27,265 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:05:27,265 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:05:27,272 - WARNING -  * Debugger is active!
+2025-12-11 09:05:27,276 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:05:30,957 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:30] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-11 09:05:31,250 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:31] "GET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-12-11 09:05:31,295 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:31] "GET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-12-11 09:05:31,308 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:31] "GET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=console.png&s=gRCSHmrV2WCi5rtYoXsD HTTP/1.1" 200 -
+2025-12-11 09:05:33,297 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:33] "GET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-12-11 09:05:35,312 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:05:35,496 - INFO -  * Restarting with stat
+2025-12-11 09:05:36,759 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:05:36,767 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:05:36,767 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:05:36,767 - INFO - Scheduler started
+2025-12-11 09:05:36,769 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:05:36,769 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:05:36,776 - WARNING -  * Debugger is active!
+2025-12-11 09:05:36,780 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:05:36,814 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:36] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-11 09:05:36,874 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:36] "[36mGET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-12-11 09:05:37,137 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:37] "[36mGET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-12-11 09:05:37,452 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:37] "GET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=console.png&s=t8lGEP8IQEGnHhE0NPMk HTTP/1.1" 200 -
+2025-12-11 09:05:37,704 - INFO - 127.0.0.1 - - [11/Dec/2025 09:05:37] "[36mGET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-12-11 09:06:03,900 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:06:04,178 - INFO -  * Restarting with stat
+2025-12-11 09:06:05,393 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:06:05,401 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:06:05,401 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:06:05,401 - INFO - Scheduler started
+2025-12-11 09:06:05,402 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:06:05,402 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:06:05,409 - WARNING -  * Debugger is active!
+2025-12-11 09:06:05,414 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:06:06,430 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:06:06,574 - INFO -  * Restarting with stat
+2025-12-11 09:06:07,587 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:06:07,595 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:06:07,595 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:06:07,595 - INFO - Scheduler started
+2025-12-11 09:06:07,596 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:06:07,596 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:06:07,603 - WARNING -  * Debugger is active!
+2025-12-11 09:06:07,607 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:06:17,025 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:20,670 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:06:20,677 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:06:20,678 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:06:20,678 - INFO - Scheduler started
+2025-12-11 09:06:20,679 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:06:20,679 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:06:20,695 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.46.58:5000
+2025-12-11 09:06:20,696 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-11 09:06:20,697 - INFO -  * Restarting with stat
+2025-12-11 09:06:21,645 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:06:21,653 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:06:21,653 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:06:21,653 - INFO - Scheduler started
+2025-12-11 09:06:21,654 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:06:21,654 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:06:21,662 - WARNING -  * Debugger is active!
+2025-12-11 09:06:21,666 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:06:22,572 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:22] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-11 09:06:22,850 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:22] "[36mGET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-12-11 09:06:22,887 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:22] "[36mGET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-12-11 09:06:22,902 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:22] "GET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=console.png&s=zab98qmqjfoVCUmnxR27 HTTP/1.1" 200 -
+2025-12-11 09:06:23,210 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:23] "[36mGET /api/fetch-data-ultah?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-12-11 09:06:23,978 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:25,218 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:25,868 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:06:26,106 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:26] "GET / HTTP/1.1" 200 -
+2025-12-11 09:06:26,559 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:26] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:06:26,560 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:27,344 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:27] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-12-11 09:06:30,217 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:06:30,281 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:30] "GET / HTTP/1.1" 200 -
+2025-12-11 09:06:30,303 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:30] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-12-11 09:06:30,764 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:30,765 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:30] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:06:30,786 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:30] "[35m[1mGET /api/fetch-data-ultah HTTP/1.1[0m" 500 -
+2025-12-11 09:06:36,347 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:42,075 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:46,347 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:51,649 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:51] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:06:56,348 - INFO - 127.0.0.1 - - [11/Dec/2025 09:06:56] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:07:01,646 - INFO - 127.0.0.1 - - [11/Dec/2025 09:07:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:07:05,937 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:07:06,063 - INFO -  * Restarting with stat
+2025-12-11 09:07:07,598 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:07:07,606 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:07:07,607 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:07:07,607 - INFO - Scheduler started
+2025-12-11 09:07:07,608 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:07:07,608 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:07:07,615 - WARNING -  * Debugger is active!
+2025-12-11 09:07:07,621 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:07:07,628 - INFO - 127.0.0.1 - - [11/Dec/2025 09:07:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:07:11,348 - INFO - 127.0.0.1 - - [11/Dec/2025 09:07:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:07:16,653 - INFO - 127.0.0.1 - - [11/Dec/2025 09:07:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:07:21,351 - INFO - 127.0.0.1 - - [11/Dec/2025 09:07:21] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:07:26,651 - INFO - 127.0.0.1 - - [11/Dec/2025 09:07:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:07:31,990 - INFO - 127.0.0.1 - - [11/Dec/2025 09:07:31] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:08:16,809 - INFO - 127.0.0.1 - - [11/Dec/2025 09:08:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:09:16,356 - INFO - 127.0.0.1 - - [11/Dec/2025 09:09:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:10:16,652 - INFO - 127.0.0.1 - - [11/Dec/2025 09:10:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:11:16,350 - INFO - 127.0.0.1 - - [11/Dec/2025 09:11:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:12:16,648 - INFO - 127.0.0.1 - - [11/Dec/2025 09:12:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:13:16,351 - INFO - 127.0.0.1 - - [11/Dec/2025 09:13:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:14:16,651 - INFO - 127.0.0.1 - - [11/Dec/2025 09:14:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:15:16,350 - INFO - 127.0.0.1 - - [11/Dec/2025 09:15:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:16:16,649 - INFO - 127.0.0.1 - - [11/Dec/2025 09:16:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:17:16,650 - INFO - 127.0.0.1 - - [11/Dec/2025 09:17:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:18:16,650 - INFO - 127.0.0.1 - - [11/Dec/2025 09:18:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:19:16,348 - INFO - 127.0.0.1 - - [11/Dec/2025 09:19:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:20:17,576 - INFO - 127.0.0.1 - - [11/Dec/2025 09:20:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:21:16,347 - INFO - 127.0.0.1 - - [11/Dec/2025 09:21:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:22:16,651 - INFO - 127.0.0.1 - - [11/Dec/2025 09:22:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:23:16,354 - INFO - 127.0.0.1 - - [11/Dec/2025 09:23:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:24:16,653 - INFO - 127.0.0.1 - - [11/Dec/2025 09:24:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:25:16,875 - INFO - 127.0.0.1 - - [11/Dec/2025 09:25:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:26:16,651 - INFO - 127.0.0.1 - - [11/Dec/2025 09:26:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:27:16,349 - INFO - 127.0.0.1 - - [11/Dec/2025 09:27:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:38:19,387 - INFO - 127.0.0.1 - - [11/Dec/2025 09:38:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:38:36,229 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:38:36,371 - INFO -  * Restarting with stat
+2025-12-11 09:38:43,048 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:38:43,059 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:38:43,059 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:38:43,059 - INFO - Scheduler started
+2025-12-11 09:38:43,068 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:38:43,068 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:38:43,078 - WARNING -  * Debugger is active!
+2025-12-11 09:38:43,084 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:38:48,109 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:38:48,269 - INFO -  * Restarting with stat
+2025-12-11 09:38:49,866 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:38:49,875 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:38:49,876 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:38:49,876 - INFO - Scheduler started
+2025-12-11 09:38:49,877 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:38:49,877 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:38:49,885 - WARNING -  * Debugger is active!
+2025-12-11 09:38:49,890 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:39:13,334 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:39:13,743 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2025-12-11 09:39:13,744 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:13] "POST /api/auth/login HTTP/1.1" 200 -
+2025-12-11 09:39:14,017 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:39:14,153 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:14] "GET / HTTP/1.1" 200 -
+2025-12-11 09:39:14,453 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:14] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:14,758 - INFO - Membuat objek session baru...
+2025-12-11 09:39:14,772 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:14] "GET /api/jadwal-list HTTP/1.1" 200 -
+2025-12-11 09:39:16,470 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:16,575 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:39:17,108 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 09:39:18,619 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:39:18,746 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-11 09:39:18,747 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-11 09:39:19,801 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:19] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:24,737 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:24] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:25,029 - INFO - Session User 1 RESTORED dari Database & VALID.
+2025-12-11 09:39:25,030 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:25] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:39:25,933 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:39:26,175 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 09:39:28,538 - INFO - Token ditemukan via regex global_token. ($2y$10$rL9qTx7L01XbwZ8V8O7ZS.2/f0oZ6Lo36wSI6tARvmQw78NmSClRK)
+2025-12-11 09:39:28,539 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2025-12-11 09:39:29,489 - INFO - [ULTAH] Berhasil memproses 6 data.
+2025-12-11 09:39:29,490 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:29] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-11 09:39:29,738 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:29] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:34,850 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:34] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:39,435 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:39] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:45,483 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:50,181 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:39:54,675 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:39:54,847 - INFO -  * Restarting with stat
+2025-12-11 09:39:55,928 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:39:55,938 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:39:55,938 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:39:55,939 - INFO - Scheduler started
+2025-12-11 09:39:55,940 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:39:55,940 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:39:55,948 - WARNING -  * Debugger is active!
+2025-12-11 09:39:55,952 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:39:55,960 - INFO - 127.0.0.1 - - [11/Dec/2025 09:39:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:00,260 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:04,766 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:05,634 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:05,728 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:05] "GET / HTTP/1.1" 200 -
+2025-12-11 09:40:05,847 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:06,153 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:06] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:40:13,484 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:40:13,492 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:40:13,492 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:40:13,492 - INFO - Scheduler started
+2025-12-11 09:40:13,493 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:40:13,493 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:40:14,761 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.46.58:5000
+2025-12-11 09:40:14,761 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-11 09:40:14,762 - INFO -  * Restarting with stat
+2025-12-11 09:40:15,761 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:40:15,769 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:40:15,770 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:40:15,770 - INFO - Scheduler started
+2025-12-11 09:40:15,771 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:40:15,771 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:40:15,778 - WARNING -  * Debugger is active!
+2025-12-11 09:40:15,782 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:40:16,478 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:16,510 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:20,853 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:26,148 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:26] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:30,522 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:30,665 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:30] "GET / HTTP/1.1" 200 -
+2025-12-11 09:40:30,963 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:31,275 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:31] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:40:31,282 - INFO - Membuat objek session baru...
+2025-12-11 09:40:31,800 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:31,953 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 09:40:32,530 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:32,647 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-11 09:40:32,647 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-11 09:40:34,411 - INFO - Session User 1 RESTORED dari Database & VALID.
+2025-12-11 09:40:35,004 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:35,164 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 09:40:36,186 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:36,404 - INFO - Token ditemukan via regex global_token. ($2y$10$rL9qTx7L01XbwZ8V8O7ZS.2/f0oZ6Lo36wSI6tARvmQw78NmSClRK)
+2025-12-11 09:40:36,404 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2025-12-11 09:40:37,326 - INFO - [ULTAH] Berhasil memproses 6 data.
+2025-12-11 09:40:37,326 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:37] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-11 09:40:42,225 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:43,918 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:40:44,291 - INFO -  * Restarting with stat
+2025-12-11 09:40:45,355 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:40:45,364 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:40:45,364 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:40:45,364 - INFO - Scheduler started
+2025-12-11 09:40:45,366 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:40:45,366 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:40:45,374 - WARNING -  * Debugger is active!
+2025-12-11 09:40:45,378 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:40:46,247 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:46,252 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:46] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:46,742 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:46] "GET / HTTP/1.1" 200 -
+2025-12-11 09:40:48,108 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:48,109 - INFO - Membuat objek session baru...
+2025-12-11 09:40:48,563 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:48,692 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 09:40:49,215 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:40:49,281 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-11 09:40:49,282 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-11 09:40:51,782 - INFO - Session User 1 RESTORED dari Database & VALID.
+2025-12-11 09:40:51,783 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:51] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:40:52,801 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:40:58,485 - INFO - 127.0.0.1 - - [11/Dec/2025 09:40:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:02,809 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:02] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:08,487 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:13,185 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:16,472 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:18,489 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:22,807 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:28,491 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:33,189 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:33] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:38,487 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:38] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:43,181 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:48,522 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:53,184 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:53] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:41:58,485 - INFO - 127.0.0.1 - - [11/Dec/2025 09:41:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:42:03,189 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:03] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:42:08,926 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:42:13,187 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:13] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:42:16,177 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:42:18,482 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:18] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:42:23,189 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:23] "GET /api/jadwal-status HTTP/1.1" 200 -

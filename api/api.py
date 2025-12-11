@@ -5,7 +5,7 @@ from yt_dlp.utils import sanitize_filename
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi
+from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session
 from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
@@ -91,22 +91,35 @@ def my_postprocessor_hook(d, task_id):
         download_progress[task_id]['status'] = 'Converting'
         download_progress[task_id]['text'] = 'Finalisasi file...'
 # mengecek status koneksi Sicyca
+# mengecek status koneksi Sicyca
 @api_bp.route('/status_koneksi')
 def api_status():
-    # 1. Ambil user_id dari session flask yang sedang login
+    # 1. Ambil user_id dari session flask
     user_id = session.get('user_id')
     
-    # 2. Panggil fungsi dengan parameter user_id
-    # Hasilnya sekarang berupa dict: {'active': True/False, 'message': '...'}
-    status_result = get_session_status(user_id)
-    
-    # 3. Cek key 'active' dari dictionary result
-    if status_result.get('active'):
-        return jsonify({"status": "ready", "message": "Koneksi Sicyca aman."})
-    else:
+    if not user_id:
+        # User flask belum login -> Kirim status 'error' agar frontend jadi Merah
         return jsonify({
             "status": "error", 
-            "message": "Koneksi Sicyca gagal atau User belum login. Coba refresh halaman atau login ulang."
+            "message": "Anda belum login."
+        })
+
+    # 2. Cek apakah session Sicyca valid (Real Check)
+    # Menggunakan get_authenticated_session untuk memastikan koneksi ke Gate/Sicyca hidup
+    sicyca_session = get_authenticated_session(user_id)
+    
+    # 3. Kondisi SUKSES (Frontend Hijau)
+    if sicyca_session:
+        return jsonify({
+            "status": "ready",  # WAJIB: 'ready' (sesuai x-if="sicycaStatus === 'ready'")
+            "message": "Terhubung ke Sicyca."
+        })
+    
+    # 4. Kondisi GAGAL (Frontend Merah)
+    else:
+        return jsonify({
+            "status": "error",  # WAJIB: 'error' (sesuai x-if="sicycaStatus === 'error'")
+            "message": "Gagal terhubung ke server Sicyca (Session Invalid)."
         })
 
 # Untuk mencari mahasiswa atau staff

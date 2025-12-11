@@ -257,9 +257,23 @@ def get_authenticated_session(user_id):
         return None
 
 def reset_session_user(user_id):
+    """
+    Menghapus sesi scraper dari Memori DAN Database.
+    """
+    # 1. Hapus dari Memory (RAM)
     with _session_lock:
         if user_id in _active_sessions:
             del _active_sessions[user_id]
+            logging.info(f"[Reset Session] Sesi memori User {user_id} dihapus.")
+
+    # 2. Hapus dari Database (Disk/MySQL)
+    try:
+        if gate_session_model.delete_session_by_user_id(user_id):
+            logging.info(f"[Reset Session] Sesi database User {user_id} berhasil dihapus.")
+        else:
+            logging.warning(f"[Reset Session] Gagal menghapus sesi database User {user_id} (Mungkin tidak ada).")
+    except Exception as e:
+        logging.error(f"[Reset Session] Error saat menghapus DB: {e}")
 
 def get_session_status(user_id):
     if not user_id: return {"active": False, "message": "No User ID"}

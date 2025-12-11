@@ -425,22 +425,22 @@ def account_page():
 @app.route('/reset-scraper-session')
 @login_required
 def reset_scraper_session():
-    cookie_file = 'cookies.json'
     try:
-            # 1. Hapus File di Disk
-            if os.path.exists(cookie_file):
-                os.remove(cookie_file)
-                logging.info("User me-reset session scraper (cookies.json dihapus).")
-            else:
-                logging.warning("User mencoba reset session, tapi cookies.json tidak ditemukan.")
-                
-            # 2. Hapus Sesi di Memory (RAM) <-- INI KUNCI FIX-NYA
-            reset_session_user()
+        # Ambil user_id dari context 'g' (dari @login_required)
+        if 'user' in g and g.user.get('sub'):
+            user_id = g.user['sub']
+            
+            # Panggil Controller untuk hapus sesi di Memori & Database
+            reset_session_user(user_id)
+            
+            logging.info(f"[Reset Scraper] Sesi untuk User ID {user_id} berhasil di-reset sepenuhnya (DB & RAM).")
+        else:
+            logging.warning("[Reset Scraper] Gagal reset: User ID tidak ditemukan dalam token.")
             
     except Exception as e:
-            logging.error(f"Gagal menghapus cookies.json: {e}")
+        logging.error(f"[Reset Scraper] Error: {e}")
     
-        # Kembali ke home setelah hapus
+    # Kembali ke dashboard
     return redirect(url_for('index'))
 
 # Route untuk refresh jadwal manual
