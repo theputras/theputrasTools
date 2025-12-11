@@ -31922,3 +31922,136 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2025-12-11 09:42:16,177 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:16] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-11 09:42:18,482 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:18] "GET /api/jadwal-status HTTP/1.1" 200 -
 2025-12-11 09:42:23,189 - INFO - 127.0.0.1 - - [11/Dec/2025 09:42:23] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:16,476 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:16,502 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:25,250 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:43:25,450 - INFO -  * Restarting with stat
+2025-12-11 09:43:26,518 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:43:26,526 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:43:26,526 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:43:26,527 - INFO - Scheduler started
+2025-12-11 09:43:26,527 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:43:26,528 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:43:26,535 - WARNING -  * Debugger is active!
+2025-12-11 09:43:26,540 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:43:27,471 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:27,899 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:28,591 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:43:28,685 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:28] "GET / HTTP/1.1" 200 -
+2025-12-11 09:43:28,887 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:28] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:29,192 - INFO - Membuat objek session baru...
+2025-12-11 09:43:29,847 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:43:29,956 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 09:43:30,745 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:43:30,870 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-11 09:43:30,871 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-11 09:43:32,177 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:43:32,292 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:32] "GET / HTTP/1.1" 200 -
+2025-12-11 09:43:32,847 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:32,898 - INFO - Session User 1 RESTORED dari Database & VALID.
+2025-12-11 09:43:32,899 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:32] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:43:32,900 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:32] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:43:33,239 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:43:33,367 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 09:43:35,416 - INFO - Token ditemukan via regex global_token. ($2y$10$rL9qTx7L01XbwZ8V8O7ZS.2/f0oZ6Lo36wSI6tARvmQw78NmSClRK)
+2025-12-11 09:43:35,417 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2025-12-11 09:43:36,204 - INFO - [ULTAH] Berhasil memproses 6 data.
+2025-12-11 09:43:36,205 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:36] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-11 09:43:37,516 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:43,478 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:43] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:48,183 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:48] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:54,096 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:54] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:58,183 - INFO - 127.0.0.1 - - [11/Dec/2025 09:43:58] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:43:58,803 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2025-12-11 09:43:58,990 - INFO -  * Restarting with stat
+2025-12-11 09:44:00,139 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:44:00,151 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:44:00,152 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:44:00,158 - INFO - Scheduler started
+2025-12-11 09:44:00,168 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:44:00,168 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:44:00,179 - WARNING -  * Debugger is active!
+2025-12-11 09:44:00,184 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:44:03,203 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2025-12-11 09:44:03,329 - INFO -  * Restarting with stat
+2025-12-11 09:44:04,706 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:44:04,715 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:44:04,716 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:44:04,716 - INFO - Scheduler started
+2025-12-11 09:44:04,717 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:44:04,717 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:44:04,725 - WARNING -  * Debugger is active!
+2025-12-11 09:44:04,729 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:44:04,736 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:04] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:05,743 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2025-12-11 09:44:05,913 - INFO -  * Restarting with stat
+2025-12-11 09:44:06,972 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:44:06,980 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:44:06,980 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:44:06,980 - INFO - Scheduler started
+2025-12-11 09:44:06,981 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:44:06,981 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:44:06,990 - WARNING -  * Debugger is active!
+2025-12-11 09:44:06,994 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:44:07,999 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:07] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:10,954 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:44:11,027 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:11] "GET / HTTP/1.1" 200 -
+2025-12-11 09:44:11,340 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:11] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:11,651 - INFO - Membuat objek session baru...
+2025-12-11 09:44:11,896 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:44:11,964 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2025-12-11 09:44:12,219 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:44:12,288 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2025-12-11 09:44:12,288 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2025-12-11 09:44:13,892 - INFO - Session User 1 RESTORED dari Database & VALID.
+2025-12-11 09:44:13,914 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:13] "GET /api/status_koneksi HTTP/1.1" 200 -
+2025-12-11 09:44:14,238 - INFO - === Koneksi ke database berhasil ===
+2025-12-11 09:44:14,359 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2025-12-11 09:44:15,165 - INFO - Token ditemukan via regex global_token. ($2y$10$rL9qTx7L01XbwZ8V8O7ZS.2/f0oZ6Lo36wSI6tARvmQw78NmSClRK), dengan NIM: 23410100003
+2025-12-11 09:44:15,198 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2025-12-11 09:44:15,949 - INFO - [ULTAH] Berhasil memproses 6 data.
+2025-12-11 09:44:15,950 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:15] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2025-12-11 09:44:16,475 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:16] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:17,183 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:17] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:22,488 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:22] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:27,179 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:27] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:32,481 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:32] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:34,131 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2025-12-11 09:44:34,289 - INFO -  * Restarting with stat
+2025-12-11 09:44:35,610 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:44:35,619 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:44:35,619 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:44:35,619 - INFO - Scheduler started
+2025-12-11 09:44:35,620 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:44:35,620 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:44:35,628 - WARNING -  * Debugger is active!
+2025-12-11 09:44:35,634 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:44:37,491 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:37] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:42,186 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:42] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:47,512 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:47] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:52,187 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:52] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:44:55,905 - INFO -  * Detected change in 'D:\\Github\\theputrasTools\\api\\api.py', reloading
+2025-12-11 09:44:56,513 - INFO -  * Restarting with stat
+2025-12-11 09:44:57,556 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2025-12-11 09:44:57,566 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-11 09:44:57,569 - INFO - Added job "run_scraper_and_save" to job store "default"
+2025-12-11 09:44:57,572 - INFO - Scheduler started
+2025-12-11 09:44:57,575 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2025-12-11 09:44:57,576 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2025-12-11 09:44:57,585 - WARNING -  * Debugger is active!
+2025-12-11 09:44:57,591 - INFO -  * Debugger PIN: 288-901-657
+2025-12-11 09:44:57,599 - INFO - 127.0.0.1 - - [11/Dec/2025 09:44:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:45:01,791 - INFO - 127.0.0.1 - - [11/Dec/2025 09:45:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2025-12-11 09:45:06,611 - INFO - 127.0.0.1 - - [11/Dec/2025 09:45:06] "GET /api/jadwal-status HTTP/1.1" 200 -

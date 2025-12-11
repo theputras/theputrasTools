@@ -97,7 +97,7 @@ def _get_api_params(user_id, session_obj):
         match = re.search(r'var global_token\s*=\s*"([^"]+)"', r.text)
         if match:
             token = match.group(1)
-            logging.info(f"Token ditemukan via regex global_token. ({token})")
+            logging.info(f"Token ditemukan via regex global_token, dengan NIM: {nim}")
         else:
             # Fallback: cari meta csrf-token
             meta_match = re.search(r'name="csrf-token"\s+content="([^"]+)"', r.text)
