@@ -2,7 +2,7 @@ from flask import request, Response, jsonify, Blueprint, current_app, send_from_
 import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
-from models.gate import GateSession
+from models.gate import GateSession, GateUser
 
 
 # Impor SEMUA fungsi scraper
@@ -807,3 +807,27 @@ def sync_cookies():
             "message": f"Server Error: {str(e)}",
             "cookies": []
         }), 500
+        
+@api_bp.route('/get-my-credentials', methods=['GET'])
+@login_required
+def get_my_credentials():
+    """
+    Endpoint untuk mengambil password user (dekripsi) agar bisa di-copy di frontend.
+    """
+    try:
+        user_id = g.user.get('sub')
+        gate_model = GateUser() # Init model
+        
+        # Ambil credentials dari database
+        _, username, decrypted_password = gate_model.get_credentials_by_user_id(user_id)
+        
+        if not decrypted_password:
+             return jsonify({"success": False, "message": "Password belum di-set"})
+
+        return jsonify({
+            "success": True, 
+            "username": username,
+            "password": decrypted_password 
+        })
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
