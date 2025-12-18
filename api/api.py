@@ -1,11 +1,12 @@
-from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session
+from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g
 import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
+from models.gate import GateSession
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session
+from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks
 from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
@@ -723,4 +724,86 @@ def api_jadwal_list():
             "error": True, 
             "message": str(e),
             "data": []
+        }), 500
+
+@api_bp.route('/sks-data', methods=['GET'])
+@login_required
+def api_sks_data():
+    """
+    Endpoint untuk mengambil data SKS (Tempuh, Ambil, Sisa).
+    """
+    try:
+        # Panggil fungsi scraper
+        raw_result = fetch_sks()
+        
+        # Jika return dict kosong, berarti gagal (session/token)
+        if not raw_result:
+            return jsonify({
+                "success": False,
+                "message": "Gagal mengambil data SKS atau sesi habis."
+            }), 500
+
+        # raw_result formatnya dari scraper: { "data": { "sks_tempuh": X, ... } }
+        # Kita ekstrak isinya biar rapi di frontend
+        sks_data = raw_result.get('data', {})
+
+        return jsonify({
+            "success": True,
+            "data": sks_data 
+        })
+
+    except Exception as e:
+        logging.error(f"[API] Error SKS: {e}")
+        return jsonify({
+            "success": False, 
+            "message": f"Server Error: {str(e)}"
+        }), 500
+
+@api_bp.route('/sync-cookies', methods=['GET'])
+@login_required
+def sync_cookies():
+    """
+    Mengambil cookies Gate/SSO yang tersimpan di database untuk user ini.
+    Frontend akan menggunakan data ini untuk 'menanam' cookies di browser.
+    """
+    try:
+        # 1. Ambil user_id dari token JWT (diset oleh @login_required)
+        user_id = g.user.get('sub')
+        if not user_id:
+            return jsonify({"success": False, "message": "User ID tidak ditemukan"}), 401
+
+        # 2. Load cookies dari Database menggunakan Model
+        gate_session_model = GateSession()
+        cookie_jar = gate_session_model.load_cookies(user_id)
+
+        cookies_list = []
+        
+        # 3. Jika ada cookies di DB, konversi ke format JSON list
+        if cookie_jar:
+            for cookie in cookie_jar:
+                # Kita ambil atribut cookie standar
+                cookies_list.append({
+                    "name": cookie.name,       # gate_dinamika_session, SSO_TOKEN, dll
+                    "value": cookie.value,
+                    "domain": ".dinamika.ac.id", # Paksa domain global agar terbaca di subdomain
+                    "path": "/",
+                    "max_age": 7200,           # Set umur cookie (2 jam)
+                    "samesite": "Lax"
+                })
+            
+            logging.info(f"[Sync Cookies] Mengirim {len(cookies_list)} cookies untuk User ID {user_id}")
+        else:
+            logging.info(f"[Sync Cookies] Tidak ada session aktif di DB untuk User ID {user_id}")
+
+        return jsonify({
+            "success": True,
+            "cookies": cookies_list
+        })
+
+    except Exception as e:
+        logging.error(f"[Sync Cookies] Error: {e}")
+        return jsonify({
+            "success": False, 
+            "message": f"Server Error: {str(e)}",
+            "cookies": []
         }), 500

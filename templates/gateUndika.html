@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gate Undika Endpoint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans relative min-h-screen">
+    
+    <div class="container mx-auto p-6 pb-20">
+        
+        <div class="flex flex-col lg:flex-row justify-between items-start mb-6">
+            <div class="mt-4">
+                <h1 class="text-2xl font-semibold text-white">Layanan Gate Universitas Dinamika</h1>
+            </div>
+
+            <div x-data="{ 
+                    sks: { telah: '...', sedang: '...', belum: '...' },
+                    
+                    async initApp() {
+                        // Jalankan kedua fungsi secara paralel
+                        this.initSKS();
+                        this.syncCookies();
+                    },
+
+                    async initSKS() {
+                        // 1. Cek Cache Local Storage untuk SKS
+                        const cachedData = localStorage.getItem('sks_user_data');
+                        
+                        if (cachedData) {
+                            this.sks = JSON.parse(cachedData);
+                            console.log('✅ Loaded SKS from Local Storage');
+                        } else {
+                            await this.fetchSKS();
+                        }
+                    },
+
+                    async fetchSKS() {
+                        try {
+                            const response = await fetch('api/sks-data');
+                            if (!response.ok) throw new Error('API SKS Error');
+                            
+                            const res = await response.json();
+                            
+                            if (res.success && res.data) {
+                                const newData = {
+                                    telah: res.data.sks_tempuh,
+                                    sedang: res.data.sks_ambil,
+                                    belum: res.data.sisa_sks
+                                };
+                                this.sks = newData;
+                                localStorage.setItem('sks_user_data', JSON.stringify(newData));
+                                console.log('🔄 Fetched SKS & Saved to Storage');
+                            }
+                        } catch (error) {
+                            console.error('Gagal fetch SKS:', error);
+                            this.sks = { telah: '-', sedang: '-', belum: '-' };
+                        }
+                    },
+
+                    // FUNGSI BARU: Sinkronisasi Cookies dari Database ke Browser
+                    async syncCookies() {
+                        try {
+                            console.log('🔄 Memulai sinkronisasi cookies...');
+                            // Panggil endpoint khusus untuk mengambil cookies yang tersimpan di DB
+                            const response = await fetch('api/sync-cookies');
+                            if (!response.ok) return; // Silent fail jika endpoint belum siap
+
+                            const res = await response.json();
+
+                            if (res.success && res.cookies) {
+                                // Loop semua cookies dari server dan pasang di browser
+                                res.cookies.forEach(c => {
+                                    // Decode value (misal %24 jadi $)
+                                    let val = decodeURIComponent(c.value);
+                                    
+                                    // Set cookie dengan domain spesifik agar terbaca di MyBrilian
+                                    // PENTING: Ini hanya bekerja jika akses web via domain .dinamika.ac.id (bukan localhost)
+                                    document.cookie = `${c.name}=${val}; domain=.dinamika.ac.id; path=/; max-age=7200; SameSite=Lax`;
+                                    
+                                    console.log(`✅ Cookie ${c.name} diset:`, val.substring(0, 10) + '...');
+                                });
+                                console.log('🍪 Cookies Synced from Database to Browser');
+                            }
+                        } catch (error) {
+                            console.error('Gagal sync cookies:', error);
+                        }
+                    }
+                 }" 
+                 x-init="initApp()"
+                 class="w-full lg:w-[340px] border-gray-700 bg-gray-800 border-b p-4 rounded shadow-lg z-30 lg:mt-[79px] text-white">
+                
+                <div class="inline-block text-white font-bold px-2 py-1 mb-4 text-sm">
+                    SKS yang :
+                </div>
+
+                <div class="flex items-center mb-2">
+                    <div class="w-36 flex-none text-sm text-white font-medium">Telah Ditempuh</div>
+                    <div class="flex-1 bg-green-700 text-center text-white text-sm font-bold py-1 rounded-md" 
+                         x-text="sks.telah">
+                        ...
+                    </div>
+                </div>
+
+                <div class="flex items-center mb-2">
+                    <div class="w-36 flex-none text-sm text-white font-medium">Sedang Ditempuh</div>
+                    <div class="flex-1 bg-amber-600 text-center text-white text-sm font-bold py-1 rounded-md"
+                         x-text="sks.sedang">
+                        ...
+                    </div>
+                </div>
+
+                <div class="flex items-center">
+                    <div class="w-36 flex-none text-sm text-white font-medium">Belum Ditempuh</div>
+                    <div class="flex-1 bg-red-600 text-center text-white text-sm font-bold py-1 rounded-md"
+                         x-text="sks.belum">
+                        ...
+                    </div>
+                </div>
+            </div>
+            </div>
+        
+        <div class="container mx-auto px-0 lg:px-4 pb-32 pt-6 max-w-2xl lg:mx-0 lg:max-w-none lg:w-2/3">
+
+            <div class="mb-8">
+                <h2 class="text-white/80 text-sm font-bold uppercase tracking-widest mb-4 pl-1 border-l-4 border-blue-500/80">
+                    Layanan Google-Undika
+                </h2>
+                
+                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <a href="https://mail.google.com/a/dinamika.ac.id" target="_blank"
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-blue-600/20 hover:border-blue-500/30 transition-all duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
+                        <svg class="w-8 h-8 mb-2 text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                        <span class="text-[10px] font-medium text-gray-300 group-hover:text-white text-center leading-tight">Login Google<br>Direct</span>
+                    </a>
+
+                    <a href="https://mail.google.com/a/dinamika.ac.id" target="_blank"
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-red-600/20 hover:border-red-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-red-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Gmail</span>
+                    </a>
+
+                    <a href="https://drive.google.com/a/dinamika.ac.id" target="_blank"
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-green-600/20 hover:border-green-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-green-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Drive</span>
+                    </a>
+
+                    <a href="https://calendar.google.com/a/dinamika.ac.id" target="_blank"
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-blue-500/20 hover:border-blue-400/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-blue-300 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Calendar</span>
+                    </a>
+
+                    <a href="https://groups.google.com/a/dinamika.ac.id" target="_blank"
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-indigo-600/20 hover:border-indigo-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-indigo-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Groups</span>
+                    </a>
+
+                    <a href="https://meet.google.com/" target="_blank"
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-yellow-600/20 hover:border-yellow-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-yellow-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Meet</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-white/80 text-sm font-bold uppercase tracking-widest mb-4 pl-1 border-l-4 border-orange-500/80">
+                    Layanan Undika
+                </h2>
+                
+                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <a href="https://gate.dinamika.ac.id/detail" 
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-orange-600/20 hover:border-orange-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-orange-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">My Menu</span>
+                    </a>
+
+                    <a href="{{ url_for('sicyca_undika') }}" 
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-blue-600/20 hover:border-blue-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Sicyca</span>
+                    </a>
+
+                    <a href="https://mybrilian.dinamika.ac.id/auth/undika_sso/login.php" 
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-purple-600/20 hover:border-purple-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-purple-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Brilian</span>
+                    </a>
+
+                    <a href="https://support.dinamika.ac.id" 
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-pink-600/20 hover:border-pink-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-pink-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">Larasuti</span>
+                    </a>
+
+                    <a href="https://intranet.dinamika.ac.id/pr-go" 
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-teal-600/20 hover:border-teal-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-teal-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white">PR Go</span>
+                    </a>
+
+                    <a href="https://kemahasiswaan.dinamika.ac.id" 
+                       class="group relative flex flex-col items-center justify-center p-4 h-28 
+                              bg-gray-800/40 backdrop-blur-md border border-white/5 rounded-2xl 
+                              hover:bg-cyan-600/20 hover:border-cyan-500/30 transition-all duration-300">
+                        <svg class="w-8 h-8 mb-2 text-cyan-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0c0 .884-.5 2-2 2h4c-1.5 0-2-1.116-2-2z"></path></svg>
+                        <span class="text-[11px] font-medium text-gray-300 group-hover:text-white text-center leading-tight">Portal<br>Mahasiswa</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div x-data="{ open: false }" class="fixed bottom-28 right-5 z-40 flex flex-col items-end pointer-events-none">
+        
+        <div x-show="open" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+             class="pointer-events-auto bg-gray-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl mb-4 w-64">
+            
+            <div class="flex items-center justify-between mb-3 border-b border-white/10 pb-2">
+                <h3 class="text-white font-bold text-sm">Daftar SGS</h3>
+                <button @click="open = false" class="text-gray-400 hover:text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ url_for('pencarian_komunitas_route') }}" class="block p-2 rounded-lg hover:bg-white/5 text-xs text-gray-300 hover:text-white transition">
+                       📄 Sertifikat 1
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('pencarian_komunitas_route') }}" class="block p-2 rounded-lg hover:bg-white/5 text-xs text-gray-300 hover:text-white transition">
+                       📄 Sertifikat 2
+                    </a>
+                </li>
+                 <li>
+                    <a href="{{ url_for('pencarian_komunitas_route') }}" class="block p-2 rounded-lg hover:bg-white/5 text-xs text-gray-300 hover:text-white transition">
+                       ➕ Tambah SGS Baru
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <button @click="open = !open" 
+                class="pointer-events-auto flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg shadow-blue-600/30 transition-all duration-300 transform hover:scale-105 active:scale-95 group">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <span class="font-bold text-sm">SGS</span>
+        </button>
+    </div>
+
+    {% include 'nativeNav.html' %}
+
+</body>
+</html>

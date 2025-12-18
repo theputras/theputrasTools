@@ -522,11 +522,17 @@ def sosmed_download():
     """Menyajikan file HTML utama."""
     return render_template('downloadSosmed.html')
 
-@app.route('/krs_kuliah')
+@app.route('/gate_undika')
 @login_required
-def krs_kuliah():
+def gate_undika():
     """Menyajikan file HTML utama."""
-    return render_template('krsKuliah.html')
+    return render_template('gateUndika.html')
+
+@app.route('/sicyca_undika')
+@login_required
+def sicyca_undika():
+    """Menyajikan file HTML utama."""
+    return render_template('sicycaUndika.html')
 
 
 

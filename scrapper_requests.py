@@ -97,7 +97,7 @@ def _get_api_params(user_id, session_obj):
         match = re.search(r'var global_token\s*=\s*"([^"]+)"', r.text)
         if match:
             token = match.group(1)
-            logging.info(f"Token ditemukan via regex global_token, dengan NIM: {nim}")
+            logging.info(f"Token ditemukan via regex global_token, dengan NIM: {nim} dan token: {token}.")
         else:
             # Fallback: cari meta csrf-token
             meta_match = re.search(r'name="csrf-token"\s+content="([^"]+)"', r.text)
@@ -639,3 +639,51 @@ def fetch_data_ultah(force_refresh=False, user_id=None):
             if attempt == 0: continue
             
     return {"error": True, "message": "Gagal mengambil data ulang tahun.", "rows": []}
+    
+def fetch_sks(user_id=None) -> dict:
+    """
+    Mengambil data SKS (SKS Tempuh, SKS Ambil, Sisa SKS).
+    Output mentah sesuai response API Sicyca.
+    """
+    target_user = _get_current_user_id(user_id)
+    
+    for attempt in range(2):
+        s = get_authenticated_session(target_user)
+        if not s: 
+            if attempt == 0: continue
+            return {} # Return dict kosong jika gagal
+
+        try:
+            nim, token = _get_api_params(target_user, s)
+            if not nim or not token:
+                if attempt == 0: continue
+                return {}
+
+            # Payload sesuai request jQuery Anda
+            payload = {
+                "nim": nim,
+                "token": token,
+                "sks": True 
+            }
+
+            logging.info(f"[SKS] Fetching data SKS (Attempt {attempt+1})...")
+            # Endpoint: https://sicyca.dinamika.ac.id/sicyca_api.php
+            r = s.post(f"{TARGET_URL}{API_SICYCA}", data=payload, timeout=10)
+            
+            if r.status_code == 200:
+                try:
+                    data = r.json()
+                    logging.info(f"   --> SKS Data fetched.")
+                    # Mengembalikan FULL JSON mentah: { "data": { "sks_tempuh": ..., ... } }
+                    return data 
+                except json.JSONDecodeError:
+                    logging.warning("[SKS] Response bukan JSON valid.")
+                    pass
+            
+            if attempt == 0: continue
+
+        except Exception as e:
+            logging.error(f"[SKS] Error: {e}")
+            if attempt == 0: continue
+                
+    return {}
