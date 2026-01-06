@@ -68,9 +68,9 @@
 
             <div class="flex items-center gap-2 overflow-x-auto w-full min-w-full no-scrollbar py-2 snap-x px-2">
                 
-                {% set is_home = 'dashboard' in request.path %}
+                {% set is_home = ('sicyca_undika' in request.path) or ('dashboard' in request.path) %}
                 <a href="{{ url_for('sicyca_undika') }}" 
-                   class="relative flex flex-col items-center justify-center w-20 h-14 rounded-full transition-all duration-300 group snap-start
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
                           {% if is_home %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
                     
                     {% if is_home %}

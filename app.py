@@ -26,6 +26,7 @@ from middleware.auth_quard import login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
 from models.auth_api import _revoke_refresh_token, _revoke_all_user_sessions
 from dotenv import load_dotenv
+from models.gate import GateUser
 load_dotenv()  # biar bisa baca file .env
 
 app = Flask(__name__)
@@ -531,8 +532,89 @@ def gate_undika():
 @app.route('/sicyca_undika')
 @login_required
 def sicyca_undika():
-    """Menyajikan file HTML utama."""
-    return render_template('undika/sicyca/sicycaUndika.html')
+    """Menyajikan file HTML utama dan mengirimkan data."""
+    user_id = g.user.get('sub')
+    
+    # 1. Ambil Credentials (NIM)
+    gate_model = GateUser()
+    _, username, _ = gate_model.get_credentials_by_user_id(user_id)
+    nim = username if username else "-"
+    
+    # 2. Ambil Profil (Nama, Prodi, Dosen Wali)
+    # Default values
+    profil = {
+        "nama": "Mahasiswa",
+        "nim": nim,
+        "prodi": "-",
+        "dosen_wali": "-",
+        "foto_profil": url_for('static', filename='no_photo.jpg') # Default
+    }
+    
+    if nim != "-":
+        # Coba ambil foto asli
+        profil["foto_profil"] = url_for('api.get_photo', role='mahasiswa', id_=nim)
+        
+        # Coba cari data teks
+        try:
+             # Kita cari data detail user ini via search
+             df_mhs = search_mahasiswa(nim)
+             if not df_mhs.empty:
+                 row = df_mhs.iloc[0]
+                 profil["nama"] = row.get("Nama", profil["nama"])
+                 profil["dosen_wali"] = row.get("Dosen Wali", profil["dosen_wali"])
+                 
+                 # Deteksi Prodi dari NIM (Logic dari api.py)
+                 if nim and len(nim) >= 7 and majorID:
+                     kodeprodi = nim[2:7]
+                     profil["prodi"] = majorID.get(kodeprodi, row.get("Prodi", "-"))
+        except Exception as e:
+            logging.error(f"[Sicyca Undika] Error fetch profile: {e}")
+
+    # 3. Ambil Jadwal (Dari JSON biar cepat)
+    jadwal_hari_ini = []
+    hari_ini_str = ""
+    
+    try:
+        # Set locale ke Indonesia untuk tanggal (Manual formatting)
+        days_id = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
+        months_id = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        
+        now = datetime.now(SCHEDULER_TZ)
+        hari_ini_str = f"{days_id[now.weekday()]}, {now.day} {months_id[now.month]} {now.year}"
+        
+        if os.path.exists(JSON_FILE):
+             with open(JSON_FILE, 'r', encoding='utf-8') as f:
+                data_json = json.load(f)
+                all_jadwal = data_json.get("data", [])
+                
+                # Filter Jadwal Hari Ini
+                # Format di JSON: "Senin, 06 Januari 2026"
+                for j in all_jadwal:
+                    hari_tgl = j.get("Hari, Tanggal", "")
+                    # Simple case-insensitive check
+                    if hari_ini_str.lower() in hari_tgl.lower():
+                         # Mapping ke format template
+                         jadwal_hari_ini.append({
+                             "nama_mk": j.get("Nama Matakuliah", "-"),
+                             "jam": j.get("Jam", "-"),
+                             "ruang": j.get("Ruang", "-"),
+                             "dosen": j.get("Dosen", "-")
+                         })
+    except Exception as e:
+        logging.error(f"[Sicyca Undika] Error fetch jadwal: {e}")
+
+    # 4. Susun Data Akhir
+    data = {
+        "nama": profil["nama"],
+        "nim": profil["nim"],
+        "prodi": profil["prodi"],
+        "dosen_wali": profil["dosen_wali"],
+        "foto_profil": profil["foto_profil"],
+        "hari_ini": hari_ini_str,
+        "jadwal": jadwal_hari_ini,
+        "tagihan": [] # Belum ada scraper tagihan, kosongkan dulu
+    }
+    return render_template('undika/sicyca/sicycaUndika.html', data=data)
 
 @app.route('/krs_sicyca')
 @login_required
