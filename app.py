@@ -496,7 +496,7 @@ def kalendar_ics():
 @app.route('/pencarian-komunitas', methods=['GET'])
 @login_required
 def pencarian_komunitas_route():
-    return render_template('pencarian_mhsstaff.html')
+    return render_template('undika/sicyca/pencarian_mhsstaff.html')
 
 
 @app.route('/cari-mahasiswa')
@@ -532,7 +532,13 @@ def gate_undika():
 @login_required
 def sicyca_undika():
     """Menyajikan file HTML utama."""
-    return render_template('sicycaUndika.html')
+    return render_template('undika/sicyca/sicycaUndika.html')
+
+@app.route('/krs_sicyca')
+@login_required
+def krs_sicyca():
+    """Menyajikan file HTML utama."""
+    return render_template('undika/sicyca/krsSicyca.html')
 
 
 

@@ -1,0 +1,233 @@
+<nav class="fixed z-50 w-full" 
+     x-data="{ 
+        activeMenu: null,
+        toggle(menu) { this.activeMenu = this.activeMenu === menu ? null : menu; },
+        close() { this.activeMenu = null; },
+        mobileOpen: false,
+        mobileTab: 'akademik',
+        toggleMobile() { this.mobileOpen = !this.mobileOpen; }
+     }"
+     @click.outside="close()">
+
+    <div class="fixed bottom-6 right-6 md:hidden z-[60]">
+        <button @click="toggleMobile()" 
+                class="flex items-center justify-center w-14 h-14 bg-blue-600 rounded-full shadow-lg shadow-blue-600/40 text-white transition-all duration-300 transform hover:scale-105 active:scale-95 border border-white/10"
+                :class="mobileOpen ? 'rotate-90 bg-red-600 shadow-red-600/40' : ''">
+            <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            <svg x-show="mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+
+    <div x-show="mobileOpen" class="fixed inset-0 z-[55] bg-gray-900/95 backdrop-blur-md md:hidden flex flex-col" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-10" style="display: none;">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-gray-900 shadow-lg z-10">
+            <h2 class="text-lg font-bold text-white tracking-wide flex items-center gap-2"><img src="https://gate.dinamika.ac.id/icon-dinamika.png" class="w-6 h-6" alt="Logo">Menu Sicyca</h2>
+            <a href="https://sicyca.dinamika.ac.id/dashboard" class="text-[10px] font-bold text-blue-300 bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20 hover:bg-blue-500/20">Ke Dashboard</a>
+        </div>
+        <div class="flex flex-1 overflow-hidden">
+            <div class="w-20 bg-gray-800/50 border-r border-white/5 flex flex-col items-center py-4 gap-3 overflow-y-auto no-scrollbar">
+                <template x-for="item in [{id: 'akademik', icon: 'M12 14l9-5-9-5-9 5 9 5z', label: 'Akd'},{id: 'keuangan', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2', label: 'Keu'},{id: 'perpus', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5', label: 'Lib'},{id: 'ppta', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1', label: 'TA'},{id: 'ppkp', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745', label: 'KP'},{id: 'angket', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2', label: 'Ang'},{id: 'others', icon: 'M4 6h16M4 12h16M4 18h16', label: 'Lain'}]">
+                    <button @click="mobileTab = item.id" class="flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-200" :class="mobileTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-white/5'">
+                        <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"></path></svg><span class="text-[9px] font-bold uppercase" x-text="item.label"></span>
+                    </button>
+                </template>
+            </div>
+            <div class="flex-1 bg-gray-900 p-4 overflow-y-auto pb-20">
+                <div x-show="mobileTab === 'akademik'" class="space-y-3"><h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Akademik</h3><div class="grid grid-cols-1 gap-2"><a href="https://sicyca.dinamika.ac.id/akademik" class="mobile-sub-item">📅 Jadwal Kuliah</a><a href="{{ url_for('krs_sicyca') }}" class="mobile-sub-item bg-blue-600/10 border-blue-500/20 text-blue-300">📝 KRS Online</a><a href="https://sicyca.dinamika.ac.id/akademik/khs" class="mobile-sub-item">📊 Kartu Hasil Studi</a><a href="https://sicyca.dinamika.ac.id/akademik/konversi" class="mobile-sub-item">🔄 Konversi</a><a href="https://sicyca.dinamika.ac.id/akademik/sisa-mk" class="mobile-sub-item">📉 Sisa Matakuliah</a><a href="https://sicyca.dinamika.ac.id/akademik/jadwal-ujian" class="mobile-sub-item">📝 Jadwal Ujian</a><a href="https://sicyca.dinamika.ac.id/akademik/histori" class="mobile-sub-item">📜 Histori Nilai</a><a href="https://sicyca.dinamika.ac.id/akademik/materi" class="mobile-sub-item">📚 Materi Kuliah</a><a href="https://sicyca.dinamika.ac.id/pdf/?t=raport" class="mobile-sub-item">📄 Cetak Raport</a></div></div>
+                <div x-show="mobileTab === 'keuangan'" class="space-y-3" style="display: none;"><h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Keuangan</h3><div class="grid gap-2"><a href="https://sicyca.dinamika.ac.id/keuangan" class="mobile-sub-item">ℹ️ Info Tagihan</a><a href="https://sicyca.dinamika.ac.id/keuangan/jadwal-pembayaran-keu" class="mobile-sub-item">🗓️ Jadwal Pembayaran</a><a href="https://sicyca.dinamika.ac.id/keuangan/spp" class="mobile-sub-item">💰 Histori SPP</a><a href="https://sicyca.dinamika.ac.id/keuangan/sp" class="mobile-sub-item">💳 Histori SP</a><a href="https://sicyca.dinamika.ac.id/keuangan/denda" class="mobile-sub-item">⚠️ Denda</a></div></div>
+                <div x-show="mobileTab === 'perpus'" class="space-y-3" style="display: none;"><h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Perpustakaan</h3><div class="grid gap-2"><a href="https://sicyca.dinamika.ac.id/perpustakaan" class="mobile-sub-item">📖 Info Umum</a><a href="https://sicyca.dinamika.ac.id/perpustakaan/peminjaman" class="mobile-sub-item">📚 Peminjaman Buku</a></div></div>
+                <div x-show="mobileTab === 'ppta'" class="space-y-3" style="display: none;"><h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">TA</h3><div class="grid gap-2"><a href="https://sicyca.dinamika.ac.id/ppta" class="mobile-sub-item">📊 Status TA</a><a href="https://sicyca.dinamika.ac.id/ppta/proposal" class="mobile-sub-item">📝 Proposal</a></div></div>
+                <div x-show="mobileTab === 'ppkp'" class="space-y-3" style="display: none;"><h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">KP</h3><div class="grid gap-2"><a href="https://sicyca.dinamika.ac.id/ppkp" class="mobile-sub-item">📤 Upload Form</a></div></div>
+                <div x-show="mobileTab === 'angket'" class="space-y-3" style="display: none;"><h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Kuesioner</h3><div class="grid gap-2"><a href="https://sicyca.dinamika.ac.id/dashboard/angket-dosen" class="mobile-sub-item">📝 Angket MK</a></div></div>
+                <div x-show="mobileTab === 'others'" class="space-y-3" style="display: none;"><h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Lainnya</h3><div class="grid gap-2"><a href="{{ url_for('pencarian_komunitas_route') }}" class="mobile-sub-item">🔍 Cari Komunitas</a><a href="https://sicyca.dinamika.ac.id/mbkm" class="mobile-sub-item">🎓 MBKM</a><a href="https://sicyca.dinamika.ac.id/toefl/daftar" class="mobile-sub-item">🗣️ TOEFL</a></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden md:flex absolute bottom-24 left-0 right-0 justify-center w-full z-[60] pointer-events-none">
+        <div class="w-full max-w-lg px-4">
+            <div class="pointer-events-auto w-full bg-gray-900/90 backdrop-blur-xl backdrop-saturate-150 border border-white/10 rounded-[2rem] p-5 shadow-2xl transition-all duration-300 origin-bottom"
+                 x-show="activeMenu !== null"
+                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-8 scale-90" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-8 scale-90" style="display: none;">
+                
+                <div x-show="activeMenu === 'akademik'" class="space-y-3"><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xs font-bold text-gray-400 uppercase">Akademik</span><button @click="close()"><svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div><div class="grid grid-cols-2 gap-2"><a href="https://sicyca.dinamika.ac.id/akademik" class="submenu-item">📅 Jadwal</a><a href="{{ url_for('krs_sicyca') }}" class="submenu-item">📝 KRS</a><a href="https://sicyca.dinamika.ac.id/akademik/khs" class="submenu-item">📊 KHS</a><a href="https://sicyca.dinamika.ac.id/akademik/sisa-mk" class="submenu-item">📉 Sisa MK</a><a href="https://sicyca.dinamika.ac.id/akademik/jadwal-ujian" class="submenu-item">📝 Ujian</a><a href="https://sicyca.dinamika.ac.id/pdf/?t=raport" class="submenu-item">📄 Raport</a></div></div>
+                <div x-show="activeMenu === 'keuangan'" class="space-y-3"><div class="flex justify-between border-b border-white/10 pb-2"><span class="text-xs font-bold text-gray-400 uppercase">Keuangan</span><button @click="close()"><svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div><div class="grid grid-cols-2 gap-2"><a href="https://sicyca.dinamika.ac.id/keuangan" class="submenu-item">ℹ️ Info</a><a href="https://sicyca.dinamika.ac.id/keuangan/jadwal-pembayaran-keu" class="submenu-item">🗓️ Jadwal</a></div></div>
+                <div x-show="activeMenu === 'perpus'" class="space-y-3"><div class="text-xs font-bold text-gray-400 border-b border-white/10 pb-1">Perpustakaan</div><div class="flex flex-col gap-2"><a href="https://sicyca.dinamika.ac.id/perpustakaan" class="submenu-item">📖 Info</a></div></div>
+                <div x-show="activeMenu === 'ppta'" class="space-y-3"><div class="text-xs font-bold text-gray-400 border-b border-white/10 pb-1">Tugas Akhir</div><div class="grid grid-cols-2 gap-2"><a href="https://sicyca.dinamika.ac.id/ppta" class="submenu-item">📊 Status</a></div></div>
+                <div x-show="activeMenu === 'ppkp'" class="space-y-3"><div class="text-xs font-bold text-gray-400 border-b border-white/10 pb-1">Kerja Praktek</div><div class="flex flex-col gap-2"><a href="https://sicyca.dinamika.ac.id/ppkp" class="submenu-item">📤 Upload</a></div></div>
+                <div x-show="activeMenu === 'angket'" class="space-y-3"><div class="text-xs font-bold text-gray-400 border-b border-white/10 pb-1">Angket</div><div class="flex flex-col gap-2"><a href="https://sicyca.dinamika.ac.id/dashboard/angket-dosen" class="submenu-item">📝 Angket MK</a></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden md:flex fixed bottom-6 left-0 right-0 justify-center z-50 pointer-events-none">
+        
+        <div class="pointer-events-auto flex items-center h-20 px-6 max-w-lg w-full 
+                    bg-gray-900/60 backdrop-blur-sm backdrop-saturate-150 
+                    rounded-[2.5rem] shadow-2xl shadow-black/50
+                    border border-white/10 border-t-white/20 overflow-hidden">
+
+            <div class="flex items-center gap-2 overflow-x-auto w-full min-w-full no-scrollbar py-2 snap-x px-2">
+                
+                {% set is_home = 'dashboard' in request.path %}
+                <a href="{{ url_for('sicyca_undika') }}" 
+                   class="relative flex flex-col items-center justify-center w-20 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_home %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    
+                    {% if is_home %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_home %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_home %} text-white drop-shadow-md {% endif %}">Home</span>
+                </a>
+
+                {% set is_akademik = ('akademik' in request.path) or ('krs' in request.path) %}
+                <button @click="toggle('akademik')" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_akademik or activeMenu == 'akademik' %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    
+                    {% if is_akademik or activeMenu == 'akademik' %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_akademik or activeMenu == 'akademik' %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_akademik or activeMenu == 'akademik' %} text-white drop-shadow-md {% endif %}">Akademik</span>
+                </button>
+
+                {% set is_keuangan = 'keuangan' in request.path %}
+                <button @click="toggle('keuangan')" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_keuangan or activeMenu == 'keuangan' %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_keuangan or activeMenu == 'keuangan' %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_keuangan or activeMenu == 'keuangan' %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_keuangan or activeMenu == 'keuangan' %} text-white drop-shadow-md {% endif %}">Keuangan</span>
+                </button>
+
+                {% set is_perpus = 'perpustakaan' in request.path %}
+                <button @click="toggle('perpus')" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_perpus or activeMenu == 'perpus' %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_perpus or activeMenu == 'perpus' %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_perpus or activeMenu == 'perpus' %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_perpus or activeMenu == 'perpus' %} text-white drop-shadow-md {% endif %}">Perpus</span>
+                </button>
+
+                {% set is_ppta = 'ppta' in request.path %}
+                <button @click="toggle('ppta')" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_ppta or activeMenu == 'ppta' %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_ppta or activeMenu == 'ppta' %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_ppta or activeMenu == 'ppta' %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_ppta or activeMenu == 'ppta' %} text-white drop-shadow-md {% endif %}">PPTA</span>
+                </button>
+
+                {% set is_ppkp = 'ppkp' in request.path %}
+                <button @click="toggle('ppkp')" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_ppkp or activeMenu == 'ppkp' %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_ppkp or activeMenu == 'ppkp' %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_ppkp or activeMenu == 'ppkp' %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_ppkp or activeMenu == 'ppkp' %} text-white drop-shadow-md {% endif %}">PPKP</span>
+                </button>
+
+                {% set is_mbkm = 'mbkm' in request.path %}
+                <a href="https://sicyca.dinamika.ac.id/mbkm" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_mbkm %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_mbkm %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_mbkm %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_mbkm %} text-white drop-shadow-md {% endif %}">MBKM</span>
+                </a>
+
+                {% set is_toefl = 'toefl' in request.path %}
+                <a href="https://sicyca.dinamika.ac.id/toefl/daftar" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_toefl %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_toefl %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_toefl %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_toefl %} text-white drop-shadow-md {% endif %}">TOEFL</span>
+                </a>
+
+                {% set is_komunitas = ('pencarian' in request.path) or ('komunitas' in request.path) %}
+                <a href="{{ url_for('pencarian_komunitas_route') }}" 
+                   class="relative flex flex-col items-center justify-center w-20 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_komunitas %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_komunitas %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_komunitas %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_komunitas %} text-white drop-shadow-md {% endif %}">Komunitas</span>
+                </a>
+
+                {% set is_angket = 'angket' in request.path %}
+                <button @click="toggle('angket')" 
+                   class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group snap-start
+                          {% if is_angket or activeMenu == 'angket' %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
+                    {% if is_angket or activeMenu == 'angket' %}
+                    <div class="absolute inset-0 bg-white/10 rounded-full blur-md"></div>
+                    <div class="absolute inset-0 bg-white/5 rounded-full border border-white/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.2)]"></div>
+                    {% endif %}
+                    <svg class="relative w-6 h-6 mb-1 transition-transform duration-300 {% if is_angket or activeMenu == 'angket' %} scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] {% else %} group-hover:scale-110 {% endif %}" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    <span class="relative text-[9px] font-bold tracking-wider {% if is_angket or activeMenu == 'angket' %} text-white drop-shadow-md {% endif %}">Angket</span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .submenu-item { @apply block p-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-gray-300 hover:text-white transition flex items-center gap-2 border border-transparent hover:border-white/5; }
+    .mobile-sub-item { @apply block p-3 rounded-lg bg-gray-800 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition border border-white/5; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<script src="/static/js/components/ui.js"></script>
+<div x-data class="fixed top-5 right-5 z-[60] flex flex-col gap-3 w-full max-w-sm pointer-events-none">
+    <template x-for="toast in $store.toast.items" :key="toast.id">
+        <div x-show="toast.show" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-10" class="pointer-events-auto bg-gray-900/80 shadow-2xl rounded-2xl p-4 border border-white/10 flex items-start gap-3 text-gray-200">
+            <div class="flex-shrink-0 pt-0.5"><i x-show="toast.type === 'success'" class="fas fa-check-circle text-green-400 drop-shadow-md"></i><i x-show="toast.type === 'error'" class="fas fa-times-circle text-red-400 drop-shadow-md"></i><i x-show="toast.type === 'info'" class="fas fa-info-circle text-blue-400 drop-shadow-md"></i></div>
+            <div class="flex-1 text-sm font-medium" x-text="toast.message"></div>
+        </div>
+    </template>
+</div>
+<div x-data x-show="$store.confirm.isOpen" class="fixed inset-0 z-[70] flex items-center justify-center px-4" x-cloak>
+    <div x-show="$store.confirm.isOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="$store.confirm.close(false)" class="absolute inset-0"></div>
+    <div x-show="$store.confirm.isOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-90 translate-y-4" class="relative bg-gray-900/50 backdrop-blur-sm rounded-[2rem] shadow-2xl max-w-md w-full p-6 border border-white/10 ring-1 ring-white/5">
+        <h3 class="text-xl font-bold text-white mb-2" x-text="$store.confirm.title"></h3>
+        <p class="text-gray-300 text-sm mb-6 leading-relaxed" x-text="$store.confirm.message"></p>
+        <div class="flex justify-end gap-3"><button @click="$store.confirm.close(false)" class="px-5 py-2.5 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition border border-transparent hover:border-white/10">Batal</button><button @click="$store.confirm.close(true)" :class="$store.confirm.type === 'danger' ? 'bg-red-500/80 hover:bg-red-500 shadow-red-500/20' : 'bg-blue-500/80 hover:bg-blue-500 shadow-blue-500/20'" class="px-5 py-2.5 rounded-full text-sm font-bold text-white shadow-lg backdrop-blur-sm transition transform active:scale-95">Ya, Lanjutkan</button></div>
+    </div>
+</div>

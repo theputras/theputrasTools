@@ -6,7 +6,7 @@ from models.gate import GateSession, GateUser
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks
+from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks, get_csrf_token_gate
 from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
@@ -823,11 +823,13 @@ def get_my_credentials():
         
         if not decrypted_password:
              return jsonify({"success": False, "message": "Password belum di-set"})
-
+        csrf_token = get_csrf_token_gate()
+        
         return jsonify({
             "success": True, 
-            "username": username,
-            "password": decrypted_password 
+            "userid": username,
+            "password": decrypted_password,
+            "gate_token": csrf_token
         })
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500

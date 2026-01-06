@@ -687,3 +687,51 @@ def fetch_sks(user_id=None) -> dict:
             if attempt == 0: continue
                 
     return {}
+
+def get_csrf_token_gate():
+    try:
+        url = "https://gate.dinamika.ac.id/login"
+        
+        # 1. GUNAKAN HEADERS LENGKAP (Biar dikira Browser Asli)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
+            'Referer': 'https://gate.dinamika.ac.id/',
+            'Connection': 'keep-alive'
+        }
+        
+        # Gunakan Session untuk menangkap cookies (siapa tahu dibutuhkan)
+        session = requests.Session()
+        response = session.get(url, headers=headers, timeout=10)
+        
+        print(f"[Scrapper Debug] Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # CARA 1: Cari di Input Hidden (Sesuai source code kamu)
+            # <input type="hidden" name="_token" value="...">
+            token_input = soup.find('input', {'name': '_token'})
+            
+            if token_input:
+                token_val = token_input.get('value')
+                print(f"[Scrapper Success] Token ditemukan di Input: {token_val[:10]}...")
+                return token_val
+            
+            # CARA 2: Cari di Meta Tag (Cadangan, sering dipakai Laravel)
+            # <meta name="csrf-token" content="...">
+            meta_token = soup.find('meta', {'name': 'csrf-token'})
+            if meta_token:
+                token_val = meta_token.get('content')
+                print(f"[Scrapper Success] Token ditemukan di Meta: {token_val[:10]}...")
+                return token_val
+
+            # DEBUG: Jika gagal, print sedikit HTML-nya untuk dicek
+            print("[Scrapper Fail] Token tidak ditemukan. Cek struktur HTML di bawah:")
+            print(soup.prettify()[:500]) # Print 500 karakter pertama
+            
+    except Exception as e:
+        print(f"[Scrapper Error] Gagal ambil token gate: {e}")
+        
+    return ""
