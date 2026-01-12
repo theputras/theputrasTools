@@ -96,7 +96,7 @@ class GateSession:
             cursor.close()
             conn.close()
 
-    def save_cookies(self, gate_user_id, session_obj, user_agent):
+    def save_cookies(self, gate_user_id, cookie_source, user_agent):
         """
         Flow: Ambil cookies dari session -> Pisah token -> Simpan ke kolom DB
         """
@@ -105,10 +105,17 @@ class GateSession:
 
         cursor = conn.cursor()
         try:
-            # Ambil value spesifik dari Session Object
-            val_xsrf = session_obj.cookies.get('XSRF-TOKEN')
-            val_gate = session_obj.cookies.get('gate_dinamika_session')
-            val_sso  = session_obj.cookies.get('SSO_TOKEN')
+            # PERBAIKAN DI SINI:
+            # Cek apakah inputnya Dictionary (dari controller baru) atau Object Session (legacy)
+            if isinstance(cookie_source, dict):
+                val_xsrf = cookie_source.get('XSRF-TOKEN')
+                val_gate = cookie_source.get('gate_dinamika_session')
+                val_sso  = cookie_source.get('SSO_TOKEN')
+            else:
+                # Fallback jika yang dikirim masih object requests.Session
+                val_xsrf = cookie_source.cookies.get('XSRF-TOKEN')
+                val_gate = cookie_source.cookies.get('gate_dinamika_session')
+                val_sso  = cookie_source.cookies.get('SSO_TOKEN')
 
             query = """
                 INSERT INTO gate_sessions 

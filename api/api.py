@@ -6,7 +6,7 @@ from models.gate import GateSession, GateUser
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks, get_csrf_token_gate, fetch_profil_mhs
+from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks, get_csrf_token_gate, fetch_profil_mhs, fetch_sskm_data
 from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
@@ -868,3 +868,26 @@ def get_my_profile_photo():
     except Exception as e:
         logging.error(f"Error /my-photo: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
+    
+@api_bp.route('/detail_sskm', methods=['GET'])
+def get_detail_sskm():
+    """
+    Mengambil data mentah dari fetch_sskm_data dan mengembalikannya sebagai JSON.
+    Tidak ada pemrosesan atau manipulasi data di sini.
+    """
+    # 1. Panggil fungsi scrapper
+    raw_data = fetch_sskm_data()
+    
+    # 2. Return langsung hasilnya sebagai JSON
+    return jsonify(raw_data)
+@api_bp.route('/detail_nilai', methods=['GET'])
+def get_detail_nilai():
+    """
+    Mengambil data mentah dari fetch_nilai_data dan mengembalikannya sebagai JSON.
+    Tidak ada pemrosesan atau manipulasi data di sini.
+    """
+    # 1. Panggil fungsi scrapper
+    raw_data = scrape_krs_detail()
+    
+    # 2. Return langsung hasilnya sebagai JSON
+    return jsonify(raw_data)

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sicyca Undika | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        [x-cloak] { display: none !important; }
+    </style>    
+</head>
+<body class="bg-gray-950 text-gray-300 font-sans min-h-screen pb-32">
+
+    <div class="relative bg-gradient-to-br from-blue-900/40 to-gray-900 pt-8 pb-16 px-6 rounded-b-[3rem] shadow-2xl border-b border-white/5">
+        <div class="container mx-auto max-w-lg flex items-center gap-5">
+            <div class="relative group">
+                <div class="absolute inset-0 bg-blue-500 rounded-full blur opacity-40 group-hover:opacity-60 transition"></div>
+                <img src="{{ data.foto_profil }}" alt="Profil" class="relative w-20 h-20 rounded-full object-cover border-2 border-white/20 shadow-xl">
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-white tracking-wide leading-tight">{{ data.nama }}</h1>
+                <p class="text-sm text-blue-300 font-medium mt-1">{{ data.nim }}</p>
+                <div class="flex items-center gap-2 mt-2 text-xs text-gray-400 bg-black/20 px-3 py-1 rounded-full w-fit backdrop-blur-sm border border-white/5">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    <span>{{ data.prodi }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto max-w-lg px-4 -mt-10 space-y-6">
+
+        <div class="bg-gray-900/80 backdrop-blur-xl border border-white/10 p-5 rounded-3xl shadow-lg flex items-center justify-between">
+            <div>
+                <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Dosen Wali</p>
+                <p class="text-sm font-semibold text-white truncate max-w-[200px]">{{ data.dosen_wali }}</p>
+            </div>
+            <div class="h-10 w-10 bg-green-500/10 rounded-full flex items-center justify-center text-green-400 border border-green-500/20">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+        </div>
+
+        <div class="bg-gray-800/40 border border-white/5 rounded-2xl p-4">
+            <div class="flex justify-between items-end mb-2">
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Progress Studi</p>
+                    <h3 class="text-xl font-bold text-white">Semester {{ data.semester }}</h3>
+                </div>
+                <span class="text-sm font-bold text-blue-400 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">
+                    {{ data.sks_tempuh }} SKS
+                </span>
+            </div>
+            <div class="w-full bg-gray-700/50 rounded-full h-1.5 mt-2 overflow-hidden">
+                <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ (data.sks_tempuh / 144 * 100)|round|int }}%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-gray-600 mt-2">
+                <span>Start</span>
+                <span>Target: 144 SKS</span>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <div class="flex items-center justify-between px-2">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 bg-blue-500 rounded-sm"></span>
+                    Jadwal Hari Ini
+                </h3>
+                <span class="text-xs text-gray-400">{{ data.hari_ini }}</span>
+            </div>
+
+            {% if data.jadwal %}
+                <div class="relative pl-4 border-l border-gray-800 space-y-4">
+                {% for matkul in data.jadwal %}
+                    <div class="relative">
+                        <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-gray-950"></div>
+                        <div class="group bg-gray-800/50 hover:bg-gray-800 border border-white/5 hover:border-blue-500/30 rounded-xl p-3 transition-all duration-300">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-bold text-white text-sm line-clamp-1">{{ matkul.nama_mk }}</h4>
+                                <span class="text-[10px] font-mono text-blue-300 bg-blue-900/20 px-1.5 py-0.5 rounded">{{ matkul.jam }}</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs text-gray-400">
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    {{ matkul.ruang }}
+                                </span>
+                                <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                                <span class="truncate max-w-[150px]">{{ matkul.dosen }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-6 bg-gray-800/30 rounded-2xl border border-white/5 border-dashed">
+                    <p class="text-gray-500 text-xs">Tidak ada jadwal kuliah hari ini.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            
+            <div class="bg-gray-800/50 border border-white/5 rounded-2xl p-4 flex flex-col h-64">
+                <div class="flex items-center gap-2 mb-3 shrink-0">
+                    <span class="w-1.5 h-4 bg-orange-500 rounded-full"></span>
+                    <h3 class="text-sm font-bold text-white">Nilai Ujian</h3>
+                </div>
+                
+                <div class="flex-1 bg-gray-900/50 rounded-xl p-2 overflow-y-auto custom-scrollbar">
+                    {% if data.nilai_ujian %}
+                        <table class="w-full text-[10px]">
+                            <tbody class="divide-y divide-gray-800">
+                                {% for nilai in data.nilai_ujian %}
+                                <tr>
+                                    <td class="py-1.5 text-gray-300 pr-2">{{ nilai.matkul }}</td>
+                                    <td class="py-1.5 text-right font-bold {{ 'text-green-400' if nilai.grade == 'A' else 'text-white' }}">{{ nilai.grade }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="h-full flex items-center justify-center text-center">
+                            <p class="text-[10px] text-gray-500">Belum ada nilai rilis</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-3 pt-2 border-t border-white/5 flex justify-between text-[10px] text-gray-400 shrink-0">
+                    <div class="text-center">
+                        <span class="block font-bold text-white text-xs">{{ data.ipk }}</span>
+                        <span>IPK</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="block font-bold text-white text-xs">{{ data.ips }}</span>
+                        <span>IPS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800/50 border border-white/5 rounded-2xl p-4 flex flex-col h-64">
+                <div class="flex items-center gap-2 mb-3 shrink-0">
+                    <span class="w-1.5 h-4 bg-purple-500 rounded-full"></span>
+                    <h3 class="text-sm font-bold text-white">SSKM</h3>
+                </div>
+
+                <div class="flex-1 flex flex-col items-center justify-center relative">
+                    <div class="w-16 h-16 rounded-full relative" 
+                         style="background: conic-gradient(#8b5cf6 {{ data.sskm_persen }}%, #1f2937 0);">
+                        <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center flex-col">
+                            <span class="text-xs font-bold text-white">{{ data.sskm_poin }}</span>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-2 text-center">Poin Terkumpul</p>
+                </div>
+
+                <div class="mt-3 pt-2 border-t border-white/5 text-center shrink-0">
+                    <a href="https://sicyca.dinamika.ac.id/dashboard/sskm" class="text-[10px] text-purple-400 hover:text-purple-300">Lihat Detail &raquo;</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% include 'undika/sicyca/navNativeSicyca.html' %}
+
+</body>
+</html>

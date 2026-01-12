@@ -97,7 +97,7 @@ def _get_api_params(user_id, session_obj):
         match = re.search(r'var global_token\s*=\s*"([^"]+)"', r.text)
         if match:
             token = match.group(1)
-            logging.info(f"Token ditemukan via regex global_token, dengan NIM: {nim} dan token: {token}.")
+            logging.info(f"Token ditemukan via regex global_token, dengan NIM: {nim}")
         else:
             # Fallback: cari meta csrf-token
             meta_match = re.search(r'name="csrf-token"\s+content="([^"]+)"', r.text)
@@ -460,6 +460,109 @@ def scrape_krs_detail(params: Dict[str, str], user_id=None) -> Dict[str, Any]:
         logging.error(f"Error scrape krs detail: {e}")
         return {"success": False, "message": str(e)}
 
+def dahsboard_nilai(params, user_id=None):
+    """
+    Mengambil detail KRS/Nilai.
+    UPDATE: Support 'dashboard_nilai_ujian' yang menggunakan struktur DIV (bukan TABLE).
+    """
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
+    
+    result = {"success": False, "tables": []}
+    
+    if not sess: return result
+
+    proxy_url = urljoin(TARGET_URL, "/table-proxy/")
+    
+    try:
+        logging.info(f"--- Scraping Table Proxy: {params} ---")
+        resp = sess.get(proxy_url, params=params, headers={"Referer": TARGET_URL}, timeout=15)
+        
+        soup = BeautifulSoup(resp.text, "lxml")
+        parsed_tables = []
+
+        # ==========================================
+        # STRATEGI 1: Cek Struktur DIV Dashboard (listUjianItem)
+        # ==========================================
+        # File HTML 'dashboard_nilai_ujian' menggunakan class="listUjianItem"
+        div_items = soup.find_all("div", class_="listUjianItem")
+        
+        if div_items:
+            logging.info(f"[Scraper] Terdeteksi struktur DIV Dashboard ({len(div_items)} item).")
+            rows_data = []
+            
+            for item in div_items:
+                # Struktur:
+                # Span 1: Nama Matakuliah
+                # Span 2: Wrapper Progress Bar -> div.progressblue (Nilai)
+                spans = item.find_all("span", recursive=False)
+                
+                if len(spans) >= 1:
+                    mk_name = spans[0].get_text(strip=True)
+                    
+                    # Cari nilai di dalam class 'progressblue'
+                    nilai_div = item.find("div", class_="progressblue")
+                    nilai_val = nilai_div.get_text(strip=True) if nilai_div else "-"
+                    
+                    rows_data.append({
+                        "Matakuliah": mk_name,
+                        "NILAI": nilai_val,  # Biasanya berupa Angka (misal: 85, 100)
+                        "UTS": "-",          # Dashboard tidak menampilkan detail UTS
+                        "UAS": "-"           # Dashboard tidak menampilkan detail UAS
+                    })
+            
+            parsed_tables.append({
+                "headers": ["Matakuliah", "NILAI"],
+                "rows": rows_data
+            })
+            
+        # ==========================================
+        # STRATEGI 2: Cek Struktur TABLE Standar (sicycatable)
+        # ==========================================
+        else:
+            tables = soup.find_all("table", class_=lambda x: x and x in ["sicycatable", "tabtable"])
+            if not tables: tables = soup.find_all("table") # Fallback
+            
+            for tbl in tables:
+                rows_data = []
+                
+                # Ambil Header
+                headers = []
+                thead = tbl.find("thead")
+                header_cols = thead.find_all(["th", "td"]) if thead else tbl.find("tr").find_all(["th", "td"]) if tbl.find("tr") else []
+                headers = [h.get_text(strip=True) for h in header_cols]
+                
+                # Ambil Data
+                tbody = tbl.find("tbody")
+                content_rows = tbody.find_all("tr") if tbody else tbl.find_all("tr")
+                if not thead and content_rows: content_rows = content_rows[1:] # Skip header row
+
+                for tr in content_rows:
+                    cols = tr.find_all("td")
+                    if not cols: continue
+                    
+                    row_dict = {}
+                    for idx, col in enumerate(cols):
+                        val = col.get_text(strip=True)
+                        key = headers[idx] if idx < len(headers) else f"col_{idx}"
+                        row_dict[key] = val
+                    
+                    if row_dict:
+                        rows_data.append(row_dict)
+
+                if rows_data:
+                    parsed_tables.append({"headers": headers, "rows": rows_data})
+
+        return {
+            "success": True, 
+            "tables": parsed_tables
+        }
+
+    except Exception as e:
+        logging.error(f"[Scraper] Error scraping: {e}")
+        return result
+
+
 def _generic_search(endpoint, query, label, user_id=None) -> pd.DataFrame:
     """Helper function untuk search mhs/staff agar tidak duplikasi kode"""
     logging.info(f"\n--- Cari {label}: '{query}' ---")
@@ -769,3 +872,98 @@ def fetch_profil_mhs(nim, user_id=None):
     except Exception as e:
         logging.error(f"[Profil Photo] Error fetching: {e}")
         return None
+    
+
+
+# --- Update scrapper_requests.py ---
+
+def fetch_sskm_data(user_id=None):
+    """
+    Mengambil data SSKM secara MENTAH (Raw) dari tabel Sicyca.
+    Perbaikan: 
+    1. Menggunakan selector tbody untuk memisahkan header.
+    2. Konversi Poin dipaksa menjadi INTEGER (int).
+    """
+    logging.info(f"[SSKM] Fetching Raw Data...")
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
+    
+    result = {
+        "success": False, 
+        "total_poin": 0,
+        "total_kegiatan": 0,
+        "detail": [] 
+    }
+
+    if not sess: return result
+
+    proxy_url = urljoin(TARGET_URL, "/table-proxy/?t=sskm")
+    params = {"t": "sskm"} 
+
+    try:
+        resp = sess.get(proxy_url, params=params, timeout=20, headers={"Referer": TARGET_URL})
+        soup = BeautifulSoup(resp.text, "lxml")
+        
+        table = soup.find("table", class_="sicycatable")
+        if not table:
+            logging.warning("[SSKM] Tabel sicycatable tidak ditemukan.")
+            return result
+
+        items_list = []
+        total_poin = 0 
+
+        # Ambil baris dari tbody
+        tbody = table.find("tbody")
+        if tbody:
+            rows = tbody.find_all("tr")
+        else:
+            all_rows = table.find_all("tr")
+            rows = [r for r in all_rows if r.find("td")]
+
+        for tr in rows:
+            cols = tr.find_all("td")
+            if len(cols) < 4: continue
+            
+            try:
+                nama_kegiatan = cols[1].get_text(strip=True)
+                poin_str = cols[3].get_text(strip=True)
+                
+                val_poin = 0
+                
+                if poin_str:
+                    # Bersihkan string: hanya angka, titik, koma
+                    clean_str = re.sub(r'[^\d.,]', '', poin_str)
+                    
+                    if clean_str:
+                        # Ganti koma jadi titik untuk format float standar
+                        clean_str = clean_str.replace(',', '.')
+                        try:
+                            # Convert ke float dulu baru ke int untuk handle string "2.0"
+                            # int("2.0") -> Error
+                            # int(float("2.0")) -> 2 (Berhasil)
+                            val_poin = int(float(clean_str))
+                        except ValueError:
+                            val_poin = 0
+
+                items_list.append({
+                    "kegiatan": nama_kegiatan,
+                    "poin": val_poin # Sudah pasti integer
+                })
+                
+                total_poin += val_poin
+                
+            except Exception:
+                continue
+
+        logging.info(f"[SSKM] Selesai. Total Raw: {total_poin} Poin dari {len(items_list)} kegiatan.")
+        
+        return {
+            "success": True,
+            "total_poin": total_poin, # Integer
+            "total_kegiatan": len(items_list),
+            "detail": items_list
+        }
+
+    except Exception as e:
+        logging.error(f"[SSKM] Error scraping: {e}")
+        return result

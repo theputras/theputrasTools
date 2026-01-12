@@ -18,7 +18,7 @@ load_dotenv()
 # Konfigurasi
 GATE_ROOT = "https://gate.dinamika.ac.id"
 TARGET_URL = "https://sicyca.dinamika.ac.id"
-# VALIDITY_CHECK_INTERVAL = 300 
+VALIDITY_CHECK_INTERVAL = 300 
 PROXY_URL = os.getenv("HTTP_PROXY_URL")
 
 _session_lock = threading.Lock()
@@ -207,116 +207,52 @@ def check_validity(session):
         logging.error(f"Error check validity: {e}")
         return False
 
-# def get_authenticated_session(user_id):
-#     """
-#     Main Logic: Memory -> DB -> Login
-#     """
-#     global _active_sessions
-#     if not user_id: return None
-
-#     with _session_lock:
-#         now = time.time()
-#         user_data = _active_sessions.get(user_id)
-
-#         # 1. CEK MEMORI
-#         if user_data:
-#             session = user_data['session']
-#             if now - user_data['last_check'] > VALIDITY_CHECK_INTERVAL:
-#                 if not check_validity(session):
-#                     logging.info(f"Session User {user_id} EXPIRED.")
-#                     del _active_sessions[user_id]
-#                 else:
-#                     user_data['last_check'] = now
-#                     return session
-#             else:
-#                 return session
-
-#         # 2. RESTORE DARI DB
-#         s = create_session_obj()
-#         gate_id, g_user, g_pass = gate_user_model.get_credentials_by_user_id(user_id)
-        
-#         if not g_user:
-#             return None
-
-#         if load_cookies(s, user_id):
-#             logging.info(f"Validasi cookies DB User {user_id}...")
-#             if check_validity(s):
-#                 logging.info("Session DB Valid.")
-#                 _active_sessions[user_id] = {'session': s, 'last_check': now, 'gate_user_id': gate_id}
-#                 return s
-#             else:
-#                 logging.info("Session DB Invalid/Expired.")
-#                 s = create_session_obj() # Bikin baru, yang lama sudah kotor
-
-#         # 3. LOGIN BARU
-#         logging.info(f"Login ulang User {user_id}...")
-#         if login_gateDinamika(s, g_user, g_pass):
-#             save_cookies(s, gate_id) # Simpan versi fresh
-#             _active_sessions[user_id] = {'session': s, 'last_check': now, 'gate_user_id': gate_id}
-#             return s
-        
-#         return None
-
 def get_authenticated_session(user_id):
     """
-    Mengambil session valid. 
-    REVISI: SELALU cek validitas ke URL (sicyca/gate). 
-    Tidak ada lagi pengecekan tanggal/waktu (VALIDITY_CHECK_INTERVAL dihapus).
+    Main Logic: Memory -> DB -> Login
     """
     global _active_sessions
     if not user_id: return None
 
     with _session_lock:
+        now = time.time()
         user_data = _active_sessions.get(user_id)
 
         # 1. CEK MEMORI
         if user_data:
             session = user_data['session']
-            
-            # --- PERUBAHAN DI SINI ---
-            # Kita HAPUS "if now - last_check > INTERVAL".
-            # Kita GANTI dengan: Selalu cek ke server.
-            # Ini menjawab request: "Cuma pengecekkan di sicyca/gate dashboard"
-            
-            if check_validity(session):
-                # Valid -> Pakai
-                return session
+            if now - user_data['last_check'] > VALIDITY_CHECK_INTERVAL:
+                if not check_validity(session):
+                    logging.info(f"Session User {user_id} EXPIRED.")
+                    del _active_sessions[user_id]
+                else:
+                    user_data['last_check'] = now
+                    return session
             else:
-                # Invalid -> Hapus dari memori & lanjut ke DB/Login ulang
-                logging.info(f"Session Memori User {user_id} INVALID (Tes URL Gagal).")
-                del _active_sessions[user_id]
+                return session
 
-        # 2. BUAT SESSION & LOAD DB
+        # 2. RESTORE DARI DB
         s = create_session_obj()
         gate_id, g_user, g_pass = gate_user_model.get_credentials_by_user_id(user_id)
         
         if not g_user:
-            logging.warning(f"User ID {user_id} belum setup Gate.")
             return None
 
-        # Coba restore dari DB
         if load_cookies(s, user_id):
-            logging.info(f"Cookies User {user_id} dimuat dari DB. Melakukan validasi URL...")
-            
-            # Cek ke server apakah cookie DB ini masih sakti?
+            logging.info(f"Validasi cookies DB User {user_id}...")
             if check_validity(s):
-                logging.info(f"Session User {user_id} RESTORED dari Database & VALID.")
-                _active_sessions[user_id] = {
-                    'session': s, 'gate_user_id': gate_id
-                }
+                logging.info("Session DB Valid.")
+                _active_sessions[user_id] = {'session': s, 'last_check': now, 'gate_user_id': gate_id}
                 return s
             else:
-                logging.info(f"Session User {user_id} dari DATABASE sudah kedaluwarsa.")
-                s.cookies.clear() 
-        
+                logging.info("Session DB Invalid/Expired.")
+                s = create_session_obj() # Bikin baru, yang lama sudah kotor
+
         # 3. LOGIN BARU
-        logging.info(f"Melakukan LOGIN ULANG ke Gate untuk User {user_id}...")
-        
+        logging.info(f"Login ulang User {user_id}...")
         if login_gateDinamika(s, g_user, g_pass):
-            save_cookies(s, gate_id) 
-            _active_sessions[user_id] = {
-                'session': s, 'gate_user_id': gate_id
-            }
+            save_cookies(s, gate_id) # Simpan versi fresh
+            _active_sessions[user_id] = {'session': s, 'last_check': now, 'gate_user_id': gate_id}
             return s
         
         return None

@@ -20,7 +20,7 @@ from models.auth_api import auth_bp
 from flask_cors import CORS
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import scrape_data, search_mahasiswa
+from scrapper_requests import scrape_data, search_mahasiswa, dahsboard_nilai, fetch_sks, fetch_sskm_data
 from controller.GateController import reset_session_user
 from middleware.auth_quard import login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -153,37 +153,69 @@ app.register_blueprint(api_bp, url_prefix='/api')
 # Jalankan scraper dan simpan hasilnya ke file JSON
 def run_scraper_and_save():
     global JADWAL_STATUS
-    JADWAL_STATUS = {"status": "loading", "message": f"Proses scraping dimulai: {datetime.now().strftime('%A, %d %B %Y %H:%M:%S')}"}
+    
+    # Format waktu saat ini
+    now = datetime.now()
+    waktu_str = now.strftime("%A, %d %B %Y %H:%M:%S")
+    
+    JADWAL_STATUS = {
+        "status": "loading", 
+        "message": f"Proses scraping dimulai: {waktu_str}"
+    }
+    
     logging.info("=== MENJALANKAN SCRAPING JADWAL ===")
     
-    df = scrape_data()
-
-    if not df.empty:
-        # Format waktu lengkap untuk disimpan di metadata
-        waktu_scraping = datetime.now().strftime("%A, %d %B %Y %H:%M:%S")
-
-        # Simpan ke file JSON utama
-        data_records = df.to_dict(orient='records')
-
-        # Tambahkan metadata di akhir file JSON
+    try:
+        # 1. Jalankan Scraper
+        # scrape_data biasanya return DataFrame pandas
+        data_raw = scrape_data()
+        
+        data_records = []
+        
+        # 2. Konversi Data (Handle DataFrame atau List)
+        if hasattr(data_raw, 'empty'): # Cek jika ini Pandas DataFrame
+            if not data_raw.empty:
+                data_records = data_raw.to_dict(orient='records')
+        elif isinstance(data_raw, list):
+            data_records = data_raw
+            
+        # 3. Logic: SELALU SIMPAN (Entah ada data atau kosong)
+        # Tujuannya agar metadata 'last_scraped' selalu terupdate di file JSON.
+        
         json_output = {
             "metadata": {
-                "last_scraped": waktu_scraping,
+                "last_scraped": waktu_str,
                 "total_jadwal": len(data_records)
             },
             "data": data_records
         }
 
-        # Simpan file
+        # Simpan ke file
         with open(JSON_FILE, 'w', encoding='utf-8') as f:
             json.dump(json_output, f, indent=4, ensure_ascii=False)
 
-        JADWAL_STATUS = {"status": "ready", "message": f"Data diperbarui: {waktu_scraping}"}
-        logging.info(f"Jadwal berhasil disimpan ({len(data_records)} entri) pada {waktu_scraping}.")
-    else:
+        # 4. Update Status Akhir
+        if data_records:
+            msg = f"Data diperbarui: {len(data_records)} jadwal pada {waktu_str}"
+            logging.info(f"--> Sukses. {len(data_records)} jadwal disimpan.")
+        else:
+            msg = f"Update selesai (0 Jadwal/Libur) pada {waktu_str}"
+            logging.info("--> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).")
+
+        JADWAL_STATUS = {
+            "status": "ready", 
+            "message": msg
+        }
+
+    except Exception as e:
         waktu_error = datetime.now().strftime("%A, %d %B %Y %H:%M:%S")
-        JADWAL_STATUS = {"status": "error", "message": f"Scraping gagal pada: {waktu_error}"}
-        logging.warning("Scraping jadwal tidak menghasilkan data.")
+        err_msg = f"Scraping gagal: {str(e)}"
+        
+        JADWAL_STATUS = {
+            "status": "error", 
+            "message": f"{err_msg} pada {waktu_error}"
+        }
+        logging.error(f"--> Error: {e}")
 
     logging.info("=== SCRAPING JADWAL SELESAI ===")
 
@@ -527,74 +559,63 @@ def sosmed_download():
 @login_required
 def gate_undika():
     """Menyajikan file HTML utama."""
-    return render_template('gateUndika.html')
+    return render_template('undika/gate/gateUndika.html')
 
 @app.route('/sicyca_undika')
 @login_required
 def sicyca_undika():
-    """Menyajikan file HTML utama dan mengirimkan data."""
+    """Menyajikan file HTML utama dan mengirimkan data lengkap (Profil, Jadwal, SKS, Nilai, SSKM)."""
     user_id = g.user.get('sub')
     
-    # 1. Ambil Credentials (NIM)
+    # ================= 1. Credentials & Profil =================
     gate_model = GateUser()
     _, username, _ = gate_model.get_credentials_by_user_id(user_id)
     nim = username if username else "-"
     
-    # 2. Ambil Profil (Nama, Prodi, Dosen Wali)
-    # Default values
     profil = {
         "nama": "Mahasiswa",
         "nim": nim,
         "prodi": "-",
         "dosen_wali": "-",
-        "foto_profil": url_for('static', filename='no_photo.jpg') # Default
+        "foto_profil": url_for('static', filename='no_photo.jpg'),
+        "ipk": "-", 
+        "ips": "-"
     }
     
     if nim != "-":
-        # Coba ambil foto asli
-        profil["foto_profil"] = url_for('api.get_my_profile_photo')
-            
-        
-        # Coba cari data teks
+        profil["foto_profil"] = url_for('api.get_my_profile_photo') # Pastikan route api.get_my_profile_photo ada
         try:
-             # Kita cari data detail user ini via search
-             df_mhs = search_mahasiswa(nim)
+             df_mhs = search_mahasiswa(nim) # Pastikan fungsi search_mahasiswa sudah diimport
              if not df_mhs.empty:
                  row = df_mhs.iloc[0]
                  profil["nama"] = row.get("Nama", profil["nama"])
                  profil["dosen_wali"] = row.get("Dosen Wali", profil["dosen_wali"])
                  
-                 # Deteksi Prodi dari NIM (Logic dari api.py)
-                 if nim and len(nim) >= 7 and majorID:
-                     kodeprodi = nim[2:7]
+                 # Logika Prodi
+                 if nim and len(nim) >= 7:
+                     kodeprodi = nim[2:7] # Ambil digit ke-3 sampai 7 dari NIM
+                     # Ambil dari dictionary majorID, atau fallback ke data excel, atau default "-"
                      profil["prodi"] = majorID.get(kodeprodi, row.get("Prodi", "-"))
         except Exception as e:
             logging.error(f"[Sicyca Undika] Error fetch profile: {e}")
 
-    # 3. Ambil Jadwal (Dari JSON biar cepat)
+    # ================= 2. Jadwal Hari Ini =================
     jadwal_hari_ini = []
     hari_ini_str = ""
-    
     try:
-        # Set locale ke Indonesia untuk tanggal (Manual formatting)
         days_id = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
         months_id = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-        
-        now = datetime.now(SCHEDULER_TZ)
+        now = datetime.now(SCHEDULER_TZ) # Pastikan SCHEDULER_TZ diimport
         hari_ini_str = f"{days_id[now.weekday()]}, {now.day} {months_id[now.month]} {now.year}"
         
-        if os.path.exists(JSON_FILE):
+        if os.path.exists(JSON_FILE): # Pastikan JSON_FILE path benar
              with open(JSON_FILE, 'r', encoding='utf-8') as f:
                 data_json = json.load(f)
                 all_jadwal = data_json.get("data", [])
-                
-                # Filter Jadwal Hari Ini
-                # Format di JSON: "Senin, 06 Januari 2026"
                 for j in all_jadwal:
+                    # Filter sederhana berdasarkan string hari
                     hari_tgl = j.get("Hari, Tanggal", "")
-                    # Simple case-insensitive check
-                    if hari_ini_str.lower() in hari_tgl.lower():
-                         # Mapping ke format template
+                    if days_id[now.weekday()].lower() in hari_tgl.lower(): 
                          jadwal_hari_ini.append({
                              "nama_mk": j.get("Nama Matakuliah", "-"),
                              "jam": j.get("Jam", "-"),
@@ -604,18 +625,98 @@ def sicyca_undika():
     except Exception as e:
         logging.error(f"[Sicyca Undika] Error fetch jadwal: {e}")
 
-    # 4. Susun Data Akhir
+    # ================= 3. Data Akademik (SKS, Nilai, SSKM) =================
+    # A. Fetch SKS (Termasuk IPK/IPS)
+    sks_tempuh = 0
+    semester_est = 1
+    try:
+        sks_raw = fetch_sks(user_id=user_id) # Pastikan fungsi fetch_sks diimport
+        if sks_raw and 'data' in sks_raw:
+            data_sks = sks_raw['data']
+            sks_tempuh = int(data_sks.get('sks_tempuh', 0))
+            
+            # Estimasi Semester: (SKS + 19) // 20
+            if sks_tempuh > 0:
+                semester_est = (sks_tempuh + 19) // 20
+            else:
+                semester_est = 1
+            
+            # Simpan IPK/IPS ke profil sementara
+            if 'ipk' in data_sks: profil["ipk"] = data_sks['ipk']
+            if 'ips' in data_sks: profil["ips"] = data_sks['ips']
+            
+    except Exception as e:
+        logging.error(f"[Sicyca] Error fetch SKS: {e}")
+
+    # B. Fetch Nilai Ujian
+# B. Fetch Nilai Ujian
+    nilai_rows = []
+    try:
+        # GANTI DARI "nilaiujian" KE "dashboard_nilai_ujian"
+        # Agar strukturnya sesuai dengan tabel kecil di dashboard (Matakuliah & NILAI)
+        nilai_raw = dahsboard_nilai({"t": "dashboard_nilai_ujian"}, user_id=user_id)
+        
+        if nilai_raw.get('success') and nilai_raw.get('tables'):
+            raw_rows = nilai_raw['tables'][0].get('rows', [])
+            
+            for r in raw_rows:
+                nilai_rows.append({
+                    "matkul": r.get('Matakuliah', '-'),
+                    
+                    # Dashboard tidak punya kolom UTS/UAS, jadi kita strip atau kosongkan
+                    "uts": "-", 
+                    "uas": "-",
+                    
+                    # Ambil Nilai (di dashboard isinya Angka: 85, 100, dst)
+                    "grade": r.get('NILAI', '-')
+                })
+                
+            logging.info(f"[Sicyca Undika] Nilai Dashboard found: {len(nilai_rows)} items")
+            
+    except Exception as e:
+        logging.error(f"[Sicyca Undika] Error fetch Nilai: {e}")
+
+    # C. Fetch SSKM
+    sskm_poin = 0
+    sskm_persen = 0
+    try:
+        sskm_result = fetch_sskm_data(user_id=user_id) # Pastikan fetch_sskm_data diimport
+        
+        if sskm_result['success']:
+            sskm_poin = sskm_result['total_poin']
+            
+            # Hitung Persentase (Target 100 poin untuk lulus)
+            sskm_persen = int((sskm_poin / 100) * 100)
+            if sskm_persen > 100: sskm_persen = 100
+            
+    except Exception as e:
+        logging.error(f"[Sicyca] Error fetch SSKM: {e}")
+
+    # ================= KIRIM DATA KE HTML =================
     data = {
         "nama": profil["nama"],
         "nim": profil["nim"],
         "prodi": profil["prodi"],
         "dosen_wali": profil["dosen_wali"],
         "foto_profil": profil["foto_profil"],
+        
         "hari_ini": hari_ini_str,
         "jadwal": jadwal_hari_ini,
-        "tagihan": [] # Belum ada scraper tagihan, kosongkan dulu
+        
+        "semester": semester_est,
+        "sks_tempuh": sks_tempuh,
+        
+        "nilai_ujian": nilai_rows,
+        
+        # PERBAIKAN: Menambahkan IPK dan IPS yang sebelumnya hilang
+        "ipk": profil["ipk"],
+        "ips": profil["ips"],
+        
+        "sskm_poin": sskm_poin,
+        "sskm_persen": sskm_persen
     }
-    return render_template('undika/sicyca/sicycaUndika.html', data=data)
+    
+    return render_template('undika/sicyca/dashboardsicycaUndika.html', data=data)
 
 @app.route('/krs_sicyca')
 @login_required
