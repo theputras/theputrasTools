@@ -38734,3 +38734,563 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2026-01-06 09:55:10,188 - INFO -    --> Foto mahasiswa/23410100003 berhasil di-fetch (288574 bytes).
 2026-01-06 09:55:10,189 - INFO - Foto mahasiswa/23410100003 berhasil di-encode (384768 chars).
 2026-01-06 09:55:10,190 - INFO - 127.0.0.1 - - [06/Jan/2026 09:55:10] "GET /api/photo/mahasiswa/23410100003 HTTP/1.1" 200 -
+2026-01-06 17:38:45,768 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-06 17:38:45,798 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-06 17:38:45,800 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-06 17:38:45,800 - INFO - Scheduler started
+2026-01-06 17:38:45,803 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-06 17:38:45,803 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-06 17:38:45,822 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.53.222:5000
+2026-01-06 17:38:45,823 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-06 17:38:45,825 - INFO -  * Restarting with stat
+2026-01-06 17:38:47,150 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-06 17:38:47,168 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-06 17:38:47,170 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-06 17:38:47,171 - INFO - Scheduler started
+2026-01-06 17:38:47,174 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-06 17:38:47,174 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-06 17:38:47,190 - WARNING -  * Debugger is active!
+2026-01-06 17:38:47,318 - INFO -  * Debugger PIN: 335-769-461
+2026-01-06 17:39:23,376 - ERROR - === Gagal konek database: 2005 (HY000): Unknown MySQL server host 'mysql.theputras.my.id' (-3) ===
+2026-01-06 17:39:23,378 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:23] "[32mGET / HTTP/1.1[0m" 302 -
+2026-01-06 17:39:23,411 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:23] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2026-01-06 17:39:27,611 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:27] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-01-06 17:39:36,649 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:39:37,525 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2026-01-06 17:39:37,528 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:37] "POST /api/auth/login HTTP/1.1" 200 -
+2026-01-06 17:39:49,525 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:39:49,631 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:49] "GET / HTTP/1.1" 200 -
+2026-01-06 17:39:49,870 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:49] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-06 17:39:50,290 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:39:50,325 - INFO - Membuat objek session baru...
+2026-01-06 17:39:50,349 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:50] "GET /api/jadwal-list HTTP/1.1" 200 -
+2026-01-06 17:39:50,599 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:39:50,672 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-06 17:39:51,431 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:39:51,495 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-06 17:39:51,496 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2026-01-06 17:39:55,257 - INFO - 127.0.0.1 - - [06/Jan/2026 17:39:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:39:58,205 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-06 17:40:00,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:02,128 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-06 17:40:02,129 - INFO -    --> Login dan proses SSO berhasil.
+2026-01-06 17:40:02,130 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-06 17:40:03,020 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:40:03,790 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:03] "GET /api/status_koneksi HTTP/1.1" 200 -
+2026-01-06 17:40:05,255 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:05,764 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:40:05,830 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-01-06 17:40:06,695 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003 dan token: $2y$10$POfNGoODEznQ89.R0lG1tej7D3.Lv2r3uFA6.6BUFDjZdepWvwNVy.
+2026-01-06 17:40:06,696 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-01-06 17:40:07,657 - INFO - [ULTAH] Berhasil memproses 4 data.
+2026-01-06 17:40:07,659 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:07] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2026-01-06 17:40:10,258 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:15,258 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:20,255 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:25,255 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:30,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:35,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:40,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:45,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:50,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:40:55,254 - INFO - 127.0.0.1 - - [06/Jan/2026 17:40:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:00,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:05,257 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:10,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:15,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:20,258 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:25,255 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:30,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:35,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:35] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:40,257 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:45,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:50,255 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:41:55,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:41:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:00,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:05,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:10,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:15,257 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:20,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:25,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:30,993 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:30] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:36,011 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:36] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:40,993 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:40] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:45,991 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:45] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:50,994 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:50] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:42:55,994 - INFO - 127.0.0.1 - - [06/Jan/2026 17:42:55] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:43:00,993 - INFO - 127.0.0.1 - - [06/Jan/2026 17:43:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:43:05,993 - INFO - 127.0.0.1 - - [06/Jan/2026 17:43:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:43:10,993 - INFO - 127.0.0.1 - - [06/Jan/2026 17:43:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:43:15,994 - INFO - 127.0.0.1 - - [06/Jan/2026 17:43:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:43:20,993 - INFO - 127.0.0.1 - - [06/Jan/2026 17:43:20] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:43:25,991 - INFO - 127.0.0.1 - - [06/Jan/2026 17:43:25] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:44:08,994 - INFO - 127.0.0.1 - - [06/Jan/2026 17:44:08] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:44:57,752 - INFO - 127.0.0.1 - - [06/Jan/2026 17:44:57] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:45:00,257 - INFO - 127.0.0.1 - - [06/Jan/2026 17:45:00] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:45:05,256 - INFO - 127.0.0.1 - - [06/Jan/2026 17:45:05] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:45:10,255 - INFO - 127.0.0.1 - - [06/Jan/2026 17:45:10] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:45:15,255 - INFO - 127.0.0.1 - - [06/Jan/2026 17:45:15] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-06 17:45:18,924 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:45:19,668 - INFO - 127.0.0.1 - - [06/Jan/2026 17:45:19] "GET /gate_undika HTTP/1.1" 200 -
+2026-01-06 17:45:19,820 - INFO - 127.0.0.1 - - [06/Jan/2026 17:45:19] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-06 17:47:15,129 - ERROR - === Gagal konek database: 2005 (HY000): Unknown MySQL server host 'mysql.theputras.my.id' (-3) ===
+2026-01-06 17:47:15,131 - INFO - 127.0.0.1 - - [06/Jan/2026 17:47:15] "[32mGET /sicyca_undika HTTP/1.1[0m" 302 -
+2026-01-06 17:47:15,162 - INFO - 127.0.0.1 - - [06/Jan/2026 17:47:15] "GET /login?next=http://localhost:5000/sicyca_undika HTTP/1.1" 200 -
+2026-01-06 17:47:30,291 - ERROR - === Gagal konek database: 2026 (HY000): SSL connection error: error:0A00010B:SSL routines::wrong version number ===
+2026-01-06 17:47:30,292 - INFO - 127.0.0.1 - - [06/Jan/2026 17:47:30] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2026-01-06 17:47:53,246 - ERROR - === Gagal konek database: 2005 (HY000): Unknown MySQL server host 'mysql.theputras.my.id' (-3) ===
+2026-01-06 17:47:53,248 - INFO - 127.0.0.1 - - [06/Jan/2026 17:47:53] "[35m[1mPOST /api/auth/login HTTP/1.1[0m" 500 -
+2026-01-06 17:48:06,723 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:48:09,122 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2026-01-06 17:48:09,124 - INFO - 127.0.0.1 - - [06/Jan/2026 17:48:09] "POST /api/auth/login HTTP/1.1" 200 -
+2026-01-06 17:48:11,320 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:48:18,528 - INFO - === Koneksi ke database berhasil ===
+2026-01-06 17:48:18,734 - ERROR - [Sicyca Undika] Error fetch profile: name 'search_mahasiswa' is not defined
+2026-01-06 17:48:18,784 - INFO - 127.0.0.1 - - [06/Jan/2026 17:48:18] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-06 17:48:18,906 - INFO - Fetching foto untuk tombol: mahasiswa/23410100003
+2026-01-06 17:48:18,908 - INFO - 127.0.0.1 - - [06/Jan/2026 17:48:18] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-06 17:48:18,908 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2026-01-06 17:48:22,706 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/23410100003.jpg
+2026-01-06 17:48:23,182 - INFO -    --> Foto mahasiswa/23410100003 berhasil di-fetch (288574 bytes).
+2026-01-06 17:48:23,185 - INFO - Foto mahasiswa/23410100003 berhasil di-encode (384768 chars).
+2026-01-06 17:48:23,189 - INFO - 127.0.0.1 - - [06/Jan/2026 17:48:23] "GET /api/photo/mahasiswa/23410100003 HTTP/1.1" 200 -
+2026-01-09 23:10:19,083 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:10:19,103 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:10:19,105 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:10:19,107 - INFO - Scheduler started
+2026-01-09 23:10:19,114 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:10:19,114 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:10:19,130 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.6.239:5000
+2026-01-09 23:10:19,131 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-09 23:10:19,132 - INFO -  * Restarting with stat
+2026-01-09 23:10:20,193 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:10:20,207 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:10:20,207 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:10:20,208 - INFO - Scheduler started
+2026-01-09 23:10:20,209 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:10:20,210 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:10:20,221 - WARNING -  * Debugger is active!
+2026-01-09 23:10:20,335 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:10:26,574 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:26,580 - INFO - [GUARD] Access Token Expired.
+2026-01-09 23:10:26,582 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:26] "[32mGET / HTTP/1.1[0m" 302 -
+2026-01-09 23:10:26,617 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:26] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2026-01-09 23:10:27,364 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:27] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-01-09 23:10:30,516 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:31,092 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2026-01-09 23:10:31,094 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:31] "POST /api/auth/login HTTP/1.1" 200 -
+2026-01-09 23:10:31,195 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:31,236 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:31] "GET / HTTP/1.1" 200 -
+2026-01-09 23:10:31,487 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:31] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:10:31,933 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:31] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-01-09 23:10:31,992 - INFO - Membuat objek session baru...
+2026-01-09 23:10:32,036 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:32] "GET /api/jadwal-list HTTP/1.1" 200 -
+2026-01-09 23:10:32,039 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:32,059 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-09 23:10:32,171 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:32,178 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2026-01-09 23:10:32,178 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2026-01-09 23:10:34,423 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2026-01-09 23:10:34,430 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-09 23:10:34,430 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-09 23:10:34,431 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2026-01-09 23:10:34,495 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-09 23:10:35,508 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:35,523 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:35] "GET /gate_undika HTTP/1.1" 200 -
+2026-01-09 23:10:35,637 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:35] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:10:36,420 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-09 23:10:36,421 - INFO -    --> Login dan proses SSO berhasil.
+2026-01-09 23:10:36,422 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-09 23:10:36,500 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:36,596 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:36] "GET /api/status_koneksi HTTP/1.1" 200 -
+2026-01-09 23:10:36,691 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:36,701 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-01-09 23:10:37,129 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:37,248 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003 dan token: $2y$10$g7rdmamqwERhnm6AXBUT2eHtuYmsy0D9H4RjYPdF6q4FtWL4v7O3O.
+2026-01-09 23:10:37,249 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-01-09 23:10:37,248 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:37,257 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:10:37,600 - INFO - [ULTAH] Berhasil memproses 3 data.
+2026-01-09 23:10:37,602 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:37] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2026-01-09 23:10:38,955 - INFO -    --> Tidak ada hasil Mahasiswa.
+2026-01-09 23:10:39,022 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:39] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:10:39,128 - INFO - Fetching foto untuk tombol: mahasiswa/23410100003
+2026-01-09 23:10:39,128 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/23410100003.jpg
+2026-01-09 23:10:39,138 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:39] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:10:39,309 - INFO -    --> Foto mahasiswa/23410100003 berhasil di-fetch (288574 bytes).
+2026-01-09 23:10:39,311 - INFO - Foto mahasiswa/23410100003 berhasil di-encode (384768 chars).
+2026-01-09 23:10:39,316 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:39] "GET /api/photo/mahasiswa/23410100003 HTTP/1.1" 200 -
+2026-01-09 23:10:48,294 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:48,473 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:10:48,478 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:10:49,283 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:49] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:10:49,388 - INFO - Foto mahasiswa/23410100003 dari cache.
+2026-01-09 23:10:49,392 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:49] "GET /api/photo/mahasiswa/23410100003 HTTP/1.1" 200 -
+2026-01-09 23:10:49,400 - INFO - 127.0.0.1 - - [09/Jan/2026 23:10:49] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:11:18,953 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:11:19,147 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:11:19,154 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:11:19,934 - INFO - 127.0.0.1 - - [09/Jan/2026 23:11:19] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:11:20,050 - INFO - Fetching foto untuk tombol: mahasiswa/23410100003
+2026-01-09 23:11:20,051 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/23410100003.jpg
+2026-01-09 23:11:20,068 - INFO - 127.0.0.1 - - [09/Jan/2026 23:11:20] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:11:20,285 - INFO -    --> Foto mahasiswa/23410100003 berhasil di-fetch (288574 bytes).
+2026-01-09 23:11:20,286 - INFO - Foto mahasiswa/23410100003 berhasil di-encode (384768 chars).
+2026-01-09 23:11:20,290 - INFO - 127.0.0.1 - - [09/Jan/2026 23:11:20] "GET /api/photo/mahasiswa/23410100003 HTTP/1.1" 200 -
+2026-01-09 23:12:16,186 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:12:16,234 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:12:16,242 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:12:16,974 - INFO - 127.0.0.1 - - [09/Jan/2026 23:12:16] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:12:17,091 - INFO - Fetching foto untuk tombol: mahasiswa/23410100003
+2026-01-09 23:12:17,091 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/23410100003.jpg
+2026-01-09 23:12:17,109 - INFO - 127.0.0.1 - - [09/Jan/2026 23:12:17] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:12:17,255 - INFO -    --> Foto mahasiswa/23410100003 berhasil di-fetch (288574 bytes).
+2026-01-09 23:12:17,258 - INFO - Foto mahasiswa/23410100003 berhasil di-encode (384768 chars).
+2026-01-09 23:12:17,261 - INFO - 127.0.0.1 - - [09/Jan/2026 23:12:17] "GET /api/photo/mahasiswa/23410100003 HTTP/1.1" 200 -
+2026-01-09 23:13:37,078 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:13:37,091 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:13:37,092 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:13:37,093 - INFO - Scheduler started
+2026-01-09 23:13:37,094 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:13:37,094 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:13:37,103 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.6.239:5000
+2026-01-09 23:13:37,104 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-09 23:13:37,105 - INFO -  * Restarting with stat
+2026-01-09 23:13:38,256 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:13:38,278 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:13:38,280 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:13:38,281 - INFO - Scheduler started
+2026-01-09 23:13:38,284 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:13:38,284 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:13:38,296 - WARNING -  * Debugger is active!
+2026-01-09 23:13:38,298 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:17:21,509 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/scrapper_requests.py', reloading
+2026-01-09 23:17:21,705 - INFO -  * Restarting with stat
+2026-01-09 23:17:22,885 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:17:22,900 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:17:22,901 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:17:22,902 - INFO - Scheduler started
+2026-01-09 23:17:22,904 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:17:22,904 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:17:22,919 - WARNING -  * Debugger is active!
+2026-01-09 23:17:22,920 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:23:25,280 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/scrapper_requests.py', reloading
+2026-01-09 23:23:25,498 - INFO -  * Restarting with stat
+2026-01-09 23:23:26,725 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:23:26,741 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:23:26,742 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:23:26,743 - INFO - Scheduler started
+2026-01-09 23:23:26,744 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:23:26,744 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:23:26,754 - WARNING -  * Debugger is active!
+2026-01-09 23:23:26,755 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:23:52,680 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/api/api.py', reloading
+2026-01-09 23:23:52,883 - INFO -  * Restarting with stat
+2026-01-09 23:23:54,101 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:23:54,133 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:23:54,135 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:23:54,136 - INFO - Scheduler started
+2026-01-09 23:23:54,138 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:23:54,139 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:23:54,156 - WARNING -  * Debugger is active!
+2026-01-09 23:23:54,157 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:24:05,120 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/api/api.py', reloading
+2026-01-09 23:24:05,338 - INFO -  * Restarting with stat
+2026-01-09 23:24:06,531 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:24:06,545 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:24:06,546 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:24:06,547 - INFO - Scheduler started
+2026-01-09 23:24:06,548 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:24:06,549 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:24:06,556 - WARNING -  * Debugger is active!
+2026-01-09 23:24:06,557 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:24:56,364 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/app.py', reloading
+2026-01-09 23:24:56,557 - INFO -  * Restarting with stat
+2026-01-09 23:24:57,694 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:24:57,709 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:24:57,710 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:24:57,710 - INFO - Scheduler started
+2026-01-09 23:24:57,711 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:24:57,711 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:24:57,720 - WARNING -  * Debugger is active!
+2026-01-09 23:24:57,721 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:25:13,960 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/app.py', reloading
+2026-01-09 23:25:14,150 - INFO -  * Restarting with stat
+2026-01-09 23:25:15,396 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:25:15,411 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:25:15,412 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:25:15,412 - INFO - Scheduler started
+2026-01-09 23:25:15,414 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:25:15,414 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:25:15,425 - WARNING -  * Debugger is active!
+2026-01-09 23:25:15,427 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:25:16,662 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/app.py', reloading
+2026-01-09 23:25:16,874 - INFO -  * Restarting with stat
+2026-01-09 23:25:17,990 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:25:18,006 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:25:18,007 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:25:18,007 - INFO - Scheduler started
+2026-01-09 23:25:18,008 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:25:18,009 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:25:18,017 - WARNING -  * Debugger is active!
+2026-01-09 23:25:18,018 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:25:31,712 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:31,833 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:31,842 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:25:31,842 - INFO - Membuat objek session baru...
+2026-01-09 23:25:31,902 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:31,907 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-09 23:25:32,013 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:32,026 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2026-01-09 23:25:32,026 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2026-01-09 23:25:34,197 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2026-01-09 23:25:34,197 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-09 23:25:34,198 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-09 23:25:34,199 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2026-01-09 23:25:34,251 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-09 23:25:38,399 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-09 23:25:38,401 - INFO -    --> Login dan proses SSO berhasil.
+2026-01-09 23:25:38,401 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-09 23:25:38,487 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:41,140 - INFO -    --> Tidak ada hasil Mahasiswa.
+2026-01-09 23:25:41,192 - INFO - 127.0.0.1 - - [09/Jan/2026 23:25:41] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:25:41,333 - INFO - 127.0.0.1 - - [09/Jan/2026 23:25:41] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:25:41,372 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:41,433 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:41,448 - INFO - Membuat objek session baru...
+2026-01-09 23:25:41,506 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:41,512 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-09 23:25:41,569 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:41,579 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2026-01-09 23:25:41,580 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2026-01-09 23:25:42,700 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2026-01-09 23:25:42,701 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-09 23:25:42,702 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-09 23:25:42,702 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2026-01-09 23:25:42,757 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-09 23:25:44,953 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-09 23:25:44,955 - INFO -    --> Login dan proses SSO berhasil.
+2026-01-09 23:25:44,955 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-09 23:25:45,033 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:25:45,224 - INFO - [Profil Photo] Fetching dari endpoint baru: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003
+2026-01-09 23:25:45,592 - INFO - 127.0.0.1 - - [09/Jan/2026 23:25:45] "GET /api/my-photo HTTP/1.1" 200 -
+2026-01-09 23:26:02,296 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:26:02,309 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:26:02,310 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:26:02,310 - INFO - Scheduler started
+2026-01-09 23:26:02,311 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:26:02,312 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:26:02,321 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.6.239:5000
+2026-01-09 23:26:02,322 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-09 23:26:02,323 - INFO -  * Restarting with stat
+2026-01-09 23:26:03,429 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:26:03,443 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:26:03,445 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:26:03,446 - INFO - Scheduler started
+2026-01-09 23:26:03,448 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:26:03,448 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:26:03,462 - WARNING -  * Debugger is active!
+2026-01-09 23:26:03,464 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:26:12,566 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:26:12,629 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:26:12,642 - INFO - Membuat objek session baru...
+2026-01-09 23:26:12,746 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:26:12,753 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-09 23:26:12,803 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:26:12,809 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2026-01-09 23:26:12,810 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2026-01-09 23:26:13,913 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2026-01-09 23:26:13,913 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-09 23:26:13,914 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-09 23:26:13,914 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2026-01-09 23:26:13,966 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-09 23:26:15,927 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-09 23:26:15,929 - INFO -    --> Login dan proses SSO berhasil.
+2026-01-09 23:26:15,930 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-09 23:26:15,999 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:26:16,131 - INFO - [Profil Photo] Fetching dari endpoint baru: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003
+2026-01-09 23:26:16,316 - INFO - 127.0.0.1 - - [09/Jan/2026 23:26:16] "GET /api/my-photo HTTP/1.1" 200 -
+2026-01-09 23:27:10,004 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/app.py', reloading
+2026-01-09 23:27:10,217 - INFO -  * Restarting with stat
+2026-01-09 23:27:11,570 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:27:11,588 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:27:11,590 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:27:11,590 - INFO - Scheduler started
+2026-01-09 23:27:11,592 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:27:11,592 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:27:11,605 - WARNING -  * Debugger is active!
+2026-01-09 23:27:11,607 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:27:12,905 - INFO -  * Detected change in '/media/theputras/Data D/Github/theputrasTools/app.py', reloading
+2026-01-09 23:27:13,139 - INFO -  * Restarting with stat
+2026-01-09 23:30:26,769 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:30:26,784 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:30:26,785 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:30:26,786 - INFO - Scheduler started
+2026-01-09 23:30:26,788 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:30:26,789 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:30:26,806 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.6.239:5000
+2026-01-09 23:30:26,807 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-09 23:30:26,809 - INFO -  * Restarting with stat
+2026-01-09 23:30:27,914 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:30:27,928 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:30:27,929 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:30:27,930 - INFO - Scheduler started
+2026-01-09 23:30:27,932 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:30:27,933 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:30:27,944 - WARNING -  * Debugger is active!
+2026-01-09 23:30:27,945 - INFO -  * Debugger PIN: 116-128-732
+2026-01-09 23:30:28,100 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:28,154 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:28,162 - INFO - Membuat objek session baru...
+2026-01-09 23:30:28,204 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:28,209 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-09 23:30:28,251 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:28,265 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2026-01-09 23:30:28,266 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2026-01-09 23:30:31,305 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2026-01-09 23:30:31,306 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-09 23:30:31,306 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-09 23:30:31,307 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2026-01-09 23:30:31,357 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-09 23:30:35,210 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-09 23:30:35,212 - INFO -    --> Login dan proses SSO berhasil.
+2026-01-09 23:30:35,213 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-09 23:30:35,255 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:35,445 - INFO - [Profil Photo] Fetching dari endpoint baru: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003
+2026-01-09 23:30:35,614 - INFO - 127.0.0.1 - - [09/Jan/2026 23:30:35] "GET /api/my-photo HTTP/1.1" 200 -
+2026-01-09 23:30:41,515 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:41,565 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:41,572 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:30:41,573 - INFO - Membuat objek session baru...
+2026-01-09 23:30:41,676 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:41,681 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-09 23:30:41,723 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:41,735 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi...
+2026-01-09 23:30:41,736 - INFO -    --> Memeriksa validitas sesi ke server: https://sicyca.dinamika.ac.id/dashboard
+2026-01-09 23:30:43,005 - WARNING -    --> Session Invalid (Redirected to Login): https://gate.dinamika.ac.id/login
+2026-01-09 23:30:43,005 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-09 23:30:43,006 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-09 23:30:43,006 - INFO - 1. [Login] Mengakses Gate (https://gate.dinamika.ac.id) untuk user: 23410100003...
+2026-01-09 23:30:43,097 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-09 23:30:44,890 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-09 23:30:44,892 - INFO -    --> Login dan proses SSO berhasil.
+2026-01-09 23:30:44,892 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-09 23:30:44,979 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:46,555 - INFO -    --> Tidak ada hasil Mahasiswa.
+2026-01-09 23:30:46,613 - INFO - 127.0.0.1 - - [09/Jan/2026 23:30:46] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:30:46,770 - INFO - 127.0.0.1 - - [09/Jan/2026 23:30:46] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:30:46,867 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:46,988 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:30:46,995 - INFO - [Profil Photo] Fetching dari endpoint baru: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003
+2026-01-09 23:30:47,254 - INFO - 127.0.0.1 - - [09/Jan/2026 23:30:47] "GET /api/my-photo HTTP/1.1" 200 -
+2026-01-09 23:31:01,803 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:31:01,858 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:31:01,864 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:31:02,656 - INFO - 127.0.0.1 - - [09/Jan/2026 23:31:02] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:31:02,792 - INFO - 127.0.0.1 - - [09/Jan/2026 23:31:02] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:31:02,818 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:31:02,868 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:31:02,874 - INFO - [Profil Photo] Fetching dari endpoint baru: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003
+2026-01-09 23:31:03,159 - INFO - 127.0.0.1 - - [09/Jan/2026 23:31:03] "GET /api/my-photo HTTP/1.1" 200 -
+2026-01-09 23:32:46,834 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:32:46,876 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:32:46,883 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:32:47,983 - INFO - 127.0.0.1 - - [09/Jan/2026 23:32:47] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:32:48,104 - INFO - 127.0.0.1 - - [09/Jan/2026 23:32:48] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:32:48,210 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:32:48,268 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:32:48,274 - INFO - [Profil Photo] Fetching dari endpoint baru: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003
+2026-01-09 23:32:48,785 - INFO - 127.0.0.1 - - [09/Jan/2026 23:32:48] "GET /api/my-photo HTTP/1.1" 200 -
+2026-01-09 23:33:00,285 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:33:00,331 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:33:00,337 - INFO - 
+--- Cari Mahasiswa: '23410100003' ---
+2026-01-09 23:33:01,192 - INFO - 127.0.0.1 - - [09/Jan/2026 23:33:01] "GET /sicyca_undika HTTP/1.1" 200 -
+2026-01-09 23:33:01,315 - INFO - 127.0.0.1 - - [09/Jan/2026 23:33:01] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-01-09 23:33:01,359 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:33:01,480 - INFO - === Koneksi ke database berhasil ===
+2026-01-09 23:33:01,486 - INFO - [Profil Photo] Fetching dari endpoint baru: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=23410100003
+2026-01-09 23:33:01,869 - INFO - 127.0.0.1 - - [09/Jan/2026 23:33:01] "GET /api/my-photo HTTP/1.1" 200 -
+2026-01-09 23:33:24,482 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:33:24,506 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:33:24,507 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:33:24,507 - INFO - Scheduler started
+2026-01-09 23:33:24,509 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:33:24,509 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:33:24,528 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.6.239:5000
+2026-01-09 23:33:24,529 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-09 23:33:24,533 - INFO -  * Restarting with stat
+2026-01-09 23:33:25,719 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-09 23:33:25,735 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-09 23:33:25,736 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-09 23:33:25,736 - INFO - Scheduler started
+2026-01-09 23:33:25,737 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-09 23:33:25,738 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-09 23:33:25,745 - WARNING -  * Debugger is active!
+2026-01-09 23:33:25,746 - INFO -  * Debugger PIN: 116-128-732

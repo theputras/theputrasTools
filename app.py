@@ -20,7 +20,7 @@ from models.auth_api import auth_bp
 from flask_cors import CORS
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import scrape_data
+from scrapper_requests import scrape_data, search_mahasiswa
 from controller.GateController import reset_session_user
 from middleware.auth_quard import login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -552,7 +552,8 @@ def sicyca_undika():
     
     if nim != "-":
         # Coba ambil foto asli
-        profil["foto_profil"] = url_for('api.get_photo', role='mahasiswa', id_=nim)
+        profil["foto_profil"] = url_for('api.get_my_profile_photo')
+            
         
         # Coba cari data teks
         try:

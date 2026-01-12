@@ -10,8 +10,23 @@ services:
       - FLASK_APP=app.py
       - FLASK_RUN_HOST=0.0.0.0
       - PREFERRED_URL_SCHEME=https
+      - HTTPS_PROXY_URL=socks5h://warp-sidecar:40001
     volumes:
       - .:/app  # Optional: This mounts your local app directory to the container's /app
       - /etc/localtime:/etc/localtime:ro  # Menyinkronkan waktu host dengan container
       - /etc/timezone:/etc/timezone:ro  # Menyinkronkan zona waktu
     restart: unless-stopped  # Optional: Ensures the container restarts unless stopped manually
+    depends_on:
+      - warp-sidecar
+
+  # --- Service Tambahan (Jembatan Proxy) ---
+  warp-sidecar:
+    image: alpine/socat
+    container_name: warp_bridge
+    # Perintah sakti socat dipindah ke sini
+    # TCP-LISTEN:40001 = Port yang dibuka untuk container lain
+    # TCP:host.docker.internal:40000 = Target Cloudflare di Host
+    command: TCP-LISTEN:40001,fork,bind=0.0.0.0 TCP:host.docker.internal:40000
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Ini kuncinya agar container bisa akses Host
+    restart: unless-stopped

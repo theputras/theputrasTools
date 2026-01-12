@@ -690,14 +690,14 @@ def fetch_sks(user_id=None) -> dict:
 
 def get_csrf_token_gate():
     try:
-        url = "https://gate.dinamika.ac.id/login"
+        url = GATE_ROOT
         
         # 1. GUNAKAN HEADERS LENGKAP (Biar dikira Browser Asli)
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
-            'Referer': 'https://gate.dinamika.ac.id/',
+            'Referer': GATE_ROOT,
             'Connection': 'keep-alive'
         }
         
@@ -735,3 +735,37 @@ def get_csrf_token_gate():
         print(f"[Scrapper Error] Gagal ambil token gate: {e}")
         
     return ""
+
+# FUNGSI BARU KHUSUS PROFIL
+def fetch_profil_mhs(nim, user_id=None):
+    """
+    Mengambil foto profil khusus mahasiswa dari endpoint API Sicyca baru.
+    Endpoint: https://sicyca.dinamika.ac.id/API/get_mhs_photo.php?nim=...
+    """
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
+    
+    if not sess:
+        logging.error(f"[Profil Photo] Gagal mendapatkan session untuk NIM {nim}")
+        return None
+
+    try:
+        # Endpoint khusus yang diminta
+        url = f"{TARGET_URL}/API/get_mhs_photo.php?nim={nim}"
+        
+        logging.info(f"[Profil Photo] Fetching dari endpoint baru: {url}")
+        
+        # Request dengan session yang sudah login
+        resp = sess.get(url, timeout=10, headers={"Referer": TARGET_URL})
+        resp.raise_for_status()
+        
+        # Validasi konten apakah benar gambar
+        if resp.headers.get('Content-Type', '').startswith('image/'):
+            return resp.content
+        else:
+            logging.warning(f"[Profil Photo] Response bukan gambar: {resp.headers.get('Content-Type')}")
+            return None
+            
+    except Exception as e:
+        logging.error(f"[Profil Photo] Error fetching: {e}")
+        return None

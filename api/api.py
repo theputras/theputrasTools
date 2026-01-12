@@ -1,4 +1,4 @@
-from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g
+from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g, redirect
 import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
@@ -6,7 +6,7 @@ from models.gate import GateSession, GateUser
 
 
 # Impor SEMUA fungsi scraper
-from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks, get_csrf_token_gate
+from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks, get_csrf_token_gate, fetch_profil_mhs
 from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
@@ -833,3 +833,38 @@ def get_my_credentials():
         })
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
+    
+@api_bp.route('/my-photo')
+@login_required
+def get_my_profile_photo():
+    """
+    API endpoint untuk mengambil foto profil user yang sedang login
+    menggunakan endpoint khusus.
+    """
+    try:
+        # 1. Ambil User ID dan NIM dari Token/Session
+        user_id = g.user.get('sub')
+        gate_model = GateUser()
+        _, nim, _ = gate_model.get_credentials_by_user_id(user_id)
+        
+        if not nim:
+            return jsonify({'success': False, 'message': 'NIM tidak ditemukan'}), 404
+
+        # 2. Cek Cache (Opsional, biar gak nembak terus)
+        cache_key = f"my_photo_{nim}"
+        if photo_cache and cache_key in photo_cache:
+            logging.info(f"Foto profil {nim} diambil dari cache.")
+            return jsonify({'success': True, 'image_b64': photo_cache[cache_key]})
+
+        # 3. Panggil Scraper Fungsi Baru
+        image_content = fetch_profil_mhs(nim, user_id=user_id)
+        
+        if image_content:
+            return Response(image_content, mimetype='image/jpeg')
+        else:
+            # Fallback ke default jika gagal
+            return redirect(url_for('static', filename='no_photo.jpg'))
+
+    except Exception as e:
+        logging.error(f"Error /my-photo: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
