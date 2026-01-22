@@ -18,6 +18,7 @@ from cachetools import TTLCache  # Install: pip install cachetools
 from api.api import api_bp, init_api
 from models.auth_api import auth_bp
 from flask_cors import CORS
+from paymentGateway import payment_bp
 
 # Impor SEMUA fungsi scraper
 from scrapper_requests import scrape_data, search_mahasiswa, dahsboard_nilai, fetch_sks, fetch_sskm_data
@@ -45,6 +46,9 @@ CORS(app, supports_credentials=True)
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+
+# Register Payment Gateway Blueprint
+app.register_blueprint(payment_bp)
 # Inisialisasi scheduler SEKALI saat modul di-import
 SCHEDULER_TZ = pytz.timezone(os.getenv("TIMEZONE"))
 
@@ -447,6 +451,12 @@ def index():
 def tools_page():
     # Nanti kita bikin file tools.html
     return render_template('tools.html') 
+
+@app.route('/pembayaran')
+@login_required
+def pembayaran_page():
+    """Halaman pembayaran QRIS"""
+    return render_template('pembayaran.html')
 
 @app.route('/account')
 @login_required

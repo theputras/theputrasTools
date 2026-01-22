@@ -84,6 +84,27 @@
                 </div>
             </a> 
 
+            <a href="{{ url_for('pembayaran_page') }}" 
+               class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
+                      bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
+                      hover:bg-gray-800 hover:border-violet-500/30 transition-all duration-300
+                      active:scale-95">
+                
+                <div class="flex-shrink-0 p-3 bg-violet-500/10 rounded-full group-hover:bg-violet-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                    </svg>
+                </div>
+                
+                <div class="text-left sm:text-center">
+                    <h3 class="font-bold text-white text-sm sm:text-base">Pembayaran QRIS</h3>
+                    <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Generate QR Code pembayaran</p>
+                </div>
+
+                <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
         </div>
     </div>
 
