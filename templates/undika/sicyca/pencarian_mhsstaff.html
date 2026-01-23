@@ -105,9 +105,10 @@
 
        function copyToClipboard(text) {
            navigator.clipboard.writeText(text).then(function() {
-               alert("Teks telah disalin: " + text);  // Menampilkan pesan sukses
+               window.showAlert('success', 'Teks telah disalin: ' + text);
            }).catch(function(err) {
-               console.error("Gagal menyalin teks: ", err);  // Menampilkan error jika gagal
+               window.showAlert('error', 'Gagal menyalin teks');
+               console.error("Gagal menyalin teks: ", err);
            });
        }
        document.addEventListener('DOMContentLoaded', function () {

@@ -105,16 +105,43 @@
 </div>
 </div>
 <div class="mt-6 bg-gray-800 rounded-lg shadow-md p-6 flex flex-wrap gap-4">
-             <a href="{{ url_for('logout_page') }}" 
-                class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
+             <!-- <a href="{{ url_for('logout_page') }}" 
+                class="">
                  Logout
-             </a>
+             </a> -->
 
-             <a href="{{ url_for('logout_all_page') }}" 
-                class="bg-gray-800 hover:bg-gray-700 border border-red-600 text-red-400 font-semibold px-4 py-2 rounded-md text-sm"
-                onclick="return confirm('Anda yakin ingin logout dari SEMUA perangkat?')">
+             <button type="button"
+                class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm"
+                x-data
+                @click="async () => {
+                    const yakin = await window.showConfirm(
+                        'Logout?',
+                        'Anda yakin ingin logout?',
+                        'danger'
+                    );
+                    
+                    if (yakin) {
+                        window.location.href = '{{ url_for('logout_page') }}';
+                    }
+                }">
+                 Logout
+             </button>
+             <button type="button"
+                class="bg-gray-800 hover:bg-gray-700 border border-red-600 text-red-400 font-semibold px-4 py-2 rounded-md text-sm transition"
+                x-data
+                @click="async () => {
+                    const yakin = await window.showConfirm(
+                        'Logout Semua Perangkat?',
+                        'Anda yakin ingin logout dari SEMUA perangkat?',
+                        'danger'
+                    );
+                    
+                    if (yakin) {
+                        window.location.href = '{{ url_for('logout_all_page') }}';
+                    }
+                }">
                  Logout All Devices
-             </a>
+             </button>
         </div>
     </div>
 
