@@ -761,21 +761,6 @@ def stream_recap_count():
     
     return Response(generate(), mimetype='text/event-stream')
 
-# Endpoint untuk sync data dari client
-@app.route('/api/sskm/sync', methods=['POST'])
-def sync_sskm_data():
-    """Menerima data SSKM dari client dan simpan ke memory"""
-    global SSKM_DATA
-    try:
-        data = request.get_json()
-        if data and 'rfidData' in data:
-            SSKM_DATA = data['rfidData']
-            return {'success': True, 'count': len(SSKM_DATA)}
-        return {'success': False, 'error': 'Invalid data'}, 400
-    except Exception as e:
-        logging.error(f"Error syncing SSKM data: {e}")
-        return {'success': False, 'error': str(e)}, 500
-
 # Route untuk halaman recap
 @app.route('/recap-hadir')
 def recap_hadir():

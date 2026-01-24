@@ -19,16 +19,18 @@ executor = None
 get_jadwal_status_func = None
 log_file = None
 _valid_role = None
+SSKM_DATA = None  # Storage for SSKM attendance data
 
 # Fungsi untuk inisialisasi variabel global
-def init_api(cache, major, execu, status_getter, logfile, valid_role_func):
-    global photo_cache, majorID, executor, get_jadwal_status_func, log_file, _valid_role
+def init_api(cache, major, execu, status_getter, logfile, valid_role_func, sskm_storage=None):
+    global photo_cache, majorID, executor, get_jadwal_status_func, log_file, _valid_role, SSKM_DATA
     photo_cache = cache
     majorID = major
     executor = execu
     get_jadwal_status_func = status_getter
     log_file = logfile
     _valid_role = valid_role_func
+    SSKM_DATA = sskm_storage if sskm_storage is not None else []
     
     
 # Fungsi untuk membersihkan kode warna ANSI (seperti \u001b[0;32m)
@@ -891,3 +893,21 @@ def get_detail_nilai():
     
     # 2. Return langsung hasilnya sebagai JSON
     return jsonify(raw_data)
+
+# ===== SSKM ENDPOINTS =====
+@api_bp.route('/sskm/sync', methods=['POST'])
+def sync_sskm_data():
+    """Menerima data SSKM dari client dan simpan ke memory"""
+    global SSKM_DATA
+    try:
+        data = request.get_json()
+        if data and 'rfidData' in data:
+            # Clear and update list in-place to maintain reference
+            SSKM_DATA.clear()
+            SSKM_DATA.extend(data['rfidData'])
+            logging.info(f"SSKM data synced: {len(SSKM_DATA)} records")
+            return jsonify({'success': True, 'count': len(SSKM_DATA)})
+        return jsonify({'success': False, 'error': 'Invalid data'}), 400
+    except Exception as e:
+        logging.error(f"Error syncing SSKM data: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500

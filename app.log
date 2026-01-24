@@ -43689,3 +43689,192 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2026-01-24 18:50:15,876 - INFO - 127.0.0.1 - - [24/Jan/2026 18:50:15] "GET /stream/recap-count HTTP/1.1" 200 -
 2026-01-24 18:50:22,352 - INFO - 127.0.0.1 - - [24/Jan/2026 18:50:22] "GET /recap-hadir HTTP/1.1" 200 -
 2026-01-24 18:50:22,621 - INFO - 127.0.0.1 - - [24/Jan/2026 18:50:22] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 18:53:02,653 - INFO - 127.0.0.1 - - [24/Jan/2026 18:53:02] "[32mGET / HTTP/1.1[0m" 302 -
+2026-01-24 18:53:02,673 - INFO - 127.0.0.1 - - [24/Jan/2026 18:53:02] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2026-01-24 18:53:03,005 - INFO - 127.0.0.1 - - [24/Jan/2026 18:53:03] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-01-24 18:53:06,785 - INFO - 127.0.0.1 - - [24/Jan/2026 18:53:06] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 18:57:15,447 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\api\\api.py', reloading
+2026-01-24 18:57:15,621 - INFO -  * Restarting with stat
+2026-01-24 18:57:16,903 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 18:57:16,914 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 18:57:16,914 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 18:57:16,915 - INFO - Scheduler started
+2026-01-24 18:57:16,929 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 18:57:16,929 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 18:57:16,930 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 18:57:16,930 - INFO - Membuat objek session baru...
+2026-01-24 18:57:17,424 - INFO - package: mysql.connector.plugins
+2026-01-24 18:57:17,425 - INFO - plugin_name: caching_sha2_password
+2026-01-24 18:57:17,425 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 18:57:17,763 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:57:18,101 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 18:57:19,585 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:57:20,228 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 18:57:20,228 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 18:57:24,047 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 18:57:24,047 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 18:57:24,048 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 18:57:24,048 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 18:57:24,188 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 18:57:26,413 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 18:57:27,726 - INFO -    --> Login SSO sukses.
+2026-01-24 18:57:27,727 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 18:57:28,580 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:57:30,267 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 18:57:30,268 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 18:57:30,268 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 18:57:30,269 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 18:57:30,269 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 18:57:30,286 - WARNING -  * Debugger is active!
+2026-01-24 18:57:30,288 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 18:57:37,452 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\api\\api.py', reloading
+2026-01-24 18:57:37,623 - INFO -  * Restarting with stat
+2026-01-24 18:57:38,859 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 18:57:38,871 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 18:57:38,871 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 18:57:38,871 - INFO - Scheduler started
+2026-01-24 18:57:38,884 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 18:57:38,884 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 18:57:38,884 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 18:57:38,884 - INFO - Membuat objek session baru...
+2026-01-24 18:57:39,431 - INFO - package: mysql.connector.plugins
+2026-01-24 18:57:39,432 - INFO - plugin_name: caching_sha2_password
+2026-01-24 18:57:39,432 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 18:57:39,796 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:57:40,243 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 18:57:40,974 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:57:41,282 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 18:57:41,283 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 18:57:44,469 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 18:57:44,469 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 18:57:44,469 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 18:57:44,470 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 18:57:44,579 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 18:57:46,612 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 18:57:48,394 - INFO -    --> Login SSO sukses.
+2026-01-24 18:57:48,394 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 18:57:49,383 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:57:50,584 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 18:57:50,586 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 18:57:50,586 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 18:57:50,586 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 18:57:50,586 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 18:57:50,601 - WARNING -  * Debugger is active!
+2026-01-24 18:57:50,603 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 18:58:00,200 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 18:58:00,412 - INFO -  * Restarting with stat
+2026-01-24 18:58:01,681 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 18:58:01,693 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 18:58:01,693 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 18:58:01,693 - INFO - Scheduler started
+2026-01-24 18:58:01,701 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 18:58:01,701 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 18:58:01,702 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 18:58:01,702 - INFO - Membuat objek session baru...
+2026-01-24 18:58:02,197 - INFO - package: mysql.connector.plugins
+2026-01-24 18:58:02,198 - INFO - plugin_name: caching_sha2_password
+2026-01-24 18:58:02,198 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 18:58:02,530 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:02,936 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 18:58:03,680 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:03,965 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 18:58:03,965 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 18:58:05,823 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 18:58:05,825 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 18:58:05,825 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 18:58:05,826 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 18:58:05,898 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 18:58:07,834 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 18:58:09,269 - INFO -    --> Login SSO sukses.
+2026-01-24 18:58:09,269 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 18:58:10,325 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:11,884 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 18:58:11,885 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 18:58:11,885 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 18:58:11,885 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 18:58:11,885 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 18:58:11,901 - WARNING -  * Debugger is active!
+2026-01-24 18:58:11,903 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 18:58:15,629 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 18:58:15,799 - INFO -  * Restarting with stat
+2026-01-24 18:58:17,101 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 18:58:17,113 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 18:58:17,113 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 18:58:17,114 - INFO - Scheduler started
+2026-01-24 18:58:17,123 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 18:58:17,123 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 18:58:17,123 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 18:58:17,123 - INFO - Membuat objek session baru...
+2026-01-24 18:58:17,621 - INFO - package: mysql.connector.plugins
+2026-01-24 18:58:17,622 - INFO - plugin_name: caching_sha2_password
+2026-01-24 18:58:17,622 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 18:58:17,989 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:18,284 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 18:58:19,387 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:20,165 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 18:58:20,165 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 18:58:22,142 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 18:58:22,143 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 18:58:22,143 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 18:58:22,144 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 18:58:22,222 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 18:58:26,469 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 18:58:29,052 - INFO -    --> Login SSO sukses.
+2026-01-24 18:58:29,052 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 18:58:30,480 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:31,909 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 18:58:31,910 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 18:58:31,910 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 18:58:31,910 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 18:58:31,910 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 18:58:31,926 - WARNING -  * Debugger is active!
+2026-01-24 18:58:31,928 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 18:58:48,304 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\api\\api.py', reloading
+2026-01-24 18:58:48,472 - INFO -  * Restarting with stat
+2026-01-24 18:58:49,686 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 18:58:49,698 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 18:58:49,698 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 18:58:49,698 - INFO - Scheduler started
+2026-01-24 18:58:49,708 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 18:58:49,708 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 18:58:49,708 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 18:58:49,708 - INFO - Membuat objek session baru...
+2026-01-24 18:58:50,484 - INFO - package: mysql.connector.plugins
+2026-01-24 18:58:50,484 - INFO - plugin_name: caching_sha2_password
+2026-01-24 18:58:50,485 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 18:58:50,769 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:51,083 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 18:58:51,921 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:58:52,209 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 18:58:52,210 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 18:58:55,702 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 18:58:55,703 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 18:58:55,703 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 18:58:55,703 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 18:58:55,851 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 18:58:58,039 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 18:58:59,631 - INFO -    --> Login SSO sukses.
+2026-01-24 18:58:59,631 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 18:59:00,484 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 18:59:01,904 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 18:59:01,904 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 18:59:01,904 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 18:59:01,905 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 18:59:01,905 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 18:59:01,920 - WARNING -  * Debugger is active!
+2026-01-24 18:59:01,922 - INFO -  * Debugger PIN: 144-594-432
