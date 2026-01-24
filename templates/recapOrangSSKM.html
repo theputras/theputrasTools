@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recap Kehadiran SSKM - Real Time</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+    }
+    .glass-card {
+      background: rgba(31, 41, 55, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .counter-display {
+      font-size: 8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 80px rgba(102, 126, 234, 0.5);
+    }
+    .pulse-dot {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: .5;
+      }
+    }
+    .status-connected {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+    .status-disconnected {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+    
+    /* OBS Mode Styles */
+    body.obs-mode {
+      background: transparent !important;
+    }
+    body.obs-mode .hide-in-obs {
+      display: none !important;
+    }
+    body.obs-mode .glass-card {
+      background: rgba(31, 41, 55, 0.95) !important;
+      backdrop-filter: blur(20px) !important;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4">
+  <div class="w-full max-w-4xl">
+    <!-- Main Counter Card -->
+    <div class="glass-card rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+      <!-- Connection Status -->
+      <div class="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white" id="connection-status">
+        <i class="fas fa-circle pulse-dot" id="status-dot"></i>
+        <span id="status-text">Connecting...</span>
+      </div>
+
+      <!-- Icon -->
+      <div class="mb-6">
+        <i class="fas fa-users text-6xl text-blue-400 mb-4"></i>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
+        Rekap Kehadiran Mahasiswa
+      </h1>
+      <p class="text-gray-400 mb-8">Real-time attendance monitoring</p>
+
+      <!-- Counter -->
+      <div class="counter-display mb-4" id="attendance-count">
+        0
+      </div>
+
+      <!-- Label -->
+      <p class="text-xl text-gray-300 font-semibold">
+        Orang Tercatat
+      </p>
+
+      <!-- Last Update -->
+      <div class="mt-8 pt-6 border-t border-white/10">
+        <div class="flex items-center justify-center gap-2 text-sm text-gray-400">
+          <i class="fas fa-sync-alt" id="sync-icon"></i>
+          <span>Last updated: <span id="last-update" class="text-blue-400 font-semibold">-</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 gap-4 mt-6 hide-in-obs">
+      <div class="glass-card rounded-2xl p-6 text-center">
+        <div class="text-3xl font-bold text-cyan-400 mb-2" id="uuid-count">0</div>
+        <div class="text-sm text-gray-400">UUID Cards</div>
+      </div>
+      <div class="glass-card rounded-2xl p-6 text-center">
+        <div class="text-3xl font-bold text-green-400 mb-2" id="nim-count">0</div>
+        <div class="text-sm text-gray-400">NIM Records</div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-6 text-center flex gap-3 justify-center hide-in-obs">
+      <!-- OBS Mode Toggle -->
+      <button 
+        onclick="toggleOBSMode()"
+        id="obs-toggle-btn"
+        class="inline-block bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 
+               text-white font-semibold px-8 py-3 rounded-full transition transform active:scale-95 shadow-lg">
+        <i class="fas fa-video mr-2"></i>
+        <span id="obs-toggle-text">OBS Mode</span>
+      </button>
+      
+      <!-- Record Page Link -->
+      <a href="/sskm_record" 
+         class="inline-block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 
+                text-white font-semibold px-8 py-3 rounded-full transition transform active:scale-95 shadow-lg">
+        <i class="fas fa-clipboard-list mr-2"></i>
+        Ke Halaman Record
+      </a>
+    </div>
+  </div>
+
+  <script>
+    let eventSource = null;
+    let lastCount = 0;
+
+    // Update timestamp
+    function updateTimestamp() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID');
+      document.getElementById('last-update').textContent = timeStr;
+      
+      // Rotate sync icon
+      const icon = document.getElementById('sync-icon');
+      icon.style.transform = 'rotate(360deg)';
+      setTimeout(() => icon.style.transform = 'rotate(0deg)', 300);
+    }
+
+    // Animate counter
+    function animateCounter(targetValue) {
+      const element = document.getElementById('attendance-count');
+      const start = lastCount;
+      const duration = 500; // ms
+      const startTime = performance.now();
+
+      function update() {
+        const currentTime = performance.now();
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        const currentValue = Math.floor(start + (targetValue - start) * progress);
+        element.textContent = currentValue;
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          lastCount = targetValue;
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    // Update status UI
+    function updateStatus(connected) {
+      const statusDiv = document.getElementById('connection-status');
+      const statusText = document.getElementById('status-text');
+      const statusDot = document.getElementById('status-dot');
+
+      if (connected) {
+        statusDiv.className = 'status-connected absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white';
+        statusText.textContent = 'Live';
+        statusDot.className = 'fas fa-circle pulse-dot';
+      } else {
+        statusDiv.className = 'status-disconnected absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white';
+        statusText.textContent = 'Disconnected';
+        statusDot.className = 'fas fa-circle';
+      }
+    }
+
+    // Connect to SSE
+    function connectSSE() {
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      eventSource = new EventSource('/stream/recap-count');
+
+      eventSource.onopen = () => {
+        console.log('SSE Connected');
+        updateStatus(true);
+      };
+
+      eventSource.onmessage = (event) => {
+        const count = parseInt(event.data);
+        console.log('Received count:', count);
+        
+        animateCounter(count);
+        updateTimestamp();
+
+        // Update breakdown (dummy calculation for now)
+        // In real implementation, you'd send breakdown from server
+        const uuidCount = Math.floor(count * 0.6);
+        const nimCount = count - uuidCount;
+        
+        document.getElementById('uuid-count').textContent = uuidCount;
+        document.getElementById('nim-count').textContent = nimCount;
+      };
+
+      eventSource.onerror = () => {
+        console.error('SSE Connection error');
+        updateStatus(false);
+        eventSource.close();
+        
+        // Reconnect after 5 seconds
+        setTimeout(connectSSE, 5000);
+      };
+    }
+
+    // Toggle OBS Mode
+    function toggleOBSMode() {
+      const body = document.body;
+      const isOBS = body.classList.toggle('obs-mode');
+      
+      // Save preference to localStorage
+      localStorage.setItem('obsMode', isOBS ? 'true' : 'false');
+      
+      // Update button text
+      const btnText = document.getElementById('obs-toggle-text');
+      if (isOBS) {
+        btnText.textContent = 'Exit OBS';
+        console.log('OBS Mode: ON - Background is now transparent');
+      } else {
+        btnText.textContent = 'OBS Mode';
+        console.log('OBS Mode: OFF');
+      }
+    }
+
+    // Load OBS mode from localStorage
+    function loadOBSMode() {
+      const savedMode = localStorage.getItem('obsMode');
+      if (savedMode === 'true') {
+        toggleOBSMode();
+      }
+    }
+
+    // Keyboard shortcut: Press 'O' to toggle OBS mode
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'o' || e.key === 'O') {
+        toggleOBSMode();
+      }
+    });
+
+    // Initialize
+    connectSSE();
+    updateTimestamp();
+    loadOBSMode();
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -4,13 +4,14 @@ import os
 import re
 from datetime import datetime
 import pandas as pd
-from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g
+from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g, Response
 from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import pytz
 import json
 from datetime import datetime
+import time
 import jwt
 # import base64  # Untuk encode image ke base64
 from logging.handlers import RotatingFileHandler
@@ -102,6 +103,10 @@ executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
 JADWAL_STATUS = {"status": "ready", "message": "Siap."}
+
+# ===== SSKM IN-MEMORY STORAGE =====
+# Store SSKM attendance data in memory for real-time streaming
+SSKM_DATA = []
 app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
 # if not app.secret_key:
     
@@ -733,6 +738,49 @@ def sicyca_undika():
 def krs_sicyca():
     """Menyajikan file HTML utama."""
     return render_template('undika/sicyca/krsSicyca.html')
+
+@app.route('/sskm_record')
+# @login_required
+def sskm_record():
+    """Menyajikan file HTML utama."""
+    return render_template('sskm-record.html')
+
+# SSE Endpoint untuk streaming count
+@app.route('/stream/recap-count')
+def stream_recap_count():
+    """Server-Sent Events endpoint untuk streaming jumlah orang yang terecap"""
+    def generate():
+        while True:
+            try:
+                count = len(SSKM_DATA)
+                # Format SSE: data: <data>\n\n
+                yield f"data: {count}\n\n"
+                time.sleep(2)  # Update every 2 seconds
+            except GeneratorExit:
+                break
+    
+    return Response(generate(), mimetype='text/event-stream')
+
+# Endpoint untuk sync data dari client
+@app.route('/api/sskm/sync', methods=['POST'])
+def sync_sskm_data():
+    """Menerima data SSKM dari client dan simpan ke memory"""
+    global SSKM_DATA
+    try:
+        data = request.get_json()
+        if data and 'rfidData' in data:
+            SSKM_DATA = data['rfidData']
+            return {'success': True, 'count': len(SSKM_DATA)}
+        return {'success': False, 'error': 'Invalid data'}, 400
+    except Exception as e:
+        logging.error(f"Error syncing SSKM data: {e}")
+        return {'success': False, 'error': str(e)}, 500
+
+# Route untuk halaman recap
+@app.route('/recap-hadir')
+def recap_hadir():
+    """Halaman real-time counter kehadiran SSKM"""
+    return render_template('recapOrangSSKM.html')
 
 
 

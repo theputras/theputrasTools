@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Record KTM / NIM</title>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  
+  <script src="/static/js/components/sskm-record.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body { 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+    .glass-card {
+      background: rgba(31, 41, 55, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .glass-input {
+      background: rgba(17, 24, 39, 0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .glass-input:focus {
+      background: rgba(17, 24, 39, 0.7);
+      border-color: rgba(96, 165, 250, 0.5);
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    }
+    .glass-table {
+      background: rgba(17, 24, 39, 0.4);
+      backdrop-filter: blur(8px);
+    }
+    .glass-table thead {
+      background: rgba(59, 130, 246, 0.2);
+      border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    }
+    .glass-table tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s;
+    }
+    .glass-table tbody tr:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 md:p-8 text-gray-100">
+  <!-- ALERT & CONFIRM WRAPPER -->
+  <div id="alertWrapper" class="relative z-50">
+    <!-- Slide Alert -->
+    <div id="customAlert"
+         class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 
+                bg-gray-900/90 backdrop-blur-md text-white px-6 py-3 rounded-2xl 
+                shadow-2xl border border-white/10 transition-all duration-500 ease-in-out">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span id="alertText"></span>
+      </div>
+    </div>
+
+    <!-- Modal Konfirmasi Yes/No -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[70] px-4">
+      <div class="glass-card rounded-3xl p-6 shadow-2xl w-full max-w-md text-center">
+        <div class="mb-4">
+          <i class="fas fa-exclamation-triangle text-yellow-400 text-4xl mb-3"></i>
+        </div>
+        <p id="confirmMessage" class="text-lg font-semibold text-white mb-6">Yakin ingin melanjutkan?</p>
+        <div class="flex justify-center gap-3">
+          <button id="confirmYes" class="bg-red-500/80 hover:bg-red-500 text-white font-semibold px-6 py-2.5 rounded-full transition transform active:scale-95 shadow-lg">
+            Ya, Lanjutkan
+          </button>
+          <button id="confirmNo" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold px-6 py-2.5 rounded-full transition transform active:scale-95">
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Download Options Modal -->
+    <div id="downloadModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[70] px-4">
+      <div class="glass-card rounded-3xl p-6 shadow-2xl w-full max-w-lg">
+        <div class="text-center mb-6">
+          <i class="fas fa-download text-blue-400 text-4xl mb-3"></i>
+          <h3 class="text-xl font-bold text-white">Pilih Format Download</h3>
+          <p class="text-gray-400 text-sm mt-2">Pilih bagaimana Anda ingin menyimpan data</p>
+        </div>
+        
+        <div class="space-y-3">
+          <!-- Option 1: Single Excel -->
+          <button id="downloadSingle" 
+                  class="w-full glass-input hover:bg-blue-500/20 border-blue-400/30 p-4 rounded-2xl transition text-left group">
+            <div class="flex items-start gap-3">
+              <i class="fas fa-file-excel text-green-400 text-2xl mt-1"></i>
+              <div class="flex-1">
+                <div class="font-semibold text-white group-hover:text-blue-300">1 File Excel (2 Sheet)</div>
+                <div class="text-xs text-gray-400 mt-1">Sheet "UUID" dan "NIM" dalam 1 file .xlsx</div>
+              </div>
+            </div>
+          </button>
+
+          <!-- Option 2: Separate Files + ZIP -->
+          <button id="downloadSeparate" 
+                  class="w-full glass-input hover:bg-purple-500/20 border-purple-400/30 p-4 rounded-2xl transition text-left group">
+            <div class="flex items-start gap-3">
+              <i class="fas fa-file-archive text-purple-400 text-2xl mt-1"></i>
+              <div class="flex-1">
+                <div class="font-semibold text-white group-hover:text-purple-300">2 File Terpisah (.zip)</div>
+                <div class="text-xs text-gray-400 mt-1">UUID.xlsx dan NIM.xlsx dikompres jadi 1 file .zip</div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <button id="cancelDownload" 
+                class="mt-6 w-full bg-gray-600/80 hover:bg-gray-600 text-white font-semibold px-6 py-2.5 rounded-full transition">
+          Batal
+        </button>
+      </div>
+    </div>
+
+    <!-- RFID Settings Modal -->
+    <div id="rfidModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[70] px-4">
+      <div class="glass-card rounded-3xl p-6 shadow-2xl w-full max-w-lg">
+        <div class="text-center mb-6">
+          <i class="fas fa-podcast text-cyan-400 text-4xl mb-3 animate-pulse"></i>
+          <h3 class="text-xl font-bold text-white">RFID Reader Settings</h3>
+          <p class="text-gray-400 text-sm mt-2">Deteksi dan hubungkan perangkat RFID reader</p>
+        </div>
+        
+        <!-- Current Device Status -->
+        <div id="currentDevice" class="mb-4 p-4 rounded-xl bg-gray-700/50 border border-gray-600/50">
+          <div class="flex items-center gap-3">
+            <i class="fas fa-circle text-gray-500" id="statusIndicator"></i>
+            <div class="flex-1">
+              <div class="text-xs text-gray-400">Status Koneksi</div>
+              <div class="text-sm font-semibold text-white" id="deviceStatus">Tidak terhubung</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device List -->
+        <div class="space-y-3 mb-6 max-h-64 overflow-y-auto">
+          <div class="text-xs font-bold text-gray-400 uppercase mb-2">Perangkat Tersedia:</div>
+          <div id="deviceList" class="space-y-2">
+            <div class="text-sm text-gray-500 text-center py-4">
+              Klik tombol "Scan Perangkat" untuk mendeteksi RFID reader
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button 
+            id="scanDevices"
+            onclick="scanRFIDDevices()"
+            class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
+                   text-white font-semibold px-6 py-2.5 rounded-full transition transform active:scale-95 
+                   shadow-lg shadow-cyan-500/30 flex items-center justify-center gap-2">
+            <i class="fas fa-search"></i>
+            Scan Perangkat
+          </button>
+          <button 
+            id="closeRFIDModal"
+            onclick="closeRFIDSettings()"
+            class="px-6 py-2.5 bg-gray-600/80 hover:bg-gray-600 text-white font-semibold rounded-full transition">
+            Tutup
+          </button>
+        </div>
+
+        <!-- Browser Support Warning -->
+        <div id="browserWarning" class="hidden mt-4 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
+          <div class="flex gap-2 text-yellow-300 text-xs">
+            <i class="fas fa-exclamation-triangle mt-0.5"></i>
+            <div>Browser Anda tidak mendukung Web Serial API. Gunakan Chrome/Edge versi terbaru.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="w-full max-w-5xl space-y-6">
+    <!-- Header -->
+    <div class="glass-card rounded-3xl p-6 text-center">
+      <div class="flex items-center justify-center gap-3 mb-2">
+        <i class="fas fa-id-card text-blue-400 text-3xl"></i>
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          Record KTM / NIM
+        </h1>
+      </div>
+      <p class="text-gray-400 text-sm">Sistem pencatatan manual kartu mahasiswa dan NIM</p>
+    </div>
+
+    <!-- Controls Card -->
+    <div class="glass-card rounded-3xl p-6 space-y-5">
+      <!-- Input Section -->
+      <div class="flex flex-col md:flex-row items-start md:items-center gap-3">
+        <div class="flex-1 w-full">
+          <label class="text-xs font-semibold text-gray-400 mb-2 block">
+            <i class="fas fa-keyboard mr-1"></i>
+            Scan Kartu atau Input Manual
+          </label>
+          <div class="relative">
+            <input
+              type="text"
+              id="uuidInput"
+              placeholder="Auto-detect: UUID (8 digit) atau NIM (11 digit)..."
+              class="glass-input w-full rounded-xl px-4 py-3 focus:outline-none text-white placeholder-gray-500"
+            />
+            <!-- Detection Badge -->
+            <div id="detectionBadge" class="absolute right-3 top-1/2 -translate-y-1/2 hidden">
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all">
+                <i id="detectionIcon" class="fas"></i>
+                <span id="detectionText"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="warning" class="text-sm font-semibold text-green-400 min-w-max flex items-center gap-2"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-3 pt-2">
+        <button
+          onclick="saveToExcel()"
+          class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 
+                 text-white font-semibold px-6 py-2.5 rounded-full transition transform active:scale-95 
+                 shadow-lg shadow-green-500/30 flex items-center gap-2"
+        >
+          <i class="fas fa-file-excel"></i>
+          Simpan ke Excel
+        </button>
+        <button
+          id="deleteButton"
+          onclick="handleDelete()"
+          class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 
+                 text-white font-semibold px-6 py-2.5 rounded-full transition transform active:scale-95 
+                 shadow-lg shadow-red-500/30 flex items-center gap-2"
+        >
+          <i id="deleteIcon" class="fas fa-trash-alt"></i>
+          <span id="deleteText">Hapus Semua Data</span>
+        </button>
+        <button
+          onclick="openRFIDSettings()"
+          class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 
+                 text-white font-semibold px-6 py-2.5 rounded-full transition transform active:scale-95 
+                 shadow-lg shadow-blue-500/30 flex items-center gap-2"
+          title="Pengaturan RFID Reader"
+        >
+          <i class="fas fa-cog"></i>
+          RFID Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="glass-card rounded-3xl p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fas fa-table text-blue-400"></i>
+        <h2 class="text-lg font-bold text-white">Data Tercatat</h2>
+      </div>
+      
+      <div class="overflow-x-auto max-h-[400px] rounded-2xl">
+        <table class="glass-table w-full text-sm text-center">
+          <thead class="sticky top-0 z-10">
+            <tr>
+              <th class="p-3 text-blue-300 font-semibold cursor-pointer hover:text-blue-200 transition" 
+                  id="headerNo" 
+                  onclick="toggleCheckboxMode()"
+                  title="Klik untuk mode select">
+                <span id="headerNoText">No</span>
+              </th>
+              <th class="p-3 text-blue-300 font-semibold">UUID</th>
+              <th class="p-3 text-blue-300 font-semibold">NIM</th>
+              <th class="p-3 text-blue-300 font-semibold">Waktu</th>
+              <th class="p-3 text-blue-300 font-semibold">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="uuidTable" class="text-gray-300 text-lg"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  
+</body>
+</html>
