@@ -69,7 +69,7 @@ void setup() {
   delay(150);
   tone(BUZZER_PIN, 2500, 100);
   
-  Serial.println("SSKM RFID Reader (UNO) - READY");
+  Serial.println("cekrfidunoo");
 }
 
 void loop() {

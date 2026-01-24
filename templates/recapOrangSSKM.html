@@ -252,13 +252,16 @@
               title = 'NEW SCAN';
           }
           
+          // Privacy: Mask UUID (Keep NIM visible)
+          const displayValue = type === 'NIM' ? value : 'SELAMAT MENIKMATI ACARA';
+          
           // Position: Fixed at TOP CENTER (diatas card)
           toast.className = `fixed top-8 left-1/2 transform -translate-x-1/2 -translate-y-full z-50 flex items-center gap-4 px-6 py-4 rounded-xl border ${colorClass} backdrop-blur-md shadow-2xl opacity-0 transition-all duration-500`;
           toast.innerHTML = `
             <div class="text-3xl"><i class="fas ${icon}"></i></div>
             <div>
                 <div class="text-xs font-bold uppercase tracking-wider text-white/80">${title}</div>
-                <div class="text-xl font-mono font-bold text-white">${value}</div>
+                <div class="text-xl font-mono font-bold text-white tracking-widest">${displayValue}</div>
             </div>
           `;
           
