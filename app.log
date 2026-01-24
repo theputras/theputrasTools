@@ -43878,3 +43878,227 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 
 2026-01-24 18:59:01,920 - WARNING -  * Debugger is active!
 2026-01-24 18:59:01,922 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 19:07:13,675 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 19:07:13,690 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 19:07:13,691 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 19:07:13,691 - INFO - Scheduler started
+2026-01-24 19:07:13,709 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 19:07:13,709 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 19:07:13,709 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 19:07:13,710 - INFO - Membuat objek session baru...
+2026-01-24 19:07:14,533 - INFO - package: mysql.connector.plugins
+2026-01-24 19:07:14,533 - INFO - plugin_name: caching_sha2_password
+2026-01-24 19:07:14,534 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 19:07:15,026 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:07:15,397 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 19:07:16,201 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:07:16,650 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 19:07:16,650 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 19:07:21,170 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 19:07:21,171 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 19:07:21,171 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 19:07:21,171 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 19:07:21,333 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 19:07:25,562 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 19:07:27,382 - INFO -    --> Login SSO sukses.
+2026-01-24 19:07:27,382 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 19:07:28,247 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:07:30,020 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 19:07:30,020 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 19:07:30,020 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 19:07:30,021 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 19:07:30,021 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 19:07:30,051 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.12:5000
+2026-01-24 19:07:30,051 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-24 19:07:30,053 - INFO -  * Restarting with stat
+2026-01-24 19:07:31,340 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 19:07:31,351 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 19:07:31,352 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 19:07:31,352 - INFO - Scheduler started
+2026-01-24 19:07:31,366 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 19:07:31,367 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 19:07:31,367 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 19:07:31,367 - INFO - Membuat objek session baru...
+2026-01-24 19:07:31,717 - INFO - package: mysql.connector.plugins
+2026-01-24 19:07:31,717 - INFO - plugin_name: caching_sha2_password
+2026-01-24 19:07:31,718 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 19:07:32,124 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:07:32,427 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 19:07:33,217 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:07:33,571 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 19:07:33,572 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 19:07:35,825 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 19:07:35,826 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 19:07:35,826 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 19:07:35,826 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 19:07:35,958 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 19:07:38,012 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 19:07:39,803 - INFO -    --> Login SSO sukses.
+2026-01-24 19:07:39,804 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 19:07:40,894 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:07:42,853 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 19:07:42,854 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 19:07:42,854 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 19:07:42,854 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 19:07:42,854 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 19:07:42,871 - WARNING -  * Debugger is active!
+2026-01-24 19:07:42,874 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 19:07:43,029 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:43] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 19:07:43,282 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:43] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 19:07:43,794 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:43] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-01-24 19:07:51,194 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:51] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:07:52,053 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:52] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:07:52,351 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:52] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:07:55,431 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:55] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:07:55,603 - INFO - 127.0.0.1 - - [24/Jan/2026 19:07:55] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:08:03,713 - INFO - SSKM data synced: 3 records
+2026-01-24 19:08:03,714 - INFO - 127.0.0.1 - - [24/Jan/2026 19:08:03] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 19:08:06,504 - INFO - 127.0.0.1 - - [24/Jan/2026 19:08:06] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:08:06,685 - INFO - 127.0.0.1 - - [24/Jan/2026 19:08:06] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:08:40,912 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 19:08:41,105 - INFO -  * Restarting with stat
+2026-01-24 19:08:42,445 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 19:08:42,456 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 19:08:42,457 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 19:08:42,457 - INFO - Scheduler started
+2026-01-24 19:08:42,469 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 19:08:42,470 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 19:08:42,470 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 19:08:42,470 - INFO - Membuat objek session baru...
+2026-01-24 19:08:43,236 - INFO - package: mysql.connector.plugins
+2026-01-24 19:08:43,237 - INFO - plugin_name: caching_sha2_password
+2026-01-24 19:08:43,237 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 19:08:43,621 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:08:44,033 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 19:08:45,258 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:08:45,566 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 19:08:45,567 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 19:08:50,012 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 19:08:50,012 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 19:08:50,012 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 19:08:50,012 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 19:08:50,156 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 19:08:54,876 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 19:08:56,537 - INFO -    --> Login SSO sukses.
+2026-01-24 19:08:56,537 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 19:08:57,348 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:08:58,852 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 19:08:58,853 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 19:08:58,853 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 19:08:58,854 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 19:08:58,854 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 19:08:58,869 - WARNING -  * Debugger is active!
+2026-01-24 19:08:58,871 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 19:08:59,033 - INFO - 127.0.0.1 - - [24/Jan/2026 19:08:59] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:08:59,037 - INFO - 127.0.0.1 - - [24/Jan/2026 19:08:59] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:08:59,210 - INFO - 127.0.0.1 - - [24/Jan/2026 19:08:59] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:09:08,811 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:08] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 19:09:09,219 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:09] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 19:09:12,188 - INFO - SSKM data synced: 0 records
+2026-01-24 19:09:12,188 - INFO - SSKM data synced: 0 records
+2026-01-24 19:09:12,189 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:12] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 19:09:12,190 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:12] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 19:09:15,454 - INFO - SSKM data synced: 1 records
+2026-01-24 19:09:15,455 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:15] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 19:09:25,220 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:25] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:09:25,713 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:25] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:09:37,062 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 19:09:37,239 - INFO -  * Restarting with stat
+2026-01-24 19:09:38,493 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 19:09:38,505 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 19:09:38,505 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 19:09:38,506 - INFO - Scheduler started
+2026-01-24 19:09:38,522 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 19:09:38,522 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 19:09:38,522 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 19:09:38,522 - INFO - Membuat objek session baru...
+2026-01-24 19:09:39,044 - INFO - package: mysql.connector.plugins
+2026-01-24 19:09:39,045 - INFO - plugin_name: caching_sha2_password
+2026-01-24 19:09:39,045 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 19:09:39,519 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:09:40,551 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 19:09:41,664 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:09:41,989 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 19:09:41,989 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 19:09:43,816 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 19:09:43,817 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 19:09:43,817 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 19:09:43,817 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 19:09:43,976 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 19:09:46,053 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 19:09:47,860 - INFO -    --> Login SSO sukses.
+2026-01-24 19:09:47,861 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 19:09:48,610 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:09:51,067 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 19:09:51,067 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 19:09:51,068 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 19:09:51,068 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 19:09:51,068 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 19:09:51,083 - WARNING -  * Debugger is active!
+2026-01-24 19:09:51,086 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 19:09:51,232 - INFO - 127.0.0.1 - - [24/Jan/2026 19:09:51] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:10:05,069 - INFO - 127.0.0.1 - - [24/Jan/2026 19:10:05] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:10:05,376 - INFO - 127.0.0.1 - - [24/Jan/2026 19:10:05] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:10:17,361 - INFO - 127.0.0.1 - - [24/Jan/2026 19:10:17] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:10:17,532 - INFO - 127.0.0.1 - - [24/Jan/2026 19:10:17] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:10:25,121 - INFO - SSKM data synced: 2 records
+2026-01-24 19:10:25,122 - INFO - 127.0.0.1 - - [24/Jan/2026 19:10:25] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 19:11:30,957 - INFO - 127.0.0.1 - - [24/Jan/2026 19:11:30] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:11:31,134 - INFO - 127.0.0.1 - - [24/Jan/2026 19:11:31] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:12:09,434 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 19:12:09,607 - INFO -  * Restarting with stat
+2026-01-24 19:12:11,055 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 19:12:11,069 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 19:12:11,070 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 19:12:11,070 - INFO - Scheduler started
+2026-01-24 19:12:11,079 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 19:12:11,080 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 19:12:11,080 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 19:12:11,080 - INFO - Membuat objek session baru...
+2026-01-24 19:12:11,455 - INFO - package: mysql.connector.plugins
+2026-01-24 19:12:11,455 - INFO - plugin_name: caching_sha2_password
+2026-01-24 19:12:11,456 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 19:12:11,737 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:12:12,011 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 19:12:12,682 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:12:12,959 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 19:12:12,959 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 19:12:16,690 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 19:12:16,690 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 19:12:16,691 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 19:12:16,691 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 19:12:16,783 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 19:12:19,930 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 19:12:21,420 - INFO -    --> Login SSO sukses.
+2026-01-24 19:12:21,425 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 19:12:22,036 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 19:12:23,392 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 19:12:23,395 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 19:12:23,395 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 19:12:23,395 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 19:12:23,396 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 19:12:23,433 - WARNING -  * Debugger is active!
+2026-01-24 19:12:23,439 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 19:12:23,957 - INFO - 127.0.0.1 - - [24/Jan/2026 19:12:23] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:12:23,963 - INFO - 127.0.0.1 - - [24/Jan/2026 19:12:23] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 19:12:24,146 - INFO - 127.0.0.1 - - [24/Jan/2026 19:12:24] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 19:12:47,182 - INFO - SSKM data synced: 3 records
+2026-01-24 19:12:47,191 - INFO - 127.0.0.1 - - [24/Jan/2026 19:12:47] "POST /api/sskm/sync HTTP/1.1" 200 -

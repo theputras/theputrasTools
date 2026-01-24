@@ -156,7 +156,8 @@ def get_current_status():
     return JADWAL_STATUS
 
 
-init_api(photo_cache, majorID, executor, get_current_status, log_file, _valid_role)
+
+init_api(photo_cache, majorID, executor, get_current_status, log_file, _valid_role, SSKM_DATA)
 app.register_blueprint(api_bp, url_prefix='/api')
 
 # Jalankan scraper dan simpan hasilnya ke file JSON
@@ -410,7 +411,7 @@ def logout_all_page():
 
 @app.route('/')
 @login_required
-def index():
+def index():    
     # logging.info(f"[INDEX DEBUG] Session keys:", list(session.keys()))
     print("[INDEX DEBUG] Session keys:", list(session.keys()))
     try:
