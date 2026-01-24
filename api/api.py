@@ -911,3 +911,25 @@ def sync_sskm_data():
     except Exception as e:
         logging.error(f"Error syncing SSKM data: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# Global variable for duplicate event broadcasting
+SSKM_LAST_DUPLICATE = {}
+
+@api_bp.route('/sskm/duplicate', methods=['POST'])
+def sskm_duplicate_warning():
+    """Endpoint untuk broadcast warning duplikat ke public screen"""
+    global SSKM_LAST_DUPLICATE
+    try:
+        data = request.get_json()
+        if data and 'type' in data and 'value' in data:
+            # Update global event for SSE to pick up
+            SSKM_LAST_DUPLICATE.update({
+                "type": data['type'],
+                "value": data['value'],
+                "timestamp": time.time()
+            })
+            return jsonify({'success': True})
+        return jsonify({'success': False, 'error': 'Invalid data'}), 400
+    except Exception as e:
+        logging.error(f"Error broadcasting duplicate: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500

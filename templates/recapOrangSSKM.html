@@ -205,20 +205,78 @@
       };
 
       eventSource.onmessage = (event) => {
-        const count = parseInt(event.data);
-        console.log('Received count:', count);
-        
-        animateCounter(count);
-        updateTimestamp();
-
-        // Update breakdown (dummy calculation for now)
-        // In real implementation, you'd send breakdown from server
-        const uuidCount = Math.floor(count * 0.6);
-        const nimCount = count - uuidCount;
-        
-        document.getElementById('uuid-count').textContent = uuidCount;
-        document.getElementById('nim-count').textContent = nimCount;
+        try {
+            const data = JSON.parse(event.data);
+            console.log('Received data:', data);
+            
+            animateCounter(data.total);
+            updateTimestamp(); // Update time
+            
+            // Update real breakdown
+            document.getElementById('uuid-count').textContent = data.uuid;
+            document.getElementById('nim-count').textContent = data.nim;
+            
+            // Show Popup if new scan detected & NOT in OBS mode
+            if (data.new_scan) {
+                const body = document.body;
+                if (!body.classList.contains('obs-mode')) {
+                    showToast(data.new_scan.type, data.new_scan.value);
+                }
+            }
+            
+            // Show Duplicate Warning
+            if (data.duplicate) {
+                const body = document.body;
+                if (!body.classList.contains('obs-mode')) {
+                    showToast(data.duplicate.type, data.duplicate.value, true);
+                }
+            }
+        } catch (e) {
+            console.warn('Received non-JSON data:', e);
+        }
       };
+      
+      // Toast Notification Logic
+      function showToast(type, value, isDuplicate = false) {
+          const toast = document.createElement('div');
+          
+          let colorClass, icon, title;
+          
+          if (isDuplicate) {
+              colorClass = 'border-yellow-500 text-yellow-400 bg-yellow-500/90';
+              icon = 'fa-exclamation-triangle';
+              title = 'DATA SUDAH ADA';
+          } else {
+              colorClass = type === 'NIM' ? 'border-green-500 text-green-400 bg-green-500/90' : 'border-blue-500 text-blue-400 bg-blue-500/90';
+              icon = type === 'NIM' ? 'fa-id-card' : 'fa-fingerprint';
+              title = 'NEW SCAN';
+          }
+          
+          // Position: Fixed at TOP CENTER (diatas card)
+          toast.className = `fixed top-8 left-1/2 transform -translate-x-1/2 -translate-y-full z-50 flex items-center gap-4 px-6 py-4 rounded-xl border ${colorClass} backdrop-blur-md shadow-2xl opacity-0 transition-all duration-500`;
+          toast.innerHTML = `
+            <div class="text-3xl"><i class="fas ${icon}"></i></div>
+            <div>
+                <div class="text-xs font-bold uppercase tracking-wider text-white/80">${title}</div>
+                <div class="text-xl font-mono font-bold text-white">${value}</div>
+            </div>
+          `;
+          
+          document.body.appendChild(toast);
+          
+          // Animate In (Slide Down)
+          requestAnimationFrame(() => {
+              toast.classList.remove('-translate-y-full', 'opacity-0');
+              toast.classList.add('translate-y-0', 'opacity-100');
+          });
+          
+          // Animate Out & Remove
+          setTimeout(() => {
+              toast.classList.remove('translate-y-0', 'opacity-100');
+              toast.classList.add('-translate-y-full', 'opacity-0');
+              setTimeout(() => toast.remove(), 500);
+          }, 3000);
+      }
 
       eventSource.onerror = () => {
         console.error('SSE Connection error');

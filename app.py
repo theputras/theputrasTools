@@ -16,7 +16,7 @@ import jwt
 # import base64  # Untuk encode image ke base64
 from logging.handlers import RotatingFileHandler
 from cachetools import TTLCache  # Install: pip install cachetools
-from api.api import api_bp, init_api
+from api.api import api_bp, init_api, SSKM_LAST_DUPLICATE
 from models.auth_api import auth_bp
 from flask_cors import CORS
 from paymentGateway import payment_bp
@@ -747,16 +747,50 @@ def sskm_record():
     return render_template('sskm-record.html')
 
 # SSE Endpoint untuk streaming count
-@app.route('/stream/recap-count')
+@app.route('/stream/recap-count')           
 def stream_recap_count():
     """Server-Sent Events endpoint untuk streaming jumlah orang yang terecap"""
     def generate():
+        last_count = 0
+        last_duplicate_time = 0
+        
+        # Import variable global dari API blueprint
+        
+        
         while True:
             try:
-                count = len(SSKM_DATA)
-                # Format SSE: data: <data>\n\n
-                yield f"data: {count}\n\n"
-                time.sleep(2)  # Update every 2 seconds
+                # Calculate counts
+                current_count = len(SSKM_DATA)
+                uuid_count = sum(1 for item in SSKM_DATA if item.get('uuid'))
+                nim_count = sum(1 for item in SSKM_DATA if item.get('nim'))
+                
+                payload = {
+                    "total": current_count,
+                    "uuid": uuid_count,
+                    "nim": nim_count
+                }
+                
+                # Check for NEW data (increment only)
+                if current_count > last_count and last_count > 0:
+                     latest_item = SSKM_DATA[-1]
+                     payload["new_scan"] = {
+                         "type": "NIM" if latest_item.get('nim') else "UUID",
+                         "value": latest_item.get('nim') or latest_item.get('uuid')
+                     }
+                
+                # Check for DUPLICATE warning
+                if SSKM_LAST_DUPLICATE and SSKM_LAST_DUPLICATE.get('timestamp', 0) > last_duplicate_time:
+                    payload["duplicate"] = {
+                        "type": SSKM_LAST_DUPLICATE['type'],
+                        "value": SSKM_LAST_DUPLICATE['value']
+                    }
+                    last_duplicate_time = SSKM_LAST_DUPLICATE['timestamp']
+
+                last_count = current_count
+                
+                # Format SSE: data: <json>\n\n
+                yield f"data: {json.dumps(payload)}\n\n"
+                time.sleep(1)  # Update every 1 second for faster feedback
             except GeneratorExit:
                 break
     

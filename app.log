@@ -44102,3 +44102,973 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2026-01-24 19:12:24,146 - INFO - 127.0.0.1 - - [24/Jan/2026 19:12:24] "GET /stream/recap-count HTTP/1.1" 200 -
 2026-01-24 19:12:47,182 - INFO - SSKM data synced: 3 records
 2026-01-24 19:12:47,191 - INFO - 127.0.0.1 - - [24/Jan/2026 19:12:47] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:15:38,804 - INFO - 127.0.0.1 - - [24/Jan/2026 20:15:38] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:15:39,294 - INFO - 127.0.0.1 - - [24/Jan/2026 20:15:39] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:15:39,762 - INFO - 127.0.0.1 - - [24/Jan/2026 20:15:39] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-01-24 20:16:37,429 - INFO - 127.0.0.1 - - [24/Jan/2026 20:16:37] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:16:37,815 - INFO - 127.0.0.1 - - [24/Jan/2026 20:16:37] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:16:48,036 - INFO - 127.0.0.1 - - [24/Jan/2026 20:16:48] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:16:48,393 - INFO - 127.0.0.1 - - [24/Jan/2026 20:16:48] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:20:31,635 - INFO - 127.0.0.1 - - [24/Jan/2026 20:20:31] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:20:32,113 - INFO - 127.0.0.1 - - [24/Jan/2026 20:20:32] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:21:10,056 - INFO - 127.0.0.1 - - [24/Jan/2026 20:21:10] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:21:10,415 - INFO - 127.0.0.1 - - [24/Jan/2026 20:21:10] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:21:14,821 - INFO - 127.0.0.1 - - [24/Jan/2026 20:21:14] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:21:15,179 - INFO - 127.0.0.1 - - [24/Jan/2026 20:21:15] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:21:27,355 - INFO - 127.0.0.1 - - [24/Jan/2026 20:21:27] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:21:27,719 - INFO - 127.0.0.1 - - [24/Jan/2026 20:21:27] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:21:55,862 - INFO - SSKM data synced: 4 records
+2026-01-24 20:21:55,863 - INFO - 127.0.0.1 - - [24/Jan/2026 20:21:55] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:22:24,056 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:22:24,066 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:22:24,066 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:22:24,067 - INFO - Scheduler started
+2026-01-24 20:22:24,087 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:22:24,087 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:22:24,087 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:22:24,087 - INFO - Membuat objek session baru...
+2026-01-24 20:22:25,013 - INFO - package: mysql.connector.plugins
+2026-01-24 20:22:25,013 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:22:25,013 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:22:25,430 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:22:25,867 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:22:26,426 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:22:26,689 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:22:26,689 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:22:30,364 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:22:30,364 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:22:30,364 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:22:30,365 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:22:30,443 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:22:34,544 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:22:36,292 - INFO -    --> Login SSO sukses.
+2026-01-24 20:22:36,293 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:22:36,993 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:22:38,365 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:22:38,365 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:22:38,365 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:22:38,366 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:22:38,366 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:22:38,384 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.12:5000
+2026-01-24 20:22:38,384 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-24 20:22:38,386 - INFO -  * Restarting with stat
+2026-01-24 20:22:39,381 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:22:39,392 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:22:39,392 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:22:39,392 - INFO - Scheduler started
+2026-01-24 20:22:39,398 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:22:39,398 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:22:39,399 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:22:39,399 - INFO - Membuat objek session baru...
+2026-01-24 20:22:39,920 - INFO - package: mysql.connector.plugins
+2026-01-24 20:22:39,920 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:22:39,920 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:22:40,286 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:22:40,568 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:22:41,217 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:22:41,515 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:22:41,516 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:22:44,631 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:22:44,631 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:22:44,631 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:22:44,632 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:22:44,744 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:22:46,699 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:22:48,151 - INFO -    --> Login SSO sukses.
+2026-01-24 20:22:48,151 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:22:49,971 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:22:51,428 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:22:51,428 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:22:51,429 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:22:51,429 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:22:51,429 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:22:51,441 - WARNING -  * Debugger is active!
+2026-01-24 20:22:51,443 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 20:22:51,572 - INFO - 127.0.0.1 - - [24/Jan/2026 20:22:51] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:22:51,574 - INFO - 127.0.0.1 - - [24/Jan/2026 20:22:51] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:22:52,024 - INFO - 127.0.0.1 - - [24/Jan/2026 20:22:52] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:25:01,860 - INFO - 127.0.0.1 - - [24/Jan/2026 20:25:01] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:25:02,217 - INFO - 127.0.0.1 - - [24/Jan/2026 20:25:02] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:25:16,009 - INFO - 127.0.0.1 - - [24/Jan/2026 20:25:16] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:25:16,382 - INFO - 127.0.0.1 - - [24/Jan/2026 20:25:16] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:25:34,019 - INFO - SSKM data synced: 5 records
+2026-01-24 20:25:34,026 - INFO - 127.0.0.1 - - [24/Jan/2026 20:25:34] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:25:54,445 - INFO - 127.0.0.1 - - [24/Jan/2026 20:25:54] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:25:54,808 - INFO - 127.0.0.1 - - [24/Jan/2026 20:25:54] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:27:12,166 - INFO - 127.0.0.1 - - [24/Jan/2026 20:27:12] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:27:12,528 - INFO - 127.0.0.1 - - [24/Jan/2026 20:27:12] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:30:41,203 - INFO - SSKM data synced: 6 records
+2026-01-24 20:30:41,204 - INFO - 127.0.0.1 - - [24/Jan/2026 20:30:41] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:30:49,571 - INFO - SSKM data synced: 7 records
+2026-01-24 20:30:49,571 - INFO - 127.0.0.1 - - [24/Jan/2026 20:30:49] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:31:34,577 - INFO - 127.0.0.1 - - [24/Jan/2026 20:31:34] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:31:34,968 - INFO - 127.0.0.1 - - [24/Jan/2026 20:31:34] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:31:39,060 - INFO - SSKM data synced: 0 records
+2026-01-24 20:31:39,060 - INFO - 127.0.0.1 - - [24/Jan/2026 20:31:39] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:31:39,061 - INFO - SSKM data synced: 0 records
+2026-01-24 20:31:39,062 - INFO - 127.0.0.1 - - [24/Jan/2026 20:31:39] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:06,051 - INFO - SSKM data synced: 1 records
+2026-01-24 20:32:06,052 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:06] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:09,655 - INFO - SSKM data synced: 0 records
+2026-01-24 20:32:09,656 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:09] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:09,656 - INFO - SSKM data synced: 0 records
+2026-01-24 20:32:09,657 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:09] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:12,020 - INFO - SSKM data synced: 1 records
+2026-01-24 20:32:12,021 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:12] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:24,035 - INFO - SSKM data synced: 2 records
+2026-01-24 20:32:24,036 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:24] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:30,201 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:30] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 20:32:30,427 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:30] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:32:42,721 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:42] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 20:32:43,030 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:43] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:32:45,285 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:45] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 20:32:45,453 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:45] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:32:49,671 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:49] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 20:32:49,980 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:49] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:32:55,738 - INFO - SSKM data synced: 0 records
+2026-01-24 20:32:55,739 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:55] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:55,742 - INFO - SSKM data synced: 0 records
+2026-01-24 20:32:55,743 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:55] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:32:59,036 - INFO - SSKM data synced: 1 records
+2026-01-24 20:32:59,037 - INFO - 127.0.0.1 - - [24/Jan/2026 20:32:59] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:33:04,028 - INFO - SSKM data synced: 2 records
+2026-01-24 20:33:04,028 - INFO - 127.0.0.1 - - [24/Jan/2026 20:33:04] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:35:41,361 - INFO - 127.0.0.1 - - [24/Jan/2026 20:35:41] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:35:41,752 - INFO - 127.0.0.1 - - [24/Jan/2026 20:35:41] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:36:00,332 - INFO - 127.0.0.1 - - [24/Jan/2026 20:36:00] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:36:00,798 - INFO - 127.0.0.1 - - [24/Jan/2026 20:36:00] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:39:08,987 - INFO - SSKM data synced: 3 records
+2026-01-24 20:39:08,988 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:08] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:39:12,508 - INFO - SSKM data synced: 4 records
+2026-01-24 20:39:12,509 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:12] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:39:19,018 - INFO - SSKM data synced: 3 records
+2026-01-24 20:39:19,019 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:19] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:39:25,893 - INFO - SSKM data synced: 4 records
+2026-01-24 20:39:25,895 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:25] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:39:32,593 - INFO - SSKM data synced: 3 records
+2026-01-24 20:39:32,594 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:32] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:39:39,420 - INFO - SSKM data synced: 0 records
+2026-01-24 20:39:39,421 - INFO - SSKM data synced: 0 records
+2026-01-24 20:39:39,424 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:39] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:39:39,425 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:39] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:39:51,031 - INFO - SSKM data synced: 1 records
+2026-01-24 20:39:51,032 - INFO - 127.0.0.1 - - [24/Jan/2026 20:39:51] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:40:01,035 - INFO - SSKM data synced: 2 records
+2026-01-24 20:40:01,036 - INFO - 127.0.0.1 - - [24/Jan/2026 20:40:01] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:41:26,102 - INFO - 127.0.0.1 - - [24/Jan/2026 20:41:26] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:41:26,461 - INFO - 127.0.0.1 - - [24/Jan/2026 20:41:26] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:41:35,646 - INFO - 127.0.0.1 - - [24/Jan/2026 20:41:35] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:41:36,006 - INFO - 127.0.0.1 - - [24/Jan/2026 20:41:36] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:42:10,461 - INFO - 127.0.0.1 - - [24/Jan/2026 20:42:10] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:42:10,839 - INFO - 127.0.0.1 - - [24/Jan/2026 20:42:10] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:42:11,748 - INFO - 127.0.0.1 - - [24/Jan/2026 20:42:11] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:42:12,105 - INFO - 127.0.0.1 - - [24/Jan/2026 20:42:12] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:43:19,708 - INFO - 127.0.0.1 - - [24/Jan/2026 20:43:19] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:43:20,076 - INFO - 127.0.0.1 - - [24/Jan/2026 20:43:20] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:43:46,720 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:43:46,732 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:43:46,732 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:43:46,733 - INFO - Scheduler started
+2026-01-24 20:43:46,740 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:43:46,740 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:43:46,740 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:43:46,740 - INFO - Membuat objek session baru...
+2026-01-24 20:43:47,105 - INFO - package: mysql.connector.plugins
+2026-01-24 20:43:47,105 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:43:47,106 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:43:47,366 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:43:47,635 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:43:48,375 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:43:48,720 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:43:48,720 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:43:51,313 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:43:51,314 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:43:51,314 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:43:51,314 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:43:51,405 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:43:55,446 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:43:56,987 - INFO -    --> Login SSO sukses.
+2026-01-24 20:43:56,987 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:43:57,592 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:43:58,949 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:43:58,950 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:43:58,950 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:43:58,950 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:43:58,950 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:43:58,971 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.12:5000
+2026-01-24 20:43:58,972 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-24 20:43:58,973 - INFO -  * Restarting with stat
+2026-01-24 20:44:00,268 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:44:00,279 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:44:00,280 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:44:00,280 - INFO - Scheduler started
+2026-01-24 20:44:00,294 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:44:00,294 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:44:00,295 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:44:00,295 - INFO - Membuat objek session baru...
+2026-01-24 20:44:00,597 - INFO - package: mysql.connector.plugins
+2026-01-24 20:44:00,597 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:44:00,597 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:44:00,852 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:44:01,129 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:44:01,830 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:44:02,098 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:44:02,098 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:44:04,770 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:44:04,771 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:44:04,771 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:44:04,772 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:44:04,903 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:44:07,906 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:44:09,408 - INFO -    --> Login SSO sukses.
+2026-01-24 20:44:09,408 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:44:10,076 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:44:11,531 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:44:11,532 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:44:11,533 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:44:11,533 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:44:11,533 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:44:11,547 - WARNING -  * Debugger is active!
+2026-01-24 20:44:11,549 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 20:44:11,685 - INFO - 127.0.0.1 - - [24/Jan/2026 20:44:11] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:44:11,688 - INFO - 127.0.0.1 - - [24/Jan/2026 20:44:11] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:44:11,790 - INFO - 127.0.0.1 - - [24/Jan/2026 20:44:11] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:44:25,000 - INFO - 127.0.0.1 - - [24/Jan/2026 20:44:25] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:44:25,355 - INFO - 127.0.0.1 - - [24/Jan/2026 20:44:25] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 20:44:42,270 - INFO - 127.0.0.1 - - [24/Jan/2026 20:44:42] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:44:42,645 - INFO - 127.0.0.1 - - [24/Jan/2026 20:44:42] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:45:02,205 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:45:02,214 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:45:02,214 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:45:02,214 - INFO - Scheduler started
+2026-01-24 20:45:02,237 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:45:02,237 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:45:02,237 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:45:02,238 - INFO - Membuat objek session baru...
+2026-01-24 20:45:02,629 - INFO - package: mysql.connector.plugins
+2026-01-24 20:45:02,630 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:45:02,630 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:45:02,886 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:45:03,196 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:45:03,797 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:45:04,101 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:45:04,101 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:45:07,024 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:45:07,024 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:45:07,025 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:45:07,025 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:45:07,099 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:45:11,206 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:45:12,998 - INFO -    --> Login SSO sukses.
+2026-01-24 20:45:12,998 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:45:13,681 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:45:15,111 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:45:15,112 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:45:15,112 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:45:15,113 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:45:15,113 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:45:15,129 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.12:5000
+2026-01-24 20:45:15,130 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-24 20:45:15,131 - INFO -  * Restarting with stat
+2026-01-24 20:45:16,157 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:45:16,168 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:45:16,168 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:45:16,168 - INFO - Scheduler started
+2026-01-24 20:45:16,181 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:45:16,181 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:45:16,181 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:45:16,181 - INFO - Membuat objek session baru...
+2026-01-24 20:45:16,525 - INFO - package: mysql.connector.plugins
+2026-01-24 20:45:16,525 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:45:16,526 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:45:16,797 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:45:17,082 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:45:17,629 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:45:17,899 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:45:17,899 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:45:19,734 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:45:19,734 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:45:19,735 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:45:19,735 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:45:19,800 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:45:21,855 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:45:23,350 - INFO -    --> Login SSO sukses.
+2026-01-24 20:45:23,351 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:45:23,912 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:45:25,438 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:45:25,439 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:45:25,439 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:45:25,439 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:45:25,439 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:45:25,453 - WARNING -  * Debugger is active!
+2026-01-24 20:45:25,455 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 20:45:25,596 - INFO - 127.0.0.1 - - [24/Jan/2026 20:45:25] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:45:26,033 - INFO - 127.0.0.1 - - [24/Jan/2026 20:45:26] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:45:26,435 - INFO - 127.0.0.1 - - [24/Jan/2026 20:45:26] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:46:38,173 - INFO - SSKM data synced: 3 records
+2026-01-24 20:46:38,173 - INFO - 127.0.0.1 - - [24/Jan/2026 20:46:38] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:48:30,989 - INFO - SSKM data synced: 4 records
+2026-01-24 20:48:30,989 - INFO - 127.0.0.1 - - [24/Jan/2026 20:48:30] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:48:36,771 - INFO - SSKM data synced: 5 records
+2026-01-24 20:48:36,772 - INFO - 127.0.0.1 - - [24/Jan/2026 20:48:36] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:48:38,045 - INFO - SSKM data synced: 6 records
+2026-01-24 20:48:38,045 - INFO - 127.0.0.1 - - [24/Jan/2026 20:48:38] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:48:41,205 - INFO - SSKM data synced: 7 records
+2026-01-24 20:48:41,205 - INFO - 127.0.0.1 - - [24/Jan/2026 20:48:41] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:48:42,153 - INFO - SSKM data synced: 8 records
+2026-01-24 20:48:42,154 - INFO - 127.0.0.1 - - [24/Jan/2026 20:48:42] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:48:52,335 - INFO - SSKM data synced: 0 records
+2026-01-24 20:48:52,335 - INFO - 127.0.0.1 - - [24/Jan/2026 20:48:52] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:48:52,336 - INFO - SSKM data synced: 0 records
+2026-01-24 20:48:52,336 - INFO - 127.0.0.1 - - [24/Jan/2026 20:48:52] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:20,677 - INFO - SSKM data synced: 1 records
+2026-01-24 20:49:20,678 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:20] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:20,818 - INFO - SSKM data synced: 2 records
+2026-01-24 20:49:20,819 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:20] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:21,488 - INFO - SSKM data synced: 3 records
+2026-01-24 20:49:21,491 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:21] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:24,034 - INFO - SSKM data synced: 4 records
+2026-01-24 20:49:24,061 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:24] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:30,029 - INFO - SSKM data synced: 5 records
+2026-01-24 20:49:30,030 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:30] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:31,035 - INFO - SSKM data synced: 6 records
+2026-01-24 20:49:31,037 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:31] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:32,061 - INFO - SSKM data synced: 7 records
+2026-01-24 20:49:32,064 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:32] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:49:38,060 - INFO - SSKM data synced: 8 records
+2026-01-24 20:49:38,074 - INFO - 127.0.0.1 - - [24/Jan/2026 20:49:38] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:50:36,391 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 20:50:36,545 - INFO -  * Restarting with stat
+2026-01-24 20:50:37,598 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:50:37,608 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:50:37,608 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:50:37,609 - INFO - Scheduler started
+2026-01-24 20:50:37,615 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:50:37,615 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:50:37,616 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:50:37,616 - INFO - Membuat objek session baru...
+2026-01-24 20:50:37,992 - INFO - package: mysql.connector.plugins
+2026-01-24 20:50:37,992 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:50:37,992 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:50:38,228 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:50:38,761 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:50:39,362 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:50:39,620 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:50:39,620 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:50:43,998 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:50:43,999 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:50:43,999 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:50:44,000 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:50:44,108 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:50:48,021 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:50:49,692 - INFO -    --> Login SSO sukses.
+2026-01-24 20:50:49,693 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:50:50,341 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:50:51,728 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:50:51,728 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:50:51,729 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:50:51,729 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:50:51,729 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:50:51,742 - WARNING -  * Debugger is active!
+2026-01-24 20:50:51,744 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 20:50:51,875 - INFO - 127.0.0.1 - - [24/Jan/2026 20:50:51] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:50:51,878 - INFO - 127.0.0.1 - - [24/Jan/2026 20:50:51] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 20:50:52,100 - INFO - 127.0.0.1 - - [24/Jan/2026 20:50:52] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:53:33,658 - INFO - SSKM data synced: 0 records
+2026-01-24 20:53:33,661 - INFO - SSKM data synced: 0 records
+2026-01-24 20:53:33,662 - INFO - 127.0.0.1 - - [24/Jan/2026 20:53:33] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:53:33,662 - INFO - 127.0.0.1 - - [24/Jan/2026 20:53:33] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:53:36,540 - INFO - SSKM data synced: 1 records
+2026-01-24 20:53:36,541 - INFO - 127.0.0.1 - - [24/Jan/2026 20:53:36] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:53:40,001 - INFO - SSKM data synced: 2 records
+2026-01-24 20:53:40,002 - INFO - 127.0.0.1 - - [24/Jan/2026 20:53:40] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:53:44,208 - INFO - SSKM data synced: 3 records
+2026-01-24 20:53:44,208 - INFO - 127.0.0.1 - - [24/Jan/2026 20:53:44] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:53:53,052 - INFO - SSKM data synced: 4 records
+2026-01-24 20:53:53,053 - INFO - 127.0.0.1 - - [24/Jan/2026 20:53:53] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:55:16,588 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 20:55:17,119 - INFO -  * Restarting with stat
+2026-01-24 20:55:18,306 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 20:55:18,317 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 20:55:18,322 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 20:55:18,322 - INFO - Scheduler started
+2026-01-24 20:55:18,331 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 20:55:18,331 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 20:55:18,331 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 20:55:18,331 - INFO - Membuat objek session baru...
+2026-01-24 20:55:18,691 - INFO - package: mysql.connector.plugins
+2026-01-24 20:55:18,691 - INFO - plugin_name: caching_sha2_password
+2026-01-24 20:55:18,691 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 20:55:19,029 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:55:19,304 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 20:55:19,932 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:55:20,331 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 20:55:20,337 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 20:55:23,801 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 20:55:23,816 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 20:55:23,816 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 20:55:23,816 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 20:55:23,896 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 20:55:27,964 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 20:55:30,649 - INFO -    --> Login SSO sukses.
+2026-01-24 20:55:30,650 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 20:55:31,299 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 20:55:32,965 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 20:55:32,966 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 20:55:32,967 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 20:55:32,967 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 20:55:32,968 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 20:55:33,008 - WARNING -  * Debugger is active!
+2026-01-24 20:55:33,013 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 20:55:33,930 - INFO - SSKM data synced: 5 records
+2026-01-24 20:55:33,932 - INFO - 127.0.0.1 - - [24/Jan/2026 20:55:33] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:55:33,933 - INFO - SSKM data synced: 6 records
+2026-01-24 20:55:33,934 - INFO - 127.0.0.1 - - [24/Jan/2026 20:55:33] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:55:33,935 - INFO - SSKM data synced: 7 records
+2026-01-24 20:55:33,938 - INFO - 127.0.0.1 - - [24/Jan/2026 20:55:33] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:55:33,941 - INFO - SSKM data synced: 8 records
+2026-01-24 20:55:33,941 - INFO - 127.0.0.1 - - [24/Jan/2026 20:55:33] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:55:33,943 - INFO - 127.0.0.1 - - [24/Jan/2026 20:55:33] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 20:55:33,948 - INFO - SSKM data synced: 9 records
+2026-01-24 20:55:33,951 - INFO - 127.0.0.1 - - [24/Jan/2026 20:55:33] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 20:58:08,763 - INFO - 127.0.0.1 - - [24/Jan/2026 20:58:08] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:58:09,166 - INFO - 127.0.0.1 - - [24/Jan/2026 20:58:09] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 20:58:10,226 - INFO - 127.0.0.1 - - [24/Jan/2026 20:58:10] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 20:58:10,582 - INFO - 127.0.0.1 - - [24/Jan/2026 20:58:10] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 21:00:27,288 - INFO - 127.0.0.1 - - [24/Jan/2026 21:00:27] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 21:00:27,661 - INFO - 127.0.0.1 - - [24/Jan/2026 21:00:27] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 21:00:31,224 - INFO - SSKM data synced: 10 records
+2026-01-24 21:00:31,224 - INFO - 127.0.0.1 - - [24/Jan/2026 21:00:31] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:00:36,349 - INFO - SSKM data synced: 11 records
+2026-01-24 21:00:36,349 - INFO - 127.0.0.1 - - [24/Jan/2026 21:00:36] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:00:46,229 - INFO - SSKM data synced: 12 records
+2026-01-24 21:00:46,230 - INFO - 127.0.0.1 - - [24/Jan/2026 21:00:46] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:00:50,999 - INFO - 127.0.0.1 - - [24/Jan/2026 21:00:50] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:00:51,498 - INFO - 127.0.0.1 - - [24/Jan/2026 21:00:51] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:01:01,687 - INFO - SSKM data synced: 13 records
+2026-01-24 21:01:01,688 - INFO - 127.0.0.1 - - [24/Jan/2026 21:01:01] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:01:04,343 - INFO - SSKM data synced: 14 records
+2026-01-24 21:01:04,345 - INFO - 127.0.0.1 - - [24/Jan/2026 21:01:04] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:01:12,715 - INFO - SSKM data synced: 15 records
+2026-01-24 21:01:12,715 - INFO - 127.0.0.1 - - [24/Jan/2026 21:01:12] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:01:16,217 - INFO - SSKM data synced: 16 records
+2026-01-24 21:01:16,219 - INFO - 127.0.0.1 - - [24/Jan/2026 21:01:16] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:03:17,837 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:17] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 21:03:18,209 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:18] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 21:03:41,448 - INFO - SSKM data synced: 17 records
+2026-01-24 21:03:41,448 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:41] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:03:42,599 - INFO - SSKM data synced: 18 records
+2026-01-24 21:03:42,600 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:42] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:03:47,038 - INFO - SSKM data synced: 19 records
+2026-01-24 21:03:47,038 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:47] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:03:48,033 - INFO - SSKM data synced: 20 records
+2026-01-24 21:03:48,033 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:48] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:03:49,037 - INFO - SSKM data synced: 21 records
+2026-01-24 21:03:49,038 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:49] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:03:50,040 - INFO - SSKM data synced: 22 records
+2026-01-24 21:03:50,049 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:50] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:03:52,048 - INFO - SSKM data synced: 23 records
+2026-01-24 21:03:52,050 - INFO - 127.0.0.1 - - [24/Jan/2026 21:03:52] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:01,628 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:01] "[32mGET / HTTP/1.1[0m" 302 -
+2026-01-24 21:10:01,955 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:01] "GET /login?next=http://localhost:5000/ HTTP/1.1" 200 -
+2026-01-24 21:10:07,977 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:07] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:10:08,596 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:08] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:10:08,597 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-01-24 21:10:23,929 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:23] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 21:10:24,302 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:24] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 21:10:41,581 - INFO - SSKM data synced: 24 records
+2026-01-24 21:10:41,582 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:41] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:43,166 - INFO - SSKM data synced: 25 records
+2026-01-24 21:10:43,168 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:43] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:44,036 - INFO - SSKM data synced: 26 records
+2026-01-24 21:10:44,040 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:44] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:44,755 - INFO - SSKM data synced: 27 records
+2026-01-24 21:10:44,762 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:44] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:45,333 - INFO - SSKM data synced: 28 records
+2026-01-24 21:10:45,335 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:45] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:45,923 - INFO - SSKM data synced: 29 records
+2026-01-24 21:10:45,925 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:45] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:46,473 - INFO - SSKM data synced: 30 records
+2026-01-24 21:10:46,478 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:46] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:47,554 - INFO - SSKM data synced: 31 records
+2026-01-24 21:10:47,556 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:47] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:48,119 - INFO - SSKM data synced: 32 records
+2026-01-24 21:10:48,120 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:48] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:48,708 - INFO - SSKM data synced: 33 records
+2026-01-24 21:10:48,710 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:48] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:49,209 - INFO - SSKM data synced: 34 records
+2026-01-24 21:10:49,210 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:49] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:49,722 - INFO - SSKM data synced: 35 records
+2026-01-24 21:10:49,723 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:49] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:50,208 - INFO - SSKM data synced: 36 records
+2026-01-24 21:10:50,208 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:50] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:50,727 - INFO - SSKM data synced: 37 records
+2026-01-24 21:10:50,730 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:50] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:51,242 - INFO - SSKM data synced: 38 records
+2026-01-24 21:10:51,244 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:51] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:51,754 - INFO - SSKM data synced: 39 records
+2026-01-24 21:10:51,756 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:51] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:52,264 - INFO - SSKM data synced: 40 records
+2026-01-24 21:10:52,266 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:52] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:52,777 - INFO - SSKM data synced: 41 records
+2026-01-24 21:10:52,778 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:52] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:53,322 - INFO - SSKM data synced: 42 records
+2026-01-24 21:10:53,323 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:53] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:53,835 - INFO - SSKM data synced: 43 records
+2026-01-24 21:10:53,837 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:53] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:54,363 - INFO - SSKM data synced: 44 records
+2026-01-24 21:10:54,367 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:54] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:54,901 - INFO - SSKM data synced: 45 records
+2026-01-24 21:10:54,902 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:54] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:55,425 - INFO - SSKM data synced: 46 records
+2026-01-24 21:10:55,426 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:55] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:55,925 - INFO - SSKM data synced: 47 records
+2026-01-24 21:10:55,926 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:55] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:56,436 - INFO - SSKM data synced: 48 records
+2026-01-24 21:10:56,437 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:56] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:56,917 - INFO - SSKM data synced: 49 records
+2026-01-24 21:10:56,918 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:56] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:57,453 - INFO - SSKM data synced: 50 records
+2026-01-24 21:10:57,455 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:57] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:10:58,031 - INFO - SSKM data synced: 51 records
+2026-01-24 21:10:58,034 - INFO - 127.0.0.1 - - [24/Jan/2026 21:10:58] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:00,033 - INFO - SSKM data synced: 52 records
+2026-01-24 21:11:00,034 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:00] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:02,029 - INFO - SSKM data synced: 53 records
+2026-01-24 21:11:02,030 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:02] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:04,020 - INFO - SSKM data synced: 54 records
+2026-01-24 21:11:04,022 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:04] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:05,046 - INFO - SSKM data synced: 55 records
+2026-01-24 21:11:05,047 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:05] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:07,036 - INFO - SSKM data synced: 56 records
+2026-01-24 21:11:07,044 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:07] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:09,042 - INFO - SSKM data synced: 57 records
+2026-01-24 21:11:09,042 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:09] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:10,081 - INFO - SSKM data synced: 58 records
+2026-01-24 21:11:10,085 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:10] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:11,033 - INFO - SSKM data synced: 59 records
+2026-01-24 21:11:11,063 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:11] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:12,041 - INFO - SSKM data synced: 60 records
+2026-01-24 21:11:12,043 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:12] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:13,113 - INFO - SSKM data synced: 61 records
+2026-01-24 21:11:13,113 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:13] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:14,052 - INFO - SSKM data synced: 62 records
+2026-01-24 21:11:14,056 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:14] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:15,035 - INFO - SSKM data synced: 63 records
+2026-01-24 21:11:15,038 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:15] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:16,058 - INFO - SSKM data synced: 64 records
+2026-01-24 21:11:16,064 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:16] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:17,044 - INFO - SSKM data synced: 65 records
+2026-01-24 21:11:17,053 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:17] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:18,083 - INFO - SSKM data synced: 66 records
+2026-01-24 21:11:18,085 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:18] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:11:19,046 - INFO - SSKM data synced: 67 records
+2026-01-24 21:11:19,047 - INFO - 127.0.0.1 - - [24/Jan/2026 21:11:19] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:12:38,961 - INFO - SSKM data synced: 68 records
+2026-01-24 21:12:38,961 - INFO - 127.0.0.1 - - [24/Jan/2026 21:12:38] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:12:45,083 - INFO - SSKM data synced: 69 records
+2026-01-24 21:12:45,085 - INFO - 127.0.0.1 - - [24/Jan/2026 21:12:45] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:13:54,036 - INFO - SSKM data synced: 70 records
+2026-01-24 21:13:54,037 - INFO - 127.0.0.1 - - [24/Jan/2026 21:13:54] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:14:07,793 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 21:14:08,239 - INFO -  * Restarting with stat
+2026-01-24 21:14:09,598 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 21:14:09,611 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 21:14:09,611 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 21:14:09,611 - INFO - Scheduler started
+2026-01-24 21:14:09,624 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 21:14:09,624 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 21:14:09,624 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 21:14:09,624 - INFO - Membuat objek session baru...
+2026-01-24 21:14:10,045 - INFO - package: mysql.connector.plugins
+2026-01-24 21:14:10,046 - INFO - plugin_name: caching_sha2_password
+2026-01-24 21:14:10,046 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 21:14:10,301 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:14:10,584 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 21:14:12,258 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:14:12,515 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 21:14:12,516 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 21:14:15,351 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 21:14:15,352 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 21:14:15,352 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 21:14:15,352 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 21:14:15,416 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 21:14:17,349 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 21:14:18,885 - INFO -    --> Login SSO sukses.
+2026-01-24 21:14:18,886 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 21:14:19,715 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:14:21,159 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 21:14:21,159 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 21:14:21,159 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 21:14:21,160 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 21:14:21,160 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 21:14:21,174 - WARNING -  * Debugger is active!
+2026-01-24 21:14:21,176 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 21:14:21,319 - INFO - 127.0.0.1 - - [24/Jan/2026 21:14:21] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:14:26,152 - INFO - 127.0.0.1 - - [24/Jan/2026 21:14:26] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:14:26,625 - INFO - 127.0.0.1 - - [24/Jan/2026 21:14:26] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:14:42,473 - INFO - 127.0.0.1 - - [24/Jan/2026 21:14:42] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:14:42,679 - INFO - 127.0.0.1 - - [24/Jan/2026 21:14:42] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:14:53,221 - INFO - 127.0.0.1 - - [24/Jan/2026 21:14:53] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:14:53,483 - INFO - 127.0.0.1 - - [24/Jan/2026 21:14:53] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:15:02,049 - INFO - SSKM data synced: 71 records
+2026-01-24 21:15:02,051 - INFO - 127.0.0.1 - - [24/Jan/2026 21:15:02] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:15:05,040 - INFO - SSKM data synced: 72 records
+2026-01-24 21:15:05,042 - INFO - 127.0.0.1 - - [24/Jan/2026 21:15:05] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:15:06,048 - INFO - SSKM data synced: 73 records
+2026-01-24 21:15:06,088 - INFO - 127.0.0.1 - - [24/Jan/2026 21:15:06] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:15:10,015 - INFO - SSKM data synced: 74 records
+2026-01-24 21:15:10,016 - INFO - 127.0.0.1 - - [24/Jan/2026 21:15:10] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:15:12,038 - INFO - SSKM data synced: 75 records
+2026-01-24 21:15:12,039 - INFO - 127.0.0.1 - - [24/Jan/2026 21:15:12] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:15:16,038 - INFO - SSKM data synced: 76 records
+2026-01-24 21:15:16,038 - INFO - 127.0.0.1 - - [24/Jan/2026 21:15:16] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:15:37,019 - INFO - SSKM data synced: 77 records
+2026-01-24 21:15:37,020 - INFO - 127.0.0.1 - - [24/Jan/2026 21:15:37] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:35,035 - INFO - SSKM data synced: 78 records
+2026-01-24 21:16:35,037 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:35] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:37,048 - INFO - SSKM data synced: 79 records
+2026-01-24 21:16:37,061 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:37] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:38,182 - INFO - SSKM data synced: 80 records
+2026-01-24 21:16:38,185 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:38] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:39,036 - INFO - SSKM data synced: 81 records
+2026-01-24 21:16:39,038 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:39] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:42,044 - INFO - SSKM data synced: 82 records
+2026-01-24 21:16:42,046 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:42] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:45,051 - INFO - SSKM data synced: 83 records
+2026-01-24 21:16:45,052 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:45] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:48,026 - INFO - SSKM data synced: 84 records
+2026-01-24 21:16:48,027 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:48] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:16:50,028 - INFO - SSKM data synced: 85 records
+2026-01-24 21:16:50,029 - INFO - 127.0.0.1 - - [24/Jan/2026 21:16:50] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:11,657 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:11] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:17:11,972 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:11] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:17:13,714 - INFO - SSKM data synced: 86 records
+2026-01-24 21:17:13,715 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:13] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:16,031 - INFO - SSKM data synced: 87 records
+2026-01-24 21:17:16,032 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:16] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:19,130 - INFO - SSKM data synced: 88 records
+2026-01-24 21:17:19,131 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:19] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:20,213 - INFO - SSKM data synced: 89 records
+2026-01-24 21:17:20,230 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:20] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:37,040 - INFO - SSKM data synced: 90 records
+2026-01-24 21:17:37,041 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:37] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:43,039 - INFO - SSKM data synced: 91 records
+2026-01-24 21:17:43,040 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:43] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:45,027 - INFO - SSKM data synced: 92 records
+2026-01-24 21:17:45,028 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:45] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:49,024 - INFO - SSKM data synced: 93 records
+2026-01-24 21:17:49,025 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:49] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:17:54,027 - INFO - SSKM data synced: 94 records
+2026-01-24 21:17:54,027 - INFO - 127.0.0.1 - - [24/Jan/2026 21:17:54] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:19:03,842 - INFO - SSKM data synced: 0 records
+2026-01-24 21:19:03,843 - INFO - 127.0.0.1 - - [24/Jan/2026 21:19:03] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:19:03,844 - INFO - SSKM data synced: 0 records
+2026-01-24 21:19:03,845 - INFO - 127.0.0.1 - - [24/Jan/2026 21:19:03] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:19:07,010 - INFO - SSKM data synced: 1 records
+2026-01-24 21:19:07,012 - INFO - 127.0.0.1 - - [24/Jan/2026 21:19:07] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:19:10,291 - INFO - SSKM data synced: 2 records
+2026-01-24 21:19:10,292 - INFO - 127.0.0.1 - - [24/Jan/2026 21:19:10] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:19:16,382 - INFO - SSKM data synced: 3 records
+2026-01-24 21:19:16,386 - INFO - 127.0.0.1 - - [24/Jan/2026 21:19:16] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:19:21,344 - INFO - SSKM data synced: 4 records
+2026-01-24 21:19:21,345 - INFO - 127.0.0.1 - - [24/Jan/2026 21:19:21] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:36,201 - INFO - SSKM data synced: 5 records
+2026-01-24 21:23:36,203 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:36] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:45,261 - INFO - SSKM data synced: 6 records
+2026-01-24 21:23:45,262 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:45] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:47,569 - INFO - SSKM data synced: 7 records
+2026-01-24 21:23:47,570 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:47] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:48,772 - INFO - SSKM data synced: 8 records
+2026-01-24 21:23:48,773 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:48] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:49,546 - INFO - SSKM data synced: 9 records
+2026-01-24 21:23:49,547 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:49] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:50,124 - INFO - SSKM data synced: 10 records
+2026-01-24 21:23:50,127 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:50] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:50,608 - INFO - SSKM data synced: 11 records
+2026-01-24 21:23:50,611 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:50] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:51,521 - INFO - SSKM data synced: 12 records
+2026-01-24 21:23:51,526 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:51] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:52,028 - INFO - SSKM data synced: 13 records
+2026-01-24 21:23:52,031 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:52] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:23:53,052 - INFO - SSKM data synced: 14 records
+2026-01-24 21:23:53,055 - INFO - 127.0.0.1 - - [24/Jan/2026 21:23:53] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:26:11,124 - INFO - SSKM data synced: 15 records
+2026-01-24 21:26:11,126 - INFO - 127.0.0.1 - - [24/Jan/2026 21:26:11] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:26:13,413 - INFO - SSKM data synced: 16 records
+2026-01-24 21:26:13,414 - INFO - 127.0.0.1 - - [24/Jan/2026 21:26:13] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:26:16,244 - INFO - SSKM data synced: 17 records
+2026-01-24 21:26:16,246 - INFO - 127.0.0.1 - - [24/Jan/2026 21:26:16] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:26:32,417 - INFO - 127.0.0.1 - - [24/Jan/2026 21:26:32] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 21:26:32,908 - INFO - 127.0.0.1 - - [24/Jan/2026 21:26:32] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 21:29:47,512 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\api\\api.py', reloading
+2026-01-24 21:29:47,696 - INFO -  * Restarting with stat
+2026-01-24 21:29:49,417 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 21:29:49,436 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 21:29:49,436 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 21:29:49,436 - INFO - Scheduler started
+2026-01-24 21:29:49,451 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 21:29:49,451 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 21:29:49,452 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 21:29:49,452 - INFO - Membuat objek session baru...
+2026-01-24 21:29:50,287 - INFO - package: mysql.connector.plugins
+2026-01-24 21:29:50,288 - INFO - plugin_name: caching_sha2_password
+2026-01-24 21:29:50,288 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 21:29:50,554 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:29:50,828 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 21:29:51,451 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:29:51,724 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 21:29:51,724 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 21:29:54,688 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 21:29:54,689 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 21:29:54,689 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 21:29:54,689 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 21:29:54,752 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 21:29:56,773 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 21:29:58,312 - INFO -    --> Login SSO sukses.
+2026-01-24 21:29:58,312 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 21:29:58,894 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:30:00,701 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 21:30:00,702 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 21:30:00,702 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 21:30:00,702 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 21:30:00,702 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 21:30:00,718 - WARNING -  * Debugger is active!
+2026-01-24 21:30:00,720 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 21:30:00,889 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:00] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:30:05,663 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 21:30:05,840 - INFO -  * Restarting with stat
+2026-01-24 21:30:07,523 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 21:30:07,539 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 21:30:07,539 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 21:30:07,540 - INFO - Scheduler started
+2026-01-24 21:30:07,549 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 21:30:07,549 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 21:30:07,549 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 21:30:07,550 - INFO - Membuat objek session baru...
+2026-01-24 21:30:08,003 - INFO - package: mysql.connector.plugins
+2026-01-24 21:30:08,004 - INFO - plugin_name: caching_sha2_password
+2026-01-24 21:30:08,004 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 21:30:08,327 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:30:08,630 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 21:30:09,280 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:30:09,567 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 21:30:09,567 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 21:30:11,698 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 21:30:11,698 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 21:30:11,698 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 21:30:11,699 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 21:30:11,822 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 21:30:14,882 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 21:30:16,334 - INFO -    --> Login SSO sukses.
+2026-01-24 21:30:16,335 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 21:30:17,032 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:30:18,368 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 21:30:18,368 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 21:30:18,369 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 21:30:18,369 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 21:30:18,369 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 21:30:18,384 - WARNING -  * Debugger is active!
+2026-01-24 21:30:18,386 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 21:30:18,559 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:18] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:30:22,227 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 21:30:22,431 - INFO -  * Restarting with stat
+2026-01-24 21:30:24,003 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 21:30:24,017 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 21:30:24,018 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 21:30:24,018 - INFO - Scheduler started
+2026-01-24 21:30:24,032 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 21:30:24,032 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 21:30:24,032 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 21:30:24,033 - INFO - Membuat objek session baru...
+2026-01-24 21:30:24,421 - INFO - package: mysql.connector.plugins
+2026-01-24 21:30:24,422 - INFO - plugin_name: caching_sha2_password
+2026-01-24 21:30:24,422 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 21:30:24,843 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:30:25,095 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 21:30:25,984 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:30:26,240 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 21:30:26,240 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 21:30:29,399 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 21:30:29,399 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 21:30:29,400 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 21:30:29,401 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 21:30:29,481 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 21:30:32,456 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 21:30:33,854 - INFO -    --> Login SSO sukses.
+2026-01-24 21:30:33,854 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 21:30:36,933 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:30:38,462 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 21:30:38,463 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 21:30:38,464 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 21:30:38,464 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 21:30:38,464 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 21:30:38,485 - WARNING -  * Debugger is active!
+2026-01-24 21:30:38,488 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 21:30:38,789 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:38] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:30:44,735 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:44] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:30:51,045 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:51] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:30:55,530 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:55] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 21:30:55,878 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:55] "GET /static/js/components/sskm-record.js HTTP/1.1" 200 -
+2026-01-24 21:30:56,404 - INFO - 127.0.0.1 - - [24/Jan/2026 21:30:56] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:31:01,431 - INFO - 127.0.0.1 - - [24/Jan/2026 21:31:01] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:31:01,928 - INFO - 127.0.0.1 - - [24/Jan/2026 21:31:01] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 21:31:01,984 - INFO - 127.0.0.1 - - [24/Jan/2026 21:31:01] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 21:31:02,639 - INFO - 127.0.0.1 - - [24/Jan/2026 21:31:02] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:31:03,020 - INFO - 127.0.0.1 - - [24/Jan/2026 21:31:03] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:31:09,064 - INFO - 127.0.0.1 - - [24/Jan/2026 21:31:09] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:31:14,733 - INFO - 127.0.0.1 - - [24/Jan/2026 21:31:14] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:31:15,886 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-01-24 21:31:16,062 - INFO -  * Restarting with stat
+2026-01-24 21:31:46,264 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 21:31:46,279 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 21:31:46,279 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 21:31:46,280 - INFO - Scheduler started
+2026-01-24 21:31:46,291 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 21:31:46,292 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 21:31:46,292 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 21:31:46,292 - INFO - Membuat objek session baru...
+2026-01-24 21:31:46,642 - INFO - package: mysql.connector.plugins
+2026-01-24 21:31:46,642 - INFO - plugin_name: caching_sha2_password
+2026-01-24 21:31:46,643 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 21:31:46,961 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:31:47,223 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 21:31:47,764 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:31:48,042 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 21:31:48,042 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 21:31:51,885 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 21:31:51,886 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 21:31:51,886 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 21:31:51,886 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 21:31:52,319 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 21:31:56,886 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 21:31:58,363 - INFO -    --> Login SSO sukses.
+2026-01-24 21:31:58,363 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 21:31:58,979 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:32:00,392 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 21:32:00,392 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 21:32:00,393 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 21:32:00,393 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 21:32:00,393 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 21:32:00,414 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.12:5000
+2026-01-24 21:32:00,414 - INFO - [33mPress CTRL+C to quit[0m
+2026-01-24 21:32:00,416 - INFO -  * Restarting with stat
+2026-01-24 21:32:01,922 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-01-24 21:32:01,938 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-01-24 21:32:01,939 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-01-24 21:32:01,939 - INFO - Scheduler started
+2026-01-24 21:32:01,952 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-01-24 21:32:01,952 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-01-24 21:32:01,952 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-01-24 21:32:01,952 - INFO - Membuat objek session baru...
+2026-01-24 21:32:02,287 - INFO - package: mysql.connector.plugins
+2026-01-24 21:32:02,288 - INFO - plugin_name: caching_sha2_password
+2026-01-24 21:32:02,288 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-01-24 21:32:02,550 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:32:02,815 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-01-24 21:32:03,375 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:32:03,639 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-01-24 21:32:03,639 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-01-24 21:32:06,431 - WARNING -    --> Session Invalid (Redirect login).
+2026-01-24 21:32:06,431 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-01-24 21:32:06,432 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-01-24 21:32:06,432 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-01-24 21:32:06,511 - INFO - 2. [Login] Mengirim kredensial...
+2026-01-24 21:32:08,527 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-01-24 21:32:10,039 - INFO -    --> Login SSO sukses.
+2026-01-24 21:32:10,039 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-01-24 21:32:10,658 - INFO - === Koneksi ke database berhasil ===
+2026-01-24 21:32:12,315 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-01-24 21:32:12,315 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-01-24 21:32:12,315 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-01-24 21:32:12,316 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-01-24 21:32:12,316 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-01-24 21:32:12,331 - WARNING -  * Debugger is active!
+2026-01-24 21:32:12,333 - INFO -  * Debugger PIN: 144-594-432
+2026-01-24 21:32:12,508 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:12] "GET /recap-hadir HTTP/1.1" 200 -
+2026-01-24 21:32:12,511 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:12] "GET /sskm_record HTTP/1.1" 200 -
+2026-01-24 21:32:12,806 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:12] "[36mGET /static/js/components/sskm-record.js HTTP/1.1[0m" 304 -
+2026-01-24 21:32:13,606 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:13] "GET /stream/recap-count HTTP/1.1" 200 -
+2026-01-24 21:32:19,525 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:19] "POST /api/sskm/duplicate HTTP/1.1" 200 -
+2026-01-24 21:32:23,762 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:23] "POST /api/sskm/duplicate HTTP/1.1" 200 -
+2026-01-24 21:32:41,814 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:41] "POST /api/sskm/duplicate HTTP/1.1" 200 -
+2026-01-24 21:32:46,407 - INFO - SSKM data synced: 18 records
+2026-01-24 21:32:46,408 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:46] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:32:53,115 - INFO - SSKM data synced: 19 records
+2026-01-24 21:32:53,115 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:53] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:32:58,720 - INFO - SSKM data synced: 20 records
+2026-01-24 21:32:58,721 - INFO - 127.0.0.1 - - [24/Jan/2026 21:32:58] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:33:03,346 - INFO - SSKM data synced: 21 records
+2026-01-24 21:33:03,346 - INFO - 127.0.0.1 - - [24/Jan/2026 21:33:03] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:33:07,249 - INFO - SSKM data synced: 22 records
+2026-01-24 21:33:07,249 - INFO - 127.0.0.1 - - [24/Jan/2026 21:33:07] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:33:08,700 - INFO - SSKM data synced: 23 records
+2026-01-24 21:33:08,701 - INFO - 127.0.0.1 - - [24/Jan/2026 21:33:08] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:33:10,111 - INFO - SSKM data synced: 24 records
+2026-01-24 21:33:10,111 - INFO - 127.0.0.1 - - [24/Jan/2026 21:33:10] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:33:11,680 - INFO - SSKM data synced: 25 records
+2026-01-24 21:33:11,681 - INFO - 127.0.0.1 - - [24/Jan/2026 21:33:11] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:39:43,889 - INFO - SSKM data synced: 26 records
+2026-01-24 21:39:43,890 - INFO - 127.0.0.1 - - [24/Jan/2026 21:39:43] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:39:46,244 - INFO - SSKM data synced: 27 records
+2026-01-24 21:39:46,245 - INFO - 127.0.0.1 - - [24/Jan/2026 21:39:46] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:39:48,785 - INFO - SSKM data synced: 28 records
+2026-01-24 21:39:48,786 - INFO - 127.0.0.1 - - [24/Jan/2026 21:39:48] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:39:56,571 - INFO - SSKM data synced: 29 records
+2026-01-24 21:39:56,572 - INFO - 127.0.0.1 - - [24/Jan/2026 21:39:56] "POST /api/sskm/sync HTTP/1.1" 200 -
+2026-01-24 21:39:57,869 - INFO - SSKM data synced: 30 records
+2026-01-24 21:39:57,869 - INFO - 127.0.0.1 - - [24/Jan/2026 21:39:57] "POST /api/sskm/sync HTTP/1.1" 200 -

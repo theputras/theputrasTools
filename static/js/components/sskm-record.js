@@ -79,6 +79,14 @@ input.addEventListener("keydown", function (e) {
         const exists = dataList.find((item) => item[mode] === value);
         if (exists) {
             alertBox(`⚠️ ${mode.toUpperCase()} "${value}" sudah ada!`, "warning");
+            
+            // Broadcast duplicate warning to public screen
+            fetch('/api/sskm/duplicate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: mode, value: value })
+            }).catch(err => console.error('Error sending duplicate warning:', err));
+            
         } else {
             const time = new Date().toLocaleString();
             const newData = {
@@ -392,17 +400,127 @@ input.addEventListener("keydown", function (e) {
     if (!('serial' in navigator)) {
       const warning = document.getElementById('browserWarning');
       if (warning) warning.classList.remove('hidden');
+    } else {
+      // Add event listeners for device changes (plug/unplug)
+      navigator.serial.addEventListener('connect', (e) => {
+        console.log('Device connected:', e.target);
+        listPairedDevices();
+        alertBox('🔌 Perangkat terhubung!', 'info');
+      });
+      
+      navigator.serial.addEventListener('disconnect', (e) => {
+        console.log('Device disconnected:', e.target);
+        listPairedDevices();
+        alertBox('🔌 Perangkat dicabut!', 'warning');
+      });
     }
   }
   
-  // Open RFID Settings Modal
-  function openRFIDSettings() {
+  // Open RFID Settings Modal and load paired devices
+  async function openRFIDSettings() {
     document.getElementById('rfidModal').classList.remove('hidden');
+    await listPairedDevices();
   }
   
   // Close RFID Settings Modal
   function closeRFIDSettings() {
     document.getElementById('rfidModal').classList.add('hidden');
+  }
+  
+  // List previously paired devices
+  async function listPairedDevices() {
+    if (!('serial' in navigator)) return;
+
+    try {
+      const ports = await navigator.serial.getPorts();
+      const deviceList = document.getElementById('deviceList');
+      deviceList.innerHTML = '';
+
+      if (ports.length === 0) {
+        deviceList.innerHTML = `
+          <div class="text-sm text-gray-500 text-center py-4">
+            Belum ada perangkat tersimpan.<br>Klik "Scan Perangkat" untuk tambah baru.
+          </div>`;
+        return;
+      }
+
+      // Add paired devices to list
+      ports.forEach((p, index) => {
+        const info = p.getInfo();
+        const friendlyName = getDeviceName(info.usbVendorId, info.usbProductId);
+        
+        // Check if this is the currently connected port
+        const isConnected = (port === p);
+        
+        const deviceCard = document.createElement('button');
+        
+        // Dynamic styling based on connection status
+        let cardStyle = 'w-full glass-input p-4 rounded-2xl transition text-left group mb-2 relative overflow-hidden';
+        if (isConnected) {
+            cardStyle += ' bg-green-500/20 border-green-500/50 cursor-default';
+        } else {
+            cardStyle += ' hover:bg-cyan-500/20 border-cyan-400/30';
+        }
+        deviceCard.className = cardStyle;
+        
+        // Dynamic Content
+        const statusText = isConnected 
+            ? '<i class="fas fa-link text-[10px]"></i> TERHUBUNG' 
+            : '<i class="fas fa-bolt text-[10px]"></i> Klik untuk hubungkan';
+            
+        const statusColor = isConnected ? 'text-green-300' : 'text-green-400';
+        
+        deviceCard.innerHTML = `
+          <div class="flex items-start gap-3 relative z-10">
+            <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center">
+              <i class="fas fa-microchip text-cyan-400 text-xl"></i>
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-white group-hover:text-cyan-300">
+                 ${friendlyName}
+              </div>
+              <div class="text-xs text-gray-400 mt-1">
+                ${info.usbVendorId ? `VID: 0x${info.usbVendorId.toString(16)} | PID: 0x${info.usbProductId?.toString(16)}` : 'Standard Serial Port'}
+              </div>
+              <div class="text-xs ${statusColor} mt-2 font-bold flex items-center gap-1">
+                ${statusText}
+              </div>
+            </div>
+            ${!isConnected ? '<i class="fas fa-chevron-right text-gray-600 group-hover:text-white transition-transform group-hover:translate-x-1"></i>' : '<i class="fas fa-check-circle text-green-400 text-xl"></i>'}
+          </div>
+          ${!isConnected ? '<div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>' : ''}
+        `;
+        
+        // Only allow click if NOT connected
+        if (!isConnected) {
+            deviceCard.onclick = () => connectToDevice(p);
+        }
+        
+        deviceList.appendChild(deviceCard);
+      });
+    } catch (err) {
+      console.error('Error listing paired devices:', err);
+    }
+  }
+
+  // Helper to get friendly name from VID/PID
+  function getDeviceName(vid, pid) {
+    if (!vid) return "Unknown Serial Device";
+    
+    // Map common vendors
+    const vendors = {
+        0x2341: "Arduino Device",
+        0x1a86: "CH340 Serial (Arduino Clone)",
+        0x0403: "FTDI Serial",
+        0x10c4: "CP210x Serial",
+        0x0525: "PL2303 Serial"
+    };
+
+    if (vendors[vid]) {
+        return vendors[vid];
+    }
+    
+    return `USB Device (0x${vid.toString(16)})`;
   }
   
   // Scan for RFID devices
@@ -413,7 +531,27 @@ input.addEventListener("keydown", function (e) {
     }
 
     try {
-      // Request port from user
+      // Filters for common Serial/RFID chips (CH340, Arduino, FTDI, CP210x)
+      const filters = [
+        { usbVendorId: 0x1a86 }, // CH340 (Common in clones)
+        { usbVendorId: 0x2341 }, // Arduino SA
+        { usbVendorId: 0x0403 }, // FTDI
+        { usbVendorId: 0x10c4 }, // Silicon Labs (CP210x)
+        { usbVendorId: 0x0525 }  // Prolific (PL2303) is sometimes tricky, but safe to add
+      ];
+
+      // Request port with filters OR no filters (allow user to choose)
+      // Note: Passing filters sometimes helps Chrome "see" generic devices
+      // But we also want to allow "All" so we usually pass NO filters to see everything.
+      // However, if user is having trouble, we can try passing filters.
+      // Strategy: Request ANY port (empty list or undefined usually works best)
+      // BUT, since user reported issues, let's try WITHOUT filters first (standard),
+      // and if they fail, we suggest checking the driver/port.
+      
+      // WAIT! The screenshot shows "No compatible devices".
+      // This often happens if the port is BUSY (opened by Arduino IDE).
+      // Let's stick to standard no-filter request but add a Help Alert if empty.
+      
       const selectedPort = await navigator.serial.requestPort();
       
       // Get port info
@@ -514,8 +652,19 @@ input.addEventListener("keydown", function (e) {
         
         for (const line of lines) {
           const cleaned = line.trim();
-          if (cleaned) {
+          
+          // VALIDATION: Filter noise & debug messages
+          // Only accept if:
+          // 1. Length is exactly 8 (UUID) or 11 (NIM)
+          // 2. Contains only alphanumeric characters (no weird symbols)
+          const isValidFormat = /^[a-zA-Z0-9]+$/.test(cleaned);
+          const isValidLength = cleaned.length === 8 || cleaned.length === 11;
+          
+          if (cleaned && isValidFormat && isValidLength) {
+            console.log('✅ Valid RFID Data:', cleaned);
             processRFIDData(cleaned);
+          } else if (cleaned) {
+             console.warn('⚠️ Ignored Junk/Debug Data:', cleaned);
           }
         }
       }
@@ -535,12 +684,31 @@ input.addEventListener("keydown", function (e) {
   
   // Process RFID data
   function processRFIDData(data) {
-    // Simulate Enter key event with the RFID data
+    // 1. Set Value & Focus
     input.value = data;
+    input.focus();
     
-    // Trigger the same validation as manual input
-    const event = new KeyboardEvent('keydown', { key: 'Enter' });
-    input.dispatchEvent(event);
+    // 2. Trigger Input Event (untuk update badge detection visual)
+    const inputEvent = new Event('input', { bubbles: true });
+    input.dispatchEvent(inputEvent);
+    
+    // 3. Trigger Enter Key Event (untuk trigger logic save)
+    // Menggunakan multiple properties untuk kompatibilitas
+    const enterEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true
+    });
+    
+    // Dispatch event setelah delay kecil dijamin UI update dulu
+    setTimeout(() => {
+        input.dispatchEvent(enterEvent);
+        // Feedback visual di console untuk debugging
+        console.log('RFID Auto-Enter triggered for:', data);
+    }, 50);
   }
   
   // Disconnect from device
@@ -656,4 +824,17 @@ function alertBox(message, type = "success", callback = null) {
   
   
   
+  // Expose functions to global scope
+  window.openRFIDSettings = openRFIDSettings;
+  window.closeRFIDSettings = closeRFIDSettings;
+  window.scanRFIDDevices = scanRFIDDevices;
+  window.listPairedDevices = listPairedDevices; // <-- Added this
+
+  // Cleanup on unload to close port properly
+  window.addEventListener('beforeunload', async () => {
+      if (port) {
+          await port.close();
+      }
+  });
+
 });
