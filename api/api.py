@@ -1,8 +1,9 @@
 from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g, redirect
-import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re
+import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re, random, string
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
 from models.gate import GateSession, GateUser
+from datetime import datetime
 
 
 # Impor SEMUA fungsi scraper
@@ -19,18 +20,19 @@ executor = None
 get_jadwal_status_func = None
 log_file = None
 _valid_role = None
-SSKM_DATA = None  # Storage for SSKM attendance data
+SSKM_ROOMS = None  # Storage for SSKM attendance data (Dictionary: room_code -> list)
+
 
 # Fungsi untuk inisialisasi variabel global
-def init_api(cache, major, execu, status_getter, logfile, valid_role_func, sskm_storage=None):
-    global photo_cache, majorID, executor, get_jadwal_status_func, log_file, _valid_role, SSKM_DATA
+def init_api(cache, major, execu, status_getter, logfile, valid_role_func, sskm_rooms_storage=None):
+    global photo_cache, majorID, executor, get_jadwal_status_func, log_file, _valid_role, SSKM_ROOMS
     photo_cache = cache
     majorID = major
     executor = execu
     get_jadwal_status_func = status_getter
     log_file = logfile
     _valid_role = valid_role_func
-    SSKM_DATA = sskm_storage if sskm_storage is not None else []
+    SSKM_ROOMS = sskm_rooms_storage if sskm_rooms_storage is not None else {}
     
     
 # Fungsi untuk membersihkan kode warna ANSI (seperti \u001b[0;32m)
@@ -895,41 +897,160 @@ def get_detail_nilai():
     return jsonify(raw_data)
 
 # ===== SSKM ENDPOINTS =====
-@api_bp.route('/sskm/sync', methods=['POST'])
-def sync_sskm_data():
-    """Menerima data SSKM dari client dan simpan ke memory"""
-    global SSKM_DATA
+@api_bp.route('/sskm/room/create', methods=['POST'])
+def create_room():
+    """Create a new SSKM Room and return the code"""
+    global SSKM_ROOMS
+    try:
+        # Generate 10-char random uppercase alphanumeric code
+        room_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        
+        # Ensure Uniqueness (low collision probability, but good practice)
+        while room_code in SSKM_ROOMS:
+            room_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            
+        SSKM_ROOMS[room_code] = []
+        logging.info(f"New SSKM Room Created: {room_code}")
+        return jsonify({'success': True, 'room_code': room_code})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/sskm/room/join', methods=['POST'])
+def join_room():
+    """Check if a room exists"""
+    global SSKM_ROOMS
     try:
         data = request.get_json()
+        room_code = data.get('room_code')
+        
+        if not room_code:
+            return jsonify({'success': False, 'message': 'Room code required'}), 400
+            
+        if room_code in SSKM_ROOMS:
+            return jsonify({'success': True, 'room_code': room_code})
+        else:
+            return jsonify({'success': False, 'message': 'Room tidak ditemukan'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/sskm/room/data', methods=['GET'])
+def get_room_data():
+    """Get all data for a specific room"""
+    global SSKM_ROOMS
+    try:
+        room_code = request.args.get('room_code')
+        if not room_code:
+            return jsonify({'success': False, 'error': 'Room code required'}), 400
+            
+        if room_code not in SSKM_ROOMS:
+             return jsonify({'success': False, 'error': 'Room not found'}), 404
+             
+        data = SSKM_ROOMS[room_code]
+        return jsonify({'success': True, 'data': data})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/sskm/sync', methods=['POST'])
+def sync_sskm_data():
+    """Menerima data SSKM dari client dan simpan ke memory Room spesifik"""
+    global SSKM_ROOMS
+    try:
+        data = request.get_json()
+        room_code = data.get('room_code')
+        
+        if not room_code or room_code not in SSKM_ROOMS:
+             return jsonify({'success': False, 'error': 'Room code invalid or missing'}), 400
+
         if data and 'rfidData' in data:
-            # Clear and update list in-place to maintain reference
-            SSKM_DATA.clear()
-            SSKM_DATA.extend(data['rfidData'])
-            logging.info(f"SSKM data synced: {len(SSKM_DATA)} records")
-            return jsonify({'success': True, 'count': len(SSKM_DATA)})
+            # Clear and update list in-place to maintain reference if possible, 
+            # but since it's a dict now, we modify the list inside the dict.
+            SSKM_ROOMS[room_code] = data['rfidData']
+            logging.info(f"SSKM data synced for Room {room_code}: {len(SSKM_ROOMS[room_code])} records")
+            return jsonify({'success': True, 'count': len(SSKM_ROOMS[room_code])})
         return jsonify({'success': False, 'error': 'Invalid data'}), 400
     except Exception as e:
         logging.error(f"Error syncing SSKM data: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # Global variable for duplicate event broadcasting
+# Structure: { 'room_code': { 'type': ..., 'value': ..., 'timestamp': ... } }
 SSKM_LAST_DUPLICATE = {}
 
 @api_bp.route('/sskm/duplicate', methods=['POST'])
 def sskm_duplicate_warning():
-    """Endpoint untuk broadcast warning duplikat ke public screen"""
+    """Endpoint untuk broadcast warning duplikat ke public screen (Room specific)"""
     global SSKM_LAST_DUPLICATE
     try:
         data = request.get_json()
+        room_code = data.get('room_code')
+        
+        if not room_code:
+             return jsonify({'success': False, 'error': 'Room code missing'}), 400
+
         if data and 'type' in data and 'value' in data:
-            # Update global event for SSE to pick up
-            SSKM_LAST_DUPLICATE.update({
+            # Update global event for SSE to pick up for this room
+            SSKM_LAST_DUPLICATE[room_code] = {
                 "type": data['type'],
                 "value": data['value'],
                 "timestamp": time.time()
-            })
+            }
             return jsonify({'success': True})
         return jsonify({'success': False, 'error': 'Invalid data'}), 400
     except Exception as e:
-        logging.error(f"Error broadcasting duplicate: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/sskm/add', methods=['POST'])
+def add_sskm_data():
+    """Menambahkan satu data SSKM (NIM/UUID) dan handle duplikasi (Room specific)"""
+    global SSKM_ROOMS, SSKM_LAST_DUPLICATE
+    try:
+        data = request.get_json()
+        room_code = data.get('room_code')
+
+        if not room_code:
+            return jsonify({'success': False, 'error': 'Room code missing'}), 400
+        
+        if room_code not in SSKM_ROOMS:
+             return jsonify({'success': False, 'error': 'Room not found'}), 404
+
+        if not data or 'value' not in data:
+            return jsonify({'success': False, 'error': 'Value wajib ada'}), 400
+            
+        inputType = data.get('type', 'NIM') # Default NIM
+        value = str(data['value']).strip()
+        
+        # Cek Duplikasi di Room ini
+        room_data = SSKM_ROOMS[room_code]
+        is_duplicate = False
+        for item in room_data:
+            # Cek key 'nim' atau 'uuid' tergantung inputType
+            if inputType == 'NIM' and str(item.get('nim')) == value:
+                is_duplicate = True
+                break
+            elif inputType == 'UUID' and str(item.get('uuid')) == value:
+                is_duplicate = True
+                break
+                
+        if is_duplicate:
+            # Update global duplicate event untuk SSE Room ini
+            SSKM_LAST_DUPLICATE[room_code] = {
+                "type": inputType,
+                "value": value,
+                "timestamp": time.time()
+            }
+            logging.info(f"Duplicate scan detected in Room {room_code}: {inputType} {value}")
+            return jsonify({'success': True, 'status': 'duplicate'})
+        else:
+            # Tambah data baru ke Room ini
+            new_record = {
+                "nim": value if inputType == 'NIM' else None,
+                "uuid": value if inputType == 'UUID' else None,
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            SSKM_ROOMS[room_code].append(new_record)
+            logging.info(f"New SSKM record added to Room {room_code}: {new_record}")
+            return jsonify({'success': True, 'status': 'added'})
+
+    except Exception as e:
+        logging.error(f"Error adding SSKM data: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500

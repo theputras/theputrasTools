@@ -2,7 +2,6 @@
 
 import os
 import re
-from datetime import datetime
 import pandas as pd
 from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g, Response
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -105,8 +104,8 @@ ICS_FILE = 'jadwal_kegiatan.ics'
 JADWAL_STATUS = {"status": "ready", "message": "Siap."}
 
 # ===== SSKM IN-MEMORY STORAGE =====
-# Store SSKM attendance data in memory for real-time streaming
-SSKM_DATA = []
+# Store SSKM attendance data in memory for real-time streaming (Dictionary: room_code -> list)
+SSKM_ROOMS = {}
 app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
 # if not app.secret_key:
     
@@ -157,7 +156,7 @@ def get_current_status():
 
 
 
-init_api(photo_cache, majorID, executor, get_current_status, log_file, _valid_role, SSKM_DATA)
+init_api(photo_cache, majorID, executor, get_current_status, log_file, _valid_role, SSKM_ROOMS)
 app.register_blueprint(api_bp, url_prefix='/api')
 
 # Jalankan scraper dan simpan hasilnya ke file JSON
@@ -750,19 +749,27 @@ def sskm_record():
 @app.route('/stream/recap-count')           
 def stream_recap_count():
     """Server-Sent Events endpoint untuk streaming jumlah orang yang terecap"""
+    room_code = request.args.get('room')
+    
     def generate():
         last_count = 0
         last_duplicate_time = 0
         
-        # Import variable global dari API blueprint
-        
-        
         while True:
             try:
+                # Check Room Validity
+                if not room_code or room_code not in SSKM_ROOMS:
+                     # Send zero data if room invalid or not created yet
+                     yield f"data: {json.dumps({'total': 0, 'uuid': 0, 'nim': 0, 'error': 'Room not found'})}\n\n"
+                     time.sleep(2)
+                     continue
+
+                current_room_data = SSKM_ROOMS[room_code]
+                
                 # Calculate counts
-                current_count = len(SSKM_DATA)
-                uuid_count = sum(1 for item in SSKM_DATA if item.get('uuid'))
-                nim_count = sum(1 for item in SSKM_DATA if item.get('nim'))
+                current_count = len(current_room_data)
+                uuid_count = sum(1 for item in current_room_data if item.get('uuid'))
+                nim_count = sum(1 for item in current_room_data if item.get('nim'))
                 
                 payload = {
                     "total": current_count,
@@ -771,20 +778,24 @@ def stream_recap_count():
                 }
                 
                 # Check for NEW data (increment only)
-                if current_count > last_count and last_count > 0:
-                     latest_item = SSKM_DATA[-1]
-                     payload["new_scan"] = {
-                         "type": "NIM" if latest_item.get('nim') else "UUID",
-                         "value": latest_item.get('nim') or latest_item.get('uuid')
-                     }
+                if current_count > last_count:
+                     if current_count > 0:
+                        latest_item = current_room_data[-1]
+                        payload["new_scan"] = {
+                            "type": "NIM" if latest_item.get('nim') else "UUID",
+                            "value": latest_item.get('nim') or latest_item.get('uuid')
+                        }
                 
-                # Check for DUPLICATE warning
-                if SSKM_LAST_DUPLICATE and SSKM_LAST_DUPLICATE.get('timestamp', 0) > last_duplicate_time:
-                    payload["duplicate"] = {
-                        "type": SSKM_LAST_DUPLICATE['type'],
-                        "value": SSKM_LAST_DUPLICATE['value']
-                    }
-                    last_duplicate_time = SSKM_LAST_DUPLICATE['timestamp']
+                # Check for DUPLICATE warning (Room Specific)
+                # SSKM_LAST_DUPLICATE structure: { 'room_code': { 'type': ..., 'value': ..., 'timestamp': ... } }
+                if room_code in SSKM_LAST_DUPLICATE:
+                    last_evt = SSKM_LAST_DUPLICATE[room_code]
+                    if last_evt.get('timestamp', 0) > last_duplicate_time:
+                        payload["duplicate"] = {
+                            "type": last_evt['type'],
+                            "value": last_evt['value']
+                        }
+                        last_duplicate_time = last_evt['timestamp']
 
                 last_count = current_count
                 

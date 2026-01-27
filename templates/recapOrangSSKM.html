@@ -61,58 +61,60 @@
 </head>
 <body class="flex items-center justify-center p-4">
   <div class="w-full max-w-4xl">
-    <!-- Main Counter Card -->
-    <div class="glass-card rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
-      <!-- Connection Status -->
-      <div class="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white" id="connection-status">
-        <i class="fas fa-circle pulse-dot" id="status-dot"></i>
-        <span id="status-text">Connecting...</span>
+    <div id="dashboard-content">
+      <!-- Main Counter Card -->
+      <div class="glass-card rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+        <!-- Connection Status -->
+        <div class="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white" id="connection-status">
+          <i class="fas fa-circle pulse-dot" id="status-dot"></i>
+          <span id="status-text">Connecting...</span>
+        </div>
+
+        <!-- Icon -->
+        <div class="mb-6">
+          <i class="fas fa-users text-6xl text-blue-400 mb-4"></i>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
+          Rekap Kehadiran Mahasiswa
+        </h1>
+        <p class="text-gray-400 mb-8">Real-time attendance monitoring</p>
+
+        <!-- Counter -->
+        <div class="counter-display mb-4" id="attendance-count">
+          0
+        </div>
+
+        <!-- Label -->
+        <p class="text-xl text-gray-300 font-semibold">
+          Orang Tercatat
+        </p>
+
+        <!-- Last Update -->
+        <div class="mt-8 pt-6 border-t border-white/10">
+          <div class="flex items-center justify-center gap-2 text-sm text-gray-400">
+            <i class="fas fa-sync-alt" id="sync-icon"></i>
+            <span>Last updated: <span id="last-update" class="text-blue-400 font-semibold">-</span></span>
+          </div>
+        </div>
       </div>
 
-      <!-- Icon -->
-      <div class="mb-6">
-        <i class="fas fa-users text-6xl text-blue-400 mb-4"></i>
-      </div>
-
-      <!-- Title -->
-      <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
-        Rekap Kehadiran Mahasiswa
-      </h1>
-      <p class="text-gray-400 mb-8">Real-time attendance monitoring</p>
-
-      <!-- Counter -->
-      <div class="counter-display mb-4" id="attendance-count">
-        0
-      </div>
-
-      <!-- Label -->
-      <p class="text-xl text-gray-300 font-semibold">
-        Orang Tercatat
-      </p>
-
-      <!-- Last Update -->
-      <div class="mt-8 pt-6 border-t border-white/10">
-        <div class="flex items-center justify-center gap-2 text-sm text-gray-400">
-          <i class="fas fa-sync-alt" id="sync-icon"></i>
-          <span>Last updated: <span id="last-update" class="text-blue-400 font-semibold">-</span></span>
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-2 gap-4 mt-6 hide-in-obs">
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="text-3xl font-bold text-cyan-400 mb-2" id="uuid-count">0</div>
+          <div class="text-sm text-gray-400">UUID Cards</div>
+        </div>
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="text-3xl font-bold text-green-400 mb-2" id="nim-count">0</div>
+          <div class="text-sm text-gray-400">NIM Records</div>
         </div>
       </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-2 gap-4 mt-6 hide-in-obs">
-      <div class="glass-card rounded-2xl p-6 text-center">
-        <div class="text-3xl font-bold text-cyan-400 mb-2" id="uuid-count">0</div>
-        <div class="text-sm text-gray-400">UUID Cards</div>
-      </div>
-      <div class="glass-card rounded-2xl p-6 text-center">
-        <div class="text-3xl font-bold text-green-400 mb-2" id="nim-count">0</div>
-        <div class="text-sm text-gray-400">NIM Records</div>
-      </div>
-    </div>
-
     <!-- Action Buttons -->
-    <div class="mt-6 text-center flex gap-3 justify-center hide-in-obs">
+    <div id="controls-container" class="mt-6 text-center flex gap-3 justify-center hide-in-obs">
       <!-- OBS Mode Toggle -->
       <button 
         onclick="toggleOBSMode()"
@@ -130,14 +132,199 @@
         <i class="fas fa-clipboard-list mr-2"></i>
         Ke Halaman Record
       </a>
+      
+      <!-- Guest Mode Toggle -->
+      <button 
+        onclick="toggleGuestMode()"
+        id="guest-toggle-btn"
+        class="inline-block bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 
+               text-white font-semibold px-8 py-3 rounded-full transition transform active:scale-95 shadow-lg">
+        <i class="fas fa-user-friends mr-2"></i>
+        <span id="guest-toggle-text">Guest Mode</span>
+      </button>
     </div>
+    
+    <!-- Exit Guest Mode Button (Floating X) -->
+    <button 
+        id="exit-guest-btn"
+        onclick="toggleGuestMode()"
+        class="fixed top-6 right-6 z-50 bg-red-500/80 hover:bg-red-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition transform hover:rotate-90 hidden">
+        <i class="fas fa-times text-xl"></i>
+    </button>
+    <!-- Static Guest Card (Visible when Guest Mode ON) -->
+    <div id="guest-welcome-card" class="glass-card rounded-3xl p-12 text-center relative overflow-hidden border-2 border-cyan-500/30 box-glow max-w-2xl w-full mx-auto hidden">
+        <!-- Icon -->
+        <div id="guest-icon-container" class="w-24 h-24 mx-auto rounded-full bg-cyan-500/20 flex items-center justify-center mb-8 box-glow-sm transition-all duration-300">
+          <i id="guest-icon" class="fas fa-rss text-5xl text-cyan-300 animate-pulse"></i>
+        </div>
+
+        <!-- Title -->
+        <h2 id="guest-title" class="text-4xl font-bold text-white mb-4 tracking-wide">
+          SELAMAT DATANG
+        </h2>
+        
+        <!-- Subtitle -->
+        <p id="guest-subtitle" class="text-xl text-gray-300 font-light mb-8">
+          Silakan tapping disini
+        </p>
+
+        <!-- Manual Input (Visible in Idle) -->
+        <div id="guest-input-container" class="opacity-100 transition-opacity duration-300">
+            <input 
+                type="text" 
+                id="guest-nim-input" 
+                placeholder="Ketik NIM disini..." 
+                maxlength="11" 
+                inputmode="numeric"
+                autocomplete="off"
+                onkeypress="handleNimInput(event)"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                class="w-full max-w-sm px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white text-center text-xl tracking-widest focus:outline-none focus:border-cyan-500 focus:bg-white/20 placeholder-gray-400 transition-all font-mono"
+            >
+        </div>
+        <!-- Value Display (Hidden in Idle) -->
+        <div id="guest-data-container" class="mt-8 bg-white/5 rounded-2xl p-6 border border-white/10 opacity-0 transition-opacity duration-300">
+          <p class="text-sm text-cyan-400 font-bold tracking-widest uppercase mb-1" id="guest-type-label">-</p>
+          <p class="text-3xl font-mono font-bold text-white tracking-wider" id="guest-value-display">-</p>
+        </div>
+    </div>
+  </div>
+
+  <!-- Room Selection Modal -->
+  <div id="room-modal" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center hidden">
+      <div class="bg-gray-800 p-8 rounded-xl shadow-2xl max-w-md w-full border border-gray-700 text-center">
+          <h2 class="text-3xl font-bold text-white mb-6">SSKM Room Sync</h2>
+          
+          <div class="space-y-4">
+              <button onclick="createRoom()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg transition">
+                  Create New Room
+              </button>
+              
+              <div class="relative py-2">
+                  <div class="absolute inset-0 flex items-center">
+                      <div class="w-full border-t border-gray-600"></div>
+                  </div>
+                  <div class="relative flex justify-center text-sm">
+                      <span class="px-2 bg-gray-800 text-gray-400">OR</span>
+                  </div>
+              </div>
+              
+              <div class="flex gap-2">
+                  <input type="text" id="join-room-input" placeholder="Enter Room Code" 
+                        class="flex-1 bg-gray-700 text-white px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none uppercase font-mono tracking-wider">
+                  <button onclick="joinRoom()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg transition">
+                      Join
+                  </button>
+              </div>
+              
+              <!-- Room Code Display (Info) -->
+               <div id="active-room-display" class="hidden mt-4 p-4 bg-gray-900 rounded-lg border border-gray-700">
+                    <p class="text-gray-400 text-xs uppercase tracking-widest mb-1">Active Room Code</p>
+                    <div class="flex items-center justify-center gap-2">
+                        <span id="room-code-value" class="text-2xl font-mono font-bold text-cyan-400 tracking-[0.2em]"></span>
+                        <button onclick="copyRoomCode()" class="text-gray-400 hover:text-white transition" title="Copy Code">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <button onclick="leaveRoom()" class="mt-4 text-xs text-red-400 hover:text-red-300 underline">Leave Room</button>
+               </div>
+
+              <p id="room-error" class="text-red-400 text-sm hidden mt-2 animate-pulse"></p>
+          </div>
+      </div>
   </div>
 
   <script>
     let eventSource = null;
     let lastCount = 0;
+    
+    // --- Room Logic ---
+    let currentRoomCode = sessionStorage.getItem('sskm_room_code');
+
+    function checkRoomStatus() {
+        const modal = document.getElementById('room-modal');
+        // Check if we also have it in URL (shareable link logic could be added here later)
+        
+        if (!currentRoomCode) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+            // Show room code briefly or in corner? 
+            // For now just connect SSE
+            connectSSE();
+            showRoomToast();
+        }
+    }
+
+    async function createRoom() {
+        try {
+            const res = await fetch('/api/sskm/room/create', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                sessionStorage.setItem('sskm_room_code', data.room_code);
+                currentRoomCode = data.room_code;
+                checkRoomStatus();
+            } else {
+                 showRoomError(data.error);
+            }
+        } catch (e) {
+            showRoomError('Connection failed');
+        }
+    }
+
+    async function joinRoom() {
+        const input = document.getElementById('join-room-input');
+        const code = input.value.trim().toUpperCase();
+        if (!code) return;
+
+        try {
+            const res = await fetch('/api/sskm/room/join', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_code: code })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                sessionStorage.setItem('sskm_room_code', data.room_code);
+                currentRoomCode = data.room_code;
+                checkRoomStatus();
+            } else {
+                showRoomError(data.message || 'Room not found');
+            }
+        } catch (e) {
+            showRoomError('Connection failed');
+        }
+    }
+    
+    function leaveRoom() {
+        sessionStorage.removeItem('sskm_room_code');
+        location.reload();
+    }
+
+    function showRoomError(msg) {
+        const errEl = document.getElementById('room-error');
+        errEl.textContent = msg;
+        errEl.classList.remove('hidden');
+        setTimeout(() => errEl.classList.add('hidden'), 3000);
+    }
+    
+    function showRoomToast() {
+        const toast = document.createElement('div');
+        toast.id = 'room-toast'; // Add ID for fullscreen toggle
+        toast.className = 'fixed top-4 left-4 z-50 bg-gray-900/80 border border-gray-700 text-white px-4 py-2 rounded-lg backdrop-blur-sm shadow-lg flex items-center gap-3 transition-opacity duration-500 hide-in-obs';
+        toast.innerHTML = `
+            <span class="text-xs text-gray-400">ROOM</span>
+            <span class="font-mono font-bold text-cyan-400 tracking-wider">${currentRoomCode}</span>
+            <button onclick="leaveRoom()" class="text-gray-500 hover:text-red-400 ml-2" title="Leave/Change Room"><i class="fas fa-sign-out-alt"></i></button>
+        `;
+        document.body.appendChild(toast);
+    }
+
+    // --- End Room Logic ---
 
     // Update timestamp
+
     function updateTimestamp() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('id-ID');
@@ -192,12 +379,200 @@
     }
 
     // Connect to SSE
+    let guestTimeout;
+
+    function resetGuestCard() {
+        const card = document.getElementById('guest-welcome-card');
+        const iconContainer = document.getElementById('guest-icon-container');
+        const icon = document.getElementById('guest-icon');
+        const title = document.getElementById('guest-title');
+        const subtitle = document.getElementById('guest-subtitle');
+        const dataContainer = document.getElementById('guest-data-container');
+        const inputContainer = document.getElementById('guest-input-container'); // NEW
+        const inputField = document.getElementById('guest-nim-input'); // NEW
+
+        // Reset Classes (Cyan Theme)
+        card.className = 'glass-card rounded-3xl p-12 text-center relative overflow-hidden border-2 border-cyan-500/30 box-glow max-w-2xl w-full mx-auto';
+        iconContainer.className = 'w-24 h-24 mx-auto rounded-full bg-cyan-500/20 flex items-center justify-center mb-8 box-glow-sm transition-all duration-300';
+        icon.className = 'fas fa-rss text-5xl text-cyan-300 animate-pulse';
+        
+        // Reset Text
+        title.textContent = "SELAMAT DATANG";
+        title.className = "text-4xl font-bold text-white mb-4 tracking-wide";
+        subtitle.textContent = "Silakan tapping disini";
+        
+        // Hide Data Result
+        dataContainer.classList.remove('opacity-100');
+        dataContainer.classList.add('opacity-0');
+        
+        // Show Input
+        if (inputContainer) {
+            inputContainer.classList.remove('hidden', 'opacity-0');
+            inputContainer.classList.add('opacity-100');
+            inputField.value = '';
+            inputField.focus();
+        }
+    }
+
+    function updateGuestCard(type, value, isDuplicate = false) {
+        const card = document.getElementById('guest-welcome-card');
+        const iconContainer = document.getElementById('guest-icon-container');
+        const icon = document.getElementById('guest-icon');
+        const title = document.getElementById('guest-title');
+        const subtitle = document.getElementById('guest-subtitle');
+        const dataContainer = document.getElementById('guest-data-container');
+        const typeLabel = document.getElementById('guest-type-label');
+        const valueDisplay = document.getElementById('guest-value-display');
+        const inputContainer = document.getElementById('guest-input-container'); // NEW
+
+        // Clear existing timeout
+        if (guestTimeout) clearTimeout(guestTimeout);
+
+        // Hide Input
+        if (inputContainer) {
+            inputContainer.classList.add('hidden', 'opacity-0');
+            inputContainer.classList.remove('opacity-100');
+        }
+
+        // Reveal Data Container
+        dataContainer.classList.remove('opacity-0');
+        dataContainer.classList.add('opacity-100');
+
+        if (isDuplicate) {
+            // WARNING STYLE (Yellow)
+            card.classList.replace('border-cyan-500/30', 'border-yellow-500/50');
+            iconContainer.className = 'w-24 h-24 mx-auto rounded-full bg-yellow-500/20 flex items-center justify-center mb-8 box-glow-sm';
+            icon.className = 'fas fa-exclamation-triangle text-5xl text-yellow-400';
+            
+            title.textContent = "DATA SUDAH ADA!";
+            title.className = "text-4xl font-bold text-yellow-400 mb-4 tracking-wide";
+            
+            const entityName = type === 'NIM' ? 'NOMOR INDUK MAHASISWA' : 'KARTU';
+            const entityValue = type === 'NIM' ? 'Masukkan NIM' : 'Scan';
+            subtitle.textContent = `${entityName} ini sudah melakukan ${entityValue} sebelumnya`;
+            
+        } else {
+            // SUCCESS STYLE (Cyan/Green)
+            card.classList.replace('border-yellow-500/50', 'border-cyan-500/30');
+            iconContainer.className = 'w-24 h-24 mx-auto rounded-full bg-cyan-500/20 flex items-center justify-center mb-8 box-glow-sm';
+            icon.className = 'fas fa-check text-5xl text-cyan-300';
+            
+            title.textContent = "SELAMAT DATANG!";
+            title.className = "text-4xl font-bold text-white mb-4 tracking-wide";
+            
+            const entityName = type === 'NIM' ? 'NIM' : 'KARTU';
+            const entityValue = type === 'NIM' ? 'Masukkan' : 'Scan';
+            subtitle.textContent = `${entityName} berhasil di ${entityValue}, silakan masuk`;
+        }
+        
+        // Data Display
+        typeLabel.textContent = type === 'NIM' ? 'NOMOR INDUK MAHASISWA' : 'KARTU ID';
+        
+        // Privacy Masking
+        const displayValue = (!isDuplicate && type !== 'NIM') ? '******' : value;
+        const finalValue = (isDuplicate && type !== 'NIM') ? '******' : displayValue;
+        
+        valueDisplay.textContent = finalValue;
+        
+        // Auto Reset after 4 seconds
+        guestTimeout = setTimeout(resetGuestCard, 4000);
+    }
+    
+    // Manual Input Handling
+    function handleNimInput(event) {
+        if (event.key === 'Enter') {
+            submitNim();
+        }
+    }
+    
+    function submitNim() {
+        const input = document.getElementById('guest-nim-input');
+        const value = input.value.trim();
+        
+        if (!value) return;
+        
+        // Validate NIM must be 11 digits
+        if (value.length !== 11) {
+            updateGuestCard('NIM', value, true); // Show warning
+            const title = document.getElementById('guest-title');
+            title.textContent = "NIM HARUS 11 DIGIT!";
+            input.value = '';
+            return;
+        }
+
+        fetch('/api/sskm/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'NIM', value: value, room_code: currentRoomCode })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Success is handled by SSE (new_scan/duplicate event)
+                // However, to make UI snappy, we could preemptively show loading or just clear
+                input.value = '';
+                
+                // If it's a new add, the SSE will start the animation
+                // If duplicate, SSE will start warning animation
+            } else {
+                console.error('Failed to add:', data.error);
+                // Maybe shake input?
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    }
+    
+    function showToast(type, value, isDuplicate = false) {
+        const toast = document.createElement('div');
+        
+        let colorClass, icon, title;
+        
+        if (isDuplicate) {
+            colorClass = 'border-yellow-500 text-yellow-400 bg-yellow-500/90';
+            icon = 'fa-exclamation-triangle';
+            title = 'DATA SUDAH ADA';
+        } else {
+            colorClass = type === 'NIM' ? 'border-green-500 text-green-400 bg-green-500/90' : 'border-blue-500 text-blue-400 bg-blue-500/90';
+            icon = type === 'NIM' ? 'fa-id-card' : 'fa-fingerprint';
+            title = 'NEW SCAN';
+        }
+        
+        // Privacy: Mask UUID (Keep NIM visible)
+        const displayValue = type === 'NIM' ? value : 'SELAMAT MENIKMATI ACARA';
+        
+        // Position: Fixed at TOP CENTER (diatas card)
+        toast.className = `fixed top-8 left-1/2 transform -translate-x-1/2 -translate-y-full z-50 flex items-center gap-4 px-6 py-4 rounded-xl border ${colorClass} backdrop-blur-md shadow-2xl opacity-0 transition-all duration-500`;
+        toast.innerHTML = `
+          <div class="text-3xl"><i class="fas ${icon}"></i></div>
+          <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-white/80">${title}</div>
+              <div class="text-xl font-mono font-bold text-white tracking-widest">${displayValue}</div>
+          </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Animate In (Slide Down)
+        requestAnimationFrame(() => {
+            toast.classList.remove('-translate-y-full', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+        });
+        
+        // Animate Out & Remove
+        setTimeout(() => {
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('-translate-y-full', 'opacity-0');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+    
     function connectSSE() {
       if (eventSource) {
         eventSource.close();
       }
 
-      eventSource = new EventSource('/stream/recap-count');
+      if (!currentRoomCode) return; // Wait for room code
+      eventSource = new EventSource(`/stream/recap-count?room=${currentRoomCode}`);
 
       eventSource.onopen = () => {
         console.log('SSE Connected');
@@ -217,10 +592,16 @@
             document.getElementById('nim-count').textContent = data.nim;
             
             // Show Popup if new scan detected & NOT in OBS mode
+            // Show Popup/Card if new scan detected & NOT in OBS mode
             if (data.new_scan) {
                 const body = document.body;
                 if (!body.classList.contains('obs-mode')) {
-                    showToast(data.new_scan.type, data.new_scan.value);
+                    const isGuestMode = localStorage.getItem('guestMode') === 'true';
+                    if (isGuestMode) {
+                        updateGuestCard(data.new_scan.type, data.new_scan.value);
+                    } else {
+                        showToast(data.new_scan.type, data.new_scan.value);
+                    }
                 }
             }
             
@@ -228,7 +609,12 @@
             if (data.duplicate) {
                 const body = document.body;
                 if (!body.classList.contains('obs-mode')) {
-                    showToast(data.duplicate.type, data.duplicate.value, true);
+                    const isGuestMode = localStorage.getItem('guestMode') === 'true';
+                    if (isGuestMode) {
+                        updateGuestCard(data.duplicate.type, data.duplicate.value, true);
+                    } else {
+                        showToast(data.duplicate.type, data.duplicate.value, true);
+                    }
                 }
             }
         } catch (e) {
@@ -236,50 +622,7 @@
         }
       };
       
-      // Toast Notification Logic
-      function showToast(type, value, isDuplicate = false) {
-          const toast = document.createElement('div');
-          
-          let colorClass, icon, title;
-          
-          if (isDuplicate) {
-              colorClass = 'border-yellow-500 text-yellow-400 bg-yellow-500/90';
-              icon = 'fa-exclamation-triangle';
-              title = 'DATA SUDAH ADA';
-          } else {
-              colorClass = type === 'NIM' ? 'border-green-500 text-green-400 bg-green-500/90' : 'border-blue-500 text-blue-400 bg-blue-500/90';
-              icon = type === 'NIM' ? 'fa-id-card' : 'fa-fingerprint';
-              title = 'NEW SCAN';
-          }
-          
-          // Privacy: Mask UUID (Keep NIM visible)
-          const displayValue = type === 'NIM' ? value : 'SELAMAT MENIKMATI ACARA';
-          
-          // Position: Fixed at TOP CENTER (diatas card)
-          toast.className = `fixed top-8 left-1/2 transform -translate-x-1/2 -translate-y-full z-50 flex items-center gap-4 px-6 py-4 rounded-xl border ${colorClass} backdrop-blur-md shadow-2xl opacity-0 transition-all duration-500`;
-          toast.innerHTML = `
-            <div class="text-3xl"><i class="fas ${icon}"></i></div>
-            <div>
-                <div class="text-xs font-bold uppercase tracking-wider text-white/80">${title}</div>
-                <div class="text-xl font-mono font-bold text-white tracking-widest">${displayValue}</div>
-            </div>
-          `;
-          
-          document.body.appendChild(toast);
-          
-          // Animate In (Slide Down)
-          requestAnimationFrame(() => {
-              toast.classList.remove('-translate-y-full', 'opacity-0');
-              toast.classList.add('translate-y-0', 'opacity-100');
-          });
-          
-          // Animate Out & Remove
-          setTimeout(() => {
-              toast.classList.remove('translate-y-0', 'opacity-100');
-              toast.classList.add('-translate-y-full', 'opacity-0');
-              setTimeout(() => toast.remove(), 500);
-          }, 3000);
-      }
+
 
       eventSource.onerror = () => {
         console.error('SSE Connection error');
@@ -309,6 +652,109 @@
         console.log('OBS Mode: OFF');
       }
     }
+    
+    function toggleGuestMode() {
+      const current = localStorage.getItem('guestMode') === 'true';
+      const newState = !current;
+      localStorage.setItem('guestMode', newState ? 'true' : 'false');
+      
+      updateGuestButton(newState);
+      toggleDashboardVisibility(!newState); // Hide dashboard if Guest Mode is ON
+      toggleControlsVisibility(!newState);  // Hide controls if Guest Mode is ON
+      
+      console.log('Guest Mode:', newState ? 'ON' : 'OFF');
+      
+      // Test trigger if turning on
+      if (newState) {
+          showGuestCard('TEST', 'GUEST MODE ACTIVE');
+      }
+    }
+    
+    function toggleDashboardVisibility(visible) {
+        const dashboard = document.getElementById('dashboard-content');
+        const guestCard = document.getElementById('guest-welcome-card');
+        
+        if (visible) {
+            dashboard.classList.remove('hidden');
+            guestCard.classList.add('hidden');
+        } else {
+            dashboard.classList.add('hidden');
+            guestCard.classList.remove('hidden');
+            resetGuestCard(); // Ensure card is in idle state
+        }
+    }
+
+    function toggleControlsVisibility(visible) {
+        const controls = document.getElementById('controls-container');
+        if (visible) {
+            controls.style.display = 'flex'; // Restore flex layout
+            controls.classList.remove('hidden'); // Just in case
+        } else {
+            controls.style.display = 'none'; // Force hide
+            controls.classList.add('hidden'); // Just in case
+        }
+        
+        // Update exit button separately
+        updateExitButtonVisibility();
+    }
+    
+    function updateExitButtonVisibility() {
+        const isGuest = localStorage.getItem('guestMode') === 'true';
+        
+        // Robust check for F11 Fullscreen vs API Fullscreen
+        const isFullscreen = document.fullscreenElement != null || 
+                             (window.innerWidth === screen.width && window.innerHeight === screen.height);
+                             
+        const exitBtn = document.getElementById('exit-guest-btn');
+        const roomToast = document.getElementById('room-toast');
+        
+        // Show exit button ONLY if Guest Mode is ON AND NOT in Fullscreen
+        if (isGuest && !isFullscreen) {
+            exitBtn.classList.remove('hidden');
+            console.log('Guest Mode ON, Exit button visible');
+        } else {
+            exitBtn.classList.add('hidden');
+            console.log('Guest Mode OFF or Fullscreen, Exit button hidden');
+        }
+        
+        // Hide room toast in fullscreen
+        if (roomToast) {
+            if (isFullscreen) {
+                roomToast.classList.add('hidden');
+            } else {
+                roomToast.classList.remove('hidden');
+            }
+        }
+    }
+    
+    // Listen for both API Fullscreen changes and F11 Resize events
+    document.addEventListener('fullscreenchange', updateExitButtonVisibility);
+    window.addEventListener('resize', updateExitButtonVisibility);
+    
+    function updateGuestButton(isActive) {
+        const btnText = document.getElementById('guest-toggle-text');
+        const btn = document.getElementById('guest-toggle-btn');
+        // Button style update is redundant if hidden, but kept for logic consistency
+        if (isActive) {
+            btnText.textContent = 'Exit Guest';
+            btn.classList.remove('from-teal-500', 'to-emerald-500');
+            btn.classList.add('from-red-500', 'to-pink-500');
+        } else {
+            btnText.textContent = 'Guest Mode';
+            btn.classList.remove('from-red-500', 'to-pink-500');
+            btn.classList.add('from-teal-500', 'to-emerald-500');
+        }
+    }
+    
+    // Init buttons on load
+    window.addEventListener('DOMContentLoaded', () => {
+        const isGuest = localStorage.getItem('guestMode') === 'true';
+        updateGuestButton(isGuest);
+        toggleDashboardVisibility(!isGuest);
+        toggleControlsVisibility(!isGuest);
+        // Ensure exit button is correct on load
+        updateExitButtonVisibility();
+    });
 
     // Load OBS mode from localStorage
     function loadOBSMode() {
@@ -326,7 +772,8 @@
     });
 
     // Initialize
-    connectSSE();
+    // connectSSE(); // Moved to checkRoomStatus
+    checkRoomStatus();
     updateTimestamp();
     loadOBSMode();
 

@@ -12,6 +12,12 @@ window.addEventListener("DOMContentLoaded", function () {
     let isCheckboxMode = false;
     let selectedItems = new Set();
     
+    // Room State
+    let currentRoomCode = sessionStorage.getItem('sskm_room_code');
+    
+    // Init Room Check
+    checkRoomStatus();
+    
     // RFID Serial Port state
     let port = null;
     let reader = null;
@@ -84,7 +90,7 @@ input.addEventListener("keydown", function (e) {
             fetch('/api/sskm/duplicate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: mode, value: value })
+                body: JSON.stringify({ type: mode, value: value, room_code: currentRoomCode })
             }).catch(err => console.error('Error sending duplicate warning:', err));
             
         } else {
@@ -125,17 +131,55 @@ input.addEventListener("keydown", function (e) {
     document.getElementById("downloadModal").classList.add("hidden");
   });
 
+  // Helper to get column options
+  function getColumnOptions() {
+    const includeNo = document.getElementById('includeNo')?.checked ?? true;
+    const includeTimestamp = document.getElementById('includeTimestamp')?.checked ?? true;
+    return { includeNo, includeTimestamp };
+  }
+
+  // Helper to format timestamp consistently
+  function formatTime(item) {
+    const rawTime = item.time || item.timestamp;
+    if (!rawTime) return "-";
+    const d = new Date(rawTime);
+    if (isNaN(d)) return rawTime;
+    const pad = n => n.toString().padStart(2, '0');
+    return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  // Build header row based on options
+  function buildHeader(dataType, options) {
+    const header = [];
+    if (options.includeNo) header.push("No");
+    header.push(dataType); // "UUID" or "NIM"
+    if (options.includeTimestamp) header.push("Waktu");
+    return header;
+  }
+
+  // Build data row based on options
+  function buildRow(index, value, item, options) {
+    const row = [];
+    if (options.includeNo) row.push(index + 1);
+    row.push(value);
+    if (options.includeTimestamp) row.push(formatTime(item));
+    return row;
+  }
+
   // Single Excel with 2 sheets
   function downloadSingleExcel() {
-    const uuidData = [["No", "UUID", "Waktu"]];
-    const nimData = [["No", "NIM", "Waktu"]];
+    const options = getColumnOptions();
     
-    dataList.forEach((item, i) => {
+    const uuidData = [buildHeader("UUID", options)];
+    const nimData = [buildHeader("NIM", options)];
+    
+    let uuidIndex = 0, nimIndex = 0;
+    dataList.forEach((item) => {
       if (item.uuid) {
-        uuidData.push([i + 1, item.uuid, item.time]);
+        uuidData.push(buildRow(uuidIndex++, item.uuid, item, options));
       } 
       if (item.nim) {
-        nimData.push([i + 1, item.nim, item.time]);
+        nimData.push(buildRow(nimIndex++, item.nim, item, options));
       }
     });
 
@@ -160,14 +204,16 @@ input.addEventListener("keydown", function (e) {
       return;
     }
 
+    const options = getColumnOptions();
     const zip = new JSZip();
     const currentDate = new Date().toISOString().slice(0, 10);
 
     // Create UUID Excel
-    const uuidData = [["No", "UUID", "Waktu"]];
-    dataList.forEach((item, i) => {
+    const uuidData = [buildHeader("UUID", options)];
+    let uuidIndex = 0;
+    dataList.forEach((item) => {
       if (item.uuid) {
-        uuidData.push([i + 1, item.uuid, item.time]);
+        uuidData.push(buildRow(uuidIndex++, item.uuid, item, options));
       }
     });
     const uuidWorksheet = XLSX.utils.aoa_to_sheet(uuidData);
@@ -177,10 +223,11 @@ input.addEventListener("keydown", function (e) {
     zip.file(`UUID_${currentDate}.xlsx`, uuidFile);
 
     // Create NIM Excel
-    const nimData = [["No", "NIM", "Waktu"]];
-    dataList.forEach((item, i) => {
+    const nimData = [buildHeader("NIM", options)];
+    let nimIndex = 0;
+    dataList.forEach((item) => {
       if (item.nim) {
-        nimData.push([i + 1, item.nim, item.time]);
+        nimData.push(buildRow(nimIndex++, item.nim, item, options));
       }
     });
     const nimWorksheet = XLSX.utils.aoa_to_sheet(nimData);
@@ -232,7 +279,19 @@ input.addEventListener("keydown", function (e) {
       
       row.insertCell(1).innerText = item.uuid || "-";
       row.insertCell(2).innerText = item.nim || "-";
-      row.insertCell(3).innerText = item.time;
+      // Normalize timestamp to 24h format
+      let timeDisplay = "-";
+      const rawTime = item.time || item.timestamp;
+      if (rawTime) {
+        const d = new Date(rawTime);
+        if (!isNaN(d)) {
+          const pad = n => n.toString().padStart(2, '0');
+          timeDisplay = `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        } else {
+          timeDisplay = rawTime; // Fallback to raw if parse fails
+        }
+      }
+      row.insertCell(3).innerText = timeDisplay;
   
       const aksiCell = row.insertCell(4);
       const delBtn = document.createElement("button");
@@ -261,20 +320,95 @@ input.addEventListener("keydown", function (e) {
     syncToServer(); // Sync to server for real-time counting
   }
   
-  // Sync data to server for SSE
+  // Sync data to server for SSE (PUSH)
   function syncToServer() {
+    if (!currentRoomCode) return; // Sync only if in a room
+    
     fetch('/api/sskm/sync', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        rfidData: dataList
+        rfidData: dataList,
+        room_code: currentRoomCode
       })
     }).catch(err => {
       console.error('Failed to sync to server:', err);
     });
   }
+
+  // Fetch data FROM server (PULL)
+  async function syncFromServer() {
+      if (!currentRoomCode) return;
+      try {
+          const res = await fetch(`/api/sskm/room/data?room_code=${currentRoomCode}`);
+          const data = await res.json();
+          
+          if (data.success && Array.isArray(data.data)) {
+              if (data.data.length > 0 || dataList.length === 0) {
+                 // Strategy: Server wins if we are just joining
+                 // But if we have local data and server has data, what do we do?
+                 // For now, logic: OVERWRITE local with server to ensure sync
+                 // Assuming server is the single source of truth for the room
+                 console.log(`Synced from server: ${data.data.length} records`);
+                 dataList = data.data;
+                 localStorage.setItem("rfidData", JSON.stringify(dataList));
+                 renderTable();
+              }
+          }
+      } catch (e) {
+          console.error("Failed to sync from server:", e);
+      }
+  }
+  
+  // Connect to SSE for real-time sync from other clients
+  let eventSource = null;
+  
+  function connectSSE() {
+      if (eventSource) {
+          eventSource.close();
+      }
+      
+      if (!currentRoomCode) return;
+      
+      eventSource = new EventSource(`/stream/recap-count?room=${currentRoomCode}`);
+      
+      eventSource.onopen = () => {
+          console.log('SSE Connected for record page');
+      };
+      
+      eventSource.onmessage = (event) => {
+          try {
+              const sseData = JSON.parse(event.data);
+              
+              // If server has more records than local, PULL fresh data
+              // This handles data added from recapOrangSSKM.html
+              if (sseData.total > dataList.length) {
+                  console.log(`Server has ${sseData.total} records, local has ${dataList.length}. Syncing...`);
+                  syncFromServer();
+              }
+          } catch (e) {
+              console.warn('SSE parse error:', e);
+          }
+      };
+      
+      eventSource.onerror = () => {
+          console.error('SSE Connection error, retrying in 5s...');
+          eventSource.close();
+          setTimeout(connectSSE, 5000);
+      };
+  }
+  
+  // Start SSE after room is confirmed
+  if (currentRoomCode) {
+      connectSSE();
+  }
+  
+  // Cleanup SSE on page unload
+  window.addEventListener('beforeunload', () => {
+      if (eventSource) eventSource.close();
+  });
   
   // Load dari localStorage
   function loadDataToTable() {
@@ -828,7 +962,10 @@ function alertBox(message, type = "success", callback = null) {
   window.openRFIDSettings = openRFIDSettings;
   window.closeRFIDSettings = closeRFIDSettings;
   window.scanRFIDDevices = scanRFIDDevices;
-  window.listPairedDevices = listPairedDevices; // <-- Added this
+  window.listPairedDevices = listPairedDevices; 
+  window.syncFromServer = syncFromServer; // <--- Expose this
+  window.alertBox = alertBox; // <--- Expose global alertBox for non-module usage
+  window.connectSSE = connectSSE; // <--- Expose SSE for room connection
 
   // Cleanup on unload to close port properly
   window.addEventListener('beforeunload', async () => {
@@ -838,3 +975,98 @@ function alertBox(message, type = "success", callback = null) {
   });
 
 });
+
+// ================= ROOM MANAGEMENT (Global) =================
+// Must be global because HTML onlick calls them
+window.checkRoomStatus = function() {
+    const modal = document.getElementById('room-modal');
+    const roomCodeDisplay = document.getElementById('active-room-display');
+    const roomCodeValue = document.getElementById('room-code-value');
+    
+    // Re-read from storage
+    const storedCode = sessionStorage.getItem('sskm_room_code');
+    
+    if (!storedCode) {
+        const modal = document.getElementById('room-modal');
+        if(modal) modal.classList.remove('hidden');
+    } else {
+        const modal = document.getElementById('room-modal');
+        if(modal) modal.classList.add('hidden');
+        showRoomFloatingBadge(storedCode);
+        
+        // PULL data from server to ensure we are up to date
+        if(window.syncFromServer) window.syncFromServer();
+        
+        // Start SSE connection for real-time updates
+        if(window.connectSSE) window.connectSSE();
+    }
+}
+
+window.createRoom = async function() {
+    try {
+        const res = await fetch('/api/sskm/room/create', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            sessionStorage.setItem('sskm_room_code', data.room_code);
+            // Clear local data for new room
+            localStorage.setItem("rfidData", "[]");
+            location.reload();
+        } else {
+             alertBox(data.error, "error");
+        }
+    } catch (e) {
+        alertBox('Connection failed', "error");
+    }
+}
+
+window.joinRoom = async function() {
+    const input = document.getElementById('join-room-input');
+    const code = input.value.trim().toUpperCase();
+    if (!code) return;
+
+    try {
+        const res = await fetch('/api/sskm/room/join', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ room_code: code })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            sessionStorage.setItem('sskm_room_code', data.room_code);
+            // We generally reload to cleanly init state, syncFromServer will run on load
+            location.reload();
+        } else {
+            alertBox(data.message || 'Room not found', "error");
+        }
+    } catch (e) {
+        alertBox('Connection failed', "error");
+    }
+}
+
+window.leaveRoom = function() {
+    sessionStorage.removeItem('sskm_room_code');
+    location.reload();
+}
+
+window.copyRoomCode = function() {
+    const code = sessionStorage.getItem('sskm_room_code');
+    if(code) {
+        navigator.clipboard.writeText(code);
+        alertBox('Room Code Copied!', 'info');
+    }
+}
+
+function showRoomFloatingBadge(code) {
+    if(document.getElementById('room-floating-badge')) return;
+    const badge = document.createElement('div');
+    badge.id = 'room-floating-badge';
+    badge.className = 'fixed top-4 left-4 z-40 bg-gray-900/80 border border-gray-700 text-white px-4 py-2 rounded-lg backdrop-blur-sm shadow-lg flex items-center gap-3 group hover:bg-gray-800 transition';
+    badge.innerHTML = `
+        <span class="text-xs text-gray-400">ROOM</span>
+        <span class="font-mono font-bold text-cyan-400 tracking-wider select-all">${code}</span>
+        <button onclick="copyRoomCode()" class="text-gray-500 hover:text-white ml-2 opacity-0 group-hover:opacity-100 transition"><i class="fas fa-copy"></i></button>
+        <button onclick="leaveRoom()" class="text-gray-500 hover:text-red-400 ml-1 opacity-0 group-hover:opacity-100 transition" title="Leave Room"><i class="fas fa-sign-out-alt"></i></button>
+    `;
+    document.body.appendChild(badge);
+}
