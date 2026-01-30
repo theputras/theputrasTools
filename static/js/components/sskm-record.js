@@ -816,10 +816,83 @@ input.addEventListener("keydown", function (e) {
     }
   }
   
+  // ===== RFID PLKA CONVERSION FUNCTIONS =====
+  // RFID Reader PLKA menghasilkan nilai Decimal
+  // Untuk sistem Undika, perlu dikonversi ke Hex dengan reverse byte order
+  
+  /**
+   * Check apakah nilai adalah Decimal dari RFID PLKA
+   * PLKA biasanya menghasilkan angka 10 digit (max 4294967295 untuk 4-byte UID)
+   */
+  function isPLKADecimal(value) {
+    // Cek apakah hanya berisi angka (pure decimal)
+    // dan panjangnya antara 8-10 digit (typical RFID decimal)
+    return /^\d{8,10}$/.test(value);
+  }
+  
+  /**
+   * Convert Decimal ke Hexadecimal
+   * Sama seperti rumus Excel =DEC2HEX(A1)
+   */
+  function decimalToHex(decimal) {
+    const num = parseInt(decimal, 10);
+    if (isNaN(num)) return null;
+    
+    // Convert ke hex dan pad ke 8 karakter (4 bytes)
+    let hex = num.toString(16).toUpperCase();
+    while (hex.length < 8) {
+      hex = '0' + hex;
+    }
+    return hex;
+  }
+  
+  /**
+   * Reverse byte order (Little Endian ke Big Endian)
+   * Sama seperti rumus Excel: =MID(C2,7,2) & MID(C2,5,2) & MID(C2,3,2) & MID(C2,1,2)
+   * Contoh: "AABBCCDD" -> "DDCCBBAA"
+   */
+  function reverseByteOrder(hexString) {
+    if (!hexString || hexString.length !== 8) return hexString;
+    
+    // Split into 2-character chunks (bytes) and reverse
+    const byte1 = hexString.substring(0, 2);  // Position 1-2
+    const byte2 = hexString.substring(2, 4);  // Position 3-4
+    const byte3 = hexString.substring(4, 6);  // Position 5-6
+    const byte4 = hexString.substring(6, 8);  // Position 7-8
+    
+    // Reverse: byte4 + byte3 + byte2 + byte1
+    return byte4 + byte3 + byte2 + byte1;
+  }
+  
+  /**
+   * Convert RFID PLKA Decimal ke format UUID yang compatible dengan sistem Undika
+   * Proses: Decimal -> Hex -> Reverse Byte Order
+   */
+  function convertPLKAToUUID(decimalValue) {
+    const hex = decimalToHex(decimalValue);
+    if (!hex) return null;
+    
+    const reversed = reverseByteOrder(hex);
+    console.log(`🔄 PLKA Conversion: ${decimalValue} -> ${hex} -> ${reversed}`);
+    return reversed;
+  }
+  
   // Process RFID data
   function processRFIDData(data) {
+    let processedData = data;
+    
+    // AUTO-DETECT: Jika input adalah Decimal dari RFID PLKA, convert ke UUID
+    if (isPLKADecimal(data)) {
+      const converted = convertPLKAToUUID(data);
+      if (converted) {
+        console.log(`📟 RFID PLKA Detected! Converting: ${data} -> ${converted}`);
+        processedData = converted;
+        alertBox(`🔄 PLKA Decimal dikonversi ke UUID: ${converted}`, 'info');
+      }
+    }
+    
     // 1. Set Value & Focus
-    input.value = data;
+    input.value = processedData;
     input.focus();
     
     // 2. Trigger Input Event (untuk update badge detection visual)
