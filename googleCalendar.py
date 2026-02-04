@@ -375,9 +375,12 @@ class GoogleCalendarService:
             logging.info(f"[GoogleCal] Event deleted: {event_id}")
             return True
         except HttpError as e:
-            if e.resp.status == 404:
-                logging.warning(f"[GoogleCal] Event not found: {event_id}")
-                return True  # Already deleted
+            # 404 = Not Found, 410 = Gone (Permanently Deleted)
+            # Keduanya dianggap sukses karena tujuan kita memang menghapusnya.
+            if e.resp.status == 404 or e.resp.status == 410:
+                logging.warning(f"[GoogleCal] Event not found or gone (ignored): {event_id}")
+                return True  # Anggap sukses
+            
             logging.error(f"[GoogleCal] HTTP Error deleting event: {e}")
             return False
         except Exception as e:

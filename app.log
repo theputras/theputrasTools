@@ -50029,3 +50029,668 @@ Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
 2026-02-04 18:07:30,925 - INFO - 127.0.0.1 - - [04/Feb/2026 18:07:30] "GET /api/public/ultah HTTP/1.1" 200 -
 2026-02-04 18:07:31,028 - INFO - === Koneksi ke database berhasil ===
 2026-02-04 18:07:31,178 - INFO - 127.0.0.1 - - [04/Feb/2026 18:07:31] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 18:38:37,956 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:38,324 - INFO - [GUARD] Access Token Expired.
+2026-02-04 18:38:38,333 - INFO - 127.0.0.1 - - [04/Feb/2026 18:38:38] "[32mGET /manajemenUltah HTTP/1.1[0m" 302 -
+2026-02-04 18:38:38,354 - INFO - 127.0.0.1 - - [04/Feb/2026 18:38:38] "GET /login?next=http://localhost:5000/manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:38:38,684 - INFO - 127.0.0.1 - - [04/Feb/2026 18:38:38] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-02-04 18:38:42,851 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:43,443 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2026-02-04 18:38:43,447 - INFO - 127.0.0.1 - - [04/Feb/2026 18:38:43] "POST /api/auth/login HTTP/1.1" 200 -
+2026-02-04 18:38:43,620 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:43,757 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:43,914 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:38:47,411 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 18:38:47,412 - INFO - Session Memori User 1 INVALID (Tes URL Gagal).
+2026-02-04 18:38:47,412 - INFO - Membuat objek session baru...
+2026-02-04 18:38:47,509 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:47,529 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-02-04 18:38:47,629 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:47,672 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-02-04 18:38:47,688 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:38:51,098 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 18:38:51,099 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-02-04 18:38:51,100 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-02-04 18:38:51,101 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-02-04 18:38:51,188 - INFO - 2. [Login] Mengirim kredensial...
+2026-02-04 18:38:53,395 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-02-04 18:38:56,354 - INFO -    --> Login SSO sukses.
+2026-02-04 18:38:56,355 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-02-04 18:38:56,501 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:57,046 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:38:57,071 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:38:57,652 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$UA5rLvgjzegcZF1B753sOOWF1YU6I8MqHZyEkWs8.EF8AFcPH/mzy
+2026-02-04 18:38:57,653 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:39:01,210 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:39:01,338 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:01,388 - INFO - 127.0.0.1 - - [04/Feb/2026 18:39:01] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:39:30,562 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:30,694 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:30,822 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:30,868 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:39:32,038 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 18:39:33,486 - INFO - [GoogleCal] Event deleted: sm4trblq93mnu4fed2icuocom8
+2026-02-04 18:39:33,578 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:33,908 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:34,070 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:34,433 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:34,559 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:34,796 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:34,985 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:35,173 - INFO - 127.0.0.1 - - [04/Feb/2026 18:39:35] "[32mPOST /manajemenUltah/bulk-delete HTTP/1.1[0m" 302 -
+2026-02-04 18:39:35,276 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:35,420 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:35,506 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:39:36,571 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:36,585 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:39:38,864 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$UA5rLvgjzegcZF1B753sOOWF1YU6I8MqHZyEkWs8.EF8AFcPH/mzy
+2026-02-04 18:39:38,864 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:39:39,754 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:39:39,847 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:39,867 - INFO - 127.0.0.1 - - [04/Feb/2026 18:39:39] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:39:58,853 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:58,984 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:59,119 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:59,297 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:59,528 - INFO - 127.0.0.1 - - [04/Feb/2026 18:39:59] "[32mPOST /manajemenUltah/edit/12 HTTP/1.1[0m" 302 -
+2026-02-04 18:39:59,658 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:59,774 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:39:59,863 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:40:04,040 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:40:04,079 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:40:05,558 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$UA5rLvgjzegcZF1B753sOOWF1YU6I8MqHZyEkWs8.EF8AFcPH/mzy
+2026-02-04 18:40:05,559 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:40:06,514 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:40:06,611 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:40:06,664 - INFO - 127.0.0.1 - - [04/Feb/2026 18:40:06] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:40:26,493 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:40:26,508 - INFO - 
+--- Cari Mahasiswa: '24420100050' ---
+2026-02-04 18:40:26,518 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:40:30,499 - INFO - 127.0.0.1 - - [04/Feb/2026 18:40:30] "GET /manajemenUltah/lookup?nim=24420100050 HTTP/1.1" 200 -
+2026-02-04 18:40:35,267 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:40:35,285 - INFO - 
+--- Cari Mahasiswa: '24420100050' ---
+2026-02-04 18:40:35,286 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:40:40,606 - INFO - 127.0.0.1 - - [04/Feb/2026 18:40:40] "GET /manajemenUltah/lookup?nim=24420100050 HTTP/1.1" 200 -
+2026-02-04 18:40:46,396 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:40:46,414 - INFO - 
+--- Cari Mahasiswa: '24420100050' ---
+2026-02-04 18:40:46,415 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:40:48,120 - INFO - 127.0.0.1 - - [04/Feb/2026 18:40:48] "GET /manajemenUltah/lookup?nim=24420100050 HTTP/1.1" 200 -
+2026-02-04 18:40:58,769 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:40:58,800 - INFO - 
+--- Cari Mahasiswa: '24420100050' ---
+2026-02-04 18:40:58,801 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:41:04,263 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:04] "GET /manajemenUltah/lookup?nim=24420100050 HTTP/1.1" 200 -
+2026-02-04 18:41:05,271 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:05,286 - INFO - 
+--- Cari Mahasiswa: '24420100050' ---
+2026-02-04 18:41:05,289 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:41:07,068 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:07] "GET /manajemenUltah/lookup?nim=24420100050 HTTP/1.1" 200 -
+2026-02-04 18:41:14,347 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:14,362 - INFO - 
+--- Cari Mahasiswa: '24420100050' ---
+2026-02-04 18:41:14,362 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:41:17,784 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:17] "GET /manajemenUltah/lookup?nim=24420100050 HTTP/1.1" 200 -
+2026-02-04 18:41:26,023 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:26,053 - INFO - 
+--- Cari Mahasiswa: '24420100008' ---
+2026-02-04 18:41:26,055 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:41:27,646 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:27] "GET /manajemenUltah/lookup?nim=24420100008 HTTP/1.1" 200 -
+2026-02-04 18:41:29,703 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:29,718 - INFO - 
+--- Cari Mahasiswa: '24420100008' ---
+2026-02-04 18:41:29,718 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:41:31,648 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:31] "GET /manajemenUltah/lookup?nim=24420100008 HTTP/1.1" 200 -
+2026-02-04 18:41:38,942 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:39,067 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:39,087 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:41:42,342 - INFO -    --> Fetching foto dari https://sicyca.dinamika.ac.id/static/foto/mahasiswa/24420100008.jpg
+2026-02-04 18:41:42,717 - INFO -    --> Foto mahasiswa/24420100008 berhasil di-fetch (279288 bytes).
+2026-02-04 18:41:42,823 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:43,362 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:43] "[32mPOST /manajemenUltah/add HTTP/1.1[0m" 302 -
+2026-02-04 18:41:43,496 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:43,612 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:43,761 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:41:47,662 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:47,675 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:41:49,821 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$UA5rLvgjzegcZF1B753sOOWF1YU6I8MqHZyEkWs8.EF8AFcPH/mzy
+2026-02-04 18:41:49,822 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:41:52,165 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:41:52,275 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:41:52,304 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:52] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:41:52,892 - INFO - 127.0.0.1 - - [04/Feb/2026 18:41:52] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-02-04 18:43:39,704 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:39,826 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:39,972 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:40,137 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:40,160 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:43:40,168 - ERROR - [BulkSync] Error: 'list' object has no attribute 'get'
+2026-02-04 18:43:40,290 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:40,459 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:40,480 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:43:40,483 - ERROR - [BulkSync] Error: 'list' object has no attribute 'get'
+2026-02-04 18:43:40,594 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:40,763 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:40,785 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:43:40,788 - ERROR - [BulkSync] Error: 'list' object has no attribute 'get'
+2026-02-04 18:43:40,791 - INFO - 127.0.0.1 - - [04/Feb/2026 18:43:40] "[32mPOST /manajemenUltah/bulk-sync HTTP/1.1[0m" 302 -
+2026-02-04 18:43:40,907 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:41,049 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:41,188 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:43:44,087 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:44,113 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:43:45,367 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$UA5rLvgjzegcZF1B753sOOWF1YU6I8MqHZyEkWs8.EF8AFcPH/mzy
+2026-02-04 18:43:45,384 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:43:48,400 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:43:48,555 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:43:48,599 - INFO - 127.0.0.1 - - [04/Feb/2026 18:43:48] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:48:52,325 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-02-04 18:48:53,211 - INFO -  * Restarting with stat
+2026-02-04 18:49:22,554 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-02-04 18:49:22,568 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-04 18:49:22,568 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-02-04 18:49:22,569 - INFO - Scheduler started
+2026-02-04 18:49:22,569 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-02-04 18:49:22,569 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-02-04 18:49:22,570 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-02-04 18:49:22,570 - INFO - Membuat objek session baru...
+2026-02-04 18:49:22,719 - INFO - package: mysql.connector.plugins
+2026-02-04 18:49:22,719 - INFO - plugin_name: caching_sha2_password
+2026-02-04 18:49:22,719 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-02-04 18:49:22,731 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:49:22,747 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-02-04 18:49:22,801 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:49:22,820 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-02-04 18:49:22,820 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:49:27,340 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 18:49:27,340 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-02-04 18:49:27,340 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-02-04 18:49:27,341 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-02-04 18:49:29,702 - INFO - 2. [Login] Mengirim kredensial...
+2026-02-04 18:49:32,494 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-02-04 18:49:40,029 - INFO -    --> Login SSO sukses.
+2026-02-04 18:49:40,030 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-02-04 18:49:40,102 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:49:43,639 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-02-04 18:49:43,640 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-02-04 18:49:43,640 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-02-04 18:49:43,640 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-02-04 18:49:43,640 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-02-04 18:49:43,712 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.247:5000
+2026-02-04 18:49:43,712 - INFO - [33mPress CTRL+C to quit[0m
+2026-02-04 18:49:43,714 - INFO -  * Restarting with stat
+2026-02-04 18:49:45,477 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-02-04 18:49:45,493 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-04 18:49:45,493 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-02-04 18:49:45,494 - INFO - Scheduler started
+2026-02-04 18:49:45,506 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-02-04 18:49:45,507 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-02-04 18:49:45,507 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-02-04 18:49:45,507 - INFO - Membuat objek session baru...
+2026-02-04 18:49:45,592 - INFO - package: mysql.connector.plugins
+2026-02-04 18:49:45,593 - INFO - plugin_name: caching_sha2_password
+2026-02-04 18:49:45,593 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-02-04 18:49:45,606 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:49:45,626 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-02-04 18:49:45,682 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:49:45,700 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-02-04 18:49:45,700 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:49:47,942 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 18:49:47,942 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-02-04 18:49:47,942 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-02-04 18:49:47,942 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-02-04 18:49:48,009 - INFO - 2. [Login] Mengirim kredensial...
+2026-02-04 18:49:51,348 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-02-04 18:49:58,420 - INFO -    --> Login SSO sukses.
+2026-02-04 18:49:58,421 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-02-04 18:49:58,479 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:50:02,369 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-02-04 18:50:02,370 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-02-04 18:50:02,370 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-02-04 18:50:02,370 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-02-04 18:50:02,370 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-02-04 18:50:02,385 - WARNING -  * Debugger is active!
+2026-02-04 18:50:02,388 - INFO -  * Debugger PIN: 144-594-432
+2026-02-04 18:50:02,704 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:50:02,769 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:50:02,921 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:50:03,769 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:50:03,786 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:50:05,866 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$KWix7PwpxmZk8jREvFf54.XfuEoUBa0IkSqz21wWNXrMdofM82G7a
+2026-02-04 18:50:05,866 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:50:09,055 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:50:09,110 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:50:09,158 - INFO - 127.0.0.1 - - [04/Feb/2026 18:50:09] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:51:03,817 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:03,925 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:04,066 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:04,252 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:04,284 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:51:05,287 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 18:51:06,492 - ERROR - [GoogleCal] HTTP Error creating event: <HttpError 400 when requesting https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=all&alt=json returned "Invalid attendee email.". Details: "[{'domain': 'global', 'reason': 'invalid', 'message': 'Invalid attendee email.'}]">
+2026-02-04 18:51:06,603 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:06,752 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:06,780 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:51:07,762 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 18:51:09,035 - ERROR - [GoogleCal] HTTP Error creating event: <HttpError 400 when requesting https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=all&alt=json returned "Invalid attendee email.". Details: "[{'domain': 'global', 'reason': 'invalid', 'message': 'Invalid attendee email.'}]">
+2026-02-04 18:51:09,037 - INFO - 127.0.0.1 - - [04/Feb/2026 18:51:09] "[32mPOST /manajemenUltah/bulk-sync HTTP/1.1[0m" 302 -
+2026-02-04 18:51:09,143 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:09,253 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:09,383 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:51:10,402 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:10,420 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:51:11,936 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$KWix7PwpxmZk8jREvFf54.XfuEoUBa0IkSqz21wWNXrMdofM82G7a
+2026-02-04 18:51:11,937 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:51:14,071 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:51:14,121 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:14,136 - INFO - 127.0.0.1 - - [04/Feb/2026 18:51:14] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:51:54,757 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:54,928 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:55,078 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:55,265 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:55,290 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:51:56,181 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 18:51:57,665 - INFO - [GoogleCal] Event created: qhi7q2c75aeqdf0t13lssfven8 for Adrian Yusuf Akhmad Affandi
+2026-02-04 18:51:57,765 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:58,889 - INFO - 127.0.0.1 - - [04/Feb/2026 18:51:58] "[32mPOST /manajemenUltah/sync-calendar/12 HTTP/1.1[0m" 302 -
+2026-02-04 18:51:59,015 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:59,131 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:51:59,246 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:52:00,245 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:52:00,261 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:52:01,496 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$KWix7PwpxmZk8jREvFf54.XfuEoUBa0IkSqz21wWNXrMdofM82G7a
+2026-02-04 18:52:01,497 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:52:02,392 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:52:02,450 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:52:02,464 - INFO - 127.0.0.1 - - [04/Feb/2026 18:52:02] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:54:30,602 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\app.py', reloading
+2026-02-04 18:54:30,855 - INFO -  * Restarting with stat
+2026-02-04 18:55:00,653 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-02-04 18:55:00,667 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-04 18:55:00,668 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-02-04 18:55:00,669 - INFO - Scheduler started
+2026-02-04 18:55:00,684 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-02-04 18:55:00,685 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-02-04 18:55:00,686 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-02-04 18:55:00,687 - INFO - Membuat objek session baru...
+2026-02-04 18:55:00,796 - INFO - package: mysql.connector.plugins
+2026-02-04 18:55:00,797 - INFO - plugin_name: caching_sha2_password
+2026-02-04 18:55:00,797 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-02-04 18:55:00,810 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:55:00,825 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-02-04 18:55:00,876 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:55:00,896 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-02-04 18:55:00,897 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:55:05,049 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 18:55:05,049 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-02-04 18:55:05,050 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-02-04 18:55:05,050 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-02-04 18:55:05,099 - INFO - 2. [Login] Mengirim kredensial...
+2026-02-04 18:55:07,385 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-02-04 18:55:12,437 - INFO -    --> Login SSO sukses.
+2026-02-04 18:55:12,438 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-02-04 18:55:12,520 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:55:17,413 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-02-04 18:55:17,413 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-02-04 18:55:17,414 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-02-04 18:55:17,414 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-02-04 18:55:17,414 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-02-04 18:55:17,446 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.247:5000
+2026-02-04 18:55:17,447 - INFO - [33mPress CTRL+C to quit[0m
+2026-02-04 18:55:17,453 - INFO -  * Restarting with stat
+2026-02-04 18:55:19,585 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-02-04 18:55:19,603 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-04 18:55:19,603 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-02-04 18:55:19,604 - INFO - Scheduler started
+2026-02-04 18:55:19,620 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-02-04 18:55:19,620 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-02-04 18:55:19,620 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-02-04 18:55:19,621 - INFO - Membuat objek session baru...
+2026-02-04 18:55:19,706 - INFO - package: mysql.connector.plugins
+2026-02-04 18:55:19,706 - INFO - plugin_name: caching_sha2_password
+2026-02-04 18:55:19,707 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-02-04 18:55:19,716 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:55:19,730 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-02-04 18:55:19,789 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:55:19,810 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-02-04 18:55:19,810 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:55:22,068 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 18:55:22,069 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-02-04 18:55:22,069 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-02-04 18:55:22,069 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-02-04 18:55:22,104 - INFO - 2. [Login] Mengirim kredensial...
+2026-02-04 18:55:24,951 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-02-04 18:55:27,839 - INFO -    --> Login SSO sukses.
+2026-02-04 18:55:27,839 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-02-04 18:55:27,958 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:55:32,493 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-02-04 18:55:32,494 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-02-04 18:55:32,494 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-02-04 18:55:32,494 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-02-04 18:55:32,495 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-02-04 18:55:32,528 - WARNING -  * Debugger is active!
+2026-02-04 18:55:32,537 - INFO -  * Debugger PIN: 144-594-432
+2026-02-04 18:57:01,080 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:01,206 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:01,327 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:01,467 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:01,500 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:57:02,492 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 18:57:03,998 - INFO - [GoogleCal] Event created: mk1p6rdc3mgr8vbvluj0eupddc for Johferian Ziggy Fivaldy Sugio
+2026-02-04 18:57:04,076 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:04,273 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:04,406 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:04,422 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:57:05,373 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 18:57:06,602 - ERROR - [GoogleCal] HTTP Error deleting event: <HttpError 410 when requesting https://www.googleapis.com/calendar/v3/calendars/primary/events/qhi7q2c75aeqdf0t13lssfven8? returned "Resource has been deleted". Details: "[{'domain': 'global', 'reason': 'deleted', 'message': 'Resource has been deleted'}]">
+2026-02-04 18:57:06,734 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:06,749 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 18:57:07,420 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 18:57:08,576 - INFO - [GoogleCal] Event created: 4vi2mh2s4dlhbebg2qro9id85o for Adrian Yusuf Akhmad Affandi
+2026-02-04 18:57:08,629 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:08,754 - INFO - 127.0.0.1 - - [04/Feb/2026 18:57:08] "[32mPOST /manajemenUltah/bulk-sync HTTP/1.1[0m" 302 -
+2026-02-04 18:57:08,856 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:08,922 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:09,034 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 18:57:13,526 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:13,540 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 18:57:14,375 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$2H0bLetJmO5b3j8Ytxc6UenuRn.Bxc4sRz6g403nkqe0/2x3/xTaW
+2026-02-04 18:57:14,375 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 18:57:17,329 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 18:57:17,418 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 18:57:17,462 - INFO - 127.0.0.1 - - [04/Feb/2026 18:57:17] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 18:59:59,665 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\googleCalendar.py', reloading
+2026-02-04 18:59:59,908 - INFO -  * Restarting with stat
+2026-02-04 19:00:08,160 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-02-04 19:00:08,173 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-04 19:00:08,173 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-02-04 19:00:08,174 - INFO - Scheduler started
+2026-02-04 19:00:08,187 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-02-04 19:00:08,188 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-02-04 19:00:08,188 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-02-04 19:00:08,188 - INFO - Membuat objek session baru...
+2026-02-04 19:00:08,319 - INFO - package: mysql.connector.plugins
+2026-02-04 19:00:08,320 - INFO - plugin_name: caching_sha2_password
+2026-02-04 19:00:08,320 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-02-04 19:00:08,335 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:08,353 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-02-04 19:00:08,419 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:08,433 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-02-04 19:00:08,433 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:00:10,863 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 19:00:10,864 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-02-04 19:00:10,865 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-02-04 19:00:10,865 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-02-04 19:00:10,920 - INFO - 2. [Login] Mengirim kredensial...
+2026-02-04 19:00:14,432 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-02-04 19:00:22,078 - INFO -    --> Login SSO sukses.
+2026-02-04 19:00:22,080 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-02-04 19:00:22,142 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:25,986 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-02-04 19:00:25,987 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-02-04 19:00:25,987 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-02-04 19:00:25,988 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-02-04 19:00:25,988 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-02-04 19:00:26,006 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.2.247:5000
+2026-02-04 19:00:26,007 - INFO - [33mPress CTRL+C to quit[0m
+2026-02-04 19:00:26,010 - INFO -  * Restarting with stat
+2026-02-04 19:00:27,642 - INFO - Scheduler timezone diatur ke: Asia/Jakarta
+2026-02-04 19:00:27,654 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-04 19:00:27,655 - INFO - Added job "run_scraper_and_save" to job store "default"
+2026-02-04 19:00:27,655 - INFO - Scheduler started
+2026-02-04 19:00:27,668 - INFO - === MENJALANKAN SCRAPING JADWAL ===
+2026-02-04 19:00:27,669 - INFO - 
+--- Memulai Scraping Jadwal ---
+2026-02-04 19:00:27,669 - INFO - [Scraper] Menggunakan User ID default (1) untuk proses ini.
+2026-02-04 19:00:27,669 - INFO - Membuat objek session baru...
+2026-02-04 19:00:27,753 - INFO - package: mysql.connector.plugins
+2026-02-04 19:00:27,754 - INFO - plugin_name: caching_sha2_password
+2026-02-04 19:00:27,754 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2026-02-04 19:00:27,770 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:27,788 - INFO - Memuat cookies dari DB untuk User ID: 1...
+2026-02-04 19:00:27,846 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:27,861 - INFO - Cookies User 1 dimuat dari DB. Melakukan validasi URL...
+2026-02-04 19:00:27,861 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:00:30,551 - WARNING -    --> Session Invalid (Redirect login).
+2026-02-04 19:00:30,552 - INFO - Session User 1 dari DATABASE sudah kedaluwarsa.
+2026-02-04 19:00:30,552 - INFO - Melakukan LOGIN ULANG ke Gate untuk User 1...
+2026-02-04 19:00:30,553 - INFO - 1. [Login] Mengakses Gate untuk user: 23410100003...
+2026-02-04 19:00:31,160 - INFO - 2. [Login] Mengirim kredensial...
+2026-02-04 19:00:37,730 - INFO - 3. [Login] Menangani alur redirect SSO...
+2026-02-04 19:00:41,087 - INFO -    --> Login SSO sukses.
+2026-02-04 19:00:41,087 - INFO - Menyimpan cookies untuk Gate User ID: 2...
+2026-02-04 19:00:41,141 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:42,094 - INFO -    --> Scraping jadwal berhasil, 0 data ditemukan.
+2026-02-04 19:00:42,095 - INFO - --> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).
+2026-02-04 19:00:42,096 - INFO - === SCRAPING JADWAL SELESAI ===
+2026-02-04 19:00:42,096 - INFO - 
+Scheduler jadwal telah dimulai. Akan berjalan setiap hari jam 05:00 pagi.
+2026-02-04 19:00:42,097 - INFO - Aplikasi web Flask siap di http://0.0.0.0:5000
+
+2026-02-04 19:00:42,113 - WARNING -  * Debugger is active!
+2026-02-04 19:00:42,115 - INFO -  * Debugger PIN: 144-594-432
+2026-02-04 19:00:45,065 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:45,147 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:45,279 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:00:46,305 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:46,316 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:00:47,439 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:00:47,440 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:00:48,360 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:00:48,416 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:00:48,447 - INFO - 127.0.0.1 - - [04/Feb/2026 19:00:48] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:01:59,190 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:01:59,261 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:01:59,370 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:02:00,413 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:02:00,430 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:02:01,265 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:02:01,266 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:02:03,620 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:02:03,726 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:02:03,776 - INFO - 127.0.0.1 - - [04/Feb/2026 19:02:03] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:03:22,424 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:22,507 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:22,590 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:22,713 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:22,728 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 19:03:23,440 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 19:03:24,442 - INFO - [GoogleCal] Event deleted: mk1p6rdc3mgr8vbvluj0eupddc
+2026-02-04 19:03:24,503 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:24,526 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 19:03:25,058 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 19:03:26,030 - INFO - [GoogleCal] Event created: a8mrrmh2mer8hvfgmp46sbcma4 for Johferian Ziggy Fivaldy Sugio
+2026-02-04 19:03:26,082 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:26,286 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:26,408 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:26,422 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 19:03:26,953 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 19:03:27,871 - INFO - [GoogleCal] Event deleted: 4vi2mh2s4dlhbebg2qro9id85o
+2026-02-04 19:03:27,931 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:27,953 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-02-04 19:03:28,483 - INFO - Refreshing credentials due to a 401 response. Attempt 1/2.
+2026-02-04 19:03:29,466 - INFO - [GoogleCal] Event created: 5beovhtj5l8l5b5b9m207vqhv8 for Adrian Yusuf Akhmad Affandi
+2026-02-04 19:03:29,520 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:29,697 - INFO - 127.0.0.1 - - [04/Feb/2026 19:03:29] "[32mPOST /manajemenUltah/bulk-sync HTTP/1.1[0m" 302 -
+2026-02-04 19:03:29,766 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:29,832 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:29,950 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:03:32,375 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:32,394 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:03:33,368 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:03:33,368 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:03:34,762 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:03:34,821 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:03:34,841 - INFO - 127.0.0.1 - - [04/Feb/2026 19:03:34] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:29:36,025 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:29:36,037 - INFO - [GUARD] Access Token Expired.
+2026-02-04 19:29:36,038 - INFO - 127.0.0.1 - - [04/Feb/2026 19:29:36] "[32mPOST /manajemenUltah/add HTTP/1.1[0m" 302 -
+2026-02-04 19:29:36,094 - INFO - 127.0.0.1 - - [04/Feb/2026 19:29:36] "GET /login?next=http://localhost:5000/manajemenUltah/add HTTP/1.1" 200 -
+2026-02-04 19:29:53,801 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:29:54,126 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2026-02-04 19:29:54,128 - INFO - 127.0.0.1 - - [04/Feb/2026 19:29:54] "POST /api/auth/login HTTP/1.1" 200 -
+2026-02-04 19:29:54,471 - INFO - 127.0.0.1 - - [04/Feb/2026 19:29:54] "[31m[1mGET /manajemenUltah/add HTTP/1.1[0m" 405 -
+2026-02-04 19:29:58,118 - INFO - 127.0.0.1 - - [04/Feb/2026 19:29:58] "[31m[1mGET /manajemenUltah/add HTTP/1.1[0m" 405 -
+2026-02-04 19:30:01,249 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:01,341 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:01] "GET / HTTP/1.1" 200 -
+2026-02-04 19:30:01,520 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:01] "[36mGET /static/js/components/ui.js HTTP/1.1[0m" 304 -
+2026-02-04 19:30:01,927 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:01] "GET /api/jadwal-status HTTP/1.1" 200 -
+2026-02-04 19:30:01,942 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:30:01,960 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:01] "GET /api/jadwal-list HTTP/1.1" 200 -
+2026-02-04 19:30:03,211 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:03] "GET /api/status_koneksi HTTP/1.1" 200 -
+2026-02-04 19:30:03,211 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:30:04,216 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:04,233 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:30:05,448 - INFO - User udah login, redirecting to index...
+2026-02-04 19:30:05,449 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:05] "[32mGET /login?next=http://localhost:5000/manajemenUltah/add HTTP/1.1[0m" 302 -
+2026-02-04 19:30:05,864 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:30:05,865 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:30:06,375 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:06,450 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:06,592 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:30:08,626 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:30:08,627 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:08] "GET /api/fetch-data-ultah HTTP/1.1" 200 -
+2026-02-04 19:30:08,652 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:08,671 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:30:09,254 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:30:09,254 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:30:23,201 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:30:23,271 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:23,290 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:23] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:30:37,273 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:37,361 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:37,430 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:37,635 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:37] "[32mPOST /manajemenUltah/add HTTP/1.1[0m" 302 -
+2026-02-04 19:30:37,714 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:37,775 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:37,888 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:30:38,903 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:38,916 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:30:42,140 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:30:42,141 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:30:42,969 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:30:43,043 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:30:43,059 - INFO - 127.0.0.1 - - [04/Feb/2026 19:30:43] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:31:00,600 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:31:00,680 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:31:00,765 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:31:00,988 - INFO - 127.0.0.1 - - [04/Feb/2026 19:31:00] "[32mPOST /manajemenUltah/add HTTP/1.1[0m" 302 -
+2026-02-04 19:31:01,072 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:31:01,150 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:31:01,293 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:31:02,299 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:31:02,317 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:31:03,780 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:31:03,781 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:31:05,967 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:31:06,034 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:31:06,051 - INFO - 127.0.0.1 - - [04/Feb/2026 19:31:06] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:33:03,730 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:33:03,799 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:33:03,923 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:33:07,262 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:33:07,280 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:33:09,128 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:33:09,129 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:33:10,987 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:33:11,047 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:33:11,063 - INFO - 127.0.0.1 - - [04/Feb/2026 19:33:11] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:42:20,649 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:42:20,785 - INFO - 127.0.0.1 - - [04/Feb/2026 19:42:20] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 19:42:44,926 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:42:45,058 - INFO - 127.0.0.1 - - [04/Feb/2026 19:42:45] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 19:42:45,490 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:42:45,628 - INFO - 127.0.0.1 - - [04/Feb/2026 19:42:45] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 19:43:15,000 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:43:15,137 - INFO - 127.0.0.1 - - [04/Feb/2026 19:43:15] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 19:43:15,233 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:43:15,386 - INFO - 127.0.0.1 - - [04/Feb/2026 19:43:15] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 19:43:39,871 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:43:40,033 - INFO - 127.0.0.1 - - [04/Feb/2026 19:43:40] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 19:43:40,139 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:43:40,277 - INFO - 127.0.0.1 - - [04/Feb/2026 19:43:40] "GET /api/public/ultah HTTP/1.1" 200 -
+2026-02-04 19:48:02,523 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:02,652 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:02,781 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:02,893 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:03,056 - INFO - 127.0.0.1 - - [04/Feb/2026 19:48:03] "[32mPOST /manajemenUltah/edit/16 HTTP/1.1[0m" 302 -
+2026-02-04 19:48:03,155 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:03,256 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:03,386 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 19:48:05,354 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:05,370 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 19:48:07,341 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 19:48:07,341 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 19:48:08,336 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 19:48:08,504 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 19:48:08,528 - INFO - 127.0.0.1 - - [04/Feb/2026 19:48:08] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 19:48:08,947 - INFO - 127.0.0.1 - - [04/Feb/2026 19:48:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-02-04 20:10:34,791 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:10:34,804 - INFO - [GUARD] Access Token Expired.
+2026-02-04 20:10:34,806 - INFO - 127.0.0.1 - - [04/Feb/2026 20:10:34] "[32mPOST /manajemenUltah/edit/16 HTTP/1.1[0m" 302 -
+2026-02-04 20:10:34,824 - INFO - 127.0.0.1 - - [04/Feb/2026 20:10:34] "GET /login?next=http://localhost:5000/manajemenUltah/edit/16 HTTP/1.1" 200 -
+2026-02-04 20:10:38,576 - INFO - 127.0.0.1 - - [04/Feb/2026 20:10:38] "[32mGET /manajemenUltah HTTP/1.1[0m" 302 -
+2026-02-04 20:10:38,884 - INFO - 127.0.0.1 - - [04/Feb/2026 20:10:38] "GET /login?next=http://localhost:5000/manajemenUltah HTTP/1.1" 200 -
+2026-02-04 20:51:04,849 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:51:05,304 - INFO - [LOGIN DEBUG] Session keys=['access_token', 'user_id']
+2026-02-04 20:51:05,310 - INFO - 127.0.0.1 - - [04/Feb/2026 20:51:05] "POST /api/auth/login HTTP/1.1" 200 -
+2026-02-04 20:51:05,475 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:51:05,563 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:51:05,723 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 20:51:16,203 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='sicyca.dinamika.ac.id', port=443): Read timed out. (read timeout=10)")': /dashboard
+2026-02-04 20:51:40,503 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='sicyca.dinamika.ac.id', port=443): Read timed out. (read timeout=10)")': /dashboard
+2026-02-04 20:51:47,413 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:51:47,438 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 20:51:54,397 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 20:51:54,398 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 20:51:56,195 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 20:51:56,355 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:51:56,392 - INFO - 127.0.0.1 - - [04/Feb/2026 20:51:56] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 20:51:56,874 - INFO - 127.0.0.1 - - [04/Feb/2026 20:51:56] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-02-04 20:58:04,834 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:05,194 - INFO - 
+--- Cari Mahasiswa: '24420100044' ---
+2026-02-04 20:58:05,195 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 20:58:14,352 - INFO - 127.0.0.1 - - [04/Feb/2026 20:58:14] "GET /manajemenUltah/lookup?nim=24420100044 HTTP/1.1" 200 -
+2026-02-04 20:58:18,169 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:20,256 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:21,771 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:22,445 - INFO - 127.0.0.1 - - [04/Feb/2026 20:58:22] "[32mPOST /manajemenUltah/add HTTP/1.1[0m" 302 -
+2026-02-04 20:58:23,372 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:23,510 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:24,459 - INFO -    --> Memeriksa validitas sesi ke: https://sicyca.dinamika.ac.id/dashboard
+2026-02-04 20:58:28,879 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:29,058 - INFO - Scraping global_token dari https://gate.dinamika.ac.id...
+2026-02-04 20:58:33,508 - INFO - Token ditemukan via regex global_token, dengan NIM: 23410100003, Token: $2y$10$8lLmayCW7dpNu2Rk6qkCuOFZ6wSOeFKYwnpMfZ0KLiQuOFlKHxTHC
+2026-02-04 20:58:33,510 - INFO - [ULTAH] Mengambil data ultah (Attempt 1)...
+2026-02-04 20:58:37,197 - INFO - [ULTAH] Berhasil memproses 2 data.
+2026-02-04 20:58:38,433 - INFO - === Koneksi ke database berhasil ===
+2026-02-04 20:58:38,965 - INFO - 127.0.0.1 - - [04/Feb/2026 20:58:38] "GET /manajemenUltah HTTP/1.1" 200 -
+2026-02-04 20:59:02,703 - INFO -  * Detected change in 'E:\\Github\\theputrasTools\\scrapper_requests.py', reloading
+2026-02-04 20:59:03,232 - INFO -  * Restarting with stat

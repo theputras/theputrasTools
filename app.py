@@ -1152,9 +1152,17 @@ def ultah_bulk_sync():
         return redirect(url_for('manajemen_ultah'))
     
     record_ids = request.form.getlist('record_ids')
-    attendees_str = request.form.get('attendees', '').strip()
-    attendees = [e.strip() for e in attendees_str.split(',') if e.strip()] if attendees_str else []
-    
+    attendees_raw = request.form.get('attendees', '')
+    attendees = []
+    try:
+        # Coba parse sebagai JSON (karena frontend kirim format ["a@b.com"])
+        attendees = json.loads(attendees_raw)
+        if not isinstance(attendees, list):
+            attendees = []
+    except:
+        # Fallback jika bukan JSON (comma separated)
+        attendees = [e.strip() for e in attendees_raw.split(',') if e.strip()]
+    # --------------------------------------------------
     if not record_ids:
         flash('Tidak ada data yang dipilih!', 'warning')
         return redirect(url_for('manajemen_ultah'))
@@ -1169,7 +1177,7 @@ def ultah_bulk_sync():
                     google_cal_service.delete_event(user_id, record['google_calendar_event_id'])
                 
                 # Create event baru
-                event_id = google_cal_service.create_birthday_event(user_id, record, attendees)
+                event_id = google_cal_service.create_birthday_event(user_id, record, overrides={'attendees': attendees})
                 
                 if event_id:
                     conn = get_connection()
