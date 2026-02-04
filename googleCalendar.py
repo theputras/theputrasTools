@@ -13,7 +13,12 @@ from googleapiclient.errors import HttpError
 from connection import get_connection
 
 JKT = ZoneInfo("Asia/Jakarta")
-SCOPES = ['https://www.googleapis.com/auth/calendar']
+SCOPES = [
+    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid'
+]
 CREDENTIALS_FILE = 'credentials.json'
 
 class GoogleCalendarService:
@@ -32,6 +37,7 @@ class GoogleCalendarService:
         
         cursor = conn.cursor(dictionary=True)
         try:
+            # We will store name/picture in token_data for now to avoid altering table schema
             cursor.execute(
                 "SELECT token_data, email FROM google_oauth_tokens WHERE user_id = %s",
                 (user_id,)
@@ -40,10 +46,16 @@ class GoogleCalendarService:
             if result:
                 token_data = result['token_data']
                 if isinstance(token_data, str):
-                    token_data = json.loads(token_data)
+                    token_data_json = json.loads(token_data)
+                else:
+                    token_data_json = token_data
+
                 return {
-                    'token': token_data,
-                    'email': result['email']
+                    'token': token_data_json,
+                    'email': result['email'],
+                    'name': token_data_json.get('user_name'),
+                    'picture': token_data_json.get('user_picture'),
+                    'settings': token_data_json.get('settings', {})
                 }
             return None
         except Exception as e:
@@ -53,34 +65,105 @@ class GoogleCalendarService:
             cursor.close()
             conn.close()
     
-    def save_token(self, user_id, credentials, email=None):
+    def save_settings(self, user_id, settings):
+        """Simpan preferences user (warna, default attendees)"""
+        conn = self._get_connection()
+        if not conn: return False
+        
+        cursor = conn.cursor(dictionary=True)
+        try:
+            # Get existing data first to preserve token
+            cursor.execute("SELECT token_data, email FROM google_oauth_tokens WHERE user_id = %s", (user_id,))
+            result = cursor.fetchone()
+            
+            if not result:
+                return False
+                
+            token_data = result['token_data']
+            if isinstance(token_data, str):
+                token_data = json.loads(token_data)
+            
+            # Update settings
+            token_data['settings'] = settings
+            
+            # Save back
+            cursor.execute(
+                "UPDATE google_oauth_tokens SET token_data = %s WHERE user_id = %s",
+                (json.dumps(token_data), user_id)
+            )
+            conn.commit()
+            return True
+        except Exception as e:
+            logging.error(f"[GoogleCal] Error save_settings: {e}")
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    def save_token(self, user_id, credentials, user_info=None):
         """Simpan atau update token ke database"""
         conn = self._get_connection()
         if not conn: return False
         
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True) # Use dictionary to check existing safely if needed, but here simple cursor is fine?
+        # Revert to standard cursor for basic ops if dict cursor not strictly needed, 
+        # but consistency helps. valid dict cursor methods are execute, fetchone...
+        # Wait, previous save_token used standard cursor?
+        # Let's check previous code. It used `cursor = conn.cursor()`. 
+        # I will keep it consistent or robust.
+        # Actually I'll use logic that preserves existing 'settings' if any.
+        
+        cursor = conn.cursor(dictionary=True)
         try:
+            # Check existing to preserve settings/profile if not provided
+            cursor.execute("SELECT token_data FROM google_oauth_tokens WHERE user_id = %s", (user_id,))
+            existing = cursor.fetchone()
+            existing_settings = {}
+            existing_name = None
+            existing_picture = None
+            
+            if existing:
+                try:
+                    td = existing['token_data']
+                    if isinstance(td, str): td = json.loads(td)
+                    existing_settings = td.get('settings', {})
+                    existing_name = td.get('user_name')
+                    existing_picture = td.get('user_picture')
+                except:
+                    pass
+
             token_data = {
                 'token': credentials.token,
                 'refresh_token': credentials.refresh_token,
                 'token_uri': credentials.token_uri,
                 'client_id': credentials.client_id,
                 'client_secret': credentials.client_secret,
-                'scopes': credentials.scopes
+                'scopes': credentials.scopes,
+                'settings': existing_settings # Preserve settings
             }
             
-            # Upsert: INSERT or UPDATE
+            email = None
+            if user_info:
+                email = user_info.get('email')
+                token_data['user_name'] = user_info.get('name')
+                token_data['user_picture'] = user_info.get('picture')
+            else:
+                # Preserve existing profile if not updating
+                token_data['user_name'] = existing_name
+                token_data['user_picture'] = existing_picture
+            
+            # Upsert
             cursor.execute("""
                 INSERT INTO google_oauth_tokens (user_id, token_data, email)
                 VALUES (%s, %s, %s)
                 ON DUPLICATE KEY UPDATE 
                     token_data = VALUES(token_data),
-                    email = VALUES(email),
+                    email = IF(VALUES(email) IS NOT NULL, VALUES(email), email),
                     updated_at = CURRENT_TIMESTAMP
             """, (user_id, json.dumps(token_data), email))
             
             conn.commit()
-            logging.info(f"[GoogleCal] Token saved for user {user_id}, email: {email}")
+            logging.info(f"[GoogleCal] Token saved for user {user_id}")
             return True
         except Exception as e:
             logging.error(f"[GoogleCal] Error save_token: {e}")
@@ -90,15 +173,13 @@ class GoogleCalendarService:
             conn.close()
     
     def delete_token(self, user_id):
-        """Hapus token dari database (disconnect)"""
+        # ... no change ...
         conn = self._get_connection()
         if not conn: return False
-        
         cursor = conn.cursor()
         try:
             cursor.execute("DELETE FROM google_oauth_tokens WHERE user_id = %s", (user_id,))
             conn.commit()
-            logging.info(f"[GoogleCal] Token deleted for user {user_id}")
             return True
         except Exception as e:
             logging.error(f"[GoogleCal] Error delete_token: {e}")
@@ -106,7 +187,7 @@ class GoogleCalendarService:
         finally:
             cursor.close()
             conn.close()
-    
+
     # ========== OAUTH FLOW ==========
     
     def create_auth_flow(self):
@@ -134,21 +215,23 @@ class GoogleCalendarService:
         flow.fetch_token(authorization_response=authorization_response)
         credentials = flow.credentials
         
-        # Get user email from Google
+        user_data = {'email': 'Unknown', 'name': 'User', 'picture': None}
+        
+        # Get user details from Google
         try:
-            from google.oauth2 import id_token
-            from google.auth.transport import requests as google_requests
-            
-            # Build people service to get email
+            # Build oauth2 service to get profile
             service = build('oauth2', 'v2', credentials=credentials)
             user_info = service.userinfo().get().execute()
-            email = user_info.get('email', 'Unknown')
+            
+            user_data['email'] = user_info.get('email', 'Unknown')
+            user_data['name'] = user_info.get('name', 'User')
+            user_data['picture'] = user_info.get('picture')
+            
         except Exception as e:
-            logging.warning(f"[GoogleCal] Could not get user email: {e}")
-            email = None
+            logging.warning(f"[GoogleCal] Could not get user info: {e}")
         
-        return credentials, email
-    
+        return credentials, user_data
+
     # ========== CALENDAR API ==========
     
     def build_service(self, user_id):
@@ -173,30 +256,39 @@ class GoogleCalendarService:
                 from google.auth.transport.requests import Request
                 credentials.refresh(Request())
                 # Update token in DB
-                self.save_token(user_id, credentials, token_info['email'])
+                self.save_token(user_id, credentials, token_info)
             
             service = build('calendar', 'v3', credentials=credentials)
             return service
         except Exception as e:
             logging.error(f"[GoogleCal] Error building service: {e}")
             return None
-    
-    def create_birthday_event(self, user_id, record, attendees=None):
+
+    def create_birthday_event(self, user_id, record, overrides=None):
         """
         Create birthday event di Google Calendar
-        
-        Args:
-            user_id: ID user (untuk ambil token)
-            record: Dict dengan keys: nama, tanggal, bulan, tahun_lahir
-            attendees: List of email strings untuk share event
-        
-        Returns:
-            event_id jika sukses, None jika gagal
+        :param overrides: dict containing 'colorId', 'attendees', 'reminders' (list of {method, minutes})
         """
         service = self.build_service(user_id)
         if not service:
             return None
+            
+        overrides = overrides or {}
         
+        # 1. Color Logic (Override > Settings > None)
+        # Note: If user selects 'Default' in modal, value is empty string, so we ignore it
+        color_id = overrides.get('colorId')
+        
+        # 2. Attendees Logic (Override > Settings > Empty)
+        # Unified Modal sends *all* attendees including defaults if preset
+        raw_attendees = overrides.get('attendees', [])
+        
+        # Format attendees for API
+        if isinstance(raw_attendees, list):
+             formatted_attendees = [{'email': e} for e in raw_attendees if e]
+        else:
+             formatted_attendees = []
+
         try:
             nama = record.get('nama', 'Birthday')
             tanggal = record.get('tanggal', 1)
@@ -206,23 +298,24 @@ class GoogleCalendarService:
             now = datetime.now(JKT)
             event_year = now.year
             
-            # Jika ultah sudah lewat tahun ini, set untuk tahun depan
             try:
                 event_date = datetime(event_year, bulan, tanggal)
                 if event_date < datetime.now():
                     event_year += 1
                     event_date = datetime(event_year, bulan, tanggal)
             except ValueError:
-                # Invalid date (e.g., 30 Feb)
                 event_date = datetime(event_year, bulan, min(tanggal, 28))
             
-            # Calculate age if year is known
+            # Calculate age
             tahun_lahir = record.get('tahun_lahir')
             if tahun_lahir:
                 usia = event_year - tahun_lahir
-                summary = f"🎂 Ultah {nama} ({usia} tahun)"
+                summary = f"🎂 Selamat Ulang Tahun {nama}"
             else:
-                summary = f"🎂 Ultah {nama}"
+                summary = f"🎂 Selamat Ulang Tahun {nama}"
+            
+            # Calculate end date (next day for all-day event)
+            end_date = event_date + timedelta(days=1)
             
             event = {
                 'summary': summary,
@@ -232,27 +325,33 @@ class GoogleCalendarService:
                     'timeZone': 'Asia/Jakarta',
                 },
                 'end': {
-                    'date': event_date.strftime('%Y-%m-%d'),
+                    'date': end_date.strftime('%Y-%m-%d'),
                     'timeZone': 'Asia/Jakarta',
                 },
-                'recurrence': ['RRULE:FREQ=YEARLY'],  # Recurring setiap tahun
-                'reminders': {
-                    'useDefault': False,
-                    'overrides': [
-                        {'method': 'popup', 'minutes': 1440},  # 1 day before
-                        {'method': 'popup', 'minutes': 60},    # 1 hour before
-                    ],
-                },
+                'recurrence': ['RRULE:FREQ=YEARLY'],
+                'transparency': 'transparent', # Show as free
             }
             
-            # Add attendees jika ada
-            if attendees:
-                event['attendees'] = [{'email': email} for email in attendees if email]
+            # Apply Reminders Override
+            reminders_override = overrides.get('reminders')
+            if reminders_override and isinstance(reminders_override, list) and len(reminders_override) > 0:
+                event['reminders'] = {
+                    'useDefault': False,
+                    'overrides': reminders_override 
+                }
+            else:
+                 event['reminders'] = {'useDefault': True}
+            
+            if color_id:
+                event['colorId'] = color_id
+            
+            if formatted_attendees:
+                event['attendees'] = formatted_attendees
             
             created_event = service.events().insert(
                 calendarId='primary',
                 body=event,
-                sendUpdates='all' if attendees else 'none'
+                sendUpdates='all' if formatted_attendees else 'none'
             ).execute()
             
             logging.info(f"[GoogleCal] Event created: {created_event.get('id')} for {nama}")

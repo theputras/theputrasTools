@@ -39,7 +39,7 @@
     }
   </style>
 </head>
-<body class="p-6" data-google-connected="{{ 'true' if google_email else 'false' }}">
+<body class="p-6" data-google-connected="{{ 'true' if google_user else 'false' }}">
   <div class="max-w-6xl mx-auto">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
@@ -72,12 +72,22 @@
       <div class="flex flex-wrap items-center justify-between gap-4">
         <!-- Left: Google Account Status -->
         <div class="flex items-center gap-4">
-          {% if google_email %}
+          {% if google_user %}
           <div class="flex items-center gap-3 px-4 py-2 bg-green-500/20 rounded-lg border border-green-500/30">
-            <i class="fab fa-google text-green-400"></i>
-            <span class="text-green-300 text-sm">Terhubung: <strong>{{ google_email }}</strong></span>
-            <form action="{{ url_for('ultah_google_disconnect') }}" method="POST" class="ml-2">
-              <button type="submit" class="text-red-400 hover:text-red-300 text-xs" onclick="return confirm('Putuskan koneksi Google?')">
+            {% if google_user.picture %}
+            <img src="{{ google_user.picture }}" class="w-8 h-8 rounded-full border border-green-400/50" alt="Google Avatar">
+            {% else %}
+            <i class="fab fa-google text-green-400 text-xl"></i>
+            {% endif %}
+            <div class="flex flex-col">
+                <span class="text-green-300 text-sm font-semibold">{{ google_user.name }}</span>
+                <span class="text-green-400/60 text-xs">{{ google_user.email }}</span>
+            </div>
+            <button type="button" onclick="openSettingsModal()" class="text-gray-400 hover:text-white transition p-2 ml-2 rounded hover:bg-white/10" title="Pengaturan Sync">
+                <i class="fas fa-cog"></i>
+            </button>
+            <form action="{{ url_for('ultah_google_disconnect') }}" method="POST" class="ml-2 border-l border-green-500/30 pl-3">
+              <button type="submit" class="text-red-400 hover:text-red-300 text-xs p-1 hover:bg-red-500/10 rounded transition" title="Disconnect" onclick="return confirm('Putuskan koneksi Google?')">
                 <i class="fas fa-unlink"></i>
               </button>
             </form>
@@ -127,7 +137,6 @@
               <th class="px-4 py-3 text-left">Tanggal Lahir</th>
               <th class="px-4 py-3 text-left">Usia</th>
               <th class="px-4 py-3 text-left">Prodi</th>
-              <th class="px-4 py-3 text-center">Synced</th>
               <th class="px-4 py-3 text-center">Aksi</th>
             </tr>
           </thead>
@@ -151,13 +160,7 @@
               <td class="px-4 py-3">{{ r.tanggal_display }}</td>
               <td class="px-4 py-3">{{ r.usia ~ ' tahun' if r.usia else '-' }}</td>
               <td class="px-4 py-3">{{ r.prodi or '-' }}</td>
-              <td class="px-4 py-3 text-center">
-                {% if r.google_calendar_event_id %}
-                <span class="text-green-400" title="Sudah di-sync"><i class="fas fa-check-circle"></i></span>
-                {% else %}
-                <span class="text-gray-500" title="Belum di-sync"><i class="fas fa-minus-circle"></i></span>
-                {% endif %}
-              </td>
+
               <td class="px-4 py-3 text-center">
                 <div class="flex items-center justify-center gap-2">
                   <button onclick="openEditModal(this)" 
@@ -171,16 +174,22 @@
                           class="text-blue-400 hover:text-blue-300 transition p-2" title="Edit">
                     <i class="fas fa-edit"></i>
                   </button>
-                  <form action="{{ url_for('ultah_delete', record_id=r.id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus data ini?')">
-                    <button type="submit" class="text-red-400 hover:text-red-300 transition p-2" title="Hapus">
-                      <i class="fas fa-trash"></i>
+                  <button type="button" onclick="openDeleteModal('{{ r.id }}', '{{ r.nama }}', '{{ r.google_calendar_event_id or '' }}')" class="text-red-400 hover:text-red-300 transition p-2" title="Hapus">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                    {% if r.google_calendar_event_id %}
+                    <button type="button" onclick="openSyncModal('{{ r.id }}', [])" class="text-blue-400 hover:text-blue-300 transition p-2 relative group" title="Event ID: {{ r.google_calendar_event_id }}">
+                      <i class="fas fa-sync-alt"></i>
+                      <span class="absolute -top-1 -right-1 flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                      </span>
                     </button>
-                  </form>
-                  <form action="{{ url_for('ultah_sync_calendar', record_id=r.id) }}" method="POST" class="inline">
-                    <button type="submit" class="text-green-400 hover:text-green-300 transition p-2" title="Sync ke Google Calendar">
+                    {% else %}
+                    <button type="button" onclick="openSyncModal('{{ r.id }}', [])" class="text-gray-400 hover:text-green-500 transition p-2" title="Sync ke Google Calendar">
                       <i class="fab fa-google"></i>
                     </button>
-                  </form>
+                    {% endif %}
                 </div>
               </td>
             </tr>
@@ -255,15 +264,15 @@
       
       <form action="{{ url_for('ultah_add') }}" method="POST" class="space-y-4">
         <div>
-          <label class="block text-sm text-gray-300 mb-1">Nama <span class="text-red-400">*</span></label>
-          <input type="text" name="nama" required 
-                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
-        </div>
-        
-        <div>
           <label class="block text-sm text-gray-300 mb-1">NIM <span class="text-red-400">*</span></label>
-          <input type="text" name="nim" required maxlength="20"
-                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 font-mono">
+          <input type="text" name="nim" id="add_nim" required maxlength="20"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 font-mono" placeholder="Ketik NIM lalu Enter/Tab untuk auto-fill">
+        </div>
+
+        <div>
+           <label class="block text-sm text-gray-300 mb-1">Nama <span class="text-red-400">*</span></label>
+           <input type="text" name="nama" id="add_nama" required 
+                  class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
         </div>
         
         <div class="grid grid-cols-2 gap-4">
@@ -272,7 +281,7 @@
             <select name="tanggal" required 
                     class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
               {% for i in range(1, 32) %}
-              <option value="{{ i }}">{{ i }}</option>
+              <option value="{{ i }}" class="bg-gray-800 text-white">{{ i }}</option>
               {% endfor %}
             </select>
           </div>
@@ -280,18 +289,18 @@
             <label class="block text-sm text-gray-300 mb-1">Bulan <span class="text-red-400">*</span></label>
             <select name="bulan" required 
                     class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
-              <option value="1">Januari</option>
-              <option value="2">Februari</option>
-              <option value="3">Maret</option>
-              <option value="4">April</option>
-              <option value="5">Mei</option>
-              <option value="6">Juni</option>
-              <option value="7">Juli</option>
-              <option value="8">Agustus</option>
-              <option value="9">September</option>
-              <option value="10">Oktober</option>
-              <option value="11">November</option>
-              <option value="12">Desember</option>
+              <option value="1" class="bg-gray-800 text-white">Januari</option>
+              <option value="2" class="bg-gray-800 text-white">Februari</option>
+              <option value="3" class="bg-gray-800 text-white">Maret</option>
+              <option value="4" class="bg-gray-800 text-white">April</option>
+              <option value="5" class="bg-gray-800 text-white">Mei</option>
+              <option value="6" class="bg-gray-800 text-white">Juni</option>
+              <option value="7" class="bg-gray-800 text-white">Juli</option>
+              <option value="8" class="bg-gray-800 text-white">Agustus</option>
+              <option value="9" class="bg-gray-800 text-white">September</option>
+              <option value="10" class="bg-gray-800 text-white">Oktober</option>
+              <option value="11" class="bg-gray-800 text-white">November</option>
+              <option value="12" class="bg-gray-800 text-white">Desember</option>
             </select>
           </div>
         </div>
@@ -304,7 +313,7 @@
         
         <div>
           <label class="block text-sm text-gray-300 mb-1">Prodi <span class="text-gray-500">(opsional)</span></label>
-          <input type="text" name="prodi"
+          <input type="text" name="prodi" id="add_prodi"
                  class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
         </div>
         
@@ -354,7 +363,7 @@
             <select name="tanggal" id="edit_tanggal" required 
                     class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
               {% for i in range(1, 32) %}
-              <option value="{{ i }}">{{ i }}</option>
+              <option value="{{ i }}" class="bg-gray-800 text-white">{{ i }}</option>
               {% endfor %}
             </select>
           </div>
@@ -362,18 +371,18 @@
             <label class="block text-sm text-gray-300 mb-1">Bulan <span class="text-red-400">*</span></label>
             <select name="bulan" id="edit_bulan" required 
                     class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
-              <option value="1">Januari</option>
-              <option value="2">Februari</option>
-              <option value="3">Maret</option>
-              <option value="4">April</option>
-              <option value="5">Mei</option>
-              <option value="6">Juni</option>
-              <option value="7">Juli</option>
-              <option value="8">Agustus</option>
-              <option value="9">September</option>
-              <option value="10">Oktober</option>
-              <option value="11">November</option>
-              <option value="12">Desember</option>
+              <option value="1" class="bg-gray-800 text-white">Januari</option>
+              <option value="2" class="bg-gray-800 text-white">Februari</option>
+              <option value="3" class="bg-gray-800 text-white">Maret</option>
+              <option value="4" class="bg-gray-800 text-white">April</option>
+              <option value="5" class="bg-gray-800 text-white">Mei</option>
+              <option value="6" class="bg-gray-800 text-white">Juni</option>
+              <option value="7" class="bg-gray-800 text-white">Juli</option>
+              <option value="8" class="bg-gray-800 text-white">Agustus</option>
+              <option value="9" class="bg-gray-800 text-white">September</option>
+              <option value="10" class="bg-gray-800 text-white">Oktober</option>
+              <option value="11" class="bg-gray-800 text-white">November</option>
+              <option value="12" class="bg-gray-800 text-white">Desember</option>
             </select>
           </div>
         </div>
@@ -402,39 +411,125 @@
     </div>
   </div>
 
-  <!-- Modal Bulk Sync -->
-  <div id="bulkSyncModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center">
-    <div class="glass-card rounded-2xl p-8 max-w-md w-full mx-4">
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-white">
-          <i class="fab fa-google text-green-400 mr-2"></i>Sync ke Google Calendar
+  <!-- Unified Sync Options Modal -->
+  <div id="syncOptionsModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center backdrop-blur-sm overflow-y-auto">
+    <div class="glass-card rounded-2xl p-6 max-w-lg w-full mx-4 my-8">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fab fa-google text-blue-400"></i> <span id="syncModalTitle">Sync ke Google Calendar</span>
         </h3>
-        <button onclick="toggleModal('bulkSyncModal')" class="text-gray-400 hover:text-white">
+        <button onclick="toggleModal('syncOptionsModal')" class="text-gray-400 hover:text-white">
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
       
-      <form id="bulkSyncForm" action="{{ url_for('ultah_bulk_sync') }}" method="POST">
-        <div id="bulkSyncRecordInputs"></div>
-        
-        <div class="mb-6">
-          <label class="block text-sm text-gray-300 mb-2">Tambahkan Orang (Email)</label>
-          <p class="text-xs text-gray-500 mb-2">Pisahkan dengan koma untuk multiple email</p>
-          <input type="text" name="attendees" placeholder="email1@gmail.com, email2@gmail.com"
-                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+      <form id="syncOptionsForm" method="POST" class="space-y-5">
+        <!-- Hidden Inputs for Mode (Single/Bulk) & IDs -->
+        <input type="hidden" name="sync_mode" id="syncMode" value="single"> 
+        <input type="hidden" name="record_id" id="syncRecordId"> 
+        <div id="bulkSyncInputsContainer"></div> 
+
+        <!-- 1. Color Selection -->
+        <div>
+            <label class="block text-gray-400 text-sm mb-1 font-semibold">Warna Event</label>
+            <select name="color_id" id="syncColorId" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500/50">
+                <option value="" class="bg-gray-800 text-white">Default (Google Calendar)</option>
+                <option value="1" class="bg-gray-800 text-white">Lavender (Biru Muda)</option>
+                <option value="2" class="bg-gray-800 text-white">Sage (Hijau Muda)</option>
+                <option value="3" class="bg-gray-800 text-white">Grape (Ungu)</option>
+                <option value="4" class="bg-gray-800 text-white">Flamingo (Merah Muda)</option>
+                <option value="5" class="bg-gray-800 text-white">Banana (Kuning)</option>
+                <option value="6" class="bg-gray-800 text-white">Tangerine (Oranye)</option>
+                <option value="7" class="bg-gray-800 text-white">Peacock (Cyan)</option>
+                <option value="8" class="bg-gray-800 text-white">Graphite (Abu-abu)</option>
+                <option value="9" class="bg-gray-800 text-white">Blueberry (Biru)</option>
+                <option value="10" class="bg-gray-800 text-white">Basil (Hijau)</option>
+                <option value="11" class="bg-gray-800 text-white">Tomato (Merah)</option>
+            </select>
         </div>
-        
-        <p class="text-sm text-gray-400 mb-4">
-          <i class="fas fa-info-circle mr-1"></i>
-          <span id="syncCountText">0 data akan disinkronkan</span>
-        </p>
-        
-        <div class="flex gap-3">
-          <button type="button" onclick="toggleModal('bulkSyncModal')" class="flex-1 bg-gray-600 text-white font-semibold py-2.5 rounded-lg hover:bg-gray-500 transition">
+
+        <!-- 2. Attendees (Shared Logic) -->
+        <div>
+            <label class="block text-gray-400 text-sm mb-1 font-semibold">Tamu Tambahan (Opsional)</label>
+            <div class="bg-white/5 border border-white/10 rounded-lg p-2 focus-within:border-blue-500/50 transition cursor-text min-h-[50px] flex flex-wrap gap-2" onclick="document.getElementById('attendeeInput').focus()">
+                <div id="tagContainer" class="contents"></div>
+                <input type="text" id="attendeeInput" class="bg-transparent border-none outline-none text-white text-sm flex-grow min-w-[120px]" placeholder="Ketik email lalu Spasi..." autocomplete="off">
+            </div>
+            <input type="hidden" name="attendees" id="attendeesHidden">
+        </div>
+
+        <!-- 3. Custom Notifications -->
+        <div>
+            <label class="block text-gray-400 text-sm mb-1 font-semibold">Notifikasi / Reminder</label>
+            
+            <div class="flex gap-4 mb-3">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="reminder_type" value="default" class="text-blue-500 bg-gray-700 border-gray-600 focus:ring-blue-600 focus:ring-2" onchange="toggleReminderSection(false)" checked>
+                    <span class="text-sm text-gray-300">Default Kalender</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="reminder_type" value="custom" class="text-blue-500 bg-gray-700 border-gray-600 focus:ring-blue-600 focus:ring-2" onchange="toggleReminderSection(true)">
+                    <span class="text-sm text-gray-300">Custom</span>
+                </label>
+            </div>
+
+            <div id="customReminderSection" class="hidden bg-white/5 rounded-lg p-4 border border-white/10">
+                <div id="reminderList" class="space-y-2 mb-3">
+                    <!-- Dynamic Reminder Rows will go here -->
+                </div>
+                
+                <button type="button" onclick="addReminderRow()" class="text-blue-400 text-xs hover:text-blue-300 flex items-center gap-1">
+                    <i class="fas fa-plus"></i> Tambah Notifikasi
+                </button>
+            </div>
+            <!-- JSON String for reminders -->
+            <input type="hidden" name="reminders_json" id="remindersJson">
+        </div>
+
+        <!-- Sync Info -->
+         <p class="text-sm text-gray-400 pt-2" id="syncInfoText">
+           <i class="fas fa-info-circle mr-1"></i>
+           <span id="syncCountText">Konfirmai sync data ini?</span>
+         </p>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="toggleModal('syncOptionsModal')" class="flex-1 bg-gray-600 text-white font-semibold py-2.5 rounded-lg hover:bg-gray-500 transition">
             Batal
           </button>
-          <button type="submit" class="flex-1 btn-success text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition">
+          <button type="button" onclick="submitSyncForm()" class="flex-1 btn-success text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition">
             <i class="fab fa-google mr-2"></i> Sync Sekarang
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Delete Confirmation -->
+  <div id="deleteModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center">
+    <div class="glass-card rounded-2xl p-8 max-w-sm w-full mx-4 text-center">
+      <div class="mb-4 text-red-500 text-5xl">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-2">Hapus Data?</h3>
+      <p class="text-gray-400 mb-6">Anda yakin ingin menghapus data <b id="deleteTargetName" class="text-white"></b>?</p>
+      
+      <form id="deleteForm" method="POST">
+        <div id="gcalDeleteContainer" class="mb-6 hidden text-left bg-blue-500/10 p-3 rounded-lg border border-blue-500/20">
+             <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" name="delete_gcal" class="mt-1 rounded text-blue-500 focus:ring-blue-500 bg-white/10 border-white/20" checked>
+                <span class="text-sm text-gray-300">
+                    Hapus juga dari <b>Google Calendar</b>?<br>
+                    <span class="text-xs text-gray-500 leading-tight block mt-1">Akan menghapus event series ini dari kalender.</span>
+                </span>
+             </label>
+        </div>
+
+        <div class="flex gap-3">
+          <button type="button" onclick="toggleModal('deleteModal')" class="flex-1 bg-gray-600 text-white font-semibold py-2.5 rounded-lg hover:bg-gray-500 transition">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 rounded-lg transition">
+            Hapus
           </button>
         </div>
       </form>
@@ -447,12 +542,75 @@
   </form>
 
   <script>
+    // Auto-lookup NIM Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const nimInput = document.getElementById('add_nim');
+        const namaInput = document.getElementById('add_nama');
+        const prodiInput = document.getElementById('add_prodi');
+        
+        if(nimInput) {
+            async function doLookup() {
+                const nim = nimInput.value.trim();
+                if(nim.length < 5) return; 
+                
+                // Visual feedback
+                const originalPlaceholder = namaInput.placeholder;
+                namaInput.placeholder = "Mencari data...";
+                namaInput.classList.add('opacity-50');
+                
+                try {
+                    const res = await fetch(`/manajemenUltah/lookup?nim=${encodeURIComponent(nim)}`);
+                    const data = await res.json();
+                    
+                    if(data.success) {
+                        if(data.nama) namaInput.value = data.nama;
+                        if(data.prodi) prodiInput.value = data.prodi;
+                        
+                        // Flash indication
+                        namaInput.classList.add('border-green-500');
+                        setTimeout(() => namaInput.classList.remove('border-green-500'), 1500);
+                    }
+                } catch(e) {
+                    console.error("Lookup error", e);
+                } finally {
+                    namaInput.placeholder = originalPlaceholder;
+                    namaInput.classList.remove('opacity-50');
+                }
+            }
+
+            nimInput.addEventListener('keydown', function(e) {
+                 if (e.key === 'Enter') {
+                    e.preventDefault(); 
+                    doLookup();
+                }
+            });
+            nimInput.addEventListener('blur', doLookup);
+        }
+    });
+
     function toggleModal(modalId) {
       const modal = document.getElementById(modalId);
       modal.classList.toggle('hidden');
       modal.classList.toggle('flex');
     }
     
+    function openDeleteModal(id, nama, eventId) {
+        document.getElementById('deleteForm').action = `/manajemenUltah/delete/${id}`;
+        document.getElementById('deleteTargetName').textContent = nama;
+        
+        const gcalContainer = document.getElementById('gcalDeleteContainer');
+        const gcalCheckbox = gcalContainer.querySelector('input[name="delete_gcal"]');
+        
+        if (eventId && eventId !== 'None') {
+            gcalContainer.classList.remove('hidden');
+        } else {
+            gcalContainer.classList.add('hidden');
+            gcalCheckbox.checked = false;
+        }
+        
+        toggleModal('deleteModal');
+    }
+
     function openEditModal(btn) {
       const id = btn.dataset.id;
       const nama = btn.dataset.nama;
@@ -529,33 +687,155 @@
       document.getElementById('bulkDeleteForm').submit();
     }
     
-    // Bulk Sync Modal
+    // Unified Sync Modal
+    let tags = [];
+    const tagContainer = document.getElementById('tagContainer');
+    const attendeeInput = document.getElementById('attendeeInput');
+    const attendeesHidden = document.getElementById('attendeesHidden');
+
+    // --- INIT ---
+    // Init Tag Listeners
+    if(attendeeInput) {
+        attendeeInput.addEventListener('keyup', handleTagInput);
+        attendeeInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && attendeeInput.value === '' && tags.length > 0) {
+                tags.pop();
+                renderTags();
+            }
+        });
+    }
+
+    function openSyncModal(id, currentAttendees = [], mode='single') {
+        const modal = document.getElementById('syncOptionsModal');
+        const form = document.getElementById('syncOptionsForm');
+        document.getElementById('syncRecordId').value = id || '';
+        document.getElementById('syncMode').value = mode;
+
+        // Reset Inputs
+        tags = Array.isArray(currentAttendees) ? [...currentAttendees] : [];
+        renderTags();
+        
+        // Reset Notifications
+        document.querySelector('input[name="reminder_type"][value="default"]').checked = true;
+        toggleReminderSection(false);
+        document.getElementById('reminderList').innerHTML = '';
+        addReminderRow(); // Add 1 default empty row
+
+        if(mode === 'bulk') {
+             // Handle Bulk IDs
+             const ids = getSelectedIds();
+             if (ids.length === 0) { alert('Pilih minimal 1 data!'); return; }
+             
+             const container = document.getElementById('bulkSyncInputsContainer');
+             container.innerHTML = '';
+             ids.forEach(rid => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'record_ids';
+                input.value = rid;
+                container.appendChild(input);
+             });
+             
+             document.getElementById('syncModalTitle').textContent = `Sync ${ids.length} Data Terpilih`;
+             document.getElementById('syncCountText').textContent = `Mensingkronkan ${ids.length} data ke Google Calendar.`;
+             form.action = "{{ url_for('ultah_bulk_sync') }}";
+        } else {
+             document.getElementById('bulkSyncInputsContainer').innerHTML = '';
+             document.getElementById('syncModalTitle').textContent = "Sync Data ke Google Calendar";
+             document.getElementById('syncCountText').textContent = "Pastikan data sudah benar sebelum sync.";
+             form.action = `/manajemenUltah/sync-calendar/${id}`; 
+        }
+
+        toggleModal('syncOptionsModal');
+    }
+
+    // --- TAG INPUT LOGIC ---
+    function createTag(label) {
+        const div = document.createElement('div');
+        div.className = 'bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1';
+        div.innerHTML = `<span>${label}</span><i class="fas fa-times cursor-pointer hover:text-red-300" onclick="removeTag('${label}')"></i>`;
+        return div;
+    }
+    function renderTags() {
+        if(!tagContainer) return;
+        tagContainer.innerHTML = '';
+        tags.slice().reverse().forEach(tag => tagContainer.prepend(createTag(tag)));
+        attendeesHidden.value = JSON.stringify(tags);
+    }
+    function handleTagInput(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const val = attendeeInput.value.trim().replace(/,/g, ''); 
+            if (val && !tags.includes(val) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                tags.push(val); renderTags(); attendeeInput.value = '';
+            }
+        }
+    }
+    function removeTag(label) { tags = tags.filter(t => t !== label); renderTags(); }
+
+    // --- CUSTOM REMINDERS LOGIC ---
+    function toggleReminderSection(show) {
+        const sec = document.getElementById('customReminderSection');
+        if(show) sec.classList.remove('hidden'); else sec.classList.add('hidden');
+    }
+
+    function addReminderRow() {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2 reminder-row';
+        div.innerHTML = `
+            <select class="reminder-method bg-gray-700 text-white border-transparent rounded text-sm p-2 w-24">
+                <option value="popup">Popup</option>
+                <option value="email">Email</option>
+            </select>
+            <input type="number" class="reminder-time bg-gray-700 text-white border-transparent rounded text-sm p-2 w-16" value="10" min="1">
+            <select class="reminder-unit bg-gray-700 text-white border-transparent rounded text-sm p-2 w-24">
+                <option value="minutes">Menit</option>
+                <option value="hours">Jam</option>
+                <option value="days">Hari</option>
+            </select>
+            <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
+        `;
+        document.getElementById('reminderList').appendChild(div);
+    }
+
+    function submitSyncForm() {
+        const form = document.getElementById('syncOptionsForm');
+        
+        // Build Reminder JSON
+        const reminderType = form.querySelector('input[name="reminder_type"]:checked').value;
+        if(reminderType === 'custom') {
+            const rows = document.querySelectorAll('.reminder-row');
+            const reminders = [];
+            rows.forEach(row => {
+                const method = row.querySelector('.reminder-method').value;
+                const time = parseInt(row.querySelector('.reminder-time').value) || 10;
+                const unit = row.querySelector('.reminder-unit').value;
+                
+                // Convert to minutes
+                let minutes = time;
+                if(unit === 'hours') minutes = time * 60;
+                if(unit === 'days') minutes = time * 24 * 60;
+                
+                reminders.push({ method, minutes });
+            });
+            document.getElementById('remindersJson').value = JSON.stringify(reminders);
+        } else {
+             document.getElementById('remindersJson').value = ''; // Use calendar default
+        }
+        
+        form.submit();
+    }
+    
+    // Override openBulkSyncModal calls
     function openBulkSyncModal() {
-      const ids = getSelectedIds();
-      if (ids.length === 0) {
-        alert('Pilih minimal 1 data!');
-        return;
-      }
-      
-      // Check Google connection (set from template)
-      const isGoogleConnected = document.body.dataset.googleConnected === 'true';
-      if (!isGoogleConnected) {
-        alert('Silakan hubungkan akun Google terlebih dahulu!');
-        return;
-      }
-      
-      const container = document.getElementById('bulkSyncRecordInputs');
-      container.innerHTML = '';
-      ids.forEach(id => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'record_ids';
-        input.value = id;
-        container.appendChild(input);
-      });
-      
-      document.getElementById('syncCountText').textContent = `${ids.length} data akan disinkronkan`;
-      toggleModal('bulkSyncModal');
+        // Reuse new logic
+         // Check Google connection (set from template)
+         const isGoogleConnected = document.body.dataset.googleConnected === 'true';
+        if (!isGoogleConnected) {
+            alert('Silakan hubungkan akun Google terlebih dahulu!');
+            return;
+        }
+        openSyncModal(null, [], 'bulk');
     }
     
     // Close modal on outside click
@@ -566,6 +846,14 @@
         }
       });
     });
+  </script>
+  <script>
+    function openSettingsModal() {
+        toggleModal('settingsModal');
+    }
+    function closeSettingsModal() {
+        toggleModal('settingsModal');
+    }
   </script>
 </body>
 </html>

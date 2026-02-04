@@ -11,6 +11,7 @@ from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from
 from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
+from manajemenUltah import ultah_model # Import model ultah
 
 
 # variabel global untuk diinject
@@ -798,7 +799,6 @@ def sync_cookies():
             logging.info(f"[Sync Cookies] Mengirim {len(cookies_list)} cookies untuk User ID {user_id}")
         else:
             logging.info(f"[Sync Cookies] Tidak ada session aktif di DB untuk User ID {user_id}")
-
         return jsonify({
             "success": True,
             "cookies": cookies_list
@@ -807,10 +807,38 @@ def sync_cookies():
     except Exception as e:
         logging.error(f"[Sync Cookies] Error: {e}")
         return jsonify({
-            "success": False, 
+            "success": False,
             "message": f"Server Error: {str(e)}",
             "cookies": []
         }), 500
+
+@api_bp.route('/public/ultah', methods=['GET'])
+def public_api_ultah():
+    """
+    Public API untuk mengambil data ulang tahun (Tanpa Login).
+    Return JSON: Nama, Nim, Tanggal Lahir, Usia, Prodi
+    """
+    try:
+        # Ambil semua data via model
+        records = ultah_model.get_all()
+        
+        data = []
+        for r in records:
+            item = {
+                'nama': r.get('nama'),
+                'nim': r.get('nim'),
+                'tanggal_lahir': r.get('tanggal_display'), # Format: "DD Bulan YYYY"
+                'usia': r.get('usia'),
+                'prodi': r.get('prodi'),
+                'foto': r.get('foto_base64')
+            }
+            data.append(item)
+            
+        return jsonify(data)
+        
+    except Exception as e:
+        logging.error(f"[API Public Ultah] Error: {e}")
+        return jsonify({'error': str(e)}), 500
         
 @api_bp.route('/get-my-credentials', methods=['GET'])
 @login_required

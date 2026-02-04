@@ -182,6 +182,26 @@ class UltahRecord:
             cursor.close()
             conn.close()
 
+    def update_google_event_id(self, record_id, event_id):
+        """Update Google Calendar Event ID"""
+        conn = self._get_connection()
+        if not conn: return False
+        
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "UPDATE ultah_records SET google_calendar_event_id = %s WHERE id = %s", 
+                (event_id, record_id)
+            )
+            conn.commit()
+            return True
+        except Exception as e:
+            logging.error(f"[Ultah] Error update_event_id: {e}")
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
 # Instance model
 ultah_model = UltahRecord()
 

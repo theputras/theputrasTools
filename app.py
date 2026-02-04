@@ -12,6 +12,7 @@ import json
 from datetime import datetime
 import time
 import jwt
+from connection import get_connection
 # import base64  # Untuk encode image ke base64
 from logging.handlers import RotatingFileHandler
 from cachetools import TTLCache  # Install: pip install cachetools
@@ -777,13 +778,12 @@ def manajemen_ultah():
     
     # Get Google account status
     google_info = google_cal_service.get_token_by_user(user_id)
-    google_email = google_info['email'] if google_info else None
     
     return render_template('manajemenUltah.html', 
                            records=db_records,
                            sicyca_list=sicyca_filtered,
                            today=sicyca_data.get('tanggal_hari_ini', ''),
-                           google_email=google_email)
+                           google_user=google_info)
 
 @app.route('/manajemenUltah/add', methods=['POST'])
 @login_required
@@ -872,6 +872,13 @@ def ultah_edit(record_id):
 @login_required
 def ultah_delete(record_id):
     """Hapus data ultah"""
+    # Cek opsi delete Google Calendar
+    if request.form.get('delete_gcal') == 'on':
+        record = ultah_model.get_by_id(record_id)
+        if record and record.get('google_calendar_event_id'):
+            user_id = g.user.get('sub')
+            google_cal_service.delete_event(user_id, record['google_calendar_event_id'])
+            
     if ultah_model.delete(record_id):
         flash('Data ultah berhasil dihapus!', 'success')
     else:
@@ -927,6 +934,37 @@ def ultah_save_sicyca():
     
     return redirect(url_for('manajemen_ultah'))
 
+@app.route('/manajemenUltah/lookup', methods=['GET'])
+@login_required
+def ultah_lookup_nim():
+    """Lookup data mahasiswa by NIM"""
+    nim = request.args.get('nim')
+    if not nim:
+        return Response(json.dumps({'success': False, 'message': 'NIM required'}), mimetype='application/json')
+        
+    try:
+        # Search via scraper
+        df = search_mahasiswa(nim)
+        
+        if not df.empty:
+            # Ambil baris pertama
+            item = df.iloc[0]
+            # Convert keys to lowercase for safety
+            data = {k.lower(): v for k, v in item.items()}
+            
+            result = {
+                'success': True,
+                'nama': data.get('nama', ''),
+                'prodi': data.get('prodi', ''),
+                'nim': data.get('nim', nim)
+            }
+            return Response(json.dumps(result), mimetype='application/json')
+        else:
+             return Response(json.dumps({'success': False, 'message': 'Data tidak ditemukan'}), mimetype='application/json')
+    except Exception as e:
+        logging.error(f"Error lookup NIM: {e}")
+        return Response(json.dumps({'success': False, 'message': str(e)}), mimetype='application/json')
+
 @app.route('/manajemenUltah/sync-calendar/<int:record_id>', methods=['POST'])
 @login_required
 def ultah_sync_calendar(record_id):
@@ -939,10 +977,28 @@ def ultah_sync_calendar(record_id):
         flash('Silakan hubungkan akun Google terlebih dahulu.', 'warning')
         return redirect(url_for('manajemen_ultah'))
     
-    # Ambil attendees dari form (comma separated)
-    attendees_str = request.form.get('attendees', '').strip()
-    attendees = [e.strip() for e in attendees_str.split(',') if e.strip()] if attendees_str else []
+    # 1. Parse Parameters from Unified Modal
+    color_id = request.form.get('color_id')
     
+    # Attendees (JSON list or comma separated)
+    attendees_raw = request.form.get('attendees', '')
+    attendees = []
+    try:
+        attendees = json.loads(attendees_raw)
+        if not isinstance(attendees, list):
+            attendees = []
+    except:
+        attendees = [e.strip() for e in attendees_raw.split(',') if e.strip()]
+    
+    # Reminders (JSON list of {method, minutes})
+    reminders_raw = request.form.get('reminders_json', '')
+    reminders = []
+    if reminders_raw:
+        try:
+            reminders = json.loads(reminders_raw)
+        except:
+            logging.warn("Failed parsing reminders JSON")
+
     # Ambil record
     record = ultah_model.get_by_id(record_id)
     if not record:
@@ -951,28 +1007,25 @@ def ultah_sync_calendar(record_id):
     
     # Hapus event lama jika ada
     if record.get('google_calendar_event_id'):
-        google_cal_service.delete_event(user_id, record['google_calendar_event_id'])
-    
-    # Create event baru
-    event_id = google_cal_service.create_birthday_event(user_id, record, attendees)
+        google_cal_service.delete_event(user_id, record.get('google_calendar_event_id'))
+        
+    # Buat Event Baru dengan Overrides
+    event_id = google_cal_service.create_birthday_event(
+        user_id, 
+        record, 
+        overrides={
+            'colorId': color_id,
+            'attendees': attendees,
+            'reminders': reminders
+        }
+    )
     
     if event_id:
-        # Update event_id di database
-        conn = get_connection()
-        if conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE ultah_records SET google_calendar_event_id = %s WHERE id = %s",
-                (event_id, record_id)
-            )
-            conn.commit()
-            cursor.close()
-            conn.close()
-        
-        flash(f'Event "{record["nama"]}" berhasil disinkronkan ke Google Calendar!', 'success')
+        ultah_model.update_google_event_id(record_id, event_id)
+        flash('Berhasil sync ke Google Calendar!', 'success')
     else:
-        flash('Gagal membuat event di Google Calendar.', 'error')
-    
+        flash('Gagal sync ke Google Calendar.', 'error')
+        
     return redirect(url_for('manajemen_ultah'))
 
 # ========== GOOGLE OAUTH ROUTES ==========
@@ -992,9 +1045,9 @@ def ultah_google_callback():
     user_id = g.user.get('sub')
     
     try:
-        credentials, email = google_cal_service.handle_callback(request.url)
-        google_cal_service.save_token(user_id, credentials, email)
-        flash(f'Berhasil terhubung dengan akun Google: {email}', 'success')
+        credentials, user_data = google_cal_service.handle_callback(request.url)
+        google_cal_service.save_token(user_id, credentials, user_data)
+        flash(f'Berhasil terhubung dengan akun Google: {user_data.get("name")}', 'success')
     except Exception as e:
         logging.error(f"[GoogleOAuth] Error: {e}")
         flash('Gagal menghubungkan akun Google.', 'error')
@@ -1006,13 +1059,59 @@ def ultah_google_callback():
 def ultah_google_disconnect():
     """Disconnect Google account"""
     user_id = g.user.get('sub')
-    google_cal_service.delete_token(user_id)
-    flash('Akun Google berhasil diputuskan.', 'success')
+    
+    if google_cal_service.delete_token(user_id):
+        # Reset kolom google_calendar_event_id di database (clean DB)
+        try:
+            conn = get_connection()
+            if conn:
+                cursor = conn.cursor()
+                cursor.execute("UPDATE ultah_records SET google_calendar_event_id = NULL")
+                conn.commit()
+                cursor.close()
+                conn.close()
+            flash('Akun Google berhasil diputuskan dan status sync di-reset.', 'success')
+        except Exception as e:
+            logging.error(f"Error reseting sync status: {e}")
+            flash('Akun Google putus, tapi gagal reset status DB.', 'warning')
+    else:
+        flash('Gagal memutuskan akun Google.', 'error')
+        
+    return redirect(url_for('manajemen_ultah'))
+
+@app.route('/manajemenUltah/settings', methods=['POST'])
+@login_required
+def ultah_save_settings():
+    """Simpan pengaturan sinkronisasi Google Calendar"""
+    user_id = g.user.get('sub')
+    
+    color_id = request.form.get('color_id')
+    raw_attendees = request.form.get('default_attendees', '').strip()
+    
+    # Parse attendees to list
+    if raw_attendees.startswith('['):
+        try:
+            default_attendees = json.loads(raw_attendees)
+        except:
+            default_attendees = []
+    else:
+        default_attendees = [x.strip() for x in raw_attendees.split(',') if x.strip()]
+    
+    settings = {
+        'color_id': color_id,
+        'default_attendees': default_attendees
+    }
+    
+    if google_cal_service.save_settings(user_id, settings):
+        flash('Pengaturan berhasil disimpan!', 'success')
+    else:
+        flash('Gagal menyimpan pengaturan.', 'error')
+        
     return redirect(url_for('manajemen_ultah'))
 
 # ========== BULK OPERATIONS ==========
 
-@app.route('/manajemenUltah/bulk-delete', methods=['POST'])
+@app.route('/manajemenUltah/bulk-delete', methods=['POST']) 
 @login_required
 def ultah_bulk_delete():
     """Bulk delete records"""
