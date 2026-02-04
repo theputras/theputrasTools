@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Ulang Tahun</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+    }
+    .glass-card {
+      background: rgba(31, 41, 55, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .photo-preview {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    .btn-warning {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+  </style>
+</head>
+<body class="p-6" data-google-connected="{{ 'true' if google_email else 'false' }}">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">
+          <i class="fas fa-birthday-cake text-pink-400 mr-3"></i>
+          Manajemen Ulang Tahun
+        </h1>
+        <p class="text-gray-400">Kelola data ulang tahun dan sinkronisasi ke Google Calendar</p>
+      </div>
+      <a href="/" class="text-gray-400 hover:text-white transition">
+        <i class="fas fa-arrow-left mr-2"></i> Kembali
+      </a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-500/20 text-red-300 border border-red-500/30{% elif category == 'success' %}bg-green-500/20 text-green-300 border border-green-500/30{% else %}bg-yellow-500/20 text-yellow-300 border border-yellow-500/30{% endif %}">
+            <i class="fas {% if category == 'error' %}fa-times-circle{% elif category == 'success' %}fa-check-circle{% else %}fa-exclamation-triangle{% endif %} mr-2"></i>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Google Account Status & Action Buttons -->
+    <div class="glass-card rounded-2xl p-4 mb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <!-- Left: Google Account Status -->
+        <div class="flex items-center gap-4">
+          {% if google_email %}
+          <div class="flex items-center gap-3 px-4 py-2 bg-green-500/20 rounded-lg border border-green-500/30">
+            <i class="fab fa-google text-green-400"></i>
+            <span class="text-green-300 text-sm">Terhubung: <strong>{{ google_email }}</strong></span>
+            <form action="{{ url_for('ultah_google_disconnect') }}" method="POST" class="ml-2">
+              <button type="submit" class="text-red-400 hover:text-red-300 text-xs" onclick="return confirm('Putuskan koneksi Google?')">
+                <i class="fas fa-unlink"></i>
+              </button>
+            </form>
+          </div>
+          {% else %}
+          <a href="{{ url_for('ultah_google_auth') }}" class="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20 transition text-white text-sm">
+            <i class="fab fa-google"></i>
+            <span>Hubungkan Google Calendar</span>
+          </a>
+          {% endif %}
+        </div>
+        
+        <!-- Right: Action Buttons -->
+        <div class="flex items-center gap-3">
+          <button onclick="toggleModal('addModal')" class="btn-primary text-white font-semibold px-5 py-2 rounded-xl transition hover:opacity-90 text-sm">
+            <i class="fas fa-plus mr-2"></i>Tambah Data
+          </button>
+          <button type="button" onclick="openBulkSyncModal()" class="btn-success text-white font-semibold px-5 py-2 rounded-xl transition hover:opacity-90 text-sm" id="bulkSyncBtn" disabled>
+            <i class="fab fa-google mr-2"></i>Sync Terpilih
+          </button>
+          <button type="button" onclick="bulkDelete()" class="btn-danger text-white font-semibold px-5 py-2 rounded-xl transition hover:opacity-90 text-sm" id="bulkDeleteBtn" disabled>
+            <i class="fas fa-trash mr-2"></i>Hapus Terpilih
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Data Tersimpan -->
+    <div class="glass-card rounded-2xl p-6 mb-8">
+      <h2 class="text-xl font-bold text-white mb-4">
+        <i class="fas fa-database text-cyan-400 mr-2"></i>
+        Data Tersimpan
+        <span class="text-sm font-normal text-gray-400 ml-2" id="selectedCount"></span>
+      </h2>
+      
+      {% if records %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-gray-300" id="recordsTable">
+          <thead class="text-xs uppercase text-gray-400 border-b border-white/10">
+            <tr>
+              <th class="px-3 py-3 text-center w-10">
+                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded">
+              </th>
+              <th class="px-4 py-3 text-left">Foto</th>
+              <th class="px-4 py-3 text-left">Nama</th>
+              <th class="px-4 py-3 text-left">NIM</th>
+              <th class="px-4 py-3 text-left">Tanggal Lahir</th>
+              <th class="px-4 py-3 text-left">Usia</th>
+              <th class="px-4 py-3 text-left">Prodi</th>
+              <th class="px-4 py-3 text-center">Synced</th>
+              <th class="px-4 py-3 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in records %}
+            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+              <td class="px-3 py-3 text-center">
+                <input type="checkbox" name="record_ids" value="{{ r.id }}" class="record-checkbox rounded" onchange="updateBulkButtons()">
+              </td>
+              <td class="px-4 py-3">
+                {% if r.foto_base64 %}
+                  <img src="data:image/jpeg;base64,{{ r.foto_base64 }}" class="photo-preview" alt="Foto">
+                {% else %}
+                  <div class="photo-preview bg-gray-700 flex items-center justify-center">
+                    <i class="fas fa-user text-gray-500"></i>
+                  </div>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3 font-medium text-white">{{ r.nama }}</td>
+              <td class="px-4 py-3 font-mono">{{ r.nim or '-' }}</td>
+              <td class="px-4 py-3">{{ r.tanggal_display }}</td>
+              <td class="px-4 py-3">{{ r.usia ~ ' tahun' if r.usia else '-' }}</td>
+              <td class="px-4 py-3">{{ r.prodi or '-' }}</td>
+              <td class="px-4 py-3 text-center">
+                {% if r.google_calendar_event_id %}
+                <span class="text-green-400" title="Sudah di-sync"><i class="fas fa-check-circle"></i></span>
+                {% else %}
+                <span class="text-gray-500" title="Belum di-sync"><i class="fas fa-minus-circle"></i></span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button onclick="openEditModal(this)" 
+                          data-id="{{ r.id }}" 
+                          data-nama="{{ r.nama }}" 
+                          data-nim="{{ r.nim or '' }}" 
+                          data-tanggal="{{ r.tanggal }}" 
+                          data-bulan="{{ r.bulan }}" 
+                          data-tahun="{{ r.tahun_lahir or '' }}" 
+                          data-prodi="{{ r.prodi or '' }}"
+                          class="text-blue-400 hover:text-blue-300 transition p-2" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <form action="{{ url_for('ultah_delete', record_id=r.id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus data ini?')">
+                    <button type="submit" class="text-red-400 hover:text-red-300 transition p-2" title="Hapus">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                  <form action="{{ url_for('ultah_sync_calendar', record_id=r.id) }}" method="POST" class="inline">
+                    <button type="submit" class="text-green-400 hover:text-green-300 transition p-2" title="Sync ke Google Calendar">
+                      <i class="fab fa-google"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-12 text-gray-400">
+        <i class="fas fa-inbox text-4xl mb-4"></i>
+        <p>Belum ada data ulang tahun tersimpan</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- List Ultah Hari Ini dari SICYCA -->
+    <div class="glass-card rounded-2xl p-6">
+      <h2 class="text-xl font-bold text-white mb-4">
+        <i class="fas fa-gift text-yellow-400 mr-2"></i>
+        Ulang Tahun Hari Ini 
+        <span class="text-sm font-normal text-gray-400">(dari SICYCA{% if today %} - {{ today }}{% endif %})</span>
+      </h2>
+      
+      {% if sicyca_list %}
+      <div class="grid gap-4">
+        {% for s in sicyca_list %}
+        <div class="bg-white/5 rounded-xl p-4 flex items-center justify-between hover:bg-white/10 transition">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center">
+              <i class="fas fa-birthday-cake text-white"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-white">{{ s.nama }}</p>
+              <p class="text-sm text-gray-400">{{ s.prodi }}</p>
+            </div>
+          </div>
+          <form action="{{ url_for('ultah_save_sicyca') }}" method="POST" class="flex items-center gap-3">
+            <input type="hidden" name="nama" value="{{ s.nama }}">
+            <input type="hidden" name="prodi" value="{{ s.prodi }}">
+            <input type="hidden" name="tanggal_lahir" value="{{ s.tanggal_lahir }}">
+            <input type="text" name="nim" placeholder="NIM (optional)" 
+                   class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm w-32 focus:outline-none focus:border-cyan-500">
+            <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+              <input type="checkbox" name="simpan_foto" class="rounded">
+              <span>+ Foto</span>
+            </label>
+            <button type="submit" class="btn-success text-white font-semibold px-4 py-2 rounded-lg text-sm hover:opacity-90 transition">
+              <i class="fas fa-save mr-1"></i> Simpan Ultah
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-12 text-gray-400">
+        <i class="fas fa-calendar-times text-4xl mb-4"></i>
+        <p>Tidak ada ulang tahun hari ini dari SICYCA atau semua sudah tersimpan</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Modal Tambah Data -->
+  <div id="addModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center">
+    <div class="glass-card rounded-2xl p-8 max-w-md w-full mx-4">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-white">Tambah Data Ultah</h3>
+        <button onclick="toggleModal('addModal')" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <form action="{{ url_for('ultah_add') }}" method="POST" class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Nama <span class="text-red-400">*</span></label>
+          <input type="text" name="nama" required 
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">NIM <span class="text-red-400">*</span></label>
+          <input type="text" name="nim" required maxlength="20"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 font-mono">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Tanggal <span class="text-red-400">*</span></label>
+            <select name="tanggal" required 
+                    class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+              {% for i in range(1, 32) %}
+              <option value="{{ i }}">{{ i }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Bulan <span class="text-red-400">*</span></label>
+            <select name="bulan" required 
+                    class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+              <option value="1">Januari</option>
+              <option value="2">Februari</option>
+              <option value="3">Maret</option>
+              <option value="4">April</option>
+              <option value="5">Mei</option>
+              <option value="6">Juni</option>
+              <option value="7">Juli</option>
+              <option value="8">Agustus</option>
+              <option value="9">September</option>
+              <option value="10">Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Tahun Lahir <span class="text-gray-500">(opsional)</span></label>
+          <input type="number" name="tahun_lahir" min="1900" max="2025" placeholder="Kosongkan jika tidak tahu"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Prodi <span class="text-gray-500">(opsional)</span></label>
+          <input type="text" name="prodi"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <input type="checkbox" name="simpan_foto" id="simpan_foto" class="rounded">
+          <label for="simpan_foto" class="text-sm text-gray-300 cursor-pointer">Simpan foto dari SICYCA (berdasarkan NIM)</label>
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button type="button" onclick="toggleModal('addModal')" class="flex-1 bg-gray-600 text-white font-semibold py-2.5 rounded-lg hover:bg-gray-500 transition">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 btn-primary text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition">
+            <i class="fas fa-save mr-2"></i> Simpan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Edit Data -->
+  <div id="editModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center">
+    <div class="glass-card rounded-2xl p-8 max-w-md w-full mx-4">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-white">Edit Data Ultah</h3>
+        <button onclick="toggleModal('editModal')" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <form id="editForm" method="POST" class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Nama <span class="text-red-400">*</span></label>
+          <input type="text" name="nama" id="edit_nama" required 
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">NIM</label>
+          <input type="text" name="nim" id="edit_nim" maxlength="20"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 font-mono">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Tanggal <span class="text-red-400">*</span></label>
+            <select name="tanggal" id="edit_tanggal" required 
+                    class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+              {% for i in range(1, 32) %}
+              <option value="{{ i }}">{{ i }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Bulan <span class="text-red-400">*</span></label>
+            <select name="bulan" id="edit_bulan" required 
+                    class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+              <option value="1">Januari</option>
+              <option value="2">Februari</option>
+              <option value="3">Maret</option>
+              <option value="4">April</option>
+              <option value="5">Mei</option>
+              <option value="6">Juni</option>
+              <option value="7">Juli</option>
+              <option value="8">Agustus</option>
+              <option value="9">September</option>
+              <option value="10">Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Tahun Lahir <span class="text-gray-500">(opsional)</span></label>
+          <input type="number" name="tahun_lahir" id="edit_tahun_lahir" min="1900" max="2025"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Prodi</label>
+          <input type="text" name="prodi" id="edit_prodi"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button type="button" onclick="toggleModal('editModal')" class="flex-1 bg-gray-600 text-white font-semibold py-2.5 rounded-lg hover:bg-gray-500 transition">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 btn-warning text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition">
+            <i class="fas fa-save mr-2"></i> Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Bulk Sync -->
+  <div id="bulkSyncModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center">
+    <div class="glass-card rounded-2xl p-8 max-w-md w-full mx-4">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-white">
+          <i class="fab fa-google text-green-400 mr-2"></i>Sync ke Google Calendar
+        </h3>
+        <button onclick="toggleModal('bulkSyncModal')" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <form id="bulkSyncForm" action="{{ url_for('ultah_bulk_sync') }}" method="POST">
+        <div id="bulkSyncRecordInputs"></div>
+        
+        <div class="mb-6">
+          <label class="block text-sm text-gray-300 mb-2">Tambahkan Orang (Email)</label>
+          <p class="text-xs text-gray-500 mb-2">Pisahkan dengan koma untuk multiple email</p>
+          <input type="text" name="attendees" placeholder="email1@gmail.com, email2@gmail.com"
+                 class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        
+        <p class="text-sm text-gray-400 mb-4">
+          <i class="fas fa-info-circle mr-1"></i>
+          <span id="syncCountText">0 data akan disinkronkan</span>
+        </p>
+        
+        <div class="flex gap-3">
+          <button type="button" onclick="toggleModal('bulkSyncModal')" class="flex-1 bg-gray-600 text-white font-semibold py-2.5 rounded-lg hover:bg-gray-500 transition">
+            Batal
+          </button>
+          <button type="submit" class="flex-1 btn-success text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition">
+            <i class="fab fa-google mr-2"></i> Sync Sekarang
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Hidden form for bulk delete -->
+  <form id="bulkDeleteForm" action="{{ url_for('ultah_bulk_delete') }}" method="POST" class="hidden">
+    <div id="bulkDeleteRecordInputs"></div>
+  </form>
+
+  <script>
+    function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+    }
+    
+    function openEditModal(btn) {
+      const id = btn.dataset.id;
+      const nama = btn.dataset.nama;
+      const nim = btn.dataset.nim;
+      const tanggal = btn.dataset.tanggal;
+      const bulan = btn.dataset.bulan;
+      const tahun = btn.dataset.tahun;
+      const prodi = btn.dataset.prodi;
+      
+      document.getElementById('editForm').action = `/manajemenUltah/edit/${id}`;
+      document.getElementById('edit_nama').value = nama || '';
+      document.getElementById('edit_nim').value = nim || '';
+      document.getElementById('edit_tanggal').value = tanggal || 1;
+      document.getElementById('edit_bulan').value = bulan || 1;
+      document.getElementById('edit_tahun_lahir').value = tahun || '';
+      document.getElementById('edit_prodi').value = prodi || '';
+      toggleModal('editModal');
+    }
+    
+    // Checkbox functions
+    function toggleSelectAll() {
+      const selectAll = document.getElementById('selectAll');
+      const checkboxes = document.querySelectorAll('.record-checkbox');
+      checkboxes.forEach(cb => cb.checked = selectAll.checked);
+      updateBulkButtons();
+    }
+    
+    function updateBulkButtons() {
+      const checkboxes = document.querySelectorAll('.record-checkbox:checked');
+      const count = checkboxes.length;
+      
+      document.getElementById('bulkSyncBtn').disabled = count === 0;
+      document.getElementById('bulkDeleteBtn').disabled = count === 0;
+      
+      const countEl = document.getElementById('selectedCount');
+      countEl.textContent = count > 0 ? `(${count} dipilih)` : '';
+      
+      // Update select all checkbox state
+      const allCheckboxes = document.querySelectorAll('.record-checkbox');
+      const selectAll = document.getElementById('selectAll');
+      if (allCheckboxes.length > 0) {
+        selectAll.checked = count === allCheckboxes.length;
+        selectAll.indeterminate = count > 0 && count < allCheckboxes.length;
+      }
+    }
+    
+    function getSelectedIds() {
+      const checkboxes = document.querySelectorAll('.record-checkbox:checked');
+      return Array.from(checkboxes).map(cb => cb.value);
+    }
+    
+    // Bulk Delete
+    function bulkDelete() {
+      const ids = getSelectedIds();
+      if (ids.length === 0) {
+        alert('Pilih minimal 1 data!');
+        return;
+      }
+      
+      if (!confirm(`Yakin hapus ${ids.length} data yang dipilih?`)) {
+        return;
+      }
+      
+      const container = document.getElementById('bulkDeleteRecordInputs');
+      container.innerHTML = '';
+      ids.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'record_ids';
+        input.value = id;
+        container.appendChild(input);
+      });
+      
+      document.getElementById('bulkDeleteForm').submit();
+    }
+    
+    // Bulk Sync Modal
+    function openBulkSyncModal() {
+      const ids = getSelectedIds();
+      if (ids.length === 0) {
+        alert('Pilih minimal 1 data!');
+        return;
+      }
+      
+      // Check Google connection (set from template)
+      const isGoogleConnected = document.body.dataset.googleConnected === 'true';
+      if (!isGoogleConnected) {
+        alert('Silakan hubungkan akun Google terlebih dahulu!');
+        return;
+      }
+      
+      const container = document.getElementById('bulkSyncRecordInputs');
+      container.innerHTML = '';
+      ids.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'record_ids';
+        input.value = id;
+        container.appendChild(input);
+      });
+      
+      document.getElementById('syncCountText').textContent = `${ids.length} data akan disinkronkan`;
+      toggleModal('bulkSyncModal');
+    }
+    
+    // Close modal on outside click
+    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          toggleModal(modal.id);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -63,8 +63,21 @@ input.addEventListener("input", function (e) {
 // Tambah data dari input dengan AUTO-DETECT
 input.addEventListener("keydown", function (e) {
     if (e.key === "Enter") {
-        const value = input.value.trim();
+        let value = input.value.trim();
         if (!value) return;
+
+        // ===== AUTO-DETECT RFID PLKA (EL-1356R04) =====
+        // Jika input adalah 8-10 digit angka murni, itu dari RFID PLKA
+        // Convert ke UUID dengan reverse byte order
+        if (/^\d{8,10}$/.test(value)) {
+            const converted = convertPLKAToUUID(value);
+            if (converted) {
+                console.log(`📟 PLKA HID Input: ${value} -> ${converted}`);
+                alertBox(`🔄 PLKA: ${value} → ${converted}`, 'info');
+                value = converted;
+                input.value = converted; // Update input field juga
+            }
+        }
 
         // AUTO-DETECT berdasarkan panjang
         let mode, maxLen;
@@ -644,10 +657,13 @@ input.addEventListener("keydown", function (e) {
     // Map common vendors
     const vendors = {
         0x2341: "Arduino Device",
-        0x1a86: "CH340 Serial (Arduino Clone)",
+        0x1a86: "CH340 Serial / EL-1356R04",  // CH340 juga dipakai EL-series
         0x0403: "FTDI Serial",
         0x10c4: "CP210x Serial",
-        0x0525: "PL2303 Serial"
+        0x0525: "PL2303 Serial",
+        0x6868: "EL-1356R04 RFID Reader",     // Electron RFID Reader
+        0x0483: "STM32 USB Serial",           // Some EL readers use STM32
+        0x1FC9: "NXP LPC USB Serial"          // Some readers use NXP chips
     };
 
     if (vendors[vid]) {
@@ -665,13 +681,16 @@ input.addEventListener("keydown", function (e) {
     }
 
     try {
-      // Filters for common Serial/RFID chips (CH340, Arduino, FTDI, CP210x)
+      // Filters for common Serial/RFID chips (CH340, Arduino, FTDI, CP210x, EL-series)
       const filters = [
-        { usbVendorId: 0x1a86 }, // CH340 (Common in clones)
+        { usbVendorId: 0x1a86 }, // CH340 (Common in clones and EL-series)
         { usbVendorId: 0x2341 }, // Arduino SA
         { usbVendorId: 0x0403 }, // FTDI
         { usbVendorId: 0x10c4 }, // Silicon Labs (CP210x)
-        { usbVendorId: 0x0525 }  // Prolific (PL2303) is sometimes tricky, but safe to add
+        { usbVendorId: 0x0525 }, // Prolific (PL2303)
+        { usbVendorId: 0x6868 }, // Electron EL-1356R04 RFID Reader
+        { usbVendorId: 0x0483 }, // STM32 USB Serial
+        { usbVendorId: 0x1FC9 }  // NXP LPC USB Serial
       ];
 
       // Request port with filters OR no filters (allow user to choose)
@@ -816,83 +835,10 @@ input.addEventListener("keydown", function (e) {
     }
   }
   
-  // ===== RFID PLKA CONVERSION FUNCTIONS =====
-  // RFID Reader PLKA menghasilkan nilai Decimal
-  // Untuk sistem Undika, perlu dikonversi ke Hex dengan reverse byte order
-  
-  /**
-   * Check apakah nilai adalah Decimal dari RFID PLKA
-   * PLKA biasanya menghasilkan angka 10 digit (max 4294967295 untuk 4-byte UID)
-   */
-  function isPLKADecimal(value) {
-    // Cek apakah hanya berisi angka (pure decimal)
-    // dan panjangnya antara 8-10 digit (typical RFID decimal)
-    return /^\d{8,10}$/.test(value);
-  }
-  
-  /**
-   * Convert Decimal ke Hexadecimal
-   * Sama seperti rumus Excel =DEC2HEX(A1)
-   */
-  function decimalToHex(decimal) {
-    const num = parseInt(decimal, 10);
-    if (isNaN(num)) return null;
-    
-    // Convert ke hex dan pad ke 8 karakter (4 bytes)
-    let hex = num.toString(16).toUpperCase();
-    while (hex.length < 8) {
-      hex = '0' + hex;
-    }
-    return hex;
-  }
-  
-  /**
-   * Reverse byte order (Little Endian ke Big Endian)
-   * Sama seperti rumus Excel: =MID(C2,7,2) & MID(C2,5,2) & MID(C2,3,2) & MID(C2,1,2)
-   * Contoh: "AABBCCDD" -> "DDCCBBAA"
-   */
-  function reverseByteOrder(hexString) {
-    if (!hexString || hexString.length !== 8) return hexString;
-    
-    // Split into 2-character chunks (bytes) and reverse
-    const byte1 = hexString.substring(0, 2);  // Position 1-2
-    const byte2 = hexString.substring(2, 4);  // Position 3-4
-    const byte3 = hexString.substring(4, 6);  // Position 5-6
-    const byte4 = hexString.substring(6, 8);  // Position 7-8
-    
-    // Reverse: byte4 + byte3 + byte2 + byte1
-    return byte4 + byte3 + byte2 + byte1;
-  }
-  
-  /**
-   * Convert RFID PLKA Decimal ke format UUID yang compatible dengan sistem Undika
-   * Proses: Decimal -> Hex -> Reverse Byte Order
-   */
-  function convertPLKAToUUID(decimalValue) {
-    const hex = decimalToHex(decimalValue);
-    if (!hex) return null;
-    
-    const reversed = reverseByteOrder(hex);
-    console.log(`🔄 PLKA Conversion: ${decimalValue} -> ${hex} -> ${reversed}`);
-    return reversed;
-  }
-  
   // Process RFID data
   function processRFIDData(data) {
-    let processedData = data;
-    
-    // AUTO-DETECT: Jika input adalah Decimal dari RFID PLKA, convert ke UUID
-    if (isPLKADecimal(data)) {
-      const converted = convertPLKAToUUID(data);
-      if (converted) {
-        console.log(`📟 RFID PLKA Detected! Converting: ${data} -> ${converted}`);
-        processedData = converted;
-        alertBox(`🔄 PLKA Decimal dikonversi ke UUID: ${converted}`, 'info');
-      }
-    }
-    
     // 1. Set Value & Focus
-    input.value = processedData;
+    input.value = data;
     input.focus();
     
     // 2. Trigger Input Event (untuk update badge detection visual)
@@ -1039,6 +985,11 @@ function alertBox(message, type = "success", callback = null) {
   window.syncFromServer = syncFromServer; // <--- Expose this
   window.alertBox = alertBox; // <--- Expose global alertBox for non-module usage
   window.connectSSE = connectSSE; // <--- Expose SSE for room connection
+  window.toggleCheckboxMode = toggleCheckboxMode;
+  window.toggleSelectAll = toggleSelectAll;
+  window.handleDelete = handleDelete;
+  window.saveToExcel = saveToExcel;
+  window.clearAllData = clearAllData;
 
   // Cleanup on unload to close port properly
   window.addEventListener('beforeunload', async () => {

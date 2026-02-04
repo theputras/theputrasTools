@@ -3,7 +3,7 @@
 import os
 import re
 import pandas as pd
-from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g, Response
+from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g, Response, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
@@ -19,6 +19,8 @@ from api.api import api_bp, init_api, SSKM_LAST_DUPLICATE
 from models.auth_api import auth_bp
 from flask_cors import CORS
 from paymentGateway import payment_bp
+from manajemenUltah import ultah_model, parse_tanggal_sicyca
+from googleCalendar import google_cal_service
 
 # Impor SEMUA fungsi scraper
 from scrapper_requests import scrape_data, search_mahasiswa, dahsboard_nilai, fetch_sks, fetch_sskm_data
@@ -150,6 +152,14 @@ majorID = { "39010": "D3 Sistem Informasi", "41010": "S1 Sistem Informasi", "410
 # Fungsi validasi (sudah ada, tidak ubah)
 def _valid_role(x):
     return x in ("mahasiswa", "staff")
+
+# Fungsi untuk deteksi prodi dari NIM
+def get_prodi_from_nim(nim):
+    """Auto-detect prodi dari NIM berdasarkan kode prodi (digit 3-7)"""
+    if nim and len(nim) >= 7:
+        kode_prodi = nim[2:7]  # Ambil digit ke-3 sampai 7
+        return majorID.get(kode_prodi, None)
+    return None
 
 def get_current_status():
     return JADWAL_STATUS
@@ -744,6 +754,341 @@ def krs_sicyca():
 def sskm_record():
     """Menyajikan file HTML utama."""
     return render_template('sskm-record.html')
+
+# ============================
+# MANAJEMEN ULTAH ROUTES (SSR)
+# ============================
+from scrapper_requests import fetch_data_ultah, fetch_photo_from_sicyca
+import base64
+
+@app.route('/manajemenUltah')
+@login_required
+def manajemen_ultah():
+    """Halaman utama - render data dari DB + SICYCA"""
+    user_id = g.user.get('sub')
+    
+    db_records = ultah_model.get_all()
+    
+    sicyca_data = fetch_data_ultah()
+    sicyca_list = sicyca_data.get('rows', []) if not sicyca_data.get('error') else []
+    
+    existing_names = {r['nama'].lower() for r in db_records}
+    sicyca_filtered = [s for s in sicyca_list if s.get('nama', '').lower() not in existing_names]
+    
+    # Get Google account status
+    google_info = google_cal_service.get_token_by_user(user_id)
+    google_email = google_info['email'] if google_info else None
+    
+    return render_template('manajemenUltah.html', 
+                           records=db_records,
+                           sicyca_list=sicyca_filtered,
+                           today=sicyca_data.get('tanggal_hari_ini', ''),
+                           google_email=google_email)
+
+@app.route('/manajemenUltah/add', methods=['POST'])
+@login_required
+def ultah_add():
+    """Tambah data ultah baru"""
+    nama = request.form.get('nama', '').strip()
+    nim = request.form.get('nim', '').strip()
+    tanggal = request.form.get('tanggal')
+    bulan = request.form.get('bulan')
+    tahun_lahir = request.form.get('tahun_lahir')
+    prodi = request.form.get('prodi', '').strip()
+    simpan_foto = request.form.get('simpan_foto') == 'on'
+    
+    if not nama or not tanggal or not bulan:
+        flash('Nama, Tanggal, dan Bulan wajib diisi!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    if nim and ultah_model.check_nim_exists(nim):
+        flash(f'NIM {nim} sudah terdaftar!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    foto_base64 = None
+    if simpan_foto and nim:
+        foto_bytes = fetch_photo_from_sicyca('mahasiswa', nim)
+        if foto_bytes:
+            foto_base64 = base64.b64encode(foto_bytes).decode('utf-8')
+    
+    data = {
+        'nama': nama,
+        'nim': nim if nim else None,
+        'tanggal': int(tanggal),
+        'bulan': int(bulan),
+        'tahun_lahir': int(tahun_lahir) if tahun_lahir else None,
+        'foto_base64': foto_base64,
+        'prodi': prodi if prodi else get_prodi_from_nim(nim),  # Auto-detect dari NIM
+        'is_from_sicyca': 0
+    }
+    
+    if ultah_model.create(data):
+        flash('Data ultah berhasil ditambahkan!', 'success')
+    else:
+        flash('Gagal menambahkan data ultah!', 'error')
+    
+    return redirect(url_for('manajemen_ultah'))
+
+@app.route('/manajemenUltah/edit/<int:record_id>', methods=['POST'])
+@login_required
+def ultah_edit(record_id):
+    """Update data ultah"""
+    nama = request.form.get('nama', '').strip()
+    nim = request.form.get('nim', '').strip()
+    tanggal = request.form.get('tanggal')
+    bulan = request.form.get('bulan')
+    tahun_lahir = request.form.get('tahun_lahir')
+    prodi = request.form.get('prodi', '').strip()
+    
+    if not nama or not tanggal or not bulan:
+        flash('Nama, Tanggal, dan Bulan wajib diisi!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    if nim and ultah_model.check_nim_exists(nim, exclude_id=record_id):
+        flash(f'NIM {nim} sudah terdaftar!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    existing = ultah_model.get_by_id(record_id)
+    foto_base64 = existing.get('foto_base64') if existing else None
+    
+    data = {
+        'nama': nama,
+        'nim': nim if nim else None,
+        'tanggal': int(tanggal),
+        'bulan': int(bulan),
+        'tahun_lahir': int(tahun_lahir) if tahun_lahir else None,
+        'foto_base64': foto_base64,
+        'prodi': prodi if prodi else get_prodi_from_nim(nim)  # Auto-detect dari NIM
+    }
+    
+    if ultah_model.update(record_id, data):
+        flash('Data ultah berhasil diupdate!', 'success')
+    else:
+        flash('Gagal mengupdate data ultah!', 'error')
+    
+    return redirect(url_for('manajemen_ultah'))
+
+@app.route('/manajemenUltah/delete/<int:record_id>', methods=['POST'])
+@login_required
+def ultah_delete(record_id):
+    """Hapus data ultah"""
+    if ultah_model.delete(record_id):
+        flash('Data ultah berhasil dihapus!', 'success')
+    else:
+        flash('Gagal menghapus data ultah!', 'error')
+    
+    return redirect(url_for('manajemen_ultah'))
+
+@app.route('/manajemenUltah/save-sicyca', methods=['POST'])
+@login_required
+def ultah_save_sicyca():
+    """Simpan data dari list SICYCA ke database"""
+    nama = request.form.get('nama', '').strip()
+    prodi = request.form.get('prodi', '').strip()
+    tanggal_lahir = request.form.get('tanggal_lahir', '').strip()
+    nim = request.form.get('nim', '').strip()
+    simpan_foto = request.form.get('simpan_foto') == 'on'
+    
+    if not nama:
+        flash('Data tidak valid!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    tanggal, bulan, tahun = parse_tanggal_sicyca(tanggal_lahir)
+    
+    if not tanggal or not bulan:
+        flash('Format tanggal tidak valid!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    if nim and ultah_model.check_nim_exists(nim):
+        flash(f'NIM {nim} sudah terdaftar!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    foto_base64 = None
+    if simpan_foto and nim:
+        foto_bytes = fetch_photo_from_sicyca('mahasiswa', nim)
+        if foto_bytes:
+            foto_base64 = base64.b64encode(foto_bytes).decode('utf-8')
+    
+    data = {
+        'nama': nama,
+        'nim': nim if nim else None,
+        'tanggal': tanggal,
+        'bulan': bulan,
+        'tahun_lahir': tahun,
+        'foto_base64': foto_base64,
+        'prodi': prodi if prodi else get_prodi_from_nim(nim),  # Auto-detect dari NIM
+        'is_from_sicyca': 1
+    }
+    
+    if ultah_model.create(data):
+        flash(f'Data ultah {nama} berhasil disimpan!', 'success')
+    else:
+        flash('Gagal menyimpan data ultah!', 'error')
+    
+    return redirect(url_for('manajemen_ultah'))
+
+@app.route('/manajemenUltah/sync-calendar/<int:record_id>', methods=['POST'])
+@login_required
+def ultah_sync_calendar(record_id):
+    """Sync single data ultah ke Google Calendar"""
+    user_id = g.user.get('sub')
+    
+    # Cek apakah sudah connect Google
+    token_info = google_cal_service.get_token_by_user(user_id)
+    if not token_info:
+        flash('Silakan hubungkan akun Google terlebih dahulu.', 'warning')
+        return redirect(url_for('manajemen_ultah'))
+    
+    # Ambil attendees dari form (comma separated)
+    attendees_str = request.form.get('attendees', '').strip()
+    attendees = [e.strip() for e in attendees_str.split(',') if e.strip()] if attendees_str else []
+    
+    # Ambil record
+    record = ultah_model.get_by_id(record_id)
+    if not record:
+        flash('Data tidak ditemukan!', 'error')
+        return redirect(url_for('manajemen_ultah'))
+    
+    # Hapus event lama jika ada
+    if record.get('google_calendar_event_id'):
+        google_cal_service.delete_event(user_id, record['google_calendar_event_id'])
+    
+    # Create event baru
+    event_id = google_cal_service.create_birthday_event(user_id, record, attendees)
+    
+    if event_id:
+        # Update event_id di database
+        conn = get_connection()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE ultah_records SET google_calendar_event_id = %s WHERE id = %s",
+                (event_id, record_id)
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+        
+        flash(f'Event "{record["nama"]}" berhasil disinkronkan ke Google Calendar!', 'success')
+    else:
+        flash('Gagal membuat event di Google Calendar.', 'error')
+    
+    return redirect(url_for('manajemen_ultah'))
+
+# ========== GOOGLE OAUTH ROUTES ==========
+
+@app.route('/manajemenUltah/google/auth')
+@login_required
+def ultah_google_auth():
+    """Redirect ke Google OAuth"""
+    auth_url, state = google_cal_service.get_auth_url()
+    session['google_oauth_state'] = state
+    return redirect(auth_url)
+
+@app.route('/manajemenUltah/google/callback')
+@login_required
+def ultah_google_callback():
+    """Handle OAuth callback dari Google"""
+    user_id = g.user.get('sub')
+    
+    try:
+        credentials, email = google_cal_service.handle_callback(request.url)
+        google_cal_service.save_token(user_id, credentials, email)
+        flash(f'Berhasil terhubung dengan akun Google: {email}', 'success')
+    except Exception as e:
+        logging.error(f"[GoogleOAuth] Error: {e}")
+        flash('Gagal menghubungkan akun Google.', 'error')
+    
+    return redirect(url_for('manajemen_ultah'))
+
+@app.route('/manajemenUltah/google/disconnect', methods=['POST'])
+@login_required
+def ultah_google_disconnect():
+    """Disconnect Google account"""
+    user_id = g.user.get('sub')
+    google_cal_service.delete_token(user_id)
+    flash('Akun Google berhasil diputuskan.', 'success')
+    return redirect(url_for('manajemen_ultah'))
+
+# ========== BULK OPERATIONS ==========
+
+@app.route('/manajemenUltah/bulk-delete', methods=['POST'])
+@login_required
+def ultah_bulk_delete():
+    """Bulk delete records"""
+    user_id = g.user.get('sub')
+    record_ids = request.form.getlist('record_ids')
+    
+    if not record_ids:
+        flash('Tidak ada data yang dipilih!', 'warning')
+        return redirect(url_for('manajemen_ultah'))
+    
+    deleted_count = 0
+    for record_id in record_ids:
+        try:
+            record = ultah_model.get_by_id(int(record_id))
+            if record:
+                # Hapus event dari Google Calendar jika ada
+                if record.get('google_calendar_event_id'):
+                    google_cal_service.delete_event(user_id, record['google_calendar_event_id'])
+                
+                if ultah_model.delete(int(record_id)):
+                    deleted_count += 1
+        except Exception as e:
+            logging.error(f"[BulkDelete] Error: {e}")
+    
+    flash(f'{deleted_count} data berhasil dihapus!', 'success')
+    return redirect(url_for('manajemen_ultah'))
+
+@app.route('/manajemenUltah/bulk-sync', methods=['POST'])
+@login_required
+def ultah_bulk_sync():
+    """Bulk sync records ke Google Calendar"""
+    user_id = g.user.get('sub')
+    
+    # Cek apakah sudah connect Google
+    token_info = google_cal_service.get_token_by_user(user_id)
+    if not token_info:
+        flash('Silakan hubungkan akun Google terlebih dahulu.', 'warning')
+        return redirect(url_for('manajemen_ultah'))
+    
+    record_ids = request.form.getlist('record_ids')
+    attendees_str = request.form.get('attendees', '').strip()
+    attendees = [e.strip() for e in attendees_str.split(',') if e.strip()] if attendees_str else []
+    
+    if not record_ids:
+        flash('Tidak ada data yang dipilih!', 'warning')
+        return redirect(url_for('manajemen_ultah'))
+    
+    synced_count = 0
+    for record_id in record_ids:
+        try:
+            record = ultah_model.get_by_id(int(record_id))
+            if record:
+                # Hapus event lama jika ada
+                if record.get('google_calendar_event_id'):
+                    google_cal_service.delete_event(user_id, record['google_calendar_event_id'])
+                
+                # Create event baru
+                event_id = google_cal_service.create_birthday_event(user_id, record, attendees)
+                
+                if event_id:
+                    conn = get_connection()
+                    if conn:
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "UPDATE ultah_records SET google_calendar_event_id = %s WHERE id = %s",
+                            (event_id, int(record_id))
+                        )
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
+                    synced_count += 1
+        except Exception as e:
+            logging.error(f"[BulkSync] Error: {e}")
+    
+    flash(f'{synced_count} data berhasil disinkronkan ke Google Calendar!', 'success')
+    return redirect(url_for('manajemen_ultah'))
 
 # SSE Endpoint untuk streaming count
 @app.route('/stream/recap-count')           
