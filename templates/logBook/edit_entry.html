@@ -41,34 +41,39 @@
                         <textarea name="deskripsi" rows="5" required class="auto-bullet w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">{{ entry.deskripsi }}</textarea>
                     </div>
                     
-                    <div x-data="imageCropUploader('{% if entry.gambar %}{{ url_for('static', filename='uploads/logbook/' ~ entry.gambar) }}{% endif %}')" class="mt-4">
+                    <div x-data="imageCropUploader()" class="mt-4">
     <label class="block text-sm mb-2 text-gray-400">Bukti Gambar Pekerjaan</label>
     
     <input type="hidden" name="hapus_gambar_lama" :value="hapusLama">
 
-    <div x-show="existingImage || newImagePreview" class="relative inline-block mb-3 group" x-cloak>
-        <img :src="newImagePreview || existingImage" class="max-h-[300px] rounded-lg border border-gray-600 shadow-sm object-contain">
-        
-        <button type="button" @click="removeImage()" class="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-red-600 transform scale-0 group-hover:scale-100 transition-transform duration-200">
-            <i class="fas fa-times"></i>
-        </button>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4" x-show="imagePreviews.length > 0">
+        <template x-for="(img, index) in imagePreviews" :key="index">
+            <div class="relative group aspect-video">
+                <img :src="img" class="w-full h-full object-cover rounded-lg border border-gray-600 shadow-sm">
+                <button type="button" @click="removeSingleImage(index)" 
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition-transform transform scale-90 group-hover:scale-100">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+        </template>
     </div>
 
-    <p x-show="!existingImage && !newImagePreview" class="text-sm text-gray-500 italic mb-3">Tidak ada gambar</p>
+    <input type="file" x-ref="fileInput" name="gambar" accept="image/*" multiple @change="handleFiles" 
+           class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 bg-gray-900 border border-gray-600 rounded-lg p-1 cursor-pointer">
 
-    <input type="file" x-ref="fileInput" name="gambar" accept="image/*" @change="fileChanged" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 bg-gray-900 border border-gray-600 rounded-lg p-1 cursor-pointer">
-
-    <div x-show="showModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4" x-cloak>
+    <div x-show="showModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4" x-cloak>
         <div class="bg-gray-800 rounded-xl p-4 w-full max-w-3xl flex flex-col shadow-2xl border border-gray-600">
-            <h3 class="text-white font-bold mb-4">Sesuaikan Area Gambar</h3>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-white font-bold">Crop Gambar (<span x-text="currentFileIndex + 1"></span> dari <span x-text="filesToCrop.length"></span>)</h3>
+            </div>
             
-            <div class="w-full h-[50vh] sm:h-[65vh] bg-black rounded-lg overflow-hidden flex justify-center items-center">
+            <div class="w-full h-[50vh] sm:h-[60vh] bg-black rounded-lg overflow-hidden flex justify-center items-center">
                 <img id="crop-image" class="max-w-full max-h-full">
             </div>
             
             <div class="flex justify-end gap-3 mt-5">
-                <button type="button" @click="cancelCrop()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded-lg text-white font-medium transition">Batal</button>
-                <button type="button" @click="applyCrop()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold shadow-lg shadow-blue-500/30 transition">Selesai Crop</button>
+                <button type="button" @click="skipCrop()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded-lg text-white transition">Lewati</button>
+                <button type="button" @click="applyCrop()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold shadow-lg transition">Selesai Crop</button>
             </div>
         </div>
     </div>
@@ -90,87 +95,84 @@
     {% include 'nativeNav.html' %}
     <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('imageCropUploader', (initialImage) => ({
-            existingImage: initialImage,
-            newImagePreview: null,
-            showModal: false,
-            hapusLama: 0,
-            cropper: null,
+    Alpine.data('imageCropUploader', () => ({
+        imagePreviews: [], // Untuk nampilin di layar
+        croppedBlobs: [],   // Data asli yang bakal dikirim ke server
+        filesToCrop: [],    // Antrean file yang dipilih
+        currentFileIndex: 0,
+        showModal: false,
+        hapusLama: 0,
+        cropper: null,
+
+        handleFiles(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
             
-            fileChanged(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
+            this.filesToCrop = files;
+            this.currentFileIndex = 0;
+            this.startCropping();
+        },
+
+        startCropping() {
+            if (this.currentFileIndex < this.filesToCrop.length) {
                 const reader = new FileReader();
-                reader.onload = (event) => {
+                reader.onload = (e) => {
                     this.showModal = true;
-                    // Buka modal dulu, baru pasang cropper di frame berikutnya
                     this.$nextTick(() => {
                         const image = document.getElementById('crop-image');
-                        image.src = event.target.result;
-                        
-                        // Hancurkan instance lama kalau ada
-                        if (this.cropper) {
-                            this.cropper.destroy();
-                        }
-                        
-                        // Setup Cropper
+                        image.src = e.target.result;
+                        if (this.cropper) this.cropper.destroy();
                         this.cropper = new Cropper(image, {
-                            viewMode: 1,      // Gak boleh keluar dari canvas
-                            dragMode: 'move',
+                            viewMode: 1,
                             autoCropArea: 1,
-                            restore: false,
-                            guides: true,
-                            center: true,
-                            highlight: false,
-                            cropBoxMovable: true,
-                            cropBoxResizable: true,
-                            toggleDragModeOnDblclick: false,
+                            responsive: true
                         });
                     });
                 };
-                reader.readAsDataURL(file);
-            },
-            
-            applyCrop() {
-                if (!this.cropper) return;
-                
-                // Ambil hasil crop
-                this.cropper.getCroppedCanvas({
-                    maxWidth: 1500,
-                    maxHeight: 1500
-                }).toBlob((blob) => {
-                    // Tampilkan preview di layar
-                    this.newImagePreview = URL.createObjectURL(blob);
-                    
-                    // --- MAGIC TRICK: Masukin hasil crop ke input file form asli ---
-                    const file = new File([blob], "cropped_image.jpg", { type: "image/jpeg", lastModified: new Date().getTime() });
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    this.$refs.fileInput.files = dataTransfer.files;
-                    // -------------------------------------------------------------
-                    
-                    // Bersihkan state
-                    this.showModal = false;
-                    this.hapusLama = 0; // Batalkan niat hapus gambar kalau tadinya diklik X
-                }, 'image/jpeg', 0.85); // Compress 85% dari frontend biar lebih enteng
-            },
-            
-            cancelCrop() {
+                reader.readAsDataURL(this.filesToCrop[this.currentFileIndex]);
+            } else {
                 this.showModal = false;
-                this.$refs.fileInput.value = ''; // Reset input file
-                if(this.cropper) this.cropper.destroy();
-            },
-            
-            removeImage() {
-                // Sembunyikan semua gambar & kirim sinyal hapus ke Python
-                this.existingImage = null;
-                this.newImagePreview = null;
-                this.$refs.fileInput.value = '';
-                this.hapusLama = 1; 
+                this.updateInputFile();
             }
-        }));
-    });
+        },
+
+        applyCrop() {
+            this.cropper.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200 }).toBlob((blob) => {
+                this.imagePreviews.push(URL.createObjectURL(blob));
+                this.croppedBlobs.push(blob);
+                this.nextFile();
+            }, 'image/jpeg', 0.8);
+        },
+
+        skipCrop() {
+            const file = this.filesToCrop[this.currentFileIndex];
+            this.imagePreviews.push(URL.createObjectURL(file));
+            this.croppedBlobs.push(file);
+            this.nextFile();
+        },
+
+        nextFile() {
+            this.currentFileIndex++;
+            this.startCropping();
+        },
+
+        removeSingleImage(index) {
+            this.imagePreviews.splice(index, 1);
+            this.croppedBlobs.splice(index, 1);
+            this.updateInputFile();
+            if (this.imagePreviews.length === 0) this.hapusLama = 1;
+        },
+
+        updateInputFile() {
+            const dataTransfer = new DataTransfer();
+            this.croppedBlobs.forEach((blob, i) => {
+                const file = new File([blob], `image_${i}.jpg`, { type: "image/jpeg" });
+                dataTransfer.items.add(file);
+            });
+            this.$refs.fileInput.files = dataTransfer.files;
+        }
+    }));
+});
     document.addEventListener('DOMContentLoaded', function() {
         const textareas = document.querySelectorAll('.auto-bullet');
 

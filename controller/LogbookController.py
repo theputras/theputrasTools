@@ -147,18 +147,23 @@ def add_entry(logbook_id, data, files):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     
-    # Ambil data nim dari logbook_id
     cursor.execute("SELECT nim FROM logbooks WHERE id = %s", (logbook_id,))
-    logbook = cursor.fetchone()
-    nim = logbook['nim'] if logbook else 'unknown_nim'
+    nim = cursor.fetchone()['nim']
     
-    # Proses kompresi dan save gambar (lempar nim ke fungsi)
-    filename = compress_and_save_image(files.get('gambar'), nim)
-    
+    # Simpan data aktivitas dulu
     cursor.execute(
-        "INSERT INTO logbook_entries (logbook_id, tanggal, aktivitas, deskripsi, gambar) VALUES (%s, %s, %s, %s, %s)",
-        (logbook_id, data['tanggal'], data['aktivitas'], data['deskripsi'], filename)
+        "INSERT INTO logbook_entries (logbook_id, tanggal, aktivitas, deskripsi) VALUES (%s, %s, %s, %s)",
+        (logbook_id, data['tanggal'], data['aktivitas'], data['deskripsi'])
     )
+    entry_id = cursor.lastrowid
+    
+    # Ambil list gambar dari request.files.getlist()
+    images = files.getlist('gambar')
+    for img in images:
+        if img and img.filename != '':
+            path = compress_and_save_image(img, nim) # Fungsi kompres yg lama tetep kepake
+            cursor.execute("INSERT INTO logbook_images (entry_id, path) VALUES (%s, %s)", (entry_id, path))
+            
     conn.commit()
     conn.close()
 
@@ -166,14 +171,15 @@ def delete_entry(entry_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     
-    cursor.execute("SELECT gambar FROM logbook_entries WHERE id = %s", (entry_id,))
-    entry = cursor.fetchone()
+    # Ambil semua path gambar
+    cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
+    images = cursor.fetchall()
     
-    if entry and entry['gambar']:
-        file_path = os.path.join('static', 'uploads', 'logbook', entry['gambar'])
+    for img in images:
+        file_path = os.path.join('static', 'uploads', 'logbook', img['path'])
         if os.path.exists(file_path):
             os.remove(file_path)
-
+            
     cursor.execute("DELETE FROM logbook_entries WHERE id = %s", (entry_id,))
     conn.commit()
     conn.close()
@@ -190,44 +196,49 @@ def update_entry(entry_id, data, files):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    image_file = files.get('gambar')
-    
-    # Ambil sinyal hapus dari input hidden HTML
-    hapus_lama = data.get('hapus_gambar_lama') == '1'
-    
-    # Kalau ada gambar baru ATAU user minta hapus gambar lama
-    if (image_file and image_file.filename != '') or hapus_lama:
+    # 1. Ambil data NIM dan list gambar lama dari database
+    cursor.execute("""
+        SELECT l.nim, e.id as entry_id 
+        FROM logbook_entries e 
+        JOIN logbooks l ON e.logbook_id = l.id 
+        WHERE e.id = %s
+    """, (entry_id,))
+    row = cursor.fetchone()
+    nim = row['nim'] if row else 'unknown_nim'
+
+    # 2. Cek apakah ada request untuk update gambar (ada file baru atau perintah hapus)
+    # Kita ambil list gambar baru dari request.files.getlist
+    new_images = files.getlist('gambar')
+    hapus_semua = data.get('hapus_gambar_lama') == '1'
+
+    # Jika user upload gambar baru ATAU menekan tombol hapus semua
+    if (new_images and any(img.filename != '' for img in new_images)) or hapus_semua:
         
-        # 1. Cari data gambar lama & nim untuk dihapus fisiknya
-        cursor.execute("SELECT l.nim, e.gambar FROM logbook_entries e JOIN logbooks l ON e.logbook_id = l.id WHERE e.id = %s", (entry_id,))
-        row = cursor.fetchone()
-        nim = row['nim'] if row else 'unknown_nim'
-        
-        # Hapus file fisik lama
-        if row and row['gambar']:
-            old_path = os.path.join('static', 'uploads', 'logbook', row['gambar'])
+        # A. Hapus semua gambar lama terkait entry ini di HDD
+        cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
+        old_images = cursor.fetchall()
+        for old_img in old_images:
+            old_path = os.path.join('static', 'uploads', 'logbook', old_img['path'])
             if os.path.exists(old_path):
                 os.remove(old_path)
+        
+        # B. Hapus record gambar lama di database logbook_images
+        cursor.execute("DELETE FROM logbook_images WHERE entry_id = %s", (entry_id,))
 
-        # 2. Jika ada gambar baru, simpan dan update DB
-        if image_file and image_file.filename != '':
-            filename = compress_and_save_image(image_file, nim)
-            cursor.execute(
-                "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s, gambar=%s WHERE id=%s",
-                (data['tanggal'], data['aktivitas'], data['deskripsi'], filename, entry_id)
-            )
-        # 3. Jika cuma minta hapus gambar (tanpa gambar baru), set NULL di DB
-        elif hapus_lama:
-            cursor.execute(
-                "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s, gambar=NULL WHERE id=%s",
-                (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)
-            )
-    else:
-        # Jika gak ngotak-ngatik gambar sama sekali
-        cursor.execute(
-            "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s",
-            (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)
-        )
+        # C. Jika ada gambar-gambar baru, simpan ke HDD dan masukkan ke database
+        for img in new_images:
+            if img and img.filename != '':
+                new_path = compress_and_save_image(img, nim)
+                cursor.execute(
+                    "INSERT INTO logbook_images (entry_id, path) VALUES (%s, %s)",
+                    (entry_id, new_path)
+                )
+
+    # 3. Update data teks (Tanggal, Aktivitas, Deskripsi) di logbook_entries
+    cursor.execute(
+        "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s",
+        (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)
+    )
 
     conn.commit()
     conn.close()
@@ -248,12 +259,12 @@ def generate_word(logbook_id, user_id):
 
     # 2. Tabel Identitas (Tanpa Border)
     if logbook:
-        # Format tanggal pelaksanaan
+        # ... (Kode identitas tetap sama seperti sebelumnya) ...
+        # [Bagian ini dilewati untuk mempersingkat jawaban]
         start = logbook['waktu_mulai']
         end = logbook['waktu_selesai']
         start_str = start.strftime('%d-%m-%Y') if hasattr(start, 'strftime') else str(start)
         end_str = end.strftime('%d-%m-%Y') if hasattr(end, 'strftime') else str(end)
-
         identitas = [
             ("Fakultas", ":", logbook.get('fakultas', '-')),
             ("Prodi", ":", logbook.get('prodi', '-')),
@@ -266,44 +277,36 @@ def generate_word(logbook_id, user_id):
             ("Whatsapp Mentor", ":", logbook.get('wa_mentor', '-')),
             ("Email Mentor", ":", logbook.get('email_mentor', '-'))
         ]
-        
         id_table = doc.add_table(rows=0, cols=3)
         for label, sep, val in identitas:
             row_cells = id_table.add_row().cells
             row_cells[0].text = label
             row_cells[1].text = sep
             row_cells[2].text = str(val)
-            # Set lebar kolom identitas biar rapi
             row_cells[0].width = Inches(1.5)
             row_cells[1].width = Inches(0.2)
             row_cells[2].width = Inches(4.3)
 
     # 3. Pengelompokan Kegiatan Berdasarkan Bulan
     months_id = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-    
     grouped_entries = {}
     for entry in entries:
-        tgl = entry['tanggal'] # Asumsi ini tipe datetime.date
-        if tgl:
-            month_key = f"{months_id[tgl.month]} {tgl.year}"
-            month_only = months_id[tgl.month]
-        else:
-            month_key = "Belum Diketahui"
-            month_only = ""
-            
+        tgl = entry['tanggal']
+        month_key = f"{months_id[tgl.month]} {tgl.year}" if tgl else "Belum Diketahui"
+        month_only = months_id[tgl.month] if tgl else ""
         if month_key not in grouped_entries:
             grouped_entries[month_key] = {'month_only': month_only, 'data': []}
-            
         grouped_entries[month_key]['data'].append(entry)
+
+    # --- TAMBAHAN: Buka koneksi database untuk ambil gambar ---
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
 
     # 4. Render Logbook Per Bulan
     for month_key, group in grouped_entries.items():
-        doc.add_paragraph() # Spacing
-        
-        # Sub Judul Bulan
+        doc.add_paragraph() 
         doc.add_heading(f'Aktivitas Bulan {month_key}', level=2)
         
-        # Buat Tabel Kegiatan (3 Kolom sesuai docx)
         table = doc.add_table(rows=1, cols=3)
         table.style = 'Table Grid'
         hdr_cells = table.rows[0].cells
@@ -311,7 +314,6 @@ def generate_word(logbook_id, user_id):
         hdr_cells[1].text = 'Aktivitas'
         hdr_cells[2].text = 'Deskripsi Kegiatan'
         
-        # Lebar Kolom
         hdr_cells[0].width = Inches(0.5)
         hdr_cells[1].width = Inches(2.0)
         hdr_cells[2].width = Inches(4.0)
@@ -321,33 +323,40 @@ def generate_word(logbook_id, user_id):
             row_cells = table.add_row().cells
             row_cells[0].text = str(idx)
             
-            # Gabungkan Tanggal ke Kolom Aktivitas karena formatnya cuma 3 kolom
             tgl_str = entry['tanggal'].strftime('%d-%m-%Y') if entry['tanggal'] else '-'
             row_cells[1].text = f"{tgl_str}\n{entry['aktivitas']}"
             
             p = row_cells[2].paragraphs[0]
             p.add_run(entry['deskripsi'] + "\n")
             
-            # Bukti Gambar
-            if entry['gambar']:
-                img_path = os.path.join('static', 'uploads', 'logbook', entry['gambar'])
+            # --- MODIFIKASI: AMBIL MULTIPLE GAMBAR DARI DATABASE ---
+            cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry['id'],))
+            db_images = cursor.fetchall()
+
+            for img in db_images:
+                img_path = os.path.join('static', 'uploads', 'logbook', img['path'])
                 if os.path.exists(img_path):
-                    row_cells[2].add_paragraph().add_run().add_picture(img_path, width=Inches(2.5))
+                    # Menambahkan gambar ke dalam sel kolom "Deskripsi Kegiatan"
+                    doc_p = row_cells[2].add_paragraph()
+                    doc_p.add_run().add_picture(img_path, width=Inches(2.5))
             
-        doc.add_paragraph() # Spacing
+        doc.add_paragraph() 
         
-        # 5. Tambahkan Format Resume & Tanda Tangan Mentor di Bawah Tabel
+        # 5. Tambahkan Format Resume & Tanda Tangan
         month_name = group['month_only']
         if month_name:
             doc.add_heading(f'Resume Kegiatan Bulan {month_name}:', level=3)
-            doc.add_paragraph("...\n\n") # Placeholder agar lu bisa ngetik bebas di Word
+            doc.add_paragraph("...\n\n") 
         
-        # Bikin Layout Tanda Tangan Rata Tengah di Sebelah Kanan/Bawah
         sig_p = doc.add_paragraph()
         sig_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         sig_p.add_run("Disetujui Oleh\n")
         sig_p.add_run("Tanda Tangan Mentor\n\n\n\n")
         sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}").bold = True
+
+    # Tutup koneksi setelah selesai looping
+    cursor.close()
+    conn.close()
 
     # Save to Stream
     file_stream = io.BytesIO()
