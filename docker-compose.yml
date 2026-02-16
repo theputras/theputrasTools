@@ -15,6 +15,7 @@ services:
       - .:/app  # Optional: This mounts your local app directory to the container's /app
       - /etc/localtime:/etc/localtime:ro  # Menyinkronkan waktu host dengan container
       - /etc/timezone:/etc/timezone:ro  # Menyinkronkan zona waktu
+      - /mnt/hdd/nextcloud-storage/data-putra/theputrasTools-files/data-magang/logbook:/app/static/uploads/logbook
     restart: unless-stopped  # Optional: Ensures the container restarts unless stopped manually
     depends_on:
       - warp-sidecar

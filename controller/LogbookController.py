@@ -8,20 +8,29 @@ from flask import send_file
 from connection import get_connection
 from docx.enum.text import WD_ALIGN_PARAGRAPH # Tambahkan ini di bagian atas file import lu
 
-UPLOAD_FOLDER = os.path.join('static', 'uploads', 'logbook')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# UPLOAD_FOLDER = os.path.join('static', 'uploads', 'logbook')
+# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-def compress_and_save_image(image_file):
+def compress_and_save_image(image_file, nim):
     if not image_file or image_file.filename == '':
         return None
+        
     filename = secure_filename(image_file.filename)
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    
+    # Bikin struktur folder dinamis: static/uploads/logbook/{nim}/imgs
+    nim_folder = os.path.join('static', 'uploads', 'logbook', str(nim), 'imgs')
+    os.makedirs(nim_folder, exist_ok=True)
+    
+    filepath = os.path.join(nim_folder, filename)
+    
     img = Image.open(image_file)
     if img.mode in ("RGBA", "P"): 
         img = img.convert("RGB")
     img.thumbnail((800, 800))
     img.save(filepath, optimize=True, quality=60)
-    return filename
+    
+    # Return path relatif untuk disimpan ke DB (misal: 23410100003/imgs/bukti.jpg)
+    return f"{nim}/imgs/{filename}"
 
 # --- CRUD SETUP LOGBOOK ---
 def get_logbooks_by_user(user_id):
@@ -78,10 +87,45 @@ def update_logbook(id, data, user_id):
 
 def delete_logbook(id, user_id):
     conn = get_connection()
-    cursor = conn.cursor()
-    # Tambahin filter AND user_id = %s biar cuma yang punya yang bisa hapus
-    cursor.execute("DELETE FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
-    conn.commit()
+    cursor = conn.cursor(dictionary=True)
+    
+    # 1. Pastikan logbooknya ada dan milik user tersebut, sekaligus ambil nim-nya
+    cursor.execute("SELECT nim FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
+    logbook = cursor.fetchone()
+    
+    if logbook:
+        nim = logbook['nim']
+        
+        # 2. Ambil semua entri yang punya gambar di logbook ini
+        cursor.execute("SELECT gambar FROM logbook_entries WHERE logbook_id = %s", (id,))
+        entries = cursor.fetchall()
+        
+        # 3. Hapus file gambarnya satu per satu secara fisik
+        for entry in entries:
+            if entry['gambar']:
+                file_path = os.path.join('static', 'uploads', 'logbook', entry['gambar'])
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    
+        # 4. Hapus logbook dari database 
+        # (Data di logbook_entries otomatis terhapus kalau lu pakai relasi ON DELETE CASCADE di SQL-nya)
+        cursor.execute("DELETE FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
+        conn.commit()
+        
+        # 5. BERSIH-BERSIH FOLDER (Hanya dihapus JIKA KOSONG)
+        try:
+            img_dir = os.path.join('static', 'uploads', 'logbook', str(nim), 'imgs')
+            base_dir = os.path.join('static', 'uploads', 'logbook', str(nim))
+            
+            # os.rmdir hanya akan menghapus folder jika isinya benar-benar kosong
+            if os.path.exists(img_dir) and not os.listdir(img_dir):
+                os.rmdir(img_dir)
+            if os.path.exists(base_dir) and not os.listdir(base_dir):
+                os.rmdir(base_dir)
+        except OSError:
+            # Abaikan jika error (berarti foldernya masih ada isinya dari logbook lain)
+            pass
+
     conn.close()
 
 # --- CRUD ENTRIES (KEGIATAN HARIAN) ---
@@ -100,9 +144,17 @@ def get_entries_by_logbook(logbook_id):
     return entries
 
 def add_entry(logbook_id, data, files):
-    filename = compress_and_save_image(files.get('gambar'))
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Ambil data nim dari logbook_id
+    cursor.execute("SELECT nim FROM logbooks WHERE id = %s", (logbook_id,))
+    logbook = cursor.fetchone()
+    nim = logbook['nim'] if logbook else 'unknown_nim'
+    
+    # Proses kompresi dan save gambar (lempar nim ke fungsi)
+    filename = compress_and_save_image(files.get('gambar'), nim)
+    
     cursor.execute(
         "INSERT INTO logbook_entries (logbook_id, tanggal, aktivitas, deskripsi, gambar) VALUES (%s, %s, %s, %s, %s)",
         (logbook_id, data['tanggal'], data['aktivitas'], data['deskripsi'], filename)
@@ -114,20 +166,18 @@ def delete_entry(entry_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     
-    # Cari tahu dulu nama file gambarnya apa sebelum datanya dihapus
     cursor.execute("SELECT gambar FROM logbook_entries WHERE id = %s", (entry_id,))
     entry = cursor.fetchone()
     
-    # Hapus file fisiknya dari folder directory (Biar hardisk server ga penuh)
     if entry and entry['gambar']:
-        file_path = os.path.join(UPLOAD_FOLDER, entry['gambar'])
+        file_path = os.path.join('static', 'uploads', 'logbook', entry['gambar'])
         if os.path.exists(file_path):
             os.remove(file_path)
 
-    # Baru hapus data dari database
     cursor.execute("DELETE FROM logbook_entries WHERE id = %s", (entry_id,))
     conn.commit()
     conn.close()
+    
 def get_entry_by_id(entry_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -142,26 +192,27 @@ def update_entry(entry_id, data, files):
 
     image_file = files.get('gambar')
     
-    # Cek apakah user mengupload gambar baru
     if image_file and image_file.filename != '':
-        # 1. Cari gambar lama untuk dihapus fisiknya (biar server ga penuh)
-        cursor.execute("SELECT gambar FROM logbook_entries WHERE id = %s", (entry_id,))
-        old_entry = cursor.fetchone()
-        if old_entry and old_entry['gambar']:
-            old_path = os.path.join(UPLOAD_FOLDER, old_entry['gambar'])
+        # 1. Cari data gambar lama & nim untuk dihapus fisiknya
+        cursor.execute("SELECT l.nim, e.gambar FROM logbook_entries e JOIN logbooks l ON e.logbook_id = l.id WHERE e.id = %s", (entry_id,))
+        row = cursor.fetchone()
+        nim = row['nim'] if row else 'unknown_nim'
+        
+        # Hapus file lama (karena gambar sekarang isinya "NIM/imgs/file.jpg", tinggal digabung path base-nya)
+        if row and row['gambar']:
+            old_path = os.path.join('static', 'uploads', 'logbook', row['gambar'])
             if os.path.exists(old_path):
                 os.remove(old_path)
 
         # 2. Simpan gambar baru
-        filename = compress_and_save_image(image_file)
+        filename = compress_and_save_image(image_file, nim)
 
-        # 3. Update database beserta nama file gambar yang baru
+        # 3. Update db
         cursor.execute(
             "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s, gambar=%s WHERE id=%s",
             (data['tanggal'], data['aktivitas'], data['deskripsi'], filename, entry_id)
         )
     else:
-        # Jika tidak ada gambar baru, update teksnya saja (gambar lama tetap aman)
         cursor.execute(
             "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s",
             (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)
@@ -268,10 +319,10 @@ def generate_word(logbook_id, user_id):
             
             # Bukti Gambar
             if entry['gambar']:
-                img_path = os.path.join(UPLOAD_FOLDER, entry['gambar'])
+                img_path = os.path.join('static', 'uploads', 'logbook', entry['gambar'])
                 if os.path.exists(img_path):
                     row_cells[2].add_paragraph().add_run().add_picture(img_path, width=Inches(2.5))
-        
+            
         doc.add_paragraph() # Spacing
         
         # 5. Tambahkan Format Resume & Tanda Tangan Mentor di Bawah Tabel
