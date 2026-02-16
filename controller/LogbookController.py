@@ -192,27 +192,38 @@ def update_entry(entry_id, data, files):
 
     image_file = files.get('gambar')
     
-    if image_file and image_file.filename != '':
+    # Ambil sinyal hapus dari input hidden HTML
+    hapus_lama = data.get('hapus_gambar_lama') == '1'
+    
+    # Kalau ada gambar baru ATAU user minta hapus gambar lama
+    if (image_file and image_file.filename != '') or hapus_lama:
+        
         # 1. Cari data gambar lama & nim untuk dihapus fisiknya
         cursor.execute("SELECT l.nim, e.gambar FROM logbook_entries e JOIN logbooks l ON e.logbook_id = l.id WHERE e.id = %s", (entry_id,))
         row = cursor.fetchone()
         nim = row['nim'] if row else 'unknown_nim'
         
-        # Hapus file lama (karena gambar sekarang isinya "NIM/imgs/file.jpg", tinggal digabung path base-nya)
+        # Hapus file fisik lama
         if row and row['gambar']:
             old_path = os.path.join('static', 'uploads', 'logbook', row['gambar'])
             if os.path.exists(old_path):
                 os.remove(old_path)
 
-        # 2. Simpan gambar baru
-        filename = compress_and_save_image(image_file, nim)
-
-        # 3. Update db
-        cursor.execute(
-            "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s, gambar=%s WHERE id=%s",
-            (data['tanggal'], data['aktivitas'], data['deskripsi'], filename, entry_id)
-        )
+        # 2. Jika ada gambar baru, simpan dan update DB
+        if image_file and image_file.filename != '':
+            filename = compress_and_save_image(image_file, nim)
+            cursor.execute(
+                "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s, gambar=%s WHERE id=%s",
+                (data['tanggal'], data['aktivitas'], data['deskripsi'], filename, entry_id)
+            )
+        # 3. Jika cuma minta hapus gambar (tanpa gambar baru), set NULL di DB
+        elif hapus_lama:
+            cursor.execute(
+                "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s, gambar=NULL WHERE id=%s",
+                (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)
+            )
     else:
+        # Jika gak ngotak-ngatik gambar sama sekali
         cursor.execute(
             "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s",
             (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)

@@ -8,6 +8,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
@@ -59,9 +61,36 @@
                         <label class="block text-sm mb-1 text-gray-400">Deskripsi Pekerjaan</label>
                         <textarea name="deskripsi" rows="3" required placeholder="Ceritakan apa saja yang dikerjakan..." class="auto-bullet w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none"></textarea>
                     </div>
-                    <div class="md:col-span-2">
+                    <div x-data="imageCropUploader('')" class="md:col-span-2">
                         <label class="block text-sm mb-1 text-gray-400">Bukti Gambar (Opsional)</label>
-                        <input type="file" name="gambar" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 bg-gray-900 border border-gray-600 rounded-lg p-1">
+                        <input type="hidden" name="hapus_gambar_lama" :value="hapusLama">
+
+    <div x-show="existingImage || newImagePreview" class="relative inline-block mb-3 group" x-cloak>
+        <img :src="newImagePreview || existingImage" class="max-h-[300px] rounded-lg border border-gray-600 shadow-sm object-contain">
+        
+        <button type="button" @click="removeImage()" class="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-red-600 transform scale-0 group-hover:scale-100 transition-transform duration-200">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <p x-show="!existingImage && !newImagePreview" class="text-sm text-gray-500 italic mb-3">Tidak ada gambar / Gambar telah dihapus.</p>
+
+    <input type="file" x-ref="fileInput" name="gambar" accept="image/*" @change="fileChanged" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 bg-gray-900 border border-gray-600 rounded-lg p-1 cursor-pointer">
+
+    <div x-show="showModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4" x-cloak>
+        <div class="bg-gray-800 rounded-xl p-4 w-full max-w-3xl flex flex-col shadow-2xl border border-gray-600">
+            <h3 class="text-white font-bold mb-4">Sesuaikan Area Gambar</h3>
+            
+            <div class="w-full h-[50vh] sm:h-[65vh] bg-black rounded-lg overflow-hidden flex justify-center items-center">
+                <img id="crop-image" class="max-w-full max-h-full">
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-5">
+                <button type="button" @click="cancelCrop()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded-lg text-white font-medium transition">Batal</button>
+                <button type="button" @click="applyCrop()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold shadow-lg shadow-blue-500/30 transition">Selesai Crop</button>
+            </div>
+        </div>
+    </div>
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition shadow-lg shadow-blue-500/30">
@@ -75,53 +104,131 @@
                 <h2 class="text-lg font-bold text-white">Riwayat Kegiatan</h2>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-sm min-w-[600px]">
-                    <thead>
-                        <tr class="bg-gray-900/50 text-gray-400 border-b border-gray-700">
-                            <th class="p-4 w-12 text-center">No</th>
-                            <th class="p-4 w-32">Tanggal</th>
-                            <th class="p-4">Aktivitas & Bukti</th>
-                            <th class="p-4 w-16 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-300 divide-y divide-gray-700">
-                        {% for entry in entries %}
-                        <tr class="hover:bg-gray-700/30 transition">
-                            <td class="p-4 text-center text-gray-500">{{ loop.index }}</td>
-                            <td class="p-4 font-medium">{{ entry.tanggal_display }}</td>
-                            <td class="p-4">
-                                <div class="font-bold text-blue-400 mb-1">{{ entry.aktivitas }}</div>
-                                <p class="text-gray-400 whitespace-pre-line mb-3">{{ entry.deskripsi }}</p>
-                                
-                                {% if entry.gambar %}
-                                    <img src="{{ url_for('static', filename='uploads/logbook/' ~ entry.gambar) }}" alt="Bukti" class="max-w-[150px] sm:max-w-[200px] rounded-lg border border-gray-600 shadow-sm">
-                                {% endif %}
-                            </td>
-                         <td class="p-4 text-center">
-    <a href="{{ url_for('logbook_edit_entry', logbook_id=logbook.id, entry_id=entry.id) }}" class="text-yellow-400 hover:text-yellow-300 transition mr-3" title="Edit">
-        <i class="fas fa-edit"></i>
-    </a>
-    
-    <a href="{{ url_for('logbook_delete_entry', logbook_id=logbook.id, entry_id=entry.id) }}" onclick="return confirm('Hapus kegiatan ini?')" class="text-red-400 hover:text-red-300 transition" title="Hapus">
-        <i class="fas fa-trash-alt"></i>
-    </a>
-</td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="4" class="p-8 text-center text-gray-500 italic">
-                                Belum ada logbook harian yang diisi.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <table class="w-full text-left border-collapse text-sm min-w-[500px]">
+                <thead>
+                    <tr class="bg-gray-900/50 text-gray-400 border-b border-gray-700">
+                        <th class="p-4 w-12 text-center">No</th>
+                        <th class="p-4 w-32">Tanggal</th>
+                        <th class="p-4">Aktivitas & Bukti</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-300 divide-y divide-gray-700">
+                    {% for entry in entries %}
+                    <tr class="hover:bg-gray-700/30 transition group">
+                        <td class="p-4 text-center text-gray-500 align-top">{{ loop.index }}</td>
+                        <td class="p-4 font-medium align-top">{{ entry.tanggal_display }}</td>
+                        <td class="p-4">
+                            <a href="{{ url_for('logbook_edit_entry', logbook_id=logbook.id, entry_id=entry.id) }}" class="inline-block mb-1">
+                                <div class="font-bold text-blue-400 hover:text-blue-300 transition flex items-center gap-2">
+                                    {{ entry.aktivitas }}
+                                    <i class="fas fa-edit text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Edit Kegiatan"></i>
+                                </div>
+                            </a>
+                            
+                            <p class="text-gray-400 whitespace-pre-line mb-3">{{ entry.deskripsi }}</p>
+                            
+                            {% if entry.gambar %}
+                                <img src="{{ url_for('static', filename='uploads/logbook/' ~ entry.gambar) }}" alt="Bukti" class="max-w-[150px] sm:max-w-[200px] rounded-lg border border-gray-600 shadow-sm">
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="p-8 text-center text-gray-500 italic">
+                            Belum ada logbook harian yang diisi.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         </div>
 
     </div>
     {% include 'nativeNav.html' %}
     <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('imageCropUploader', (initialImage) => ({
+            existingImage: initialImage,
+            newImagePreview: null,
+            showModal: false,
+            hapusLama: 0,
+            cropper: null,
+            
+            fileChanged(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    this.showModal = true;
+                    // Buka modal dulu, baru pasang cropper di frame berikutnya
+                    this.$nextTick(() => {
+                        const image = document.getElementById('crop-image');
+                        image.src = event.target.result;
+                        
+                        // Hancurkan instance lama kalau ada
+                        if (this.cropper) {
+                            this.cropper.destroy();
+                        }
+                        
+                        // Setup Cropper
+                        this.cropper = new Cropper(image, {
+                            viewMode: 1,      // Gak boleh keluar dari canvas
+                            dragMode: 'move',
+                            autoCropArea: 1,
+                            restore: false,
+                            guides: true,
+                            center: true,
+                            highlight: false,
+                            cropBoxMovable: true,
+                            cropBoxResizable: true,
+                            toggleDragModeOnDblclick: false,
+                        });
+                    });
+                };
+                reader.readAsDataURL(file);
+            },
+            
+            applyCrop() {
+                if (!this.cropper) return;
+                
+                // Ambil hasil crop
+                this.cropper.getCroppedCanvas({
+                    maxWidth: 1500,
+                    maxHeight: 1500
+                }).toBlob((blob) => {
+                    // Tampilkan preview di layar
+                    this.newImagePreview = URL.createObjectURL(blob);
+                    
+                    // --- MAGIC TRICK: Masukin hasil crop ke input file form asli ---
+                    const file = new File([blob], "cropped_image.jpg", { type: "image/jpeg", lastModified: new Date().getTime() });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    this.$refs.fileInput.files = dataTransfer.files;
+                    // -------------------------------------------------------------
+                    
+                    // Bersihkan state
+                    this.showModal = false;
+                    this.hapusLama = 0; // Batalkan niat hapus gambar kalau tadinya diklik X
+                }, 'image/jpeg', 0.85); // Compress 85% dari frontend biar lebih enteng
+            },
+            
+            cancelCrop() {
+                this.showModal = false;
+                this.$refs.fileInput.value = ''; // Reset input file
+                if(this.cropper) this.cropper.destroy();
+            },
+            
+            removeImage() {
+                // Sembunyikan semua gambar & kirim sinyal hapus ke Python
+                this.existingImage = null;
+                this.newImagePreview = null;
+                this.$refs.fileInput.value = '';
+                this.hapusLama = 1; 
+            }
+        }));
+    });
     document.addEventListener('DOMContentLoaded', function() {
         const textareas = document.querySelectorAll('.auto-bullet');
 
