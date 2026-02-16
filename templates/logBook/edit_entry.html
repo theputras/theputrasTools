@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Kegiatan - The Putras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
+    <div class="flex-1 container mx-auto p-4 sm:p-6 pb-32 max-w-3xl">
+        
+        <div class="mb-6 flex items-center gap-3">
+            <a href="{{ url_for('logbook_detail', logbook_id=logbook.id) }}" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 text-white transition">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="text-2xl font-bold text-white">Edit Kegiatan Harian</h1>
+        </div>
+
+        <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-6 sm:p-8">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="grid grid-cols-1 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm mb-1 text-gray-400">Tanggal</label>
+                        <input type="text" name="tanggal" value="{{ entry.tanggal }}" required class="datepicker w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1 text-gray-400">Aktivitas / Judul</label>
+                        <input type="text" name="aktivitas" value="{{ entry.aktivitas }}" required class="w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1 text-gray-400">Deskripsi Pekerjaan</label>
+                        <textarea name="deskripsi" rows="5" required class="auto-bullet w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">{{ entry.deskripsi }}</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm mb-2 text-gray-400">Bukti Gambar Saat Ini</label>
+                        {% if entry.gambar %}
+                            <img src="{{ url_for('static', filename='uploads/logbook/' ~ entry.gambar) }}" alt="Bukti Lama" class="max-w-[200px] rounded-lg border border-gray-600 shadow-sm mb-3">
+                        {% else %}
+                            <p class="text-sm text-gray-500 italic mb-3">Tidak ada gambar yang diupload sebelumnya.</p>
+                        {% endif %}
+                        
+                        <label class="block text-sm mb-1 text-gray-400">Ganti Bukti Gambar (Opsional)</label>
+                        <p class="text-xs text-yellow-500 mb-2">*Biarkan kosong jika tidak ingin mengubah gambar.</p>
+                        <input type="file" name="gambar" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 bg-gray-900 border border-gray-600 rounded-lg p-1">
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full mt-4 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-yellow-500/30">
+                    <i class="fas fa-save mr-2"></i> Perbarui Kegiatan
+                </button>
+            </form>
+        </div>
+    </div>
+    {% include 'nativeNav.html' %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textareas = document.querySelectorAll('.auto-bullet');
+
+        textareas.forEach(textarea => {
+            textarea.addEventListener('keydown', function(e) {
+                // Hanya eksekusi jika tombol yang ditekan adalah Enter
+                if (e.key === 'Enter') {
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    const value = this.value;
+
+                    // Ambil teks dari awal sampai posisi kursor saat ini
+                    const textBeforeCursor = value.substring(0, start);
+                    // Ambil baris terakhir yang sedang diketik
+                    const lines = textBeforeCursor.split('\n');
+                    const currentLine = lines[lines.length - 1];
+
+                    // Deteksi pola bullet: "-", "*", atau angka "1.", "2." diikuti spasi
+                    const bulletRegex = /^(\s*[-*]\s+|\s*\d+\.\s+)/;
+                    const match = currentLine.match(bulletRegex);
+
+                    if (match) {
+                        e.preventDefault(); // Stop fungsi Enter bawaan
+                        
+                        let bullet = match[1]; // Dapatkan bulletnya (misal: "- ")
+                        const lineContent = currentLine.substring(bullet.length);
+
+                        // Fitur ala Google Keep: Kalau barisnya kosong (cuma ada bullet),
+                        // tekan Enter bakal ngehapus bulletnya dan balik ke baris normal
+                        if (lineContent.trim() === '') {
+                            this.value = value.substring(0, start - bullet.length) + value.substring(end);
+                            this.selectionStart = this.selectionEnd = start - bullet.length;
+                        } else {
+                            // Kalau ada isinya, bikin baris baru + bullet yang sama
+                            let insertText = '\n' + bullet;
+                            
+                            // Fitur tambahan: Auto-increment untuk list angka (1. -> 2. -> 3.)
+                            const numberMatch = bullet.match(/\d+/);
+                            if (numberMatch) {
+                                const num = parseInt(numberMatch[0]);
+                                insertText = '\n' + bullet.replace(/\d+/, num + 1);
+                            }
+
+                            // Sisipkan ke dalam textarea
+                            this.value = value.substring(0, start) + insertText + value.substring(end);
+                            
+                            // Kembalikan kursor ke posisi yang tepat
+                            this.selectionStart = this.selectionEnd = start + insertText.length;
+                        }
+                    }
+                }
+            });
+        });
+    });
+    // Inisialisasi Flatpickr
+    flatpickr(".datepicker", {
+        altInput: true,          // Mengaktifkan fitur ilusi (tampilan vs data asli berbeda)
+        altFormat: "d-m-Y",      // Format yang DILIHAT oleh user (dd-mm-yyyy)
+        dateFormat: "Y-m-d",     // Format yang DIKIRIM ke database Python (yyyy-mm-dd)
+        disableMobile: "true"    // Memaksa HP pakai kalender Flatpickr, bukan bawaan browser
+    });
+</script>
+</body>
+</html>

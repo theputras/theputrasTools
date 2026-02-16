@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Logbook - The Putras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
+    <div class="flex-1 container mx-auto p-4 sm:p-6 pb-32 max-w-5xl">
+        
+        <div class="flex flex-wrap justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Logbook Magang</h1>
+                <p class="text-gray-400 text-sm mt-1">Kelola catatan magang harianmu di sini</p>
+            </div>
+            <a href="{{ url_for('logbook_setup') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition shadow-lg shadow-blue-500/30 flex items-center gap-2">
+                <i class="fas fa-plus"></i> Buat Logbook Baru
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for lb in logbooks %}
+            <div class="bg-gray-800/80 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:border-blue-500/50 transition duration-300 flex flex-col">
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-white">{{ lb.nama_mitra }}</h3>
+                    <p class="text-blue-400 text-sm font-medium mb-3">{{ lb.posisi_magang }}</p>
+                    <div class="text-xs text-gray-400 space-y-1.5">
+                        <p><i class="fas fa-user text-gray-500 w-4"></i> {{ lb.nama }}</p>
+                        <p><i class="fas fa-calendar-alt text-gray-500 w-4"></i> {{ lb.waktu_mulai }} s/d {{ lb.waktu_selesai }}</p>
+                    </div>
+                </div>
+                <div class="mt-5 pt-4 border-t border-gray-700 flex justify-between items-center">
+                    <a href="{{ url_for('logbook_detail', logbook_id=lb.id) }}" class="text-sm text-white bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full transition">Buka Logbook</a>
+                    <a href="{{ url_for('logbook_delete', logbook_id=lb.id) }}" onclick="return confirm('Yakin ingin menghapus logbook ini? Semua data di dalamnya akan hilang!')" class="text-red-400 hover:text-red-300 transition">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-full bg-gray-800/50 border border-gray-700 rounded-2xl p-8 text-center">
+                <i class="fas fa-folder-open text-4xl text-gray-600 mb-3"></i>
+                <h3 class="text-white font-semibold">Belum Ada Logbook</h3>
+                <p class="text-gray-400 text-sm mt-1">Kamu belum membuat logbook apapun. Klik tombol di atas untuk memulai.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- {% include 'nativeNav.html' %} -->
+    <script>
+    // Inisialisasi Flatpickr
+    flatpickr(".datepicker", {
+        altInput: true,          // Mengaktifkan fitur ilusi (tampilan vs data asli berbeda)
+        altFormat: "d-m-Y",      // Format yang DILIHAT oleh user (dd-mm-yyyy)
+        dateFormat: "Y-m-d",     // Format yang DIKIRIM ke database Python (yyyy-mm-dd)
+        disableMobile: "true"    // Memaksa HP pakai kalender Flatpickr, bukan bawaan browser
+    });
+</script>
+</body>
+</html>

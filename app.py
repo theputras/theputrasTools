@@ -31,6 +31,11 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from models.auth_api import _revoke_refresh_token, _revoke_all_user_sessions
 from dotenv import load_dotenv
 from models.gate import GateUser
+from controller.LogbookController import (
+    get_logbooks_by_user, get_logbook_by_id_and_user, create_logbook, update_logbook, 
+    delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
+    get_entry_by_id, update_entry # <--- TAMBAHIN INI DI IMPORTNYA
+)
 load_dotenv()  # biar bisa baca file .env
 
 app = Flask(__name__)
@@ -1265,7 +1270,130 @@ def recap_hadir():
     """Halaman real-time counter kehadiran SSKM"""
     return render_template('recapOrangSSKM.html')
 
+@app.route('/testhtml')
+def test_html():
+    """Halaman real-time counter kehadiran SSKM"""
+    return render_template('test.html')
 
+# ======================================================
+# ROUTES LOGBOOK MAGANG
+# ======================================================
+
+# 1. Halaman Awal: List Semua Logbook
+@app.route('/logbook', methods=['GET'])
+@login_required # Proteksi route
+def logbook_list():
+    current_user = g.user.get('sub') # Ambil User ID dari JWT
+    
+    # Ambil logbook KHUSUS punya user ini aja
+    logbooks = get_logbooks_by_user(current_user)
+    return render_template('logBook/list.html', logbooks=logbooks)
+
+# 2. Halaman Setup Logbook Baru
+@app.route('/logbook/setup', methods=['GET', 'POST'])
+@login_required
+def logbook_setup():
+    current_user = g.user.get('sub')
+    
+    if request.method == 'POST':
+        # Simpan logbook baru dengan menyertakan ID usernya
+        new_id = create_logbook(current_user, request.form)
+        return redirect(url_for('logbook_detail', logbook_id=new_id))
+        
+    return render_template('logBook/setup.html', logbook=None)
+
+# 3. Edit Setup Logbook (INI YANG TADI DUPLIKAT DAN SALAH ROUTE)
+@app.route('/logbook/edit/<int:logbook_id>', methods=['GET', 'POST'])
+@login_required
+def logbook_edit(logbook_id):
+    current_user = g.user.get('sub')
+    
+    if request.method == 'POST':
+        update_logbook(logbook_id, request.form, current_user)
+        return redirect(url_for('logbook_detail', logbook_id=logbook_id))
+        
+    # Ambil datanya buat diisi ke form
+    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    if not logbook:
+        return "Akses Ditolak! Ini bukan logbook Anda.", 403
+        
+    return render_template('logBook/setup.html', logbook=logbook)
+
+# 4. Hapus Setup Logbook
+@app.route('/logbook/delete/<int:logbook_id>')
+@login_required
+def logbook_delete(logbook_id):
+    current_user = g.user.get('sub')
+    delete_logbook(logbook_id, current_user)
+    return redirect(url_for('logbook_list'))
+
+# 5. HALAMAN UTAMA LOGBOOK (Isi Kegiatan Harian)
+@app.route('/logbook/<int:logbook_id>', methods=['GET'])
+@login_required
+def logbook_detail(logbook_id):
+    current_user = g.user.get('sub')
+    
+    # Cek apakah logbook ini beneran milik dia
+    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    if not logbook:
+        return "Akses Ditolak! Ini bukan logbook Anda.", 403
+        
+    entries = get_entries_by_logbook(logbook_id)
+    return render_template('logBook/detail.html', logbook=logbook, entries=entries)
+
+# 6. Tambah Kegiatan Harian
+@app.route('/logbook/<int:logbook_id>/add_entry', methods=['POST'])
+@login_required
+def logbook_add_entry(logbook_id):
+    current_user = g.user.get('sub')
+    
+    # Keamanan: Pastikan logbook milik dia sebelum nambah kegiatan
+    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    if logbook:
+        add_entry(logbook_id, request.form, request.files)
+        
+    return redirect(url_for('logbook_detail', logbook_id=logbook_id))
+# 6.5 Edit Kegiatan Harian
+@app.route('/logbook/<int:logbook_id>/edit_entry/<int:entry_id>', methods=['GET', 'POST'])
+@login_required
+def logbook_edit_entry(logbook_id, entry_id):
+    current_user = g.user.get('sub')
+    
+    # Keamanan: Pastikan logbook ini beneran milik dia sebelum ngedit
+    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    if not logbook:
+        return "Akses Ditolak!", 403
+
+    # Jika disubmit (POST)
+    if request.method == 'POST':
+        update_entry(entry_id, request.form, request.files)
+        return redirect(url_for('logbook_detail', logbook_id=logbook_id))
+
+    # Jika cuma ngebuka halaman (GET)
+    entry = get_entry_by_id(entry_id)
+    if not entry:
+        return "Data kegiatan tidak ditemukan", 404
+
+    return render_template('logBook/edit_entry.html', logbook=logbook, entry=entry)
+# 7. Hapus Kegiatan Harian
+@app.route('/logbook/<int:logbook_id>/delete_entry/<int:entry_id>')
+@login_required
+def logbook_delete_entry(logbook_id, entry_id):
+    current_user = g.user.get('sub')
+    
+    # Keamanan: Pastikan logbook milik dia sebelum hapus kegiatan
+    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    if logbook:
+        delete_entry(entry_id)
+        
+    return redirect(url_for('logbook_detail', logbook_id=logbook_id))
+
+# 8. Download Word
+@app.route('/logbook/<int:logbook_id>/download', methods=['GET'])
+@login_required
+def logbook_download(logbook_id):
+    current_user = g.user.get('sub')
+    return generate_word(logbook_id, current_user)
 
 # if __name__ == "__main__":
 #     should_run_scraper = False
