@@ -9,3 +9,4 @@ __pycache__/
 flask_session/
 cookies.json
 credentials.json
+app.log
