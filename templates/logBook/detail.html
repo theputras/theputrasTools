@@ -133,9 +133,15 @@
                             
                             <p class="text-gray-400 whitespace-pre-line mb-3">{{ entry.deskripsi }}</p>
                             
-                            {% if entry.gambar %}
-                                <img src="{{ url_for('static', filename='uploads/logbook/' ~ entry.gambar) }}" alt="Bukti" class="max-w-[150px] sm:max-w-[200px] rounded-lg border border-gray-600 shadow-sm">
-                            {% endif %}
+                           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-3">
+    {% for img in entry.images %}
+        <div class="relative">
+            <img src="{{ url_for('static', filename='uploads/logbook/' ~ img.path) }}" 
+                 alt="Bukti Kegiatan" 
+                 class="w-full h-32 object-cover rounded-lg border border-gray-600 shadow-sm">
+        </div>
+    {% endfor %}
+</div>
                         </td>
                     </tr>
                     {% else %}
@@ -151,7 +157,7 @@
         </div>
 
     </div>
-    {% include 'nativeNav.html' %}
+    <!-- {% include 'nativeNav.html' %} -->
     <script>
     document.addEventListener('alpine:init', () => {
     Alpine.data('imageCropUploader', () => ({

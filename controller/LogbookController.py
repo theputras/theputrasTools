@@ -132,15 +132,24 @@ def delete_logbook(id, user_id):
 def get_entries_by_logbook(logbook_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
+    
+    # 1. Ambil semua entri logbook
     cursor.execute("SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC", (logbook_id,))
     entries = cursor.fetchall()
-    conn.close()
+    
+    # 2. Iterasi untuk setiap entri guna mengambil gambar dan memformat tanggal
     for entry in entries:
+        # Format tanggal display dd-mm-yyyy
         if entry['tanggal']:
-            # strftime akan mengubah format YYYY-MM-DD ke DD-MM-YYYY
             entry['tanggal_display'] = entry['tanggal'].strftime('%d-%m-%Y')
         else:
             entry['tanggal_display'] = '-'
+            
+        # Ambil semua gambar yang terkait dengan entri ini dari tabel logbook_images
+        cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry['id'],))
+        entry['images'] = cursor.fetchall() # Berisi list of dict, misal: [{'path': '...'}, {'path': '...'}]
+        
+    conn.close()
     return entries
 
 def add_entry(logbook_id, data, files):
@@ -187,8 +196,20 @@ def delete_entry(entry_id):
 def get_entry_by_id(entry_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
+    
+    # Ambil data teks entri
     cursor.execute("SELECT * FROM logbook_entries WHERE id = %s", (entry_id,))
     entry = cursor.fetchone()
+    
+    if entry:
+        # Format tanggal biar rapi di form edit
+        if entry['tanggal']:
+            entry['tanggal_display'] = entry['tanggal'].strftime('%d-%m-%Y')
+            
+        # Ambil list gambar dari tabel logbook_images
+        cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
+        entry['images'] = cursor.fetchall()
+        
     conn.close()
     return entry
 
