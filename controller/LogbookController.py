@@ -3,6 +3,7 @@ import io
 from werkzeug.utils import secure_filename
 from PIL import Image
 from docx import Document
+import time
 from docx.shared import Inches
 from flask import send_file
 from connection import get_connection
@@ -11,13 +12,21 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH # Tambahkan ini di bagian atas fil
 # UPLOAD_FOLDER = os.path.join('static', 'uploads', 'logbook')
 # os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-def compress_and_save_image(image_file, nim):
+def compress_and_save_image(image_file, nim, entry_id):
     if not image_file or image_file.filename == '':
         return None
         
-    filename = secure_filename(image_file.filename)
+    original_filename = secure_filename(image_file.filename)
     
-    # Bikin struktur folder dinamis: static/uploads/logbook/{nim}/imgs
+    # Pisahkan nama file dan ekstensinya (misal: "new_image_0" dan ".jpg")
+    name, ext = os.path.splitext(original_filename)
+    
+    # Bikin nama file super unik: namaAsli_entryId_timestamp.jpg
+    # Contoh hasil: new_image_0_25_1708150000.jpg
+    timestamp = int(time.time() * 1000)
+    filename = f"{name}_{entry_id}_{timestamp}{ext}"
+    
+    # Bikin struktur folder dinamis
     nim_folder = os.path.join('static', 'uploads', 'logbook', str(nim), 'imgs')
     os.makedirs(nim_folder, exist_ok=True)
     
@@ -29,7 +38,7 @@ def compress_and_save_image(image_file, nim):
     img.thumbnail((800, 800))
     img.save(filepath, optimize=True, quality=60)
     
-    # Return path relatif untuk disimpan ke DB (misal: 23410100003/imgs/bukti.jpg)
+    # Return path relatif untuk disimpan ke DB
     return f"{nim}/imgs/{filename}"
 
 # --- CRUD SETUP LOGBOOK ---
@@ -217,7 +226,7 @@ def update_entry(entry_id, data, files):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # 1. Ambil data NIM dan list gambar lama dari database
+    # Ambil data NIM
     cursor.execute("""
         SELECT l.nim, e.id as entry_id 
         FROM logbook_entries e 
@@ -227,39 +236,40 @@ def update_entry(entry_id, data, files):
     row = cursor.fetchone()
     nim = row['nim'] if row else 'unknown_nim'
 
-    # 2. Cek apakah ada request untuk update gambar (ada file baru atau perintah hapus)
-    # Kita ambil list gambar baru dari request.files.getlist
-    new_images = files.getlist('gambar')
-    hapus_semua = data.get('hapus_gambar_lama') == '1'
-
-    # Jika user upload gambar baru ATAU menekan tombol hapus semua
-    if (new_images and any(img.filename != '' for img in new_images)) or hapus_semua:
-        
-        # A. Hapus semua gambar lama terkait entry ini di HDD
-        cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
-        old_images = cursor.fetchall()
-        for old_img in old_images:
-            old_path = os.path.join('static', 'uploads', 'logbook', old_img['path'])
-            if os.path.exists(old_path):
-                os.remove(old_path)
-        
-        # B. Hapus record gambar lama di database logbook_images
-        cursor.execute("DELETE FROM logbook_images WHERE entry_id = %s", (entry_id,))
-
-        # C. Jika ada gambar-gambar baru, simpan ke HDD dan masukkan ke database
-        for img in new_images:
-            if img and img.filename != '':
-                new_path = compress_and_save_image(img, nim)
-                cursor.execute(
-                    "INSERT INTO logbook_images (entry_id, path) VALUES (%s, %s)",
-                    (entry_id, new_path)
-                )
-
-    # 3. Update data teks (Tanggal, Aktivitas, Deskripsi) di logbook_entries
+    # 1. Update data teks terlebih dahulu
     cursor.execute(
         "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s",
         (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)
     )
+
+    # --- LOGIKA MULTIPLE GAMBAR YANG BENAR ---
+    # Ambil array path gambar yang TIDAK DIHAPUS oleh user di form HTML
+    retained_paths = data.getlist('existing_images') 
+    new_images = files.getlist('gambar')
+
+    # Ambil semua gambar lama dari database
+    cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
+    old_images = cursor.fetchall()
+
+    # A. Bandingkan dan hapus gambar yang disilang (X) oleh user
+    for old_img in old_images:
+        if old_img['path'] not in retained_paths:
+            # Hapus file fisik dari HDD
+            old_path = os.path.join('static', 'uploads', 'logbook', old_img['path'])
+            if os.path.exists(old_path):
+                os.remove(old_path)
+            # Hapus dari tabel
+            cursor.execute("DELETE FROM logbook_images WHERE entry_id = %s AND path = %s", (entry_id, old_img['path']))
+
+    # B. Tambahkan gambar baru hasil crop (jika ada)
+    for img in new_images:
+            if img and img.filename != '':
+                # Tambahkan entry_id di sini
+                new_path = compress_and_save_image(img, nim, entry_id)
+                cursor.execute(
+                    "INSERT INTO logbook_images (entry_id, path) VALUES (%s, %s)",
+                    (entry_id, new_path)
+                )
 
     conn.commit()
     conn.close()
