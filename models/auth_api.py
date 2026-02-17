@@ -9,12 +9,14 @@ from connection import get_connection
 import logging
 import pytz
 from dotenv import load_dotenv
+from extensions import limiter
 # import json
 # from webauthn import verify_registration_response, verify_authentication_response, generate_authentication_options, generate_registration_options, serialize_options
 import base64
 import json
 from webauthn import verify_registration_response, verify_authentication_response, generate_authentication_options, generate_registration_options
-
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from datetime import datetime, timedelta
 
@@ -134,6 +136,7 @@ def _revoke_all_user_sessions(user_id: str) -> bool:
 
 # === LOGIN ===
 @auth_bp.route('/login', methods=['POST'])
+@limiter.limit("5 per minute")
 def login():
     data = request.form
     username = data.get('username')

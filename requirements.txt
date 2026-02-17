@@ -24,3 +24,5 @@ google-auth-oauthlib
 google-auth-httplib2
 python-docx 
 Pillow
+bleach
+Flask-Limiter

@@ -10,10 +10,13 @@ from docx.shared import Inches
 from flask import send_file
 from connection import get_connection
 from docx.enum.text import WD_ALIGN_PARAGRAPH # Tambahkan ini di bagian atas file import lu
+import bleach
 
 # UPLOAD_FOLDER = os.path.join('static', 'uploads', 'logbook')
 # os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
+ALLOWED_TAGS = [
+    'p', 'ul', 'ol', 'li', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'br'
+]
 def compress_and_save_image(image_file, nim, entry_id):
     if not image_file or image_file.filename == '':
         return None
@@ -177,7 +180,12 @@ def get_entries_by_logbook(logbook_id):
     conn.close()
     return entries
 
-def add_entry(logbook_id, data, files):
+def add_entry(logbook_id, form_data, files):
+    aktivitas = form_data.get('aktivitas')
+    deskripsi_raw = form_data.get('deskripsi')
+
+    # SANITASI: Bersihkan HTML dari karakter berbahaya sebelum masuk DB
+    deskripsi_clean = bleach.clean(deskripsi_raw, tags=ALLOWED_TAGS, strip=True)
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     
@@ -187,7 +195,7 @@ def add_entry(logbook_id, data, files):
     # Simpan data aktivitas dulu
     cursor.execute(
         "INSERT INTO logbook_entries (logbook_id, tanggal, aktivitas, deskripsi) VALUES (%s, %s, %s, %s)",
-        (logbook_id, data['tanggal'], data['aktivitas'], data['deskripsi'])
+        (logbook_id, form_data.get('tanggal'), aktivitas, deskripsi_clean)
     )
     entry_id = cursor.lastrowid
     
@@ -238,7 +246,12 @@ def get_entry_by_id(entry_id):
     conn.close()
     return entry
 
-def update_entry(entry_id, data, files):
+def update_entry(entry_id, form_data, files):
+    aktivitas = form_data.get('aktivitas')
+    deskripsi_raw = form_data.get('deskripsi')
+
+    # SANITASI: Bersihkan HTML dari karakter berbahaya sebelum masuk DB
+    deskripsi_clean = bleach.clean(deskripsi_raw, tags=ALLOWED_TAGS, strip=True)
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -255,12 +268,12 @@ def update_entry(entry_id, data, files):
     # 1. Update data teks terlebih dahulu
     cursor.execute(
         "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s",
-        (data['tanggal'], data['aktivitas'], data['deskripsi'], entry_id)
+        (form_data.get('tanggal'), aktivitas, deskripsi_clean, entry_id)
     )
 
     # --- LOGIKA MULTIPLE GAMBAR YANG BENAR ---
     # Ambil array path gambar yang TIDAK DIHAPUS oleh user di form HTML
-    retained_paths = data.getlist('existing_images') 
+    retained_paths = form_data.getlist('existing_images') 
     new_images = files.getlist('gambar')
 
     # Ambil semua gambar lama dari database

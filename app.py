@@ -11,8 +11,9 @@ import pytz
 import json
 from datetime import datetime, timedelta
 import time
-
 import jwt
+
+from extensions import limiter
 from connection import get_connection
 # import base64  # Untuk encode image ke base64
 from logging.handlers import RotatingFileHandler
@@ -61,6 +62,15 @@ from controller.WebAuthnController import save_credential, get_credentials_by_us
 load_dotenv()  # biar bisa baca file .env
 
 app = Flask(__name__)
+# Konfigurasi Rate Limiter
+limiter.init_app(app)
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    return jsonify({
+        "success": False, 
+        "msg": f"Terlalu banyak percobaan. Silakan coba lagi nanti. (Limit: {e.description})"
+    }), 429
 CORS(app, supports_credentials=True)
 
 # CORS(
@@ -360,6 +370,7 @@ def log_cookie_header(resp):
 # Main route
 
 @app.route('/login', methods=['GET'])
+@limiter.limit("5 per minute") # Batasi cuma 5x percobaan per menit per IP
 def login_page():
     # Ambil token dari session atau cookie
     token = session.get('access_token') or request.cookies.get('access_token')
@@ -1815,6 +1826,7 @@ def webauthn_login_options():
 
 
 @app.route('/webauthn/login/verify', methods=['POST'])
+@limiter.limit("5 per minute") # Batasi cuma 5x percobaan per menit per IP
 def webauthn_login_verify():
     challenge = session.get('webauthn_auth_challenge')
     if not challenge:
