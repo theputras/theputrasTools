@@ -1835,7 +1835,10 @@ def webauthn_login_verify():
             credential_public_key=base64.b64decode(user_data['public_key']),
             credential_current_sign_count=user_data['sign_count']
         )
-
+        if verification.new_sign_count <= user_data['sign_count']:
+            logging.warning(f"Potensi Replay Attack terdeteksi untuk user {user_data['id']}!")
+            return jsonify({"success": False, "msg": "Deteksi keamanan: Token tidak valid."}), 403
+            
         update_sign_count(cred_id_b64, verification.new_sign_count)
 
         # Proses pembuatan token JWT
