@@ -249,7 +249,8 @@ def get_entry_by_id(entry_id):
     conn.close()
     return entry
 
-def update_entry(entry_id, form_data, files):
+# Tambahkan parameter logbook_id di sini
+def update_entry(entry_id, logbook_id, form_data, files):
     aktivitas = form_data.get('aktivitas')
     deskripsi_raw = form_data.get('deskripsi')
 
@@ -258,20 +259,29 @@ def update_entry(entry_id, form_data, files):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Ambil data NIM
+    # ========================================================
+    # FIX CRITICAL (IDOR): Validasi kepemilikan entry_id
+    # ========================================================
     cursor.execute("""
         SELECT l.nim, e.id as entry_id 
         FROM logbook_entries e 
         JOIN logbooks l ON e.logbook_id = l.id 
-        WHERE e.id = %s
-    """, (entry_id,))
+        WHERE e.id = %s AND e.logbook_id = %s 
+    """, (entry_id, logbook_id))
+    
     row = cursor.fetchone()
-    nim = row['nim'] if row else 'unknown_nim'
+    
+    # Kalau data ga ketemu (berarti hacker nyoba masukin entry_id orang lain), langsung tolak!
+    if not row:
+        conn.close()
+        return False 
+        
+    nim = row['nim']
 
-    # 1. Update data teks terlebih dahulu
+    # 1. Update data teks terlebih dahulu (tambahin filter logbook_id biar makin aman)
     cursor.execute(
-        "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s",
-        (form_data.get('tanggal'), aktivitas, deskripsi_clean, entry_id)
+        "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s AND logbook_id=%s",
+        (form_data.get('tanggal'), aktivitas, deskripsi_clean, entry_id, logbook_id)
     )
 
     # --- LOGIKA MULTIPLE GAMBAR YANG BENAR ---
@@ -305,6 +315,7 @@ def update_entry(entry_id, form_data, files):
 
     conn.commit()
     conn.close()
+    return True # Kembalikan nilai True tandanya sukses
 
 # --- GENERATE WORD ---
 # Tambahin parameter user_id biar pas diconvert dicek dulu ownershipnya
