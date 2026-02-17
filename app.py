@@ -1569,7 +1569,7 @@ def logbook_edit_entry(logbook_id, entry_id):
 
     # Jika disubmit (POST)
     if request.method == 'POST':
-        update_entry(entry_id, request.form, request.files)
+        update_entry(entry_id, logbook_id, request.form, request.files)
         return redirect(url_for('logbook_detail', logbook_id=logbook_id))
 
     # Jika cuma ngebuka halaman (GET)
