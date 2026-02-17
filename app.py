@@ -130,7 +130,7 @@ def boot_scrape_if_needed():
 RP_ID = os.getenv("WEBAUTHN_RP_ID", "localhost") 
 RP_NAME = os.getenv("WEBAUTHN_RP_NAME", "The Putras Tools")
 ORIGIN = os.getenv("WEBAUTHN_ORIGIN", "http://localhost:5000")
-logging.info(f"[WebAuthn Config] Aktif di RP_ID: '{RP_ID}' dengan ORIGIN: '{ORIGIN}'")
+# logging.info(f"[WebAuthn Config] Aktif di RP_ID: '{RP_ID}' dengan ORIGIN: '{ORIGIN}'")
 
 executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
