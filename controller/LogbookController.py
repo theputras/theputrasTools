@@ -209,12 +209,15 @@ def add_entry(logbook_id, form_data, files):
     conn.commit()
     conn.close()
 
-def delete_entry(entry_id):
+def delete_entry(entry_id, logbook_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     
     # Ambil semua path gambar
-    cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
+    cursor.execute("SELECT id FROM logbook_entries WHERE id = %s AND logbook_id = %s", (entry_id, logbook_id))
+    if not cursor.fetchone():
+        conn.close()
+        return False # Tolak jika hacker mencoba manipulasi URL
     images = cursor.fetchall()
     
     for img in images:

@@ -71,7 +71,16 @@ def ratelimit_handler(e):
         "success": False, 
         "msg": f"Terlalu banyak percobaan. Silakan coba lagi nanti. (Limit: {e.description})"
     }), 429
-CORS(app, supports_credentials=True)
+
+# Batasi hanya domain asli lu yang boleh kirim credentials
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+        "http://localhost:5000",
+        "https://tools.theputras.my.id", # Ganti dengan domain asli lu
+    ]
+)
 
 # CORS(
 #     app,
@@ -158,8 +167,7 @@ app.secret_key = os.getenv("SECRET_KEY")  # Untuk session
 # logging.info("Secret Key untuk session berhasil diatur.")
 
 if not app.secret_key:
-    app.secret_key = 'fallback_secret_for_dev'  # Jangan pakai di prod!
-    app.config['SECRET_KEY'] = app.secret_key  # Set ke config juga, biar current_app.config bisa akses
+    raise ValueError("FATAL ERROR: SECRET_KEY wajib diisi di .env untuk alasan keamanan!")
 
 
 
@@ -1580,7 +1588,7 @@ def logbook_delete_entry(logbook_id, entry_id):
     # Keamanan: Pastikan logbook milik dia sebelum hapus kegiatan
     logbook = get_logbook_by_id_and_user(logbook_id, current_user)
     if logbook:
-        delete_entry(entry_id)
+        delete_entry(entry_id, logbook_id)
         
     return redirect(url_for('logbook_detail', logbook_id=logbook_id))
 
