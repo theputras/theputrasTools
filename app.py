@@ -1720,17 +1720,31 @@ def admin_reset_password(user_id):
 @login_required
 def webauthn_register_options():
     user_id = str(g.user.get('sub'))
+    
+    # Ambil username dari token (kalau ada)
     username = g.user.get('username')
+
+    # JIKA KOSONG (karena JWT lama nggak nyimpen username), ambil dari Database
+    if not username:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT username FROM users WHERE id = %s", (user_id,))
+        user_db = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        
+        # Pastikan username gak boleh kosong
+        username = user_db['username'] if user_db else f"user_{user_id}"
 
     # Bikin opsi tantangan buat alat fingerprint
     options = generate_registration_options(
         rp_id=RP_ID,
         rp_name=RP_NAME,
         user_id=user_id.encode('utf-8'),
-        user_name=username,
+        user_name=username,  # Sekarang dijamin terisi!
         user_display_name=username,
         authenticator_selection=AuthenticatorSelectionCriteria(
-            authenticator_attachment=AuthenticatorAttachment.PLATFORM, # Memaksa pakai sensor bawaan device (kayak TouchID/Windows Hello)
+            authenticator_attachment=AuthenticatorAttachment.PLATFORM, 
             user_verification=UserVerificationRequirement.REQUIRED,
             resident_key=ResidentKeyRequirement.REQUIRED
         )
@@ -1741,7 +1755,6 @@ def webauthn_register_options():
 
     # Kirim format JSON ke frontend
     return options_to_json(options)
-
 
 @app.route('/webauthn/register/verify', methods=['POST'])
 @login_required
