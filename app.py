@@ -358,43 +358,37 @@ def log_cookie_header(resp):
 
 # Main route
 
-@app.route('/login', methods=['GET']) # Kita cuma butuh GET
+@app.route('/login', methods=['GET'])
 def login_page():
-    
     # Ambil token dari session atau cookie
     token = session.get('access_token') or request.cookies.get('access_token')
     
     if token:
         try:
-            # Kita validasi token-nya (Mirip auth_quard.py)
             secret = current_app.config.get('SECRET_KEY') or app.secret_key
-            payload = jwt.decode(
-                token,
-                secret,
-                algorithms=["HS256"],
-                options={"require": ["exp", "iat", "sub"]},
-                leeway=30 # Toleransi waktu
-            )
+            payload = jwt.decode(token, secret, algorithms=["HS256"], options={"require": ["exp", "iat", "sub"]}, leeway=30)
             
-            # Cek kalo udah expired
             exp_time = datetime.fromtimestamp(payload['exp'], SCHEDULER_TZ)
             if exp_time < datetime.now(SCHEDULER_TZ):
                 raise jwt.ExpiredSignatureError("Token expired")
 
-            # Kalo token ADA dan VALID, lempar ke index
-            logging.info(f"User udah login, redirecting to index...")
-            next_url = request.args.get('next')
-            return redirect(next_url or url_for('index'))
-        
-        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
-            # Kalo token ada tapi RUSAK atau EXPIRED
-            logging.warning(f"Token rusak/expired, biarkan login ulang: {e}")
-            session.clear() # Bersihin session/cookie yang rusak
-            # Lanjut ke return render_template di bawah
-            pass
+            logging.info("User udah login, redirecting to index...")
+            return redirect(request.args.get('next') or url_for('index'))
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            session.clear() 
+
+    # --- TAMBAHAN BARU: Cek di Database apakah ada minimal 1 data fingerprint? ---
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM webauthn_credentials")
+    count = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
     
-    # Kalo token GAK ADA, atau token RUSAK, tampilkan halaman login
-    return render_template('login.html')
+    has_any_biometric = count > 0
+
+    # Kirim variabel has_any_biometric ke template login.html
+    return render_template('login.html', has_any_biometric=has_any_biometric)
 
 # Logout Route 1 Session + Cookie
 @app.route('/logout')
@@ -1754,7 +1748,7 @@ def webauthn_register_options():
     session['webauthn_registration_challenge'] = options.challenge
 
     # Kirim format JSON ke frontend
-    return options_to_json(options)
+    return Response(options_to_json(options), mimetype='application/json')
 
 @app.route('/webauthn/register/verify', methods=['POST'])
 @login_required
@@ -1793,13 +1787,14 @@ def webauthn_register_verify():
         
 @app.route('/webauthn/login/options', methods=['POST'])
 def webauthn_login_options():
-    # Kirim tantangan ke browser
     options = generate_authentication_options(
         rp_id=RP_ID,
         user_verification=UserVerificationRequirement.REQUIRED
     )
     session['webauthn_auth_challenge'] = options.challenge
-    return options_to_json(options)
+    
+    # FIX: Pake Response biar browser tau ini tipe datanya JSON!
+    return Response(options_to_json(options), mimetype='application/json')
 
 
 @app.route('/webauthn/login/verify', methods=['POST'])
@@ -1811,13 +1806,11 @@ def webauthn_login_verify():
     credential_data = request.json
     cred_id_b64 = credential_data.get('id')
 
-    # Cari user dari database berdasarkan ID alat/sidik jari ini
     user_data = get_user_by_credential(cred_id_b64)
     if not user_data:
         return jsonify({"success": False, "msg": "Perangkat ini belum terdaftar."}), 404
 
     try:
-        # 1. Verifikasi keaslian sidik jari
         verification = verify_authentication_response(
             credential=credential_data,
             expected_challenge=challenge,
@@ -1827,10 +1820,9 @@ def webauthn_login_verify():
             credential_current_sign_count=user_data['sign_count']
         )
 
-        # 2. Update keamanan (sign count) untuk mencegah cloning
         update_sign_count(cred_id_b64, verification.new_sign_count)
 
-        # 3. PROSES LOGIN (Mirip login password biasa)
+        # Proses pembuatan token JWT
         access_token = generate_access_token(user_data['id'], user_data['role_id'])
         refresh_token = generate_refresh_token()
         expires_at = datetime.now(SCHEDULER_TZ) + timedelta(days=30)
@@ -1845,11 +1837,9 @@ def webauthn_login_verify():
         cursor.close()
         conn.close()
 
-        # Set session Flask
         session['user_id'] = user_data['id']
         session.modified = True
 
-        # 4. Set Cookies & kirim response sukses
         resp = jsonify({"success": True, "msg": "Login Biometrik berhasil!", "redirect": url_for('index')})
         
         if isinstance(access_token, bytes):
