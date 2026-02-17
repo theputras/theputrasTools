@@ -399,7 +399,6 @@ async function registerBiometric() {
         const verificationData = await verificationResp.json();
 
         if (verificationData.success) {
-        localStorage.setItem('hasBiometric', 'true');   
             window.showAlert('success', 'Sidik jari berhasil didaftarkan!');
         } else {
             window.showAlert('error', verificationData.msg || 'Gagal memverifikasi sidik jari.');
