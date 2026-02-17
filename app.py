@@ -1785,6 +1785,17 @@ def webauthn_register_verify():
     except Exception as e:
         print(f"WebAuthn Verify Error: {e}")
         return jsonify({"success": False, "msg": str(e)}), 400
+        
+@app.route('/webauthn/login/options', methods=['POST'])
+def webauthn_login_options():
+    options = generate_authentication_options(
+        rp_id=RP_ID,
+        user_verification=UserVerificationRequirement.REQUIRED
+    )
+    session['webauthn_auth_challenge'] = options.challenge
+    
+    # FIX: Pake Response biar browser tau ini tipe datanya JSON!
+    return Response(options_to_json(options), mimetype='application/json')
 
 
 @app.route('/webauthn/login/verify', methods=['POST'])
