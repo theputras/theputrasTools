@@ -39,9 +39,10 @@ JAKARTA_TZ = pytz.timezone(os.getenv("TIMEZONE"))
 auth_bp = Blueprint('auth', __name__)
 
 # === Utility ===
-def generate_access_token(user_id):
+def generate_access_token(user_id, role_id):
     payload = {
         'sub': str(user_id),  # Ubah ke str() agar jadi string, e.g., '1' bukan 1
+        'role_id': role_id,
         'iat': datetime.now(JAKARTA_TZ),
         'exp': datetime.now(JAKARTA_TZ) + timedelta(minutes=30)
     }
@@ -142,16 +143,17 @@ def login():
     if not conn:
         return jsonify({"error": "Koneksi ke database gagal"}), 500
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT id, username, password FROM users WHERE username = %s", (username,))
+    # 2. Tambahin role_id di query SELECT ini
+    cursor.execute("SELECT id, username, password, role_id FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
 
     if not user or not bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
         cursor.close()
         conn.close()
         return jsonify({"error": "Username atau password salah"}), 401
-
-    access_token = generate_access_token(user['id'])
-    session['access_token'] = access_token  # Tambahkan ini
+    # 3. Lempar role_id ke fungsi generate_access_token
+    access_token = generate_access_token(user['id'], user['role_id'])
+    session['access_token'] = access_token
     session.modified = True  # Sudah ada, tapi pastikan
     if isinstance(access_token, bytes):
         access_token = access_token.decode('utf-8')

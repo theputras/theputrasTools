@@ -18,116 +18,134 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl">
 
+            {% if 'cari_komunitas' in allowed_tools %}
             <a href="{{ url_for('pencarian_komunitas_route') }}" 
                class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
                       bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
                       hover:bg-gray-800 hover:border-blue-500/30 transition-all duration-300
                       active:scale-95">
-                
                 <div class="flex-shrink-0 p-3 bg-blue-500/10 rounded-full group-hover:bg-blue-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
                     <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                
                 <div class="text-left sm:text-center">
                     <h3 class="font-bold text-white text-sm sm:text-base">Cari Komunitas</h3>
                     <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Pencarian data mahasiswa/staff</p>
                 </div>
-
                 <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </a>
+            {% endif %}
 
+            {% if 'log_program' in allowed_tools %}
             <a href="{{ url_for('log_program') }}" 
                class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
                       bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
                       hover:bg-gray-800 hover:border-green-500/30 transition-all duration-300
                       active:scale-95">
-                
                 <div class="flex-shrink-0 p-3 bg-green-500/10 rounded-full group-hover:bg-green-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
                     <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                 </div>
-                
                 <div class="text-left sm:text-center">
                     <h3 class="font-bold text-white text-sm sm:text-base">Log Program</h3>
                     <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Catatan update sistem</p>
                 </div>
-
                 <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </a> 
+            {% endif %}
 
+            {% if 'sosmed_download' in allowed_tools %}
             <a href="{{ url_for('sosmed_download') }}" 
                class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
                       bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
                       hover:bg-gray-800 hover:border-pink-500/30 transition-all duration-300
                       active:scale-95">
-                
                 <div class="flex-shrink-0 p-3 bg-pink-500/10 rounded-full group-hover:bg-pink-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
                     <svg class="w-6 h-6 sm:w-8 sm:h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                     </svg>
                 </div>
-                
                 <div class="text-left sm:text-center">
                     <h3 class="font-bold text-white text-sm sm:text-base">Downloader</h3>
                     <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Unduh media sosial</p>
                 </div>
-
                 <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </a> 
+            {% endif %}
 
+            {% if 'pembayaran_qris' in allowed_tools %}
             <a href="{{ url_for('pembayaran_page') }}" 
                class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
                       bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
                       hover:bg-gray-800 hover:border-violet-500/30 transition-all duration-300
                       active:scale-95">
-                
                 <div class="flex-shrink-0 p-3 bg-violet-500/10 rounded-full group-hover:bg-violet-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
                     <svg class="w-6 h-6 sm:w-8 sm:h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
                     </svg>
                 </div>
-                
                 <div class="text-left sm:text-center">
                     <h3 class="font-bold text-white text-sm sm:text-base">Pembayaran QRIS</h3>
                     <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Generate QR Code pembayaran</p>
                 </div>
-
                 <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </a>
+            {% endif %}
             
+            {% if 'logbook_magang' in allowed_tools %}
             <a href="{{ url_for('logbook_list') }}" 
-   class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
-          bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
-          hover:bg-gray-800 hover:border-yellow-500/30 transition-all duration-300
-          active:scale-95">
-    
-    <div class="flex-shrink-0 p-3 bg-yellow-500/10 rounded-full group-hover:bg-yellow-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
-        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-        </svg>
-    </div>
-    
-    <div class="text-left sm:text-center">
-        <h3 class="font-bold text-white text-sm sm:text-base">Logbook Magang</h3>
-        <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Catat kegiatan harian & eksport ke Word</p>
-    </div>
+               class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
+                      bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
+                      hover:bg-gray-800 hover:border-yellow-500/30 transition-all duration-300
+                      active:scale-95">
+                <div class="flex-shrink-0 p-3 bg-yellow-500/10 rounded-full group-hover:bg-yellow-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div class="text-left sm:text-center">
+                    <h3 class="font-bold text-white text-sm sm:text-base">Logbook Magang</h3>
+                    <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Catat kegiatan harian & eksport ke Word</p>
+                </div>
+                <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
+            {% endif %}
 
-    <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-    </div>
-</a>
+            {% if g.user and g.user.role_id == 1 %}
+            <a href="{{ url_for('admin_panel') }}" 
+               class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
+                      bg-red-900/10 backdrop-blur-sm border border-red-500/30 rounded-2xl 
+                      hover:bg-red-900/20 hover:border-red-500/50 transition-all duration-300
+                      active:scale-95 shadow-lg shadow-red-900/10 mb-4 sm:mb-0">
+                <div class="flex-shrink-0 p-3 bg-red-500/10 rounded-full group-hover:bg-red-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div class="text-left sm:text-center">
+                    <h3 class="font-bold text-red-400 text-sm sm:text-base uppercase tracking-wider">Super Admin Panel</h3>
+                    <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Atur Hak Akses User & Izin Fitur</p>
+                </div>
+                <div class="ml-auto sm:hidden text-gray-600 group-hover:text-red-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
+            {% endif %}
+
         </div>
+        
     </div>
 
     {% include 'nativeNav.html' %}

@@ -3,7 +3,7 @@
 import os
 import re
 import pandas as pd
-from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g, Response, flash
+from flask import Flask, send_from_directory, request, render_template, redirect, url_for, json, session, current_app, make_response, g, Response, flash, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor
 import logging
@@ -11,6 +11,7 @@ import pytz
 import json
 from datetime import datetime
 import time
+
 import jwt
 from connection import get_connection
 # import base64  # Untuk encode image ke base64
@@ -22,11 +23,12 @@ from flask_cors import CORS
 from paymentGateway import payment_bp
 from manajemenUltah import ultah_model, parse_tanggal_sicyca
 from googleCalendar import google_cal_service
+from cryptography.fernet import Fernet
 
 # Impor SEMUA fungsi scraper
 from scrapper_requests import scrape_data, search_mahasiswa, dahsboard_nilai, fetch_sks, fetch_sskm_data
 from controller.GateController import reset_session_user
-from middleware.auth_quard import login_required
+from middleware.auth_quard import login_required, check_permission
 from werkzeug.middleware.proxy_fix import ProxyFix
 from models.auth_api import _revoke_refresh_token, _revoke_all_user_sessions
 from dotenv import load_dotenv
@@ -36,6 +38,26 @@ from controller.LogbookController import (
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
     get_entry_by_id, update_entry # <--- TAMBAHIN INI DI IMPORTNYA
 )
+from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password
+from models.auth_api import generate_access_token, generate_refresh_token
+from webauthn import (
+    generate_registration_options,
+    verify_registration_response,
+    generate_authentication_options,
+    verify_authentication_response,
+    options_to_json,
+    base64url_to_bytes
+)
+from webauthn.helpers.structs import (
+    UserVerificationRequirement,
+    AuthenticatorSelectionCriteria,
+    AuthenticatorAttachment,
+    ResidentKeyRequirement
+)
+import base64
+from controller.WebAuthnController import save_credential, get_credentials_by_user, get_user_by_credential, update_sign_count
+
+
 load_dotenv()  # biar bisa baca file .env
 
 app = Flask(__name__)
@@ -104,7 +126,11 @@ def boot_scrape_if_needed():
     except Exception as e:
         logging.warning(f"Boot scrape gagal: {e}")
         
-        
+        # Konfigurasi Domain WebAuthn (Ambil dari .env)
+RP_ID = os.getenv("WEBAUTHN_RP_ID", "localhost") 
+RP_NAME = os.getenv("WEBAUTHN_RP_NAME", "The Putras Tools")
+ORIGIN = os.getenv("WEBAUTHN_ORIGIN", "http://localhost:5000")
+logging.info(f"[WebAuthn Config] Aktif di RP_ID: '{RP_ID}' dengan ORIGIN: '{ORIGIN}'")
 
 executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
@@ -427,6 +453,22 @@ def logout_all_page():
 @app.route('/')
 @login_required
 def index():    
+    user_id = g.user.get('sub')
+    role_id = g.user.get('role_id')
+
+    # Jika dia role Mahasiswa Non-Sicyca (4), langsung lempar ke tools
+    if role_id == 4:
+        return redirect(url_for('tools_page'))
+    # Cek apakah user punya kredensial Gate
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id FROM gate_users WHERE user_id = %s", (user_id,))
+    gate_exists = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    # Kalau dia Mahasiswa (3) tapi belum setup Gate, arahkan ke tools juga
+    if not gate_exists and role_id == 3:
+        return redirect(url_for('tools_page'))
     # logging.info(f"[INDEX DEBUG] Session keys:", list(session.keys()))
     print("[INDEX DEBUG] Session keys:", list(session.keys()))
     try:
@@ -470,11 +512,35 @@ def index():
 @app.route('/tools')
 @login_required
 def tools_page():
-    # Nanti kita bikin file tools.html
-    return render_template('tools.html') 
+    role_id = g.user.get('role_id', 3)
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Kalau Super Admin (1), ambil semua daftar tool. Kalau bukan, cek izinnya.
+    if role_id == 1:
+        cursor.execute("SELECT route_name FROM tools")
+    else:
+        cursor.execute("""
+            SELECT t.route_name 
+            FROM tools t
+            JOIN role_permissions rp ON t.id = rp.tool_id
+            WHERE rp.role_id = %s AND rp.is_allowed = 1
+        """, (role_id,))
+        
+    allowed_tools_db = cursor.fetchall()
+    # Ubah formatnya jadi list biasa misal: ['logbook_magang', 'cari_komunitas']
+    allowed_tools = [t['route_name'] for t in allowed_tools_db]
+    
+    cursor.close()
+    conn.close()
+    
+    # Kirim list allowed_tools ke HTML
+    return render_template('tools.html', allowed_tools=allowed_tools)
 
 @app.route('/pembayaran')
 @login_required
+@check_permission('pembayaran_qris')
 def pembayaran_page():
     """Halaman pembayaran QRIS"""
     return render_template('pembayaran.html')
@@ -482,8 +548,91 @@ def pembayaran_page():
 @app.route('/account')
 @login_required
 def account_page():
-    # Nanti kita bikin file account.html
-    return render_template('account.html')
+    user_id = g.user.get('sub')
+    
+    # 1. Ambil data gate user kalau udah ada
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT gate_username FROM gate_users WHERE user_id = %s", (user_id,))
+    gate_info = cursor.fetchone()
+    
+    # Ambil info user dasar juga
+    cursor.execute("SELECT username, email, role_id FROM users WHERE id = %s", (user_id,))
+    user_info = cursor.fetchone()
+    
+    cursor.close()
+    conn.close()
+
+    gate_username = gate_info['gate_username'] if gate_info else ""
+
+    return render_template('account.html', gate_username=gate_username, user_info=user_info)
+
+
+@app.route('/account/update-gate', methods=['POST'])
+@login_required
+def update_gate_credentials():
+    user_id = g.user.get('sub')
+    gate_username = request.form.get('gate_username')
+    gate_password = request.form.get('gate_password')
+    
+    if not gate_username or not gate_password:
+        flash('Username dan Password Sicyca wajib diisi!', 'error')
+        return redirect(url_for('account_page'))
+
+    try:
+        # Enkripsi Password pakai Fernet (sesuai skema database lu)
+        # Pastikan lu punya variabel GATE_ENCRYPTION_KEY di file .env lu
+        gate_secret = os.getenv('GATE_ENCRYPTION_KEY')
+        if not gate_secret:
+            raise ValueError("GATE_ENCRYPTION_KEY tidak ditemukan di environment!")
+            
+        cipher_suite = Fernet(gate_secret.encode('utf-8'))
+        encrypted_password = cipher_suite.encrypt(gate_password.encode('utf-8')).decode('utf-8')
+
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Gunakan sistem UPSERT (Kalau belum ada di-insert, kalau udah ada di-update)
+        query = """
+            INSERT INTO gate_users (user_id, gate_username, gate_password) 
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE 
+            gate_username = VALUES(gate_username), 
+            gate_password = VALUES(gate_password)
+        """
+        cursor.execute(query, (user_id, gate_username, encrypted_password))
+        conn.commit()
+        
+        cursor.close()
+        conn.close()
+        
+        flash('Kredensial Sicyca berhasil diperbarui!', 'success')
+    except Exception as e:
+        logging.error(f"[Account] Error update gate credentials: {e}")
+        flash('Gagal memperbarui kredensial Sicyca.', 'error')
+
+    return redirect(url_for('account_page'))
+
+@app.route('/account/update-profile', methods=['POST'])
+@login_required
+def update_profile():
+    user_id = g.user.get('sub') # Ambil ID user yang lagi login
+    username = request.form.get('username')
+    email = request.form.get('email')
+    
+    if not username:
+        flash('Username tidak boleh kosong!', 'error')
+        return redirect(url_for('account_page'))
+        
+    # Panggil controller yang udah ada
+    success, message = update_user_detail(user_id, username, email)
+    
+    if success:
+        flash('Profil berhasil diperbarui!', 'success')
+    else:
+        flash(message, 'error')
+        
+    return redirect(url_for('account_page'))
 
 # Route untuk reset session scraper (hapus cookies.json)
 @app.route('/reset-scraper-session')
@@ -570,6 +719,7 @@ def cari_mahasiswa_redirect():
 
 @app.route('/log-program')
 @login_required
+@check_permission('log_program')
 def log_program():
     log_content = "Membaca log..."
     if os.path.exists(log_file):
@@ -582,6 +732,7 @@ def log_program():
 
 @app.route('/sosmed-download')
 @login_required
+@check_permission('sosmed_download')
 def sosmed_download():
     """Menyajikan file HTML utama."""
     return render_template('downloadSosmed.html')
@@ -589,7 +740,24 @@ def sosmed_download():
 @app.route('/gate_undika')
 @login_required
 def gate_undika():
-    """Menyajikan file HTML utama."""
+    user_id = g.user.get('sub')
+    role_id = g.user.get('role_id')
+
+    # Jika dia role Mahasiswa Non-Sicyca (4), langsung lempar ke tools
+    if role_id == 4:
+        return redirect(url_for('tools_page'))
+    # Cek apakah user punya kredensial Gate
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id FROM gate_users WHERE user_id = %s", (user_id,))
+    gate_exists = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    # Kalau dia Mahasiswa (3) tapi belum setup Gate, arahkan ke tools juga
+    if not gate_exists and role_id == 3:
+        return redirect(url_for('tools_page'))
+    
+    
     return render_template('undika/gate/gateUndika.html')
 
 @app.route('/sicyca_undika')
@@ -1282,6 +1450,7 @@ def test_html():
 # 1. Halaman Awal: List Semua Logbook
 @app.route('/logbook', methods=['GET'])
 @login_required # Proteksi route
+@check_permission('logbook_magang')
 def logbook_list():
     current_user = g.user.get('sub') # Ambil User ID dari JWT
     
@@ -1305,6 +1474,7 @@ def logbook_setup():
 # 3. Edit Setup Logbook (INI YANG TADI DUPLIKAT DAN SALAH ROUTE)
 @app.route('/logbook/edit/<int:logbook_id>', methods=['GET', 'POST'])
 @login_required
+@check_permission('logbook_magang')
 def logbook_edit(logbook_id):
     current_user = g.user.get('sub')
     
@@ -1322,6 +1492,7 @@ def logbook_edit(logbook_id):
 # 4. Hapus Setup Logbook
 @app.route('/logbook/delete/<int:logbook_id>')
 @login_required
+@check_permission('logbook_magang')
 def logbook_delete(logbook_id):
     current_user = g.user.get('sub')
     delete_logbook(logbook_id, current_user)
@@ -1330,6 +1501,7 @@ def logbook_delete(logbook_id):
 # 5. HALAMAN UTAMA LOGBOOK (Isi Kegiatan Harian)
 @app.route('/logbook/<int:logbook_id>', methods=['GET'])
 @login_required
+@check_permission('logbook_magang')
 def logbook_detail(logbook_id):
     current_user = g.user.get('sub')
     
@@ -1344,6 +1516,7 @@ def logbook_detail(logbook_id):
 # 6. Tambah Kegiatan Harian
 @app.route('/logbook/<int:logbook_id>/add_entry', methods=['POST'])
 @login_required
+@check_permission('logbook_magang')
 def logbook_add_entry(logbook_id):
     current_user = g.user.get('sub')
     
@@ -1356,6 +1529,7 @@ def logbook_add_entry(logbook_id):
 # 6.5 Edit Kegiatan Harian
 @app.route('/logbook/<int:logbook_id>/edit_entry/<int:entry_id>', methods=['GET', 'POST'])
 @login_required
+@check_permission('logbook_magang')
 def logbook_edit_entry(logbook_id, entry_id):
     current_user = g.user.get('sub')
     
@@ -1378,6 +1552,7 @@ def logbook_edit_entry(logbook_id, entry_id):
 # 7. Hapus Kegiatan Harian
 @app.route('/logbook/<int:logbook_id>/delete_entry/<int:entry_id>')
 @login_required
+@check_permission('logbook_magang')
 def logbook_delete_entry(logbook_id, entry_id):
     current_user = g.user.get('sub')
     
@@ -1391,10 +1566,290 @@ def logbook_delete_entry(logbook_id, entry_id):
 # 8. Download Word
 @app.route('/logbook/<int:logbook_id>/download', methods=['GET'])
 @login_required
+@check_permission('logbook_magang')
 def logbook_download(logbook_id):
     current_user = g.user.get('sub')
     return generate_word(logbook_id, current_user)
 
+
+# ======================================================
+# ROUTES SUPER ADMIN (1 HTML DENGAN TABS)
+# ======================================================
+
+@app.route('/admin/panel')
+@login_required
+def admin_panel():
+    if g.user.get('role_id') != 1:
+        return "Akses Ditolak! Anda bukan Super Admin.", 403
+        
+    # Panggil fungsi dari UserController
+    users = get_all_users()
+    all_roles = get_all_roles(include_super_admin=True)
+    roles_for_tools = get_all_roles(include_super_admin=False)
+    
+    # Bagian Tools & Izin (Tetap di sini atau bisa dipisah ke ToolController nanti)
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, nama_tool, route_name FROM tools")
+    tools = cursor.fetchall()
+    
+    cursor.execute("SELECT role_id, tool_id, is_allowed FROM role_permissions")
+    perms = cursor.fetchall()
+    perm_map = {(p['role_id'], p['tool_id']): p['is_allowed'] for p in perms}
+    cursor.close()
+    conn.close()
+    
+    return render_template('admin_panel.html', users=users, all_roles=all_roles, roles=roles_for_tools, tools=tools, perm_map=perm_map)
+
+@app.route('/admin/add-user', methods=['POST'])
+@login_required
+def add_user():
+    if g.user.get('role_id') != 1:
+        return "Akses Ditolak!", 403
+        
+    username = request.form.get('username')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    role_id = request.form.get('role_id')
+    
+    if not username or not password or not role_id:
+        flash('Username, Password, dan Role wajib diisi!', 'error')
+        return redirect(url_for('admin_panel'))
+        
+    # Lempar datanya ke UserController
+    success, message = create_user(username, email, password, role_id)
+    
+    if success:
+        flash(message, 'success')
+    else:
+        flash(message, 'error')
+        
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/update-role', methods=['POST'])
+@login_required
+def update_role():
+    if g.user.get('role_id') != 1:
+        return "Ditolak", 403
+        
+    user_id = request.form.get('user_id')
+    role_id = request.form.get('role_id')
+    
+    # Lempar datanya ke UserController
+    if change_user_role(user_id, role_id):
+        flash('Role user berhasil diubah!', 'success')
+    else:
+        flash('Gagal mengubah role user.', 'error')
+        
+    return redirect(url_for('admin_panel'))
+@app.route('/admin/toggle-tool', methods=['POST'])
+@login_required
+def toggle_tool():
+    # Proteksi extra: Pastikan cuma Super Admin yang bisa ubah
+    if g.user.get('role_id') != 1:
+        return jsonify({'error': 'Akses Ditolak!'}), 403
+        
+    data = request.json
+    role_id = data.get('role_id')
+    tool_id = data.get('tool_id')
+    is_allowed = data.get('is_allowed')
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        # Pake fitur sakti MySQL UPSERT (Insert if not exist, Update if exist)
+        query = """
+            INSERT INTO role_permissions (role_id, tool_id, is_allowed) 
+            VALUES (%s, %s, %s) 
+            ON DUPLICATE KEY UPDATE is_allowed = VALUES(is_allowed)
+        """
+        cursor.execute(query, (role_id, tool_id, is_allowed))
+        conn.commit()
+        return jsonify({'success': True, 'message': 'Izin berhasil diubah!'})
+    except Exception as e:
+        logging.error(f"[Toggle Tool] Error: {e}")
+        return jsonify({'success': False, 'message': 'Terjadi kesalahan server.'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/admin/update-user', methods=['POST'])
+@login_required
+def admin_update_user():
+    if g.user.get('role_id') != 1: return "Ditolak", 403
+    
+    user_id = request.form.get('user_id')
+    username = request.form.get('username')
+    email = request.form.get('email')
+    
+    success, message = update_user_detail(user_id, username, email)
+    flash(message, 'success' if success else 'error')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/delete-user/<int:user_id>')
+@login_required
+def admin_delete_user(user_id):
+    if g.user.get('role_id') != 1: return "Ditolak", 403
+    
+    # Keamanan: Jangan biarkan admin menghapus dirinya sendiri
+    if str(user_id) == str(g.user.get('sub')):
+        flash('Anda tidak bisa menghapus akun Anda sendiri!', 'error')
+        return redirect(url_for('admin_panel'))
+        
+    if delete_user(user_id):
+        flash('User berhasil dihapus!', 'success')
+    else:
+        flash('Gagal menghapus user.', 'error')
+    return redirect(url_for('admin_panel'))
+    
+@app.route('/admin/reset-password/<int:user_id>')
+@login_required
+def admin_reset_password(user_id):
+    if g.user.get('role_id') != 1: 
+        return "Ditolak", 403
+        
+    if reset_user_password(user_id):
+        flash(f'Password berhasil direset ke "mhs123"!', 'success')
+    else:
+        flash('Gagal mereset password.', 'error')
+        
+    return redirect(url_for('admin_panel'))
+
+
+@app.route('/webauthn/register/options', methods=['POST'])
+@login_required
+def webauthn_register_options():
+    user_id = str(g.user.get('sub'))
+    username = g.user.get('username')
+
+    # Bikin opsi tantangan buat alat fingerprint
+    options = generate_registration_options(
+        rp_id=RP_ID,
+        rp_name=RP_NAME,
+        user_id=user_id.encode('utf-8'),
+        user_name=username,
+        user_display_name=username,
+        authenticator_selection=AuthenticatorSelectionCriteria(
+            authenticator_attachment=AuthenticatorAttachment.PLATFORM, # Memaksa pakai sensor bawaan device (kayak TouchID/Windows Hello)
+            user_verification=UserVerificationRequirement.REQUIRED,
+            resident_key=ResidentKeyRequirement.REQUIRED
+        )
+    )
+
+    # Simpan 'challenge' ke session sementara buat diverifikasi nanti
+    session['webauthn_registration_challenge'] = options.challenge
+
+    # Kirim format JSON ke frontend
+    return options_to_json(options)
+
+
+@app.route('/webauthn/register/verify', methods=['POST'])
+@login_required
+def webauthn_register_verify():
+    challenge = session.get('webauthn_registration_challenge')
+    if not challenge:
+        return jsonify({"success": False, "msg": "Challenge tidak ditemukan"}), 400
+
+    credential_data = request.json # Data dari frontend
+
+    try:
+        # Verifikasi keaslian respon dari sensor fingerprint
+        verification = verify_registration_response(
+            credential=credential_data,
+            expected_challenge=challenge,
+            expected_rp_id=RP_ID,
+            expected_origin=ORIGIN
+        )
+
+        # Ubah bytes ke Base64 string biar gampang disimpan di text MySQL
+        cred_id_b64 = base64.b64encode(verification.credential_id).decode('utf-8')
+        pub_key_b64 = base64.b64encode(verification.credential_public_key).decode('utf-8')
+
+        # Simpan ke Database
+        user_id = g.user.get('sub')
+        save_credential(user_id, cred_id_b64, pub_key_b64, verification.sign_count, "")
+        
+        # Hapus challenge dari session
+        session.pop('webauthn_registration_challenge', None)
+
+        return jsonify({"success": True, "msg": "Sidik jari berhasil didaftarkan!"})
+
+    except Exception as e:
+        print(f"WebAuthn Verify Error: {e}")
+        return jsonify({"success": False, "msg": str(e)}), 400
+        
+@app.route('/webauthn/login/options', methods=['POST'])
+def webauthn_login_options():
+    # Kirim tantangan ke browser
+    options = generate_authentication_options(
+        rp_id=RP_ID,
+        user_verification=UserVerificationRequirement.REQUIRED
+    )
+    session['webauthn_auth_challenge'] = options.challenge
+    return options_to_json(options)
+
+
+@app.route('/webauthn/login/verify', methods=['POST'])
+def webauthn_login_verify():
+    challenge = session.get('webauthn_auth_challenge')
+    if not challenge:
+        return jsonify({"success": False, "msg": "Challenge tidak ditemukan"}), 400
+
+    credential_data = request.json
+    cred_id_b64 = credential_data.get('id')
+
+    # Cari user dari database berdasarkan ID alat/sidik jari ini
+    user_data = get_user_by_credential(cred_id_b64)
+    if not user_data:
+        return jsonify({"success": False, "msg": "Perangkat ini belum terdaftar."}), 404
+
+    try:
+        # 1. Verifikasi keaslian sidik jari
+        verification = verify_authentication_response(
+            credential=credential_data,
+            expected_challenge=challenge,
+            expected_rp_id=RP_ID,
+            expected_origin=ORIGIN,
+            credential_public_key=base64.b64decode(user_data['public_key']),
+            credential_current_sign_count=user_data['sign_count']
+        )
+
+        # 2. Update keamanan (sign count) untuk mencegah cloning
+        update_sign_count(cred_id_b64, verification.new_sign_count)
+
+        # 3. PROSES LOGIN (Mirip login password biasa)
+        access_token = generate_access_token(user_data['id'], user_data['role_id'])
+        refresh_token = generate_refresh_token()
+        expires_at = datetime.now(SCHEDULER_TZ) + timedelta(days=30)
+        
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO user_sessions (user_id, refresh_token, expires_at, ip_address, user_agent, revoked, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+        """, (user_data['id'], refresh_token, expires_at, request.remote_addr, request.headers.get('User-Agent'), 0))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        # Set session Flask
+        session['user_id'] = user_data['id']
+        session.modified = True
+
+        # 4. Set Cookies & kirim response sukses
+        resp = jsonify({"success": True, "msg": "Login Biometrik berhasil!", "redirect": url_for('index')})
+        
+        if isinstance(access_token, bytes):
+            access_token = access_token.decode('utf-8')
+            
+        resp.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="Lax", max_age=1800)
+        resp.set_cookie("refresh_token", refresh_token, httponly=True, secure=False, samesite="Lax", max_age=3600*24*30)
+
+        return resp
+
+    except Exception as e:
+        logging.error(f"WebAuthn Login Error: {e}")
+        return jsonify({"success": False, "msg": "Verifikasi sidik jari gagal."}), 400
 # if __name__ == "__main__":
 #     should_run_scraper = False
 

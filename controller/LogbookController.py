@@ -4,6 +4,8 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 from docx import Document
 import time
+import re
+import html
 from docx.shared import Inches
 from flask import send_file
 from connection import get_connection
@@ -18,13 +20,13 @@ def compress_and_save_image(image_file, nim, entry_id):
         
     original_filename = secure_filename(image_file.filename)
     
-    # Pisahkan nama file dan ekstensinya (misal: "new_image_0" dan ".jpg")
-    name, ext = os.path.splitext(original_filename)
+    # Kita cuma butuh ekstensinya aja (misal: ".jpg" atau ".png")
+    _, ext = os.path.splitext(original_filename)
     
-    # Bikin nama file super unik: namaAsli_entryId_timestamp.jpg
-    # Contoh hasil: new_image_0_25_1708150000.jpg
+    # Format baru sesuai request lu: {nim}Image_{entry_id}_{timestamp}{ext}
+    # Contoh hasil: 23410100003Image_45_1708150000.jpg
     timestamp = int(time.time() * 1000)
-    filename = f"{name}_{entry_id}_{timestamp}{ext}"
+    filename = f"{nim}img_{entry_id}_{timestamp}{ext}"
     
     # Bikin struktur folder dinamis
     nim_folder = os.path.join('static', 'uploads', 'logbook', str(nim), 'imgs')
@@ -40,7 +42,21 @@ def compress_and_save_image(image_file, nim, entry_id):
     
     # Return path relatif untuk disimpan ke DB
     return f"{nim}/imgs/{filename}"
-
+def clean_html_for_word(html_text):
+    """Fungsi sakti merubah HTML Tiptap jadi teks rapi buat Word"""
+    if not html_text: return ""
+    
+    # Ubah list item <li> jadi format bullet
+    text = re.sub(r'<li>', r'- ', html_text)
+    # Ganti tag akhir paragraf/list jadi baris baru (enter)
+    text = re.sub(r'</p>|<br>|</li>|</ul>|</ol>', r'\n', text)
+    # Hapus semua tag HTML yang tersisa
+    text = re.sub(r'<[^>]+>', '', text)
+    # Decode simbol (kayak &amp; jadi &)
+    text = html.unescape(text)
+    
+    # Hapus enter berlebih
+    return re.sub(r'\n{3,}', '\n\n', text).strip()
 # --- CRUD SETUP LOGBOOK ---
 def get_logbooks_by_user(user_id):
     conn = get_connection()
@@ -358,7 +374,8 @@ def generate_word(logbook_id, user_id):
             row_cells[1].text = f"{tgl_str}\n{entry['aktivitas']}"
             
             p = row_cells[2].paragraphs[0]
-            p.add_run(entry['deskripsi'] + "\n")
+            clean_deskripsi = clean_html_for_word(entry['deskripsi'])
+            p.add_run(clean_deskripsi + "\n")
             
             # --- MODIFIKASI: AMBIL MULTIPLE GAMBAR DARI DATABASE ---
             cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry['id'],))
@@ -393,10 +410,11 @@ def generate_word(logbook_id, user_id):
     file_stream = io.BytesIO()
     doc.save(file_stream)
     file_stream.seek(0)
+    current_time = int(time.time())
     
     return send_file(
         file_stream, 
         as_attachment=True, 
-        download_name=f"Logbook_Magang_{logbook['nim']}.docx",
+        download_name=f"Logbook_{logbook['nim']}_{current_time}.docx",
         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )

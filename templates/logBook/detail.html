@@ -13,7 +13,19 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        
+    [x-cloak] { display: none !important; }
+    /* Tambahkan ini di bawah gaya ::-webkit-calendar-picker-indicator */
+.editor-content ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 0.5em; }
+.editor-content ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 0.5em; }
+.editor-content p { margin-bottom: 0.5em; }
+.editor-content p:last-child { margin-bottom: 0; }
+.editor-content strong { font-weight: bold; color: white; }
+.editor-content em { font-style: italic; }
+.editor-content blockquote { border-left: 4px solid #3b82f6; padding-left: 1em; color: #9ca3af; font-style: italic; margin-bottom: 0.5em; }
+
     </style>
+    
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
     <div class="flex-1 container mx-auto p-4 sm:p-6 pb-32 max-w-5xl" x-data="{ showForm: false }">
@@ -45,7 +57,7 @@
             </button>
         </div>
 
-        <div x-show="showForm" x-collapse class="bg-gray-800 rounded-2xl shadow-xl border border-blue-500/30 p-6 mb-8">
+        <div x-cloak x-show="showForm" x-collapse class="bg-gray-800 rounded-2xl shadow-xl border border-blue-500/30 p-6 mb-8">
             <h2 class="text-lg font-bold text-white mb-4">Isi Kegiatan Baru</h2>
             <form action="{{ url_for('logbook_add_entry', logbook_id=logbook.id) }}" method="POST" enctype="multipart/form-data">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -57,16 +69,35 @@
                         <label class="block text-sm mb-1 text-gray-400">Aktivitas / Judul</label>
                         <input type="text" name="aktivitas" placeholder="Contoh: Setup Server Proxmox" required class="w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm mb-1 text-gray-400">Deskripsi Pekerjaan</label>
-                        <textarea name="deskripsi" rows="3" required placeholder="Ceritakan apa saja yang dikerjakan..." class="auto-bullet w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none"></textarea>
-                    </div>
+                <div class="md:col-span-2" x-data="tiptapEditor('')">
+    <label class="block text-sm mb-1 text-gray-400">Deskripsi Pekerjaan</label>
+    
+    <div class="bg-gray-900 border border-gray-600 rounded-xl flex flex-col focus-within:border-blue-500 transition-colors">
+        <div class="bg-gray-800 border-b border-gray-600 p-2 rounded-t-xl min-h-[48px] flex items-center">
+            <template x-if="editor">
+                <div class="flex flex-wrap gap-1">
+                    <button type="button" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs font-bold w-8 h-8 flex items-center justify-center">B</button>
+                    <button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all italic text-xs w-8 h-8 flex items-center justify-center">I</button>
+                    <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                    <button type="button" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
+                    <button type="button" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ol"></i></button>
+                    <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                    <button type="button" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-quote-right"></i></button>
+                </div>
+            </template>
+        </div>
+        
+        <div x-ref="editorElement"></div>
+        
+        <input type="hidden" name="deskripsi" :value="content">
+    </div>
+</div>
                     <div x-data="imageCropUploader()" class="mt-4">
     <label class="block text-sm mb-2 text-gray-400">Bukti Gambar (Opsional)</label>
     
     <input type="hidden" name="hapus_gambar_lama" :value="hapusLama">
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4" x-show="imagePreviews.length > 0">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4" x-show="imagePreviews.length > 0" x-cloak>
         <template x-for="(img, index) in imagePreviews" :key="index">
             <div class="relative group aspect-video">
                 <img :src="img" class="w-full h-full object-cover rounded-lg border border-gray-600 shadow-sm">
@@ -78,9 +109,23 @@
         </template>
     </div>
 
-    <input type="file" x-ref="fileInput" name="gambar" accept="image/*" multiple @change="handleFiles" 
-           class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 bg-gray-900 border border-gray-600 rounded-lg p-1 cursor-pointer">
-
+ <div 
+    @dragover.prevent="isDragging = true" 
+    @dragleave.prevent="isDragging = false" 
+    @drop.prevent="handleDrop($event)"
+    :class="isDragging ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600 bg-gray-900 hover:bg-gray-800'"
+    class="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors mt-2"
+    @click="$refs.fileInput.click()"
+>
+    <div class="flex flex-col items-center justify-center pt-5 pb-6 pointer-events-none">
+        <i class="fas fa-cloud-upload-alt text-4xl mb-3 transition-colors duration-200" 
+           :class="isDragging ? 'text-blue-500' : 'text-gray-400'"></i>
+        <p class="mb-2 text-sm text-gray-400"><span class="font-bold text-white">Klik untuk upload</span> atau drag and drop ke sini</p>
+        <p class="text-xs text-gray-500">PNG, JPG, JPEG (Bisa pilih banyak)</p>
+    </div>
+    
+    <input type="file" x-ref="fileInput" name="gambar" accept="image/*" multiple @change="handleFiles" class="hidden">
+</div>
     <div x-show="showModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4" x-cloak>
         <div class="bg-gray-800 rounded-xl p-4 w-full max-w-3xl flex flex-col shadow-2xl border border-gray-600">
             <div class="flex justify-between items-center mb-4">
@@ -92,6 +137,7 @@
             </div>
             
             <div class="flex justify-end gap-3 mt-5">
+            <button type="button" @click="cancelCrop()" class="px-5 py-2.5 bg-red-600 hover:bg-red-500 rounded-lg text-white transition">Batal</button>
                 <button type="button" @click="skipCrop()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded-lg text-white transition">Lewati</button>
                 <button type="button" @click="applyCrop()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold shadow-lg transition">Selesai Crop</button>
             </div>
@@ -131,7 +177,9 @@
                                 </div>
                             </a>
                             
-                            <p class="text-gray-400 whitespace-pre-line mb-3">{{ entry.deskripsi }}</p>
+                            <div class="text-gray-400 text-sm editor-content mb-3">
+    {{ entry.deskripsi | safe }}
+</div>
                             
                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-3">
     {% for img in entry.images %}
@@ -158,147 +206,156 @@
 
     </div>
     <!-- {% include 'nativeNav.html' %} -->
-    <script>
+<script>
     document.addEventListener('alpine:init', () => {
-    Alpine.data('imageCropUploader', () => ({
-        imagePreviews: [], // Untuk nampilin di layar
-        croppedBlobs: [],   // Data asli yang bakal dikirim ke server
-        filesToCrop: [],    // Antrean file yang dipilih
-        currentFileIndex: 0,
-        showModal: false,
-        hapusLama: 0,
-        cropper: null,
-
-        handleFiles(e) {
-            const files = Array.from(e.target.files);
-            if (files.length === 0) return;
-            
-            this.filesToCrop = files;
-            this.currentFileIndex = 0;
-            this.startCropping();
-        },
-
-        startCropping() {
-            if (this.currentFileIndex < this.filesToCrop.length) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.showModal = true;
-                    this.$nextTick(() => {
-                        const image = document.getElementById('crop-image');
-                        image.src = e.target.result;
-                        if (this.cropper) this.cropper.destroy();
-                        this.cropper = new Cropper(image, {
-                            viewMode: 1,
-                            autoCropArea: 1,
-                            responsive: true
-                        });
-                    });
-                };
-                reader.readAsDataURL(this.filesToCrop[this.currentFileIndex]);
-            } else {
-                this.showModal = false;
-                this.updateInputFile();
+        // --- TIPTAP EDITOR COMPONENT ---
+      // --- KOMPONEN EDITOR TIPTAP (Fix ProseMirror Conflict) ---
+    Alpine.data('tiptapEditor', (initialContent = '') => ({
+        editor: null,
+        content: initialContent,
+        async init() {
+            try {
+                // KUNCINYA DI SINI: Pakai esm.sh agar ProseMirror tidak bentrok!
+                const { Editor } = await import('https://esm.sh/@tiptap/core@2.2.4');
+                const { default: StarterKit } = await import('https://esm.sh/@tiptap/starter-kit@2.2.4');
+                
+                const _this = this;
+                
+                this.editor = new Editor({
+                    element: this.$refs.editorElement,
+                    extensions: [StarterKit],
+                    content: this.content,
+                    editorProps: {
+                        attributes: {
+                            class: 'focus:outline-none min-h-[150px] p-4 text-gray-300 editor-content',
+                        },
+                    },
+                    onUpdate: ({ editor }) => {
+                        _this.content = editor.getHTML();
+                    }
+                });
+            } catch (error) {
+                console.error("Gagal load Tiptap:", error);
             }
         },
-
-        applyCrop() {
-            this.cropper.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200 }).toBlob((blob) => {
-                this.imagePreviews.push(URL.createObjectURL(blob));
-                this.croppedBlobs.push(blob);
-                this.nextFile();
-            }, 'image/jpeg', 0.8);
-        },
-
-        skipCrop() {
-            const file = this.filesToCrop[this.currentFileIndex];
-            this.imagePreviews.push(URL.createObjectURL(file));
-            this.croppedBlobs.push(file);
-            this.nextFile();
-        },
-
-        nextFile() {
-            this.currentFileIndex++;
-            this.startCropping();
-        },
-
-        removeSingleImage(index) {
-            this.imagePreviews.splice(index, 1);
-            this.croppedBlobs.splice(index, 1);
-            this.updateInputFile();
-            if (this.imagePreviews.length === 0) this.hapusLama = 1;
-        },
-
-        updateInputFile() {
-            const dataTransfer = new DataTransfer();
-            this.croppedBlobs.forEach((blob, i) => {
-                const file = new File([blob], `image_${i}.jpg`, { type: "image/jpeg" });
-                dataTransfer.items.add(file);
-            });
-            this.$refs.fileInput.files = dataTransfer.files;
+        destroy() {
+            if (this.editor) {
+                this.editor.destroy();
+            }
         }
     }));
-});
-    document.addEventListener('DOMContentLoaded', function() {
-        const textareas = document.querySelectorAll('.auto-bullet');
 
-        textareas.forEach(textarea => {
-            textarea.addEventListener('keydown', function(e) {
-                // Hanya eksekusi jika tombol yang ditekan adalah Enter
-                if (e.key === 'Enter') {
-                    const start = this.selectionStart;
-                    const end = this.selectionEnd;
-                    const value = this.value;
-
-                    // Ambil teks dari awal sampai posisi kursor saat ini
-                    const textBeforeCursor = value.substring(0, start);
-                    // Ambil baris terakhir yang sedang diketik
-                    const lines = textBeforeCursor.split('\n');
-                    const currentLine = lines[lines.length - 1];
-
-                    // Deteksi pola bullet: "-", "*", atau angka "1.", "2." diikuti spasi
-                    const bulletRegex = /^(\s*[-*]\s+|\s*\d+\.\s+)/;
-                    const match = currentLine.match(bulletRegex);
-
-                    if (match) {
-                        e.preventDefault(); // Stop fungsi Enter bawaan
-                        
-                        let bullet = match[1]; // Dapatkan bulletnya (misal: "- ")
-                        const lineContent = currentLine.substring(bullet.length);
-
-                        // Fitur ala Google Keep: Kalau barisnya kosong (cuma ada bullet),
-                        // tekan Enter bakal ngehapus bulletnya dan balik ke baris normal
-                        if (lineContent.trim() === '') {
-                            this.value = value.substring(0, start - bullet.length) + value.substring(end);
-                            this.selectionStart = this.selectionEnd = start - bullet.length;
-                        } else {
-                            // Kalau ada isinya, bikin baris baru + bullet yang sama
-                            let insertText = '\n' + bullet;
-                            
-                            // Fitur tambahan: Auto-increment untuk list angka (1. -> 2. -> 3.)
-                            const numberMatch = bullet.match(/\d+/);
-                            if (numberMatch) {
-                                const num = parseInt(numberMatch[0]);
-                                insertText = '\n' + bullet.replace(/\d+/, num + 1);
-                            }
-
-                            // Sisipkan ke dalam textarea
-                            this.value = value.substring(0, start) + insertText + value.substring(end);
-                            
-                            // Kembalikan kursor ke posisi yang tepat
-                            this.selectionStart = this.selectionEnd = start + insertText.length;
-                        }
-                    }
+        // --- IMAGE CROPPER COMPONENT (Tetap sama seperti aslinya) ---
+        Alpine.data('imageCropUploader', () => ({
+            imagePreviews: [], 
+            croppedBlobs: [],   
+            filesToCrop: [],    
+            currentFileIndex: 0,
+            showModal: false,
+            hapusLama: 0,
+            cropper: null,
+            isDragging: false,
+            handleFiles(e) {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) return;
+                this.filesToCrop = files;
+                this.currentFileIndex = 0;
+                this.startCropping();
+            },
+            handleDrop(e) {
+                this.isDragging = false; 
+                const files = Array.from(e.dataTransfer.files);
+                this.processFiles(files);
+            },
+            processFiles(files) {
+                if (files.length === 0) return;
+                const imageFiles = files.filter(file => file.type.startsWith('image/'));
+                if (imageFiles.length === 0) {
+                    if (typeof window.showAlert === 'function') window.showAlert('error', 'Hanya file gambar yang diperbolehkan!');
+                    else alert('Hanya file gambar yang diperbolehkan!');
+                    return;
                 }
-            });
+                this.filesToCrop = imageFiles;
+                this.currentFileIndex = 0;
+                this.startCropping();
+            },
+            startCropping() {
+                if (this.currentFileIndex < this.filesToCrop.length) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.showModal = true;
+                        this.$nextTick(() => {
+                            const image = document.getElementById('crop-image');
+                            image.src = e.target.result;
+                            if (this.cropper) this.cropper.destroy();
+                            this.cropper = new Cropper(image, {
+                                viewMode: 1,
+                                autoCropArea: 1,
+                                responsive: true
+                            });
+                        });
+                    };
+                    reader.readAsDataURL(this.filesToCrop[this.currentFileIndex]);
+                } else {
+                    this.showModal = false;
+                    this.updateInputFile();
+                }
+            },
+            cancelCrop() {
+                this.showModal = false;          
+                this.filesToCrop = [];           
+                this.currentFileIndex = 0;       
+                if (this.cropper) {
+                    this.cropper.destroy();      
+                    this.cropper = null;
+                }
+                this.updateInputFile();          
+                if (typeof window.showAlert === 'function') window.showAlert('info', 'Proses upload dibatalkan.');
+            },
+            applyCrop() {
+                this.cropper.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200 }).toBlob((blob) => {
+                    this.imagePreviews.push(URL.createObjectURL(blob));
+                    this.croppedBlobs.push(blob);
+                    this.nextFile();
+                }, 'image/jpeg', 0.8);
+            },
+            skipCrop() {
+                const file = this.filesToCrop[this.currentFileIndex];
+                this.imagePreviews.push(URL.createObjectURL(file));
+                this.croppedBlobs.push(file);
+                this.nextFile();
+            },
+            nextFile() {
+                this.currentFileIndex++;
+                this.startCropping();
+            },
+            removeSingleImage(index) {
+                this.imagePreviews.splice(index, 1);
+                this.croppedBlobs.splice(index, 1);
+                this.updateInputFile();
+                if (this.imagePreviews.length === 0) this.hapusLama = 1;
+            },
+            updateInputFile() {
+                const dataTransfer = new DataTransfer();
+                this.croppedBlobs.forEach((blob, i) => {
+                    const file = new File([blob], `image_${i}.jpg`, { type: "image/jpeg" });
+                    dataTransfer.items.add(file);
+                });
+                this.$refs.fileInput.files = dataTransfer.files;
+            }
+        }));
+    });
+
+    // Inisialisasi Flatpickr
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr(".datepicker", {
+            altInput: true,          
+            altFormat: "d-m-Y",      
+            dateFormat: "Y-m-d",     
+            disableMobile: "true"    
         });
     });
-    // Inisialisasi Flatpickr
-    flatpickr(".datepicker", {
-        altInput: true,          // Mengaktifkan fitur ilusi (tampilan vs data asli berbeda)
-        altFormat: "d-m-Y",      // Format yang DILIHAT oleh user (dd-mm-yyyy)
-        dateFormat: "Y-m-d",     // Format yang DIKIRIM ke database Python (yyyy-mm-dd)
-        disableMobile: "true"    // Memaksa HP pakai kalender Flatpickr, bukan bawaan browser
-    });
 </script>
+{% include 'alert.html' %}
 </body>
 </html>

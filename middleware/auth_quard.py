@@ -111,3 +111,57 @@ def login_required(view_func):
         return view_func(*args, **kwargs)
         
     return wrapped_view
+    
+def check_permission(tool_route_name):
+    """
+    Decorator untuk mengecek apakah user boleh mengakses fitur ini berdasarkan tabel role_permissions.
+    HARUS diletakkan di bawah @login_required.
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapped_view(*args, **kwargs):
+            # 1. Pastikan user udah login (variabel g.user diset oleh @login_required)
+            if not hasattr(g, 'user'):
+                return "Unauthorized", 401
+
+            # 2. Ambil role_id dari token JWT (Default 3 = Mahasiswa kalau gak ada)
+            role_id = g.user.get('role_id', 3) 
+            
+            # 3. KEKUATAN ORANG DALAM: Kalau Super Admin (1), tembusin aja semua fitur!
+            if role_id == 1:
+                return view_func(*args, **kwargs)
+
+            # 4. Kalau bukan Super Admin, cek izin ke Database (tabel role_permissions)
+            conn = None
+            cursor = None
+            try:
+                conn = get_connection()
+                cursor = conn.cursor(dictionary=True)
+                
+                # Cek apakah is_allowed = 1 untuk role_id dan tool ini
+                query = """
+                    SELECT rp.is_allowed 
+                    FROM role_permissions rp
+                    JOIN tools t ON rp.tool_id = t.id
+                    WHERE rp.role_id = %s AND t.route_name = %s
+                """
+                cursor.execute(query, (role_id, tool_route_name))
+                permission = cursor.fetchone()
+
+                # Kalau datanya gak ada, atau is_allowed = 0, gembok!
+                if not permission or permission['is_allowed'] == 0:
+                    logging.warning(f"[GUARD] Akses Ditolak: Role {role_id} mencoba akses {tool_route_name}")
+                    return "Akses Ditolak! Fitur ini sedang dikunci atau Anda tidak memiliki izin.", 403
+
+            except Exception as e:
+                logging.error(f"[PERMISSION GUARD] Error: {e}")
+                return "Terjadi kesalahan server saat mengecek hak akses", 500
+            finally:
+                if cursor: cursor.close()
+                if conn: conn.close()
+
+            # Lolos semua razia, silakan masuk!
+            return view_func(*args, **kwargs)
+            
+        return wrapped_view
+    return decorator

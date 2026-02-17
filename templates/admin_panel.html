@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - The Putras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+    [x-cloak] { display: none !important; }
+</style>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans min-h-screen">
+    
+    <div class="container mx-auto p-6 pb-32 max-w-5xl" 
+         x-data="{ activeTab: 'users', showAddUserModal: false, showEditModal: false, editData: {} }">
+        
+        <div class="mb-8 flex items-center gap-4">
+            <a href="{{ url_for('tools_page') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 backdrop-blur-sm border border-white/10 text-white transition hover:bg-gray-700">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight uppercase">Super Admin Panel</h1>
+                <p class="text-xs text-gray-400">Manajemen hak akses dan pengguna sistem</p>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6 space-y-2">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-2xl text-white text-sm {% if category == 'success' %}bg-green-600/60{% else %}bg-red-600/60{% endif %} backdrop-blur-md border border-white/10">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="flex p-1.5 bg-gray-800/40 backdrop-blur-md rounded-[2rem] border border-white/5 mb-8 w-fit">
+            <button @click="activeTab = 'users'" 
+                    :class="activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    class="px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-users-cog"></i> User
+            </button>
+            <button @click="activeTab = 'tools'" 
+                    :class="activeTab === 'tools' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    class="px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-shield-halved"></i> Izin
+            </button>
+        </div>
+
+        <div x-show="activeTab === 'users'" x-transition x-cloak>
+            <div class="flex justify-between items-center mb-4 px-2">
+                <h2 class="text-lg font-semibold text-white">Daftar Pengguna</h2>
+                <button @click="showAddUserModal = true" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-lg flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Tambah User
+                </button>
+            </div>
+
+            <div class="bg-gray-800/40 backdrop-blur-sm rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-white/5 text-gray-400 uppercase text-[10px] tracking-widest border-b border-white/5">
+                            <tr>
+                                <th class="px-6 py-4">User Details</th>
+                                <th class="px-6 py-4">Role</th>
+                                <th class="px-6 py-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for user in users %}
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-white">{{ user.username }}</div>
+                                    <div class="text-[11px] text-gray-500">{{ user.email or 'No Email Registered' }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <form action="{{ url_for('update_role') }}" method="POST">
+                                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                                        <select name="role_id" onchange="this.form.submit()" 
+                                                class="bg-gray-900/60 border border-white/10 text-xs rounded-lg p-2 text-white outline-none focus:ring-1 focus:ring-blue-500">
+                                            {% for r in all_roles %}
+                                                <option value="{{ r.id }}" {% if user.role_id == r.id %}selected{% endif %}>{{ r.nama_role }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-center gap-4">
+                                        <button @click="showEditModal = true; editData = { id: '{{ user.id }}', username: '{{ user.username }}', email: '{{ user.email or '' }}' }" 
+                                                class="text-blue-400 hover:text-blue-300 transition-transform active:scale-90" title="Edit User">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button @click="async () => {
+                                                    const yakin = await window.showConfirm('Reset Password?', 'Reset ke: mhs123', 'danger');
+                                                    if(yakin) window.location.href = '{{ url_for('admin_reset_password', user_id=user.id) }}';
+                                                }" class="text-yellow-500 hover:text-yellow-400 active:scale-90" title="Reset Password">
+                                            <i class="fas fa-key"></i>
+                                        </button>
+                                        <button @click="async () => {
+                                                    const yakin = await window.showConfirm('Hapus User?', 'Akun {{ user.username }} akan dihapus permanen!', 'danger');
+                                                    if(yakin) window.location.href = '{{ url_for('admin_delete_user', user_id=user.id) }}';
+                                                }" class="text-red-500 hover:text-red-400 active:scale-90" title="Hapus User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="activeTab === 'tools'" x-transition x-cloak>
+            <div class="bg-gray-800/40 backdrop-blur-sm rounded-[2.5rem] border border-white/10 shadow-2xl p-6">
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold text-white">Matriks Izin Fitur</h2>
+                    <p class="text-xs text-gray-400">Atur ketersediaan aplikasi untuk tiap role</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-300">
+                        <thead>
+                            <tr class="text-gray-500 uppercase tracking-widest">
+                                <th class="pb-4 pr-4">Aplikasi</th>
+                                {% for role in roles %}
+                                <th class="pb-4 text-center">{{ role.nama_role }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for tool in tools %}
+                            <tr>
+                                <td class="py-4 pr-4">
+                                    <div class="text-white font-bold">{{ tool.nama_tool }}</div>
+                                    <div class="text-[10px] text-gray-500">{{ tool.route_name }}</div>
+                                </td>
+                                {% for role in roles %}
+                                    {% set is_allowed = perm_map.get((role.id, tool.id), 0) %}
+                                    <td class="py-4 text-center">
+                                        <div x-data="{ 
+                                            active: {{ 'true' if is_allowed == 1 else 'false' }},
+                                            async toggle() {
+                                                this.active = !this.active;
+                                                const res = await fetch('{{ url_for('toggle_tool') }}', {
+                                                    method: 'POST',
+                                                    headers: {'Content-Type': 'application/json'},
+                                                    body: JSON.stringify({ role_id: {{ role.id }}, tool_id: {{ tool.id }}, is_allowed: this.active ? 1 : 0 })
+                                                });
+                                                if(res.ok) window.showAlert('success', 'Akses diubah!');
+                                            }
+                                        }">
+                                            <button @click="toggle()" :class="active ? 'bg-green-600' : 'bg-gray-700'" class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors outline-none ring-offset-gray-900 focus:ring-2 focus:ring-green-500">
+                                                <span :class="active ? 'translate-x-5' : 'translate-x-1'" class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform duration-200"></span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="showAddUserModal || showEditModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4" x-cloak>
+            
+            <div @click.away="showAddUserModal = false; showEditModal = false" 
+                 class="bg-gray-800/90 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/10 p-8 w-full max-w-md relative">
+                
+                <h2 class="text-xl font-bold text-white mb-6">
+                    <i :class="showAddUserModal ? 'fas fa-user-plus text-blue-500' : 'fas fa-user-edit text-blue-500'" class="mr-2"></i>
+                    <span x-text="showAddUserModal ? 'Tambah Pengguna' : 'Edit Pengguna'"></span>
+                </h2>
+
+                <form :action="showAddUserModal ? '{{ url_for('add_user') }}' : '{{ url_for('admin_update_user') }}'" method="POST" class="space-y-4">
+                    <input type="hidden" name="user_id" :value="editData.id">
+                    
+                    <input type="text" name="username" :value="editData.username" required placeholder="Username / NIM" 
+                           class="w-full bg-gray-900/60 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-500 focus:border-blue-500 outline-none transition">
+                    
+                    <input type="email" name="email" :value="editData.email" placeholder="Email (Opsional)" 
+                           class="w-full bg-gray-900/60 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-500 focus:border-blue-500 outline-none transition">
+                    
+                    <template x-if="showAddUserModal">
+                        <input type="password" name="password" required placeholder="Password" 
+                               class="w-full bg-gray-900/60 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-500 focus:border-blue-500 outline-none transition">
+                    </template>
+
+                    <template x-if="showAddUserModal">
+                        <select name="role_id" class="w-full bg-gray-900/60 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500">
+                            {% for r in all_roles %} <option value="{{ r.id }}" {% if r.id == 3 %}selected{% endif %}>{{ r.nama_role }}</option> {% endfor %}
+                        </select>
+                    </template>
+
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 mt-4">
+                        <span x-text="showAddUserModal ? 'Simpan Pengguna' : 'Simpan Perubahan'"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% include 'nativeNav.html' %}
+    {% include 'alert.html' %}
+</body>
+</html>

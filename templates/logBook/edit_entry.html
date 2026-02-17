@@ -11,9 +11,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="/static/js/components/ui.js"></script>
     <style>
         ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        [x-cloak] { display: none !important; }
+        .editor-content ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 0.5em; }
+.editor-content ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 0.5em; }
+.editor-content p { margin-bottom: 0.5em; }
+.editor-content p:last-child { margin-bottom: 0; }
+.editor-content strong { font-weight: bold; color: white; }
+.editor-content em { font-style: italic; }
+.editor-content blockquote { border-left: 4px solid #3b82f6; padding-left: 1em; color: #9ca3af; font-style: italic; margin-bottom: 0.5em; }
+
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
@@ -37,10 +45,30 @@
                         <label class="block text-sm mb-1 text-gray-400">Aktivitas / Judul</label>
                         <input type="text" name="aktivitas" value="{{ entry.aktivitas }}" required class="w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">
                     </div>
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-400">Deskripsi Pekerjaan</label>
-                        <textarea name="deskripsi" rows="5" required class="auto-bullet w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">{{ entry.deskripsi }}</textarea>
-                    </div>
+                   <textarea id="hidden-desc" style="display:none;">{{ entry.deskripsi }}</textarea>
+
+<div class="mb-4" x-data="tiptapEditor(document.getElementById('hidden-desc').value)">
+    <label class="block text-sm mb-1 text-gray-400">Deskripsi Pekerjaan</label>
+    
+    <div class="bg-gray-900 border border-gray-600 rounded-xl flex flex-col focus-within:border-blue-500 transition-colors">
+        <div class="bg-gray-800 border-b border-gray-600 p-2 rounded-t-xl min-h-[48px] flex items-center">
+            <template x-if="editor">
+                <div class="flex flex-wrap gap-1">
+                    <button type="button" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs font-bold w-8 h-8 flex items-center justify-center">B</button>
+                    <button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all italic text-xs w-8 h-8 flex items-center justify-center">I</button>
+                    <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                    <button type="button" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
+                    <button type="button" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ol"></i></button>
+                    <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                    <button type="button" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-quote-right"></i></button>
+                </div>
+            </template>
+        </div>
+        
+        <div x-ref="editorElement"></div>
+        <input type="hidden" name="deskripsi" :value="content">
+    </div>
+</div>
                     
                     <div x-data="imageCropUploader([
     {% if entry.images %}
@@ -78,9 +106,23 @@
         </template>
     </div>
 
-    <input type="file" x-ref="fileInput" name="gambar" accept="image/*" multiple @change="handleFiles" 
-           class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 bg-gray-900 border border-gray-600 rounded-lg p-1 cursor-pointer">
-
+   <div 
+    @dragover.prevent="isDragging = true" 
+    @dragleave.prevent="isDragging = false" 
+    @drop.prevent="handleDrop($event)"
+    :class="isDragging ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600 bg-gray-900 hover:bg-gray-800'"
+    class="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors mt-2"
+    @click="$refs.fileInput.click()"
+>
+    <div class="flex flex-col items-center justify-center pt-5 pb-6 pointer-events-none">
+        <i class="fas fa-cloud-upload-alt text-4xl mb-3 transition-colors duration-200" 
+           :class="isDragging ? 'text-blue-500' : 'text-gray-400'"></i>
+        <p class="mb-2 text-sm text-gray-400"><span class="font-bold text-white">Klik untuk upload</span> atau drag and drop ke sini</p>
+        <p class="text-xs text-gray-500">PNG, JPG, JPEG (Bisa pilih banyak)</p>
+    </div>
+    
+    <input type="file" x-ref="fileInput" name="gambar" accept="image/*" multiple @change="handleFiles" class="hidden">
+</div>
     <div x-show="showModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4" x-cloak>
         <div class="bg-gray-800 rounded-xl p-4 w-full max-w-3xl flex flex-col shadow-2xl border border-gray-600">
             <div class="flex justify-between items-center mb-4">
@@ -90,6 +132,7 @@
                 <img id="crop-image" class="max-w-full max-h-full">
             </div>
             <div class="flex justify-end gap-3 mt-5">
+            <button type="button" @click="cancelCrop()" class="px-5 py-2.5 bg-red-600 hover:bg-red-500 rounded-lg text-white transition">Batal</button>
                 <button type="button" @click="skipCrop()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded-lg text-white transition">Lewati</button>
                 <button type="button" @click="applyCrop()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold shadow-lg transition">Selesai Crop</button>
             </div>
@@ -145,6 +188,41 @@
     
     <script>
     document.addEventListener('alpine:init', () => {
+    // --- KOMPONEN EDITOR TIPTAP (Fix ProseMirror Conflict) ---
+    Alpine.data('tiptapEditor', (initialContent = '') => ({
+        editor: null,
+        content: initialContent,
+        async init() {
+            try {
+                // KUNCINYA DI SINI: Pakai esm.sh agar ProseMirror tidak bentrok!
+                const { Editor } = await import('https://esm.sh/@tiptap/core@2.2.4');
+                const { default: StarterKit } = await import('https://esm.sh/@tiptap/starter-kit@2.2.4');
+                
+                const _this = this;
+                
+                this.editor = new Editor({
+                    element: this.$refs.editorElement,
+                    extensions: [StarterKit],
+                    content: this.content,
+                    editorProps: {
+                        attributes: {
+                            class: 'focus:outline-none min-h-[150px] p-4 text-gray-300 editor-content',
+                        },
+                    },
+                    onUpdate: ({ editor }) => {
+                        _this.content = editor.getHTML();
+                    }
+                });
+            } catch (error) {
+                console.error("Gagal load Tiptap:", error);
+            }
+        },
+        destroy() {
+            if (this.editor) {
+                this.editor.destroy();
+            }
+        }
+    }));
         Alpine.data('imageCropUploader', (initialImages = []) => ({
             existingImages: initialImages, // Menyimpan gambar dari database {path, url}
             newImages: [], // Menyimpan gambar baru hasil crop {blob, url}
@@ -152,6 +230,7 @@
             currentFileIndex: 0,
             showModal: false,
             cropper: null,
+            isDragging: false,
 
             handleFiles(e) {
                 const files = Array.from(e.target.files);
@@ -160,7 +239,30 @@
                 this.currentFileIndex = 0;
                 this.startCropping();
             },
+handleDrop(e) {
+            this.isDragging = false; // Matiin efek nyala
+            const files = Array.from(e.dataTransfer.files);
+            this.processFiles(files);
+        },
+        processFiles(files) {
+            if (files.length === 0) return;
+            
+            // Filter biar cuma gambar aja yang masuk antrean
+            const imageFiles = files.filter(file => file.type.startsWith('image/'));
+            
+            if (imageFiles.length === 0) {
+                if (typeof window.showAlert === 'function') {
+                    window.showAlert('error', 'Hanya file gambar yang diperbolehkan!');
+                } else {
+                    alert('Hanya file gambar yang diperbolehkan!');
+                }
+                return;
+            }
 
+            this.filesToCrop = imageFiles;
+            this.currentFileIndex = 0;
+            this.startCropping();
+        },
             startCropping() {
                 if (this.currentFileIndex < this.filesToCrop.length) {
                     const reader = new FileReader();
@@ -179,7 +281,23 @@
                     this.updateInputFile();
                 }
             },
-
+cancelCrop() {
+            this.showModal = false;          // Tutup modal
+            this.filesToCrop = [];           // Kosongkan sisa antrean file
+            this.currentFileIndex = 0;       // Reset index
+            
+            if (this.cropper) {
+                this.cropper.destroy();      // Matikan engine cropper
+                this.cropper = null;
+            }
+            
+            this.updateInputFile();          // Sync file yang udah terlanjur di-crop (kalau ada)
+            
+            // Opsional: Kasih notif kalau lu mau
+            if (typeof window.showAlert === 'function') {
+                window.showAlert('info', 'Proses upload gambar dibatalkan.');
+            }
+        },
             applyCrop() {
                 this.cropper.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200 }).toBlob((blob) => {
                     this.newImages.push({ blob: blob, url: URL.createObjectURL(blob) });
@@ -304,5 +422,6 @@ async function handleCustomDelete(event, title, message) {
         disableMobile: "true"    // Memaksa HP pakai kalender Flatpickr, bukan bawaan browser
     });
 </script>
+{% include 'alert.html' %}
 </body>
 </html>

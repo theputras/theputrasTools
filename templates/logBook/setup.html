@@ -12,6 +12,7 @@
     <style>
         /* Styling khusus input date biar icon kalendernya warna putih di chrome */
         ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
@@ -52,7 +53,7 @@
             </form>
         </div>
     </div>
-    {% include 'nativeNav.html' %}
+    {% include 'alert.html' %}
     <script>
     // Inisialisasi Flatpickr
     flatpickr(".datepicker", {
