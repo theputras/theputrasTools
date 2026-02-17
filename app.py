@@ -1760,7 +1760,6 @@ def webauthn_register_verify():
     credential_data = request.json # Data dari frontend
 
     try:
-        # Verifikasi keaslian respon dari sensor fingerprint
         verification = verify_registration_response(
             credential=credential_data,
             expected_challenge=challenge,
@@ -1768,15 +1767,17 @@ def webauthn_register_verify():
             expected_origin=ORIGIN
         )
 
-        # Ubah bytes ke Base64 string biar gampang disimpan di text MySQL
-        cred_id_b64 = base64.b64encode(verification.credential_id).decode('utf-8')
+        # FIX UTAMA: Ambil credential ID langsung dari string yang dikirim Browser!
+        # Jangan pakai base64.b64encode punya Python biar string-nya 100% cocok pas login.
+        cred_id_b64 = credential_data.get('id') 
+        
+        # Public key tetap di-encode karena cuma dibaca sama Python
         pub_key_b64 = base64.b64encode(verification.credential_public_key).decode('utf-8')
 
         # Simpan ke Database
         user_id = g.user.get('sub')
         save_credential(user_id, cred_id_b64, pub_key_b64, verification.sign_count, "")
         
-        # Hapus challenge dari session
         session.pop('webauthn_registration_challenge', None)
 
         return jsonify({"success": True, "msg": "Sidik jari berhasil didaftarkan!"})
@@ -1784,17 +1785,6 @@ def webauthn_register_verify():
     except Exception as e:
         print(f"WebAuthn Verify Error: {e}")
         return jsonify({"success": False, "msg": str(e)}), 400
-        
-@app.route('/webauthn/login/options', methods=['POST'])
-def webauthn_login_options():
-    options = generate_authentication_options(
-        rp_id=RP_ID,
-        user_verification=UserVerificationRequirement.REQUIRED
-    )
-    session['webauthn_auth_challenge'] = options.challenge
-    
-    # FIX: Pake Response biar browser tau ini tipe datanya JSON!
-    return Response(options_to_json(options), mimetype='application/json')
 
 
 @app.route('/webauthn/login/verify', methods=['POST'])
