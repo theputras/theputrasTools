@@ -38,7 +38,7 @@ from controller.LogbookController import (
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
     get_entry_by_id, update_entry # <--- TAMBAHIN INI DI IMPORTNYA
 )
-from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password
+from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password, update_user_password
 from models.auth_api import generate_access_token, generate_refresh_token
 from webauthn import (
     generate_registration_options,
@@ -628,6 +628,21 @@ def update_profile():
         
     return redirect(url_for('account_page'))
 
+@app.route('/account/update-password', methods=['POST'])
+@login_required
+def update_password():
+    user_id = g.user.get('sub') # Ambil ID user yang lagi login
+    new_password = request.form.get('new_password')
+
+    # Panggil Controller
+    success, message = update_user_password(user_id, new_password)
+
+    if success:
+        flash(message, 'success')
+    else:
+        flash(message, 'error')
+
+    return redirect(url_for('account_page'))
 # Route untuk reset session scraper (hapus cookies.json)
 @app.route('/reset-scraper-session')
 @login_required

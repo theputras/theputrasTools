@@ -130,3 +130,26 @@ def reset_user_password(user_id):
     finally:
         cursor.close()
         conn.close()
+
+def update_user_password(user_id, new_password):
+    """Fungsi khusus untuk mengganti password user secara mandiri"""
+    # Validasi backend
+    if not new_password or len(new_password) < 6:
+        return False, "Password minimal 6 karakter!"
+        
+    # Enkripsi password baru pakai bcrypt
+    hashed_pw = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        # Update ke tabel users
+        cursor.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_pw, user_id))
+        conn.commit()
+        return True, "Password berhasil diperbarui! Silakan gunakan password baru pada login berikutnya."
+    except Exception as e:
+        logging.error(f"[Update Password] Error: {e}")
+        return False, "Gagal memperbarui password."
+    finally:
+        cursor.close()
+        conn.close()
