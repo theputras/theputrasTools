@@ -165,13 +165,14 @@ if not app.secret_key:
 #     SESSION_COOKIE_DOMAIN=None,  # biar domain fleksibel
 #     SESSION_REFRESH_EACH_REQUEST=True
 # )
+cookie_secure_env = os.getenv("COOKIE_SECURE", "0") == "1"
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
-    SESSION_COOKIE_SECURE=False
+    SESSION_COOKIE_SECURE=cookie_secure_env
 )
 
-
+logging.info(f"[Security Config] Session Cookie Secure: {cookie_secure_env}")
 # Session(app) # <--- TAMBAHIN INI
 
 
