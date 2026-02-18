@@ -19,8 +19,8 @@ cipher = Fernet(key)
 TARGET_USER_ID = 1 
 
 # Kredensial Gate/Sicyca yang mau disimpan
-gate_username_input = "23410100003"  # Ganti dengan NIM asli
-gate_password_asli  = "368010" # Ganti dengan Pass asli
+gate_username_input = os.getenv("GATE_ENCRYPTION_KEY")  # Ganti dengan NIM asli
+gate_password_asli  = os.getenv("GATE_ENCRYPTION_KEY") # Ganti dengan Pass asli
 # ========================
 
 # 2. Enkripsi Password
