@@ -51,28 +51,29 @@ def _midnight_epoch() -> float:
 
 
 # === HELPER: DETEKSI USER ID OTOMATIS ===
+# === HELPER: DETEKSI USER ID OTOMATIS ===
 def _get_current_user_id(explicit_id=None):
-    """
-    Menentukan User ID mana yang dipakai untuk scraping.
-    """
     if explicit_id:
         return explicit_id
     
     if has_request_context():
-        # 1. PRIORITAS UTAMA: Cek dari JWT (g.user) yang diset oleh @login_required
+        # 1. Cek JWT (g.user)
         if hasattr(g, 'user') and g.user.get('sub'):
             return g.user.get('sub')
             
-        # 2. Fallback: Cek dari Flask Session lama
+        # 2. Cek Session Flask Lama
         uid = session.get('user_id')
         if uid:
             return uid
             
-        logging.warning("[Scraper] Request context ada, tapi tidak ada user_id di JWT atau session.")
+        logging.warning("[Scraper] Request context ada, tapi tidak ada user_id.")
     
-    # Fallback untuk Scheduler / Bot (Default User ID 1)
-    logging.info("[Scraper] Menggunakan User ID default (1) untuk proses ini.")
-    return 1
+    # 3. Fallback Cerdas untuk Scheduler / Bot
+    # JANGAN HARDCODE 1! Minta model cariin siapa yang available.
+    bot_id = gate_user_model.get_bot_user() 
+    
+    logging.info(f"[Scraper] Mode Otomatis: Menggunakan User ID {bot_id} sebagai eksekutor.")
+    return bot_id
 
 # === HELPER: AMBIL CREDENTIALS (NIM & TOKEN) ===
 def _get_api_params(user_id, session_obj):

@@ -46,6 +46,33 @@ class GateUser:
         finally:
             cursor.close()
             conn.close()
+    def get_bot_user(self):
+        """
+        Cari satu user yang punya akun Gate aktif buat dipake sama Bot/Scheduler.
+        Prioritas: User ID terkecil yang is_active = 1.
+        """
+        conn = self._get_connection()
+        if not conn: return 1 # Fallback darurat
+        
+        cursor = conn.cursor()
+        try:
+            # Ambil user pertama yang punya kredensial aktif
+            query = "SELECT user_id FROM gate_users WHERE is_active = 1 ORDER BY user_id ASC LIMIT 1"
+            cursor.execute(query)
+            result = cursor.fetchone()
+            
+            if result:
+                # KETEMU! Pake user ini (misal: User ID 2)
+                return result[0] 
+            
+            # Kalau tabel kosong melompong, yaudah pasrah balik ke 1
+            return 1 
+        except Exception as e:
+            logging.error(f"[GateModel] Error cari bot user: {e}")
+            return 1
+        finally:
+            cursor.close()
+            conn.close()
 
 # === MODEL SESSION (Cookies Terpisah) ===
 class GateSession:
@@ -165,3 +192,4 @@ class GateSession:
         finally:
             cursor.close()
             conn.close()
+            
