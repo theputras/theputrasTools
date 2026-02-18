@@ -16,7 +16,7 @@ cipher = Fernet(key)
 
 # === KONFIGURASI DATA ===
 # User ID aplikasi (hardcoded ke 1 sesuai request)
-TARGET_USER_ID = 1 
+TARGET_USER_ID = 2
 
 # Kredensial Gate/Sicyca yang mau disimpan
 gate_username_input = os.getenv("SICYCA_USER")  # Ganti dengan NIM asli

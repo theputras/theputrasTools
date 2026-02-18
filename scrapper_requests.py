@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 import logging
 from typing import List, Dict, Any, Optional
 from zoneinfo import ZoneInfo
-from flask import session, has_request_context
+from flask import session, has_request_context, g
 from controller.GateController import get_authenticated_session, reset_session_user
 from models.gate import GateUser
 
@@ -54,23 +54,23 @@ def _midnight_epoch() -> float:
 def _get_current_user_id(explicit_id=None):
     """
     Menentukan User ID mana yang dipakai untuk scraping.
-    Prioritas:
-    1. Parameter explicit (jika dikirim manual)
-    2. Flask Session (jika dipanggil user via web/API)
-    3. Default '1' (jika dipanggil Scheduler/Background job)
     """
     if explicit_id:
         return explicit_id
     
     if has_request_context():
-        # Sedang diakses via Browser/API
+        # 1. PRIORITAS UTAMA: Cek dari JWT (g.user) yang diset oleh @login_required
+        if hasattr(g, 'user') and g.user.get('sub'):
+            return g.user.get('sub')
+            
+        # 2. Fallback: Cek dari Flask Session lama
         uid = session.get('user_id')
         if uid:
             return uid
-        logging.warning("[Scraper] Request context ada, tapi tidak ada user_id di session.")
+            
+        logging.warning("[Scraper] Request context ada, tapi tidak ada user_id di JWT atau session.")
     
     # Fallback untuk Scheduler / Bot (Default User ID 1)
-    # Pastikan User ID 1 sudah di-seed di database!
     logging.info("[Scraper] Menggunakan User ID default (1) untuk proses ini.")
     return 1
 
