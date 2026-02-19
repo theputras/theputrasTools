@@ -291,7 +291,20 @@ def get_entry_by_id(entry_id):
             FROM logbook_images 
             WHERE entry_id = %s
         """, (entry_id,))
-        entry['images'] = cursor.fetchall()
+        images = cursor.fetchall()
+        
+        # Format ukuran berkas biar enak dibaca
+        for img in images:
+            if img['ukuran_berkas']:
+                size_bytes = img['ukuran_berkas']
+                if size_bytes < 1024 * 1024:
+                    img['ukuran_display'] = f"{round(size_bytes / 1024, 2)} KB"
+                else:
+                    img['ukuran_display'] = f"{round(size_bytes / (1024 * 1024), 2)} MB"
+            else:
+                img['ukuran_display'] = "0 KB"
+        
+        entry['images'] = images
         
     conn.close()
     return entry
