@@ -485,41 +485,33 @@
                     return `Foto ${current} dari ${total}`;
                 },
 
-                // --- FLOW UPLOAD BARU (Langsung buka Edit) ---
+                // --- FLOW UPLOAD: Langsung masuk tanpa setting ---
                 handleFiles(e) {
                     const files = Array.from(e.target.files);
-                    if (files.length === 0) return;
-                    
-                    // Proses file pertama untuk langsung dibuka di editor
-                    const file = files[0]; // Ambil file pertama dulu (bisa diloop kalau mau banyak)
-                    
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        // Tambahkan ke array
-                        const imgData = {
-                            url: ev.target.result,
-                            blob: file, // Simpan blob asli
-                            nama_asli: file.name,
-                            deskripsi: '',
-                            _dimensi: 'Memuat...'
-                        };
-                        this.newImages.push(imgData);
-                        
-                        // Hitung dimensi gambar
-                        const tempImg = new window.Image();
-                        tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
-                        tempImg.src = ev.target.result;
+                    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+                    if (imageFiles.length === 0) return;
 
-                        // LANGSUNG BUKA MODAL DI GAMBAR TERAKHIR
-                        const newIndex = this.newImages.length - 1;
-                        this.openGallery(newIndex, 'new');
-                        
-                        // LANGSUNG AKTIFKAN MODE CROP
-                        this.startVisualEdit();
-                    };
-                    reader.readAsDataURL(file);
+                    imageFiles.forEach((file) => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            const imgData = {
+                                url: ev.target.result,
+                                blob: file,
+                                nama_asli: file.name,
+                                deskripsi: '',
+                                _dimensi: 'Memuat...'
+                            };
+                            this.newImages.push(imgData);
+                            
+                            const tempImg = new window.Image();
+                            tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
+                            tempImg.src = ev.target.result;
+
+                            this.updateInputFile();
+                        };
+                        reader.readAsDataURL(file);
+                    });
                     
-                    // Reset input biar bisa upload file sama lagi
                     e.target.value = '';
                 },
                 
@@ -529,27 +521,26 @@
                     const imageFiles = files.filter(file => file.type.startsWith('image/'));
                     if (imageFiles.length === 0) return alert('Hanya file gambar!');
                     
-                    // Sama logic-nya, ambil yg pertama, push, open gallery, start edit
-                    const file = imageFiles[0];
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        const imgData = {
-                            url: ev.target.result,
-                            blob: file,
-                            nama_asli: file.name,
-                            deskripsi: '',
-                            _dimensi: 'Memuat...'
+                    imageFiles.forEach((file) => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            const imgData = {
+                                url: ev.target.result,
+                                blob: file,
+                                nama_asli: file.name,
+                                deskripsi: '',
+                                _dimensi: 'Memuat...'
+                            };
+                            this.newImages.push(imgData);
+                            
+                            const tempImg = new window.Image();
+                            tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
+                            tempImg.src = ev.target.result;
+
+                            this.updateInputFile();
                         };
-                        this.newImages.push(imgData);
-                        
-                        const tempImg = new window.Image();
-                        tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
-                        tempImg.src = ev.target.result;
-                        const newIndex = this.newImages.length - 1;
-                        this.openGallery(newIndex, 'new');
-                        this.startVisualEdit();
-                    };
-                    reader.readAsDataURL(file);
+                        reader.readAsDataURL(file);
+                    });
                 },
 
                 // --- FUNGSI GALLERY ---

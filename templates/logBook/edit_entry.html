@@ -493,30 +493,35 @@
                     const imageFiles = files.filter(file => file.type.startsWith('image/'));
                     if (imageFiles.length === 0) return alert('Hanya file gambar!');
 
-                    // Ambil file pertama saja (atau loop jika mau multi-edit)
-                    const file = imageFiles[0];
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        const imgData = {
-                            url: ev.target.result,
-                            blob: file,
-                            nama_asli: file.name,
-                            deskripsi: '',
-                            _dimensi: 'Memuat...'
+                    // Proses SEMUA file, bukan cuma yang pertama
+                    imageFiles.forEach((file, i) => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            const imgData = {
+                                url: ev.target.result,
+                                blob: file,
+                                nama_asli: file.name,
+                                deskripsi: '',
+                                _dimensi: 'Memuat...'
+                            };
+                            this.newImages.push(imgData);
+                            
+                            // Hitung dimensi gambar
+                            const tempImg = new window.Image();
+                            tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
+                            tempImg.src = ev.target.result;
+                            
+                            // AUTO OPEN: Buka modal hanya untuk gambar TERAKHIR
+                            if (i === imageFiles.length - 1) {
+                                const newIdx = this.newImages.length - 1;
+                                this.openGallery(newIdx, 'new');
+                                this.startVisualEdit();
+                            }
+
+                            this.updateInputFile();
                         };
-                        this.newImages.push(imgData);
-                        
-                        // Hitung dimensi gambar
-                        const tempImg = new window.Image();
-                        tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
-                        tempImg.src = ev.target.result;
-                        
-                        // AUTO OPEN: Buka gambar terbaru & langsung masuk mode edit
-                        const newIdx = this.newImages.length - 1;
-                        this.openGallery(newIdx, 'new');
-                        this.startVisualEdit();
-                    };
-                    reader.readAsDataURL(file);
+                        reader.readAsDataURL(file);
+                    });
                 },
 
                 // --- UTILS: Update Input File Hidden ---
