@@ -42,12 +42,17 @@ JAKARTA_TZ = pytz.timezone(os.getenv("TIMEZONE"))
 auth_bp = Blueprint('auth', __name__)
 
 # === Utility ===
-def generate_access_token(user_id, role_id):
+def generate_access_token(user_id, role_id, remember_me=False):
+    if remember_me:
+        token_lifetime = timedelta(days=30)
+    else:
+        token_lifetime = timedelta(minutes=30)
+
     payload = {
-        'sub': str(user_id),  # Ubah ke str() agar jadi string, e.g., '1' bukan 1
+        'sub': str(user_id),
         'role_id': role_id,
         'iat': datetime.now(JAKARTA_TZ),
-        'exp': datetime.now(JAKARTA_TZ) + timedelta(minutes=30)
+        'exp': datetime.now(JAKARTA_TZ) + token_lifetime
     }
     return jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
 
@@ -142,12 +147,12 @@ def login():
     data = request.form
     username = data.get('username')
     password = data.get('password')
+    remember_me = data.get('remember_me') in ['true', '1', 'on', 'yes']
 
     conn = get_connection()
     if not conn:
         return jsonify({"error": "Koneksi ke database gagal"}), 500
     cursor = conn.cursor(dictionary=True)
-    # 2. Tambahin role_id di query SELECT ini
     cursor.execute("SELECT id, username, password, role_id FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
 
@@ -155,14 +160,26 @@ def login():
         cursor.close()
         conn.close()
         return jsonify({"error": "Username atau password salah"}), 401
-    # 3. Lempar role_id ke fungsi generate_access_token
-    access_token = generate_access_token(user['id'], user['role_id'])
+
+    # Generate tokens dengan lifetime sesuai pilihan "Ingat Saya"
+    access_token = generate_access_token(user['id'], user['role_id'], remember_me=remember_me)
     session['access_token'] = access_token
-    session.modified = True  # Sudah ada, tapi pastikan
+    session.modified = True
     if isinstance(access_token, bytes):
         access_token = access_token.decode('utf-8')
     refresh_token = generate_refresh_token()
-    expires_at = datetime.now(JAKARTA_TZ) + timedelta(days=30)
+
+    # Tentukan lifetime berdasarkan remember_me
+    if remember_me:
+        access_max_age = 3600 * 24 * 30      # 30 hari
+        refresh_max_age = 3600 * 24 * 365    # 365 hari
+        refresh_expires = timedelta(days=365)
+    else:
+        access_max_age = 1800                 # 30 menit
+        refresh_max_age = 3600 * 24 * 30     # 30 hari
+        refresh_expires = timedelta(days=30)
+
+    expires_at = datetime.now(JAKARTA_TZ) + refresh_expires
 
     ip_address = request.remote_addr or "0.0.0.0"
     user_agent = request.headers.get('User-Agent', 'Unknown')
@@ -179,31 +196,31 @@ def login():
     session['user_id'] = user['id']
     session.modified = True
     
-    # Simpan JWT ke cookie HTTP-only agar ga ilang tiap reload
     resp = jsonify({
         "message": "Login successful!",
         "redirect": url_for('index')
     })
-# 1. Cookie untuk Access Token (JWT, 30 menit)
+
+    # 1. Cookie untuk Access Token (JWT)
     resp.set_cookie(
         "access_token",
         access_token,
         httponly=True,
-        secure=False,      # (False di localhost)
+        secure=False,
         samesite="Lax",
-        max_age=1800       # 30 menit
+        max_age=access_max_age
     )
     
-    # 2. Cookie untuk Refresh Token (UUID, 30 hari)
+    # 2. Cookie untuk Refresh Token (UUID)
     resp.set_cookie(
-        "refresh_token",   # <-- NAMA COOKIE BARU
-        refresh_token,     # <-- VALUE-NYA
+        "refresh_token",
+        refresh_token,
         httponly=True,
-        secure=False,      # (False di localhost)
+        secure=False,
         samesite="Lax",
-        max_age=3600 * 24 * 30 # 30 hari
+        max_age=refresh_max_age
     )
-    logging.info(f"[LOGIN DEBUG] Session keys={list(session.keys())}")
+    logging.info(f"[LOGIN] User {username} logged in. Remember me: {remember_me}")
     return resp, 200
 
 

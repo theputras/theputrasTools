@@ -91,10 +91,60 @@ def login_required(view_func):
             g.user = payload
 
         except jwt.ExpiredSignatureError:
-            logging.info("[GUARD] Access Token Expired.")
-            # TODO: Di sini idealnya kita lakukan Auto-Refresh Access Token 
-            # karena Refresh Token (di langkah 2) sudah terbukti VALID.
-            # Tapi untuk sekarang, redirect login dulu biar aman.
+            logging.info("[GUARD] Access Token Expired. Attempting auto-refresh...")
+            
+            # AUTO-REFRESH: Refresh token sudah terbukti VALID di langkah 2.
+            # Ambil user_id dari session DB untuk generate token baru.
+            try:
+                conn2 = get_connection()
+                if conn2:
+                    cursor2 = conn2.cursor(dictionary=True)
+                    cursor2.execute(
+                        "SELECT user_id FROM user_sessions WHERE refresh_token = %s AND revoked = 0",
+                        (refresh_token,)
+                    )
+                    session_row = cursor2.fetchone()
+                    cursor2.close()
+                    conn2.close()
+
+                    if session_row:
+                        from models.auth_api import generate_access_token
+                        
+                        # Decode token lama TANPA validasi exp untuk ambil role_id
+                        old_payload = jwt.decode(
+                            access_token, secret, algorithms=["HS256"],
+                            options={"verify_exp": False}
+                        )
+                        role_id = old_payload.get('role_id', 3)
+                        user_id = session_row['user_id']
+
+                        # Generate token baru (30 menit default)
+                        new_access_token = generate_access_token(user_id, role_id)
+                        if isinstance(new_access_token, bytes):
+                            new_access_token = new_access_token.decode('utf-8')
+
+                        # Set g.user supaya request bisa lanjut
+                        new_payload = jwt.decode(
+                            new_access_token, secret, algorithms=["HS256"],
+                            leeway=10
+                        )
+                        g.user = new_payload
+                        session['access_token'] = new_access_token
+                        session.modified = True
+
+                        # Lanjutkan request, tapi set cookie baru di response
+                        response = make_response(view_func(*args, **kwargs))
+                        response.set_cookie(
+                            "access_token", new_access_token,
+                            httponly=True, secure=False, samesite="Lax",
+                            max_age=1800  # 30 menit (default)
+                        )
+                        logging.info(f"[GUARD] Auto-refresh berhasil untuk user_id {user_id}")
+                        return response
+            except Exception as refresh_err:
+                logging.error(f"[GUARD] Auto-refresh gagal: {refresh_err}")
+
+            # Kalau auto-refresh gagal, fallback ke redirect login
             resp = make_response(redirect(url_for('login_page', next=request.url)))
             session.clear()
             resp.set_cookie("access_token", "", expires=0)
