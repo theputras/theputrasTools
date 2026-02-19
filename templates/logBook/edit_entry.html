@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Kegiatan - The Putras</title>
+    <title>Edit Kegiatan {{ entry.aktivitas }} - {{ logbook.nim }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -808,6 +808,14 @@
         // Init Flatpickr
         document.addEventListener('DOMContentLoaded', function() {
             flatpickr(".datepicker", { altInput: true, altFormat: "d-m-Y", dateFormat: "Y-m-d", disableMobile: "true" });
+
+            // Running text pada tab browser
+            const baseTitle = document.title + ' ';
+            let pos = 0;
+            setInterval(() => {
+                document.title = baseTitle.substring(pos) + baseTitle.substring(0, pos);
+                pos = (pos + 1) % baseTitle.length;
+            }, 300);
         });
     </script>
     
