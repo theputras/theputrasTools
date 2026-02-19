@@ -62,13 +62,22 @@
                             <div class="bg-gray-800 border-b border-gray-600 p-2 rounded-t-xl min-h-[48px] flex items-center">
                                 <template x-if="editor">
                                     <div class="flex flex-wrap gap-1">
-                                        <button type="button" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs font-bold w-8 h-8 flex items-center justify-center">B</button>
-                                        <button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all italic text-xs w-8 h-8 flex items-center justify-center">I</button>
+                                        <button type="button" title="Tebal" @click="Alpine.raw(editor).chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs font-bold w-8 h-8 flex items-center justify-center">B</button>
+                                        <button type="button" title="Miring" @click="Alpine.raw(editor).chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all italic text-xs w-8 h-8 flex items-center justify-center">I</button>
+                                        <button type="button" title="Coret" @click="Alpine.raw(editor).chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all line-through text-xs w-8 h-8 flex items-center justify-center">S</button>
                                         <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
-                                        <button type="button" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
-                                        <button type="button" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ol"></i></button>
+                                        <button type="button" title="Daftar Poin" @click="Alpine.raw(editor).chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
+                                        <button type="button" title="Daftar Nomor" @click="Alpine.raw(editor).chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ol"></i></button>
                                         <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
-                                        <button type="button" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-quote-right"></i></button>
+                                        <button type="button" title="Kode Inline" @click="Alpine.raw(editor).chain().focus().toggleCode().run()" :class="editor.isActive('code') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center font-mono">&lt;&gt;</button>
+                                        <button type="button" title="Blok Kode" @click="Alpine.raw(editor).chain().focus().toggleCodeBlock().run()" :class="editor.isActive('codeBlock') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-file-code"></i></button>
+                                        <button type="button" title="Kutipan" @click="Alpine.raw(editor).chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-quote-right"></i></button>
+                                        <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                                        <button type="button" title="Tautan" @click="toggleLink()" :class="editor.isActive('link') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-link"></i></button>
+                                        <button type="button" title="Garis Pemisah" @click="Alpine.raw(editor).chain().focus().setHorizontalRule().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-minus"></i></button>
+                                        <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                                        <button type="button" title="Undo" @click="Alpine.raw(editor).chain().focus().undo().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-undo"></i></button>
+                                        <button type="button" title="Redo" @click="Alpine.raw(editor).chain().focus().redo().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-redo"></i></button>
                                     </div>
                                 </template>
                             </div>
@@ -726,15 +735,29 @@
                     try {
                         const { Editor } = await import('https://esm.sh/@tiptap/core@2.2.4');
                         const { default: StarterKit } = await import('https://esm.sh/@tiptap/starter-kit@2.2.4');
+                        const { default: Link } = await import('https://esm.sh/@tiptap/extension-link@2.2.4');
                         const _this = this;
                         this.editor = new Editor({
                             element: this.$refs.editorElement,
-                            extensions: [StarterKit],
+                            extensions: [
+                                StarterKit,
+                                Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-blue-400 underline cursor-pointer' } })
+                            ],
                             content: this.content,
                             editorProps: { attributes: { class: 'focus:outline-none min-h-[150px] p-4 text-gray-300 editor-content' } },
                             onUpdate: ({ editor }) => { _this.content = editor.getHTML(); }
                         });
                     } catch (error) { console.error("Gagal load Tiptap:", error); }
+                },
+                toggleLink() {
+                    const raw = Alpine.raw(this.editor);
+                    if (raw.isActive('link')) {
+                        raw.chain().focus().unsetLink().run();
+                        return;
+                    }
+                    const url = prompt('Masukkan URL:');
+                    if (!url) return;
+                    raw.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
                 },
                 destroy() { if (this.editor) this.editor.destroy(); }
             }));
