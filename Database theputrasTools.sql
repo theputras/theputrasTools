@@ -141,6 +141,11 @@ CREATE TABLE logbook_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
     entry_id INT NOT NULL,
     path VARCHAR(255) NOT NULL,
+    nama_asli VARCHAR(255) DEFAULT NULL,
+    deskripsi TEXT DEFAULT NULL,
+    tipe_berkas VARCHAR(50) NULL,      -- Contoh: image/jpeg, image/png
+    ukuran_berkas BIGINT NULL,         -- Dalam Bytes
+    dimensi VARCHAR(20) NULL,          -- Contoh: 1920x1080
     CONSTRAINT fk_logbook_images_parent FOREIGN KEY (entry_id) REFERENCES logbook_entries(id) ON DELETE CASCADE
 );
 

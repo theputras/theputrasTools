@@ -1,5 +1,5 @@
 from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g, redirect
-import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re, random, string
+import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re, random, string, html
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
 from models.gate import GateSession, GateUser
@@ -130,6 +130,7 @@ def api_status():
 
 # Untuk mencari mahasiswa atau staff
 @api_bp.route('/search', methods=['POST'])
+@login_required
 def api_search():
     data = request.get_json()   
     query = data.get('query', '').strip()
@@ -151,20 +152,20 @@ def api_search():
                 prodi_name = 'Sistem Belum Siap'
             combined_results.append({
                 'Tipe': 'Mahasiswa',
-                'Nama': row.get('Nama'),
-                'IDMhs': nim,
-                'Status': row.get('Status'),
-                'Prodi': prodi_name,
-                'Detail': row.get('Dosen Wali')
+                'Nama': html.escape(str(row.get('Nama', ''))),
+                'IDMhs': html.escape(str(nim)),
+                'Status': html.escape(str(row.get('Status', ''))),
+                'Prodi': html.escape(str(prodi_name)),
+                'Detail': html.escape(str(row.get('Dosen Wali', '')))
             })
     if not df_staff.empty:
         for _, row in df_staff.iterrows():
             combined_results.append({
                 'Tipe': 'Staff/Dosen',
-                'Nama': row.get('Nama'),
-                'IDStaff': row.get('NIK'),
-                'Bagian': row.get('Bagian'),
-                'Detail': row.get('Email')
+                'Nama': html.escape(str(row.get('Nama', ''))),
+                'IDStaff': html.escape(str(row.get('NIK', ''))),
+                'Bagian': html.escape(str(row.get('Bagian', ''))),
+                'Detail': html.escape(str(row.get('Email', '')))
             })
 
     html_output = ""
@@ -199,10 +200,20 @@ def api_search():
                 """
             else:
                 detail_html = f"""
-                <dt class="font-medium text-gray-400">NIK</dt><dd class="col-span-2 text-white">{item['IDStaff']}</dd>
+                <dt class="font-medium text-gray-400">NIK</dt>
+                <dd class="col-span-2 text-white flex items-center" id="nik-{item['IDStaff']}">
+                    <span>{item['IDStaff']}</span>
+                    <button class="copy-id-btn p-1 text-gray-400 hover:text-white transition" 
+                        data-name="{item['IDStaff']}" title="Salin NIK">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </button>
+                </dd>
+
                 <dt class="font-medium text-gray-400">Bagian</dt><dd class="col-span-2 text-white">{item['Bagian']}</dd>
                 <dt class="font-medium text-gray-400">Email</dt><dd class="col-span-2 text-white">{item['Detail']}</dd>
-                <!-- Tombol di bawah Email -->
+                
                 <dd class="col-span-3 mt-2">
                     <button class="photo-btn px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 rounded text-white" data-role="staff" data-id="{item['IDStaff']}">Lihat Foto</button>
                 </dd>
@@ -238,7 +249,7 @@ def api_search():
 
     <!-- Bagian detail yang terbuka atau tertutup -->
     <div x-show="isOpen" x-transition class="p-4 bg-gray-900 border-t border-gray-700 text-sm">
-        <dl class="grid grid-cols-3 gap-2 text-sm">{detail_html}</dl>
+        <dl class="grid grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">{detail_html}</dl>
     </div>
 </div>
 
@@ -342,7 +353,8 @@ def get_youtube_info():
     except yt_dlp.utils.DownloadError as e:
         return jsonify({"error": f"Gagal mengambil info video. Mungkin video ini private atau dihapus."}), 500
     except Exception as e:
-        return jsonify({"error": f"Terjadi kesalahan internal: {str(e)}"}), 500
+        logging.error(f"[yt-dlp info] Error: {e}")
+        return jsonify({"error": "Terjadi kesalahan internal saat mengambil info video."}), 500
         
 # Endpoint yt-dlp untuk request konversi
 @api_bp.route('/request-conversion', methods=['POST'])
@@ -458,10 +470,10 @@ def request_conversion():
 
     except Exception as e:
         if task_id in download_progress:
-             download_progress[task_id] = {"status": "Error", "message": str(e)}
+             download_progress[task_id] = {"status": "Error", "message": "Konversi gagal"}
              # Jangan langsung dihapus biar frontend bisa baca errornya sebentar
-        logging.error(f"Konversi gagal: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Konversi gagal: {e}")
+        return jsonify({"error": "Konversi gagal. Silakan coba lagi."}), 500
 
 # Endpoint untuk membatalkan task yg sedang berjalan
 @api_bp.route('/cancel-task', methods=['POST'])
@@ -537,6 +549,7 @@ def download_converted_file(filename):
             
 # Untuk melihat log terus menerus
 @api_bp.route('/log')
+@login_required
 def api_log():
     if os.path.exists(log_file):
         with open(log_file, 'r', encoding='utf-8') as f:
@@ -659,7 +672,7 @@ def api_krs_data():
         logging.error(f"API Error (KRS): {e}")
         return jsonify({
             "success": False, 
-            "message": f"Terjadi kesalahan server: {str(e)}",
+            "message": "Terjadi kesalahan server saat mengambil data KRS.",
             "data": []
         }), 500
 
@@ -761,7 +774,7 @@ def api_sks_data():
         logging.error(f"[API] Error SKS: {e}")
         return jsonify({
             "success": False, 
-            "message": f"Server Error: {str(e)}"
+            "message": "Terjadi kesalahan server saat mengambil data SKS."
         }), 500
 
 @api_bp.route('/sync-cookies', methods=['GET'])
@@ -857,14 +870,17 @@ def get_my_credentials():
              return jsonify({"success": False, "message": "Password belum di-set"})
         csrf_token = get_csrf_token_gate()
         
+        # Mask password: tampilkan 3 karakter pertama + ***
+        masked_pw = decrypted_password[:3] + '***' if len(decrypted_password) > 3 else '***'
         return jsonify({
             "success": True, 
             "userid": username,
-            "password": decrypted_password,
+            "password": masked_pw,
             "gate_token": csrf_token
         })
     except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+        logging.error(f"[API] Error get-my-credentials: {e}")
+        return jsonify({"success": False, "message": "Terjadi kesalahan saat mengambil kredensial."}), 500
     
 @api_bp.route('/my-photo')
 @login_required

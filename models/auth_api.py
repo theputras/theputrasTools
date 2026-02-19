@@ -3,13 +3,14 @@ import bcrypt
 import os
 import jwt
 from datetime import datetime, timedelta
-from flask import Blueprint, request, jsonify, session, url_for
+from flask import Blueprint, request, jsonify, session, url_for, g
 from flask import current_app
 from connection import get_connection
 import logging
 import pytz
 from dotenv import load_dotenv
 from extensions import limiter
+from middleware.auth_quard import login_required
 # import json
 # from webauthn import verify_registration_response, verify_authentication_response, generate_authentication_options, generate_registration_options, serialize_options
 import base64
@@ -210,6 +211,7 @@ def login():
 
 # === LOGOUT (hapus 1 session aktif) ===
 @auth_bp.route('/logout', methods=['POST'])
+@login_required
 def logout():
     """
     Rute API untuk logout (dipakai oleh 'Manajemen Sesi', dll)
@@ -225,12 +227,12 @@ def logout():
 
 # === LOGOUT ALL DEVICE ===
 @auth_bp.route('/logout_all', methods=['POST'])
+@login_required
 def logout_all():
     """
     Rute API untuk logout semua device (dipakai 'Manajemen Sesi', dll)
     """
-    data = request.form
-    user_id = data.get('user_id')
+    user_id = g.user.get('sub')  # Ambil dari JWT, BUKAN dari form!
     
     if _revoke_all_user_sessions(user_id):
         return jsonify({"message": "Semua sesi berhasil dihapus"}), 200
@@ -289,7 +291,8 @@ def verify_face_id_registration():
         
         return jsonify({'success': True})
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error(f"[WebAuthn Register] Error: {e}")
+        return jsonify({'error': 'Terjadi kesalahan saat mendaftarkan perangkat'}), 400
         
         
 @auth_bp.route('/login-face', methods=['POST'])

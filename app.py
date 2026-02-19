@@ -37,7 +37,7 @@ from models.gate import GateUser
 from controller.LogbookController import (
     get_logbooks_by_user, get_logbook_by_id_and_user, create_logbook, update_logbook, 
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
-    get_entry_by_id, update_entry # <--- TAMBAHIN INI DI IMPORTNYA
+    get_entry_by_id, update_entry, delete_single_image, update_image_metadata, get_image_by_id, replace_image_file
 )
 from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password, update_user_password
 from models.auth_api import generate_access_token, generate_refresh_token
@@ -393,7 +393,10 @@ def login_page():
                 raise jwt.ExpiredSignatureError("Token expired")
 
             logging.info("User udah login, redirecting to index...")
-            return redirect(request.args.get('next') or url_for('index'))
+            next_url = request.args.get('next', '')
+            if not next_url.startswith('/') or next_url.startswith('//'):
+                next_url = url_for('index')
+            return redirect(next_url)
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
             session.clear() 
 
@@ -1519,7 +1522,7 @@ def logbook_edit(logbook_id):
     return render_template('logBook/setup.html', logbook=logbook)
 
 # 4. Hapus Setup Logbook
-@app.route('/logbook/delete/<int:logbook_id>')
+@app.route('/logbook/delete/<int:logbook_id>', methods=['POST'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_delete(logbook_id):
@@ -1552,7 +1555,13 @@ def logbook_add_entry(logbook_id):
     # Keamanan: Pastikan logbook milik dia sebelum nambah kegiatan
     logbook = get_logbook_by_id_and_user(logbook_id, current_user)
     if logbook:
-        add_entry(logbook_id, request.form, request.files)
+        add_entry(
+            logbook_id, 
+            request.form.get('tanggal'), 
+            request.form.get('aktivitas'), 
+            request.form.get('deskripsi'), 
+            request.files.getlist('gambar')
+        )
         
     return redirect(url_for('logbook_detail', logbook_id=logbook_id))
 # 6.5 Edit Kegiatan Harian
@@ -1579,7 +1588,7 @@ def logbook_edit_entry(logbook_id, entry_id):
 
     return render_template('logBook/edit_entry.html', logbook=logbook, entry=entry)
 # 7. Hapus Kegiatan Harian
-@app.route('/logbook/<int:logbook_id>/delete_entry/<int:entry_id>')
+@app.route('/logbook/<int:logbook_id>/delete_entry/<int:entry_id>', methods=['POST'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_delete_entry(logbook_id, entry_id):
@@ -1600,6 +1609,58 @@ def logbook_download(logbook_id):
     current_user = g.user.get('sub')
     return generate_word(logbook_id, current_user)
 
+# ==========================================
+# API KHUSUS GAMBAR LOGBOOK (JSON RESPONSES)
+# ==========================================
+
+@app.route('/logbook/image/delete/<int:image_id>', methods=['DELETE'])
+@login_required
+def delete_logbook_image_route(image_id):
+    user_id = g.user.get('sub')
+    
+    if delete_single_image(image_id, user_id):
+        return jsonify({'status': 'success'}), 200
+    else:
+        return jsonify({'status': 'error'}), 400
+
+@app.route('/logbook/image/update/<int:image_id>', methods=['POST'])
+@login_required
+def update_logbook_image_route(image_id):
+    data = request.get_json()
+    user_id = g.user.get('sub') # Ambil ID user dari JWT token
+    
+    success = update_image_metadata(
+        image_id, 
+        user_id, 
+        data.get('nama'), 
+        data.get('deskripsi')
+    )
+    
+    if success:
+        return jsonify({'status': 'success', 'message': 'Metadata updated'}), 200
+    else:
+        return jsonify({'status': 'error', 'message': 'Update failed or Unauthorized'}), 403
+
+@app.route('/logbook/image/replace/<int:image_id>', methods=['POST'])
+@login_required
+def replace_logbook_image_route(image_id):
+    """Replace file fisik gambar yang sudah ada (untuk crop/rotate/resize)"""
+    user_id = g.user.get('sub')
+    
+    if 'file' not in request.files:
+        return jsonify({'status': 'error', 'message': 'No file uploaded'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'status': 'error', 'message': 'Empty filename'}), 400
+    
+    success, result = replace_image_file(image_id, user_id, file)
+    
+    if success:
+        new_url = url_for('static', filename=f'uploads/logbook/{result}')
+        return jsonify({'status': 'success', 'new_url': new_url}), 200
+    else:
+        return jsonify({'status': 'error', 'message': result}), 403
 
 # ======================================================
 # ROUTES SUPER ADMIN (1 HTML DENGAN TABS)

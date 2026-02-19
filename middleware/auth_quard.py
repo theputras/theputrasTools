@@ -79,7 +79,7 @@ def login_required(view_func):
                 secret,
                 algorithms=["HS256"],
                 options={"require": ["exp", "iat", "sub"]},
-                leeway=30
+                leeway=10
             )
             
             # Cek expired JWT

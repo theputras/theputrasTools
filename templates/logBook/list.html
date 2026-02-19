@@ -103,12 +103,34 @@
             
             // Jika user klik "Ya"
             if (isConfirmed) {
-                window.location.href = deleteUrl; // Eksekusi penghapusan
+                // Modified for Security H3: Use POST instead of GET
+                try {
+                    const response = await fetch(deleteUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() if csrf_token else "" }}' // Prepare for CSRF
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Gagal menghapus logbook. Silakan coba lagi.');
+                    }
+                } catch (e) {
+                    console.error('Delete error:', e);
+                    alert('Terjadi kesalahan koneksi.');
+                }
             }
         } else {
-            // Fallback (jaga-jaga kalau ui.js gagal dimuat)
+            // Fallback
             if (confirm(message)) {
-                window.location.href = deleteUrl;
+                // Manual POST form creation for fallback
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = deleteUrl;
+                document.body.appendChild(form);
+                form.submit();
             }
         }
     }
