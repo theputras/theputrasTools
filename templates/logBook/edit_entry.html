@@ -519,13 +519,6 @@
                             const tempImg = new window.Image();
                             tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
                             tempImg.src = ev.target.result;
-                            
-                            // AUTO OPEN: Buka modal hanya untuk gambar TERAKHIR
-                            if (i === imageFiles.length - 1) {
-                                const newIdx = this.newImages.length - 1;
-                                this.openGallery(newIdx, 'new');
-                                this.startVisualEdit();
-                            }
 
                             this.updateInputFile();
                         };
