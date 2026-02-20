@@ -57,7 +57,7 @@
       <div class="flex items-center justify-between">
         <label for="rememberMe" class="flex items-center gap-2.5 cursor-pointer select-none group">
           <div class="relative flex items-center justify-center w-[18px] h-[18px]">
-            <input type="checkbox" id="rememberMe" class="peer sr-only">
+            <input type="checkbox" id="rememberMe" name="remember_me" class="peer sr-only">
             <div class="absolute inset-0 rounded-[5px] border-2 border-gray-600 bg-gray-800/80 
                         peer-checked:bg-blue-600 peer-checked:border-blue-500 
                         transition-all duration-200 ease-out
@@ -219,10 +219,14 @@ async function loginBiometric() {
         }
 
         // 3. Kirim hasil scan ke server
+        const rememberMe = document.getElementById('rememberMe').checked;
+        // Gabungkan asseResp dengan status rememberMe
+        const payload = { ...asseResp, remember_me: rememberMe };
+
         const verificationResp = await fetch('{{ url_for("webauthn_login_verify") }}', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(asseResp),
+            body: JSON.stringify(payload),
         });
 
         const verificationData = await verificationResp.json();

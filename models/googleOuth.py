@@ -15,6 +15,9 @@ from connection import get_connection
 JKT = ZoneInfo("Asia/Jakarta")
 SCOPES = [
     'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/documents',
+    'https://www.googleapis.com/auth/drive.readonly',
+    'https://www.googleapis.com/auth/drive.file',
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
     'openid'
@@ -23,7 +26,7 @@ CREDENTIALS_FILE = 'credentials.json'
 
 class GoogleCalendarService:
     def __init__(self):
-        self.redirect_uri = os.getenv('GOOGLE_REDIRECT_URI', 'http://localhost:5000/manajemenUltah/google/callback')
+        self.redirect_uri = os.getenv('GOOGLE_REDIRECT_URI', 'http://localhost:5000/google/callback')
     
     def _get_connection(self):
         return get_connection()
@@ -258,10 +261,68 @@ class GoogleCalendarService:
                 # Update token in DB
                 self.save_token(user_id, credentials, token_info)
             
-            service = build('calendar', 'v3', credentials=credentials)
+            service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
             return service
         except Exception as e:
             logging.error(f"[GoogleCal] Error building service: {e}")
+            return None
+
+    def build_drive_service(self, user_id):
+        """Build Google Drive API service dari stored token"""
+        token_info = self.get_token_by_user(user_id)
+        if not token_info:
+            return None
+        
+        try:
+            token_data = token_info['token']
+            credentials = Credentials(
+                token=token_data.get('token'),
+                refresh_token=token_data.get('refresh_token'),
+                token_uri=token_data.get('token_uri'),
+                client_id=token_data.get('client_id'),
+                client_secret=token_data.get('client_secret'),
+                scopes=token_data.get('scopes')
+            )
+            
+            # Refresh if expired
+            if credentials.expired and credentials.refresh_token:
+                from google.auth.transport.requests import Request
+                credentials.refresh(Request())
+                self.save_token(user_id, credentials, token_info) # Use token_info arg
+            
+            service = build('drive', 'v3', credentials=credentials, cache_discovery=False)
+            return service
+        except Exception as e:
+            logging.error(f"[GoogleDrive] Error building service: {e}")
+            return None
+
+    def build_docs_service(self, user_id):
+        """Build Google Docs API service dari stored token"""
+        token_info = self.get_token_by_user(user_id)
+        if not token_info:
+            return None
+        
+        try:
+            token_data = token_info['token']
+            credentials = Credentials(
+                token=token_data.get('token'),
+                refresh_token=token_data.get('refresh_token'),
+                token_uri=token_data.get('token_uri'),
+                client_id=token_data.get('client_id'),
+                client_secret=token_data.get('client_secret'),
+                scopes=token_data.get('scopes')
+            )
+            
+            # Refresh if expired
+            if credentials.expired and credentials.refresh_token:
+                from google.auth.transport.requests import Request
+                credentials.refresh(Request())
+                self.save_token(user_id, credentials, token_info)
+            
+            service = build('docs', 'v1', credentials=credentials, cache_discovery=False)
+            return service
+        except Exception as e:
+            logging.error(f"[GoogleDocs] Error building service: {e}")
             return None
 
     def create_birthday_event(self, user_id, record, overrides=None):

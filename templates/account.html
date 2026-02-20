@@ -136,6 +136,40 @@
 
         <div class="mt-6 bg-gray-800 rounded-lg shadow-md p-6">
     <h2 class="text-lg font-semibold text-white mb-4">Pengaturan</h2>
+
+    <!-- Google Account Section -->
+    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-700">
+        <span class="flex flex-col">
+            <span class="font-medium text-white">Akun Google</span>
+            <span class="text-sm text-gray-400">Hubungkan akun Google untuk Calendar & Drive sync.</span>
+        </span>
+
+        {% if google_user %}
+        <div class="flex items-center gap-3 px-4 py-2 bg-green-500/20 rounded-lg border border-green-500/30">
+            {% if google_user.picture %}
+            <img src="{{ google_user.picture }}" class="w-8 h-8 rounded-full border border-green-400/50" alt="Google Avatar">
+            {% else %}
+            <i class="fab fa-google text-green-400 text-xl"></i>
+            {% endif %}
+            <div class="flex flex-col">
+                <span class="text-green-300 text-sm font-semibold">{{ google_user.name }}</span>
+                <span class="text-green-400/60 text-xs">{{ google_user.email }}</span>
+            </div>
+            <form action="{{ url_for('google_disconnect') }}" method="POST" class="ml-2 border-l border-green-500/30 pl-3">
+                <input type="hidden" name="next" value="{{ url_for('account_page') }}">
+                <button type="submit" class="text-red-400 hover:text-red-300 text-xs p-1 hover:bg-red-500/10 rounded transition" title="Putuskan" onclick="return confirm('Putuskan koneksi Google?')">
+                    <i class="fas fa-unlink"></i>
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <a href="{{ url_for('google_auth') }}" class="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20 transition text-white text-sm">
+            <i class="fab fa-google"></i>
+            <span>Hubungkan Akun Google</span>
+        </a>
+        {% endif %}
+    </div>
+
     
     {% if g.user and g.user.role_id in [1, 2, 3] %}
     <div 

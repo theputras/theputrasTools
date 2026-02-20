@@ -25,8 +25,8 @@ from api.api import api_bp, init_api, SSKM_LAST_DUPLICATE
 from models.auth_api import auth_bp
 from flask_cors import CORS
 from paymentGateway import payment_bp
-from manajemenUltah import ultah_model, parse_tanggal_sicyca
-from googleCalendar import google_cal_service
+from controller.manajemenultahController import ultah_model, parse_tanggal_sicyca
+from models.googleOuth import google_cal_service
 from cryptography.fernet import Fernet
 
 # Impor SEMUA fungsi scraper
@@ -586,7 +586,10 @@ def account_page():
 
     gate_username = gate_info['gate_username'] if gate_info else ""
 
-    return render_template('account.html', gate_username=gate_username, user_info=user_info)
+    # Google account status (unified: Calendar + Drive)
+    google_user = google_cal_service.get_token_by_user(user_id)
+
+    return render_template('account.html', gate_username=gate_username, user_info=user_info, google_user=google_user)
 
 
 @app.route('/account/update-gate', methods=['POST'])
@@ -1239,18 +1242,22 @@ def ultah_sync_calendar(record_id):
 
 # ========== GOOGLE OAUTH ROUTES ==========
 
-@app.route('/manajemenUltah/google/auth')
+# ========== UNIFIED GOOGLE OAUTH (Calendar + Drive) ==========
+
+@app.route('/google/auth')
 @login_required
-def ultah_google_auth():
-    """Redirect ke Google OAuth"""
+def google_auth():
+    """Unified Google OAuth — redirect ke Google login"""
+    next_url = request.args.get('next', url_for('account_page'))
+    session['google_oauth_next'] = next_url
     auth_url, state = google_cal_service.get_auth_url()
     session['google_oauth_state'] = state
     return redirect(auth_url)
 
-@app.route('/manajemenUltah/google/callback')
+@app.route('/google/callback')
 @login_required
-def ultah_google_callback():
-    """Handle OAuth callback dari Google"""
+def google_callback():
+    """Unified Google OAuth callback"""
     user_id = g.user.get('sub')
     
     try:
@@ -1261,13 +1268,15 @@ def ultah_google_callback():
         logging.error(f"[GoogleOAuth] Error: {e}")
         flash('Gagal menghubungkan akun Google.', 'error')
     
-    return redirect(url_for('manajemen_ultah'))
+    next_url = session.pop('google_oauth_next', url_for('account_page'))
+    return redirect(next_url)
 
-@app.route('/manajemenUltah/google/disconnect', methods=['POST'])
+@app.route('/google/disconnect', methods=['POST'])
 @login_required
-def ultah_google_disconnect():
-    """Disconnect Google account"""
+def google_disconnect():
+    """Unified disconnect Google account"""
     user_id = g.user.get('sub')
+    next_url = request.form.get('next', url_for('account_page'))
     
     if google_cal_service.delete_token(user_id):
         # Reset kolom google_calendar_event_id di database (clean DB)
@@ -1286,7 +1295,7 @@ def ultah_google_disconnect():
     else:
         flash('Gagal memutuskan akun Google.', 'error')
         
-    return redirect(url_for('manajemen_ultah'))
+    return redirect(next_url)
 
 @app.route('/manajemenUltah/settings', methods=['POST'])
 @login_required
@@ -1504,9 +1513,30 @@ def logbook_setup():
         # Simpan logbook baru dengan menyertakan ID usernya
         new_id = create_logbook(current_user, request.form)
         return redirect(url_for('logbook_detail', logbook_id=new_id))
-    # Cek apakah session google drive udah ada
-    is_google_connected = 'drive_credentials' in session
-    return render_template('logBook/setup.html', logbook=None, is_google_connected=is_google_connected)
+    # Cek Google account status (unified via DB token)
+    # Trigger refresh logic via build_drive_service if needed
+    try:
+        google_cal_service.build_drive_service(current_user)
+    except:
+        pass
+
+    google_user = google_cal_service.get_token_by_user(current_user)
+    is_google_connected = google_user is not None
+    
+    # Prepare API Params for Google Picker
+    google_api_key = os.getenv('GOOGLE_API_KEY', '')
+    google_app_id = os.getenv('GOOGLE_APP_ID', '')
+    active_token = google_user['token']['token'] if google_user and 'token' in google_user and 'token' in google_user['token'] else ''
+
+    return render_template(
+        'logBook/setup.html', 
+        logbook=None, 
+        is_google_connected=is_google_connected, 
+        google_user=google_user,
+        google_api_key=google_api_key,
+        google_app_id=google_app_id,
+        active_token=active_token
+    )
 
 # 3. Edit Setup Logbook (INI YANG TADI DUPLIKAT DAN SALAH ROUTE)
 @app.route('/logbook/edit/<int:logbook_id>', methods=['GET', 'POST'])
@@ -1523,9 +1553,30 @@ def logbook_edit(logbook_id):
     logbook = get_logbook_by_id_and_user(logbook_id, current_user)
     if not logbook:
         return "Akses Ditolak! Ini bukan logbook Anda.", 403
-# TAMBAHAN: Cek apakah session google drive udah ada
-    is_google_connected = 'drive_credentials' in session
-    return render_template('logBook/setup.html', logbook=logbook, is_google_connected=is_google_connected)
+    # Google account status (unified via DB token)
+    # Trigger refresh logic via build_drive_service if needed
+    try:
+        google_cal_service.build_drive_service(current_user)
+    except:
+        pass
+        
+    google_user = google_cal_service.get_token_by_user(current_user)
+    is_google_connected = google_user is not None
+    
+    # Prepare API Params for Google Picker
+    google_api_key = os.getenv('GOOGLE_API_KEY', '')
+    google_app_id = os.getenv('GOOGLE_APP_ID', '')
+    active_token = google_user['token']['token'] if google_user and 'token' in google_user and 'token' in google_user['token'] else ''
+
+    return render_template(
+        'logBook/setup.html', 
+        logbook=logbook, 
+        is_google_connected=is_google_connected, 
+        google_user=google_user,
+        google_api_key=google_api_key,
+        google_app_id=google_app_id,
+        active_token=active_token
+    )
 
 # 4. Hapus Setup Logbook
 @app.route('/logbook/delete/<int:logbook_id>', methods=['POST'])
@@ -1549,7 +1600,9 @@ def logbook_detail(logbook_id):
         return "Akses Ditolak! Ini bukan logbook Anda.", 403
         
     entries = get_entries_by_logbook(logbook_id)
-    return render_template('logBook/detail.html', logbook=logbook, entries=entries)
+    # Google account status
+    google_user = google_cal_service.get_token_by_user(current_user)
+    return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user)
 
 # 6. Tambah Kegiatan Harian
 @app.route('/logbook/<int:logbook_id>/add_entry', methods=['POST'])
@@ -1664,82 +1717,36 @@ def replace_logbook_image_route(image_id):
     
     if success:
         new_url = url_for('static', filename=f'uploads/logbook/{result}')
-        return jsonify({'status': 'success', 'new_url': new_url}), 200
+        return jsonify({'status': 'success', 'new_url': new_url, 'new_path': result}), 200
     else:
         return jsonify({'status': 'error', 'message': result}), 403
 
 # ======================================================
-# ROUTES GOOGLE DRIVE OAUTH
+# API GOOGLE DRIVE (pake unified DB token)
 # ======================================================
-# Scope untuk melihat semua isi Google Drive (readonly) 
-# & mengedit file (kalo lu nanti mau auto-write ke docs)
-DRIVE_SCOPES = [
-    'https://www.googleapis.com/auth/drive.readonly',
-    'https://www.googleapis.com/auth/drive.file'
-]
 
-@app.route('/google_login')
+@app.route('/api/google/drive/docs')
 @login_required
-def google_login():
-    """Route untuk melempar user ke halaman login Google"""
-    # Tangkap next url buat redirect balik ke tempat asal (setup atau edit)
-    next_url = request.args.get('next', url_for('logbook_setup'))
-    session['google_next_url'] = next_url
+def google_drive_list_docs():
+    """List Google Docs dari Google Drive user"""
+    user_id = g.user.get('sub')
     
-    flow = Flow.from_client_secrets_file(
-        'credentials.json', # Pastikan file ini ada di root folder lu
-        scopes=DRIVE_SCOPES,
-        redirect_uri=url_for('google_callback', _external=True)
-    )
+    service = google_cal_service.build_drive_service(user_id)
+    if not service:
+        return jsonify({'error': 'Google account belum terhubung'}), 401
     
-    authorization_url, state = flow.authorization_url(
-        access_type='offline',
-        include_granted_scopes='true',
-        prompt='consent' # Maksa minta refresh token
-    )
-    session['google_auth_state'] = state
-    return redirect(authorization_url)
-
-@app.route('/google_callback')
-@login_required
-def google_callback():
-    """Route untuk menangkap kembalian dari Google setelah user login"""
-    state = session.get('google_auth_state')
-    
-    if not state:
-        flash('Sesi Google tidak valid, silakan coba lagi.', 'error')
-        return redirect(url_for('logbook_setup'))
-        
     try:
-        flow = Flow.from_client_secrets_file(
-            'credentials.json',
-            scopes=DRIVE_SCOPES,
-            state=state,
-            redirect_uri=url_for('google_callback', _external=True)
-        )
+        results = service.files().list(
+            q="mimeType='application/vnd.google-apps.document'",
+            fields="files(id, name)",
+            pageSize=50,
+            orderBy="modifiedTime desc"
+        ).execute()
         
-        # Ambil token dari URL balikan google
-        flow.fetch_token(authorization_response=request.url)
-        credentials = flow.credentials
-        
-        # Simpan token credentials ke session
-        session['drive_credentials'] = {
-            'token': credentials.token,
-            'refresh_token': credentials.refresh_token,
-            'token_uri': credentials.token_uri,
-            'client_id': credentials.client_id,
-            'client_secret': credentials.client_secret,
-            'scopes': credentials.scopes
-        }
-        
-        flash('Akun Google berhasil dihubungkan!', 'success')
-        
+        return jsonify({'files': results.get('files', [])})
     except Exception as e:
-        logging.error(f"[Google OAuth] Error callback: {e}")
-        flash('Gagal menghubungkan ke Google.', 'error')
-        
-    next_url = session.pop('google_next_url', url_for('logbook_setup'))
-    return redirect(next_url)
+        logging.error(f"[GoogleDrive] Error listing docs: {e}")
+        return jsonify({'error': 'Gagal mengambil daftar dokumen'}), 500
 
 # ======================================================
 # ROUTES SUPER ADMIN (1 HTML DENGAN TABS)
@@ -1982,6 +1989,7 @@ def webauthn_login_verify():
 
     credential_data = request.json
     cred_id_b64 = credential_data.get('id')
+    remember_me = credential_data.get('remember_me', False)
 
     user_data = get_user_by_credential(cred_id_b64)
     if not user_data:
@@ -2001,7 +2009,18 @@ def webauthn_login_verify():
         # Proses pembuatan token JWT
         access_token = generate_access_token(user_data['id'], user_data['role_id'])
         refresh_token = generate_refresh_token()
-        expires_at = datetime.now(SCHEDULER_TZ) + timedelta(days=30)
+        
+        # Tentukan lifetime berdasarkan remember_me
+        if remember_me:
+            access_max_age = 3600 * 24 * 30      # 30 hari
+            refresh_max_age = 3600 * 24 * 365    # 365 hari
+            refresh_expires = timedelta(days=365)
+        else:
+            access_max_age = 1800                 # 30 menit
+            refresh_max_age = 3600 * 24 * 30     # 30 hari
+            refresh_expires = timedelta(days=30)
+            
+        expires_at = datetime.now(SCHEDULER_TZ) + refresh_expires
         
         conn = get_connection()
         cursor = conn.cursor()
@@ -2021,8 +2040,8 @@ def webauthn_login_verify():
         if isinstance(access_token, bytes):
             access_token = access_token.decode('utf-8')
             
-        resp.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="Lax", max_age=1800)
-        resp.set_cookie("refresh_token", refresh_token, httponly=True, secure=False, samesite="Lax", max_age=3600*24*30)
+        resp.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="Lax", max_age=access_max_age)
+        resp.set_cookie("refresh_token", refresh_token, httponly=True, secure=False, samesite="Lax", max_age=refresh_max_age)
 
         return resp
 

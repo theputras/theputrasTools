@@ -84,10 +84,24 @@
                     <p class="text-blue-400 font-medium ml-7">{{ logbook.posisi_magang }}</p>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ url_for('google_login', next=request.path) }}" class="bg-white hover:bg-gray-100 text-gray-900 font-semibold px-4 py-2 rounded-lg text-sm transition shadow-lg flex items-center gap-2" title="Hubungkan ke Google Drive">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" class="w-4 h-4">
-        <span class="hidden sm:inline">Hubungkan Google</span>
-    </a>
+                    {% if google_user %}
+                    <div class="flex items-center gap-3 px-4 py-2 bg-green-500/20 rounded-lg border border-green-500/30">
+                        {% if google_user.picture %}
+                        <img src="{{ google_user.picture }}" class="w-8 h-8 rounded-full border border-green-400/50" alt="Google Avatar">
+                        {% else %}
+                        <i class="fab fa-google text-green-400 text-xl"></i>
+                        {% endif %}
+                        <div class="flex flex-col">
+                            <span class="text-green-300 text-sm font-semibold">{{ google_user.name }}</span>
+                            <span class="text-green-400/60 text-xs">{{ google_user.email }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('account_page') }}" class="bg-white hover:bg-gray-100 text-gray-900 font-semibold px-4 py-2 rounded-lg text-sm transition shadow-lg flex items-center gap-2" title="Hubungkan ke Google Drive">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" class="w-4 h-4">
+                        <span class="hidden sm:inline">Hubungkan Google</span>
+                    </a>
+                    {% endif %}
                     <a href="{{ url_for('logbook_edit', logbook_id=logbook.id) }}" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm transition" title="Edit Identitas">
                         <i class="fas fa-edit"></i>
                     </a>
@@ -196,8 +210,14 @@
         </div>
 
         <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 overflow-hidden">
-            <div class="p-6 border-b border-gray-700">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-white">Riwayat Kegiatan</h2>
+                {% if logbook.google_doc_id %}
+                <button onclick="syncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}')" 
+                        class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-green-500/20">
+                    <i class="fas fa-sync-alt"></i> Sync Activities
+                </button>
+                {% endif %}
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-sm min-w-[500px]">
@@ -590,6 +610,8 @@
                         this.gallery.dragMode = 'crop';
                         this.gallery.cropper = new Cropper(imageElement, {
                             viewMode: 0,
+
+
                             autoCropArea: 1,
                             responsive: true,
                             background: false,
@@ -895,6 +917,47 @@
                 destroy() { if (this.editor) this.editor.destroy(); }
             }));
         });
+
+    async function confirmDelete(url) {
+        const confirmed = await window.showConfirm(
+            'Apakah anda yakin?',
+            "Data yang dihapus tidak dapat dikembalikan!",
+            'danger'
+        );
+        if (confirmed) {
+            window.location.href = url;
+        }
+    }
+
+    async function syncActivities(logbookId, fileId) {
+        const confirmed = await window.showConfirm(
+            'Sinkronisasi Kegiatan?',
+            "Sistem akan MENULIS data dari website ke Google Doc (Tabel akan di-overwrite). Lanjutkan?",
+            'info'
+        );
+
+        if (confirmed) {
+            window.showAlert('info', 'Sedang memproses, mohon tunggu...');
+            
+            try {
+                const res = await fetch(`/api/google/drive/sync-activities/${logbookId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({file_id: fileId})
+                });
+                const data = await res.json();
+                
+                if(data.success) {
+                    window.showAlert('success', data.message || 'Berhasil!');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    window.showAlert('error', data.error || "Terjadi kesalahan");
+                }
+            } catch(e) {
+                window.showAlert('error', 'Gagal menghubungi server: ' + e);
+            }
+        }
+    }
 
         document.addEventListener('DOMContentLoaded', function() {
             flatpickr(".datepicker", { altInput: true, altFormat: "d-m-Y", dateFormat: "Y-m-d", disableMobile: "true" });

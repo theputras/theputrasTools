@@ -83,19 +83,12 @@
                 <span class="text-green-300 text-sm font-semibold">{{ google_user.name }}</span>
                 <span class="text-green-400/60 text-xs">{{ google_user.email }}</span>
             </div>
-            <button type="button" onclick="openSettingsModal()" class="text-gray-400 hover:text-white transition p-2 ml-2 rounded hover:bg-white/10" title="Pengaturan Sync">
-                <i class="fas fa-cog"></i>
-            </button>
-            <form action="{{ url_for('ultah_google_disconnect') }}" method="POST" class="ml-2 border-l border-green-500/30 pl-3">
-              <button type="submit" class="text-red-400 hover:text-red-300 text-xs p-1 hover:bg-red-500/10 rounded transition" title="Disconnect" onclick="return confirm('Putuskan koneksi Google?')">
-                <i class="fas fa-unlink"></i>
-              </button>
-            </form>
+            <!-- Settings moved to account.html -->
           </div>
           {% else %}
-          <a href="{{ url_for('ultah_google_auth') }}" class="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20 transition text-white text-sm">
+          <a href="{{ url_for('google_auth', next=url_for('manajemen_ultah')) }}" class="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20 transition text-white text-sm">
             <i class="fab fa-google"></i>
-            <span>Hubungkan Google Calendar</span>
+            <span>Hubungkan Akun Google</span>
           </a>
           {% endif %}
         </div>

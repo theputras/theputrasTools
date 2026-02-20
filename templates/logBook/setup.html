@@ -51,12 +51,25 @@
 <div class="mb-8" x-data="googleDriveSync()">
     
     {% if not is_google_connected %}
-        <a href="{{ url_for('google_login', next=request.path) }}" class="inline-flex items-center justify-center gap-2 bg-white text-gray-900 font-bold py-2.5 px-4 rounded-lg hover:bg-gray-100 transition shadow-lg w-full sm:w-auto">
+        <a href="{{ url_for('google_auth', next=request.path + '?open_drive=true') }}" class="inline-flex items-center justify-center gap-2 bg-white text-gray-900 font-bold py-2.5 px-4 rounded-lg hover:bg-gray-100 transition shadow-lg w-full sm:w-auto">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" class="w-5 h-5">
             Hubungkan Akun Google
         </a>
         <p class="text-xs text-gray-500 mt-2">Hubungkan akun Google lu untuk mengaktifkan sinkronisasi dokumen otomatis.</p>
     {% else %}
+        <!-- Connected Account Info (Matches manajemenUltah.html) -->
+        <div class="flex items-center gap-3 px-4 py-2 bg-green-500/20 rounded-lg border border-green-500/30 mb-4 w-fit">
+            {% if google_user and google_user.picture %}
+            <img src="{{ google_user.picture }}" class="w-8 h-8 rounded-full border border-green-400/50" alt="Google Avatar">
+            {% else %}
+            <i class="fab fa-google text-green-400 text-xl"></i>
+            {% endif %}
+            <div class="flex flex-col">
+                <span class="text-green-300 text-sm font-semibold">{{ google_user.name if google_user else 'Google Account' }}</span>
+                <span class="text-green-400/60 text-xs">{{ google_user.email if google_user else '' }}</span>
+            </div>
+        </div>
+
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <button type="button" @click="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition flex items-center gap-2 shadow-lg shadow-blue-500/20">
                 <i class="fab fa-google-drive"></i> Pilih Dokumen untuk Disinkron
@@ -74,46 +87,196 @@
         <input type="hidden" name="google_doc_id" :value="selectedDocId">
         <input type="hidden" name="google_doc_name" :value="selectedDocName">
 
+        <!-- Google Drive-like File Manager Modal -->
         <div x-show="isOpen" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-            <div class="bg-gray-800 w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-700 flex flex-col max-h-[80vh]" @click.away="isOpen = false">
+            <div class="bg-gray-800 w-full max-w-4xl rounded-2xl shadow-2xl border border-gray-700 flex flex-col h-[85vh]" @click.away="isOpen = false">
                 
-                <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-900 rounded-t-2xl">
-                    <div class="flex items-center gap-2">
-                        <i class="fab fa-google-drive text-blue-400 text-xl"></i>
-                        <h3 class="text-white font-bold">Pilih Dokumen Logbook</h3>
+                <!-- 1. Header -->
+                <div class="p-4 border-b border-gray-700 bg-gray-900 rounded-t-2xl flex flex-col gap-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <i class="fab fa-google-drive text-blue-400 text-xl"></i>
+                            <h3 class="text-white font-bold text-lg">Google Drive - {{ google_user.name if google_user else 'Google Account' }}</h3>
+                        </div>
+                        <button @click="isOpen = false" class="text-gray-400 hover:text-white transition"><i class="fas fa-times text-xl"></i></button>
                     </div>
-                    <button @click="isOpen = false" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+
+                    <!-- Search & Toolbar -->
+                    <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                        <!-- Search Bar -->
+                        <div class="relative w-full sm:max-w-md">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-500"></i>
+                            <input type="text" x-model.debounce.500ms="searchQuery" 
+                                placeholder="Telusuri di Drive..." 
+                                class="w-full bg-gray-800 border border-gray-600 rounded-full pl-10 pr-4 py-2 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition">
+                        </div>
+                        
+                        <!-- View Toggle -->
+                        <div class="flex items-center bg-gray-800 rounded-lg p-1 border border-gray-700">
+                            <button @click="viewMode = 'list'" class="p-2 rounded hover:bg-gray-700 transition" :class="viewMode === 'list' ? 'text-blue-400 bg-gray-700' : 'text-gray-400'">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button @click="viewMode = 'grid'" class="p-2 rounded hover:bg-gray-700 transition" :class="viewMode === 'grid' ? 'text-blue-400 bg-gray-700' : 'text-gray-400'">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Breadcrumbs -->
+                    <div class="flex items-center gap-2 text-sm overflow-x-auto pb-1 scrollbar-thin">
+                        <template x-for="(crumb, index) in breadcrumbs" :key="crumb.id">
+                            <div class="flex items-center whitespace-nowrap">
+                                <button @click="navigateToCrumb(index)" 
+                                    class="hover:bg-gray-800 px-2 py-1 rounded transition" 
+                                    :class="index === breadcrumbs.length - 1 ? 'font-bold text-white' : 'text-gray-400'">
+                                    <span x-text="crumb.name"></span>
+                                </button>
+                                <span x-show="index < breadcrumbs.length - 1" class="text-gray-600 mx-1"><i class="fas fa-chevron-right text-xs"></i></span>
+                            </div>
+                        </template>
+                    </div>
                 </div>
 
-                <div class="p-4 border-b border-gray-700">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-500"></i>
-                        <input type="text" x-model="searchQuery" placeholder="Cari nama dokumen..." class="w-full bg-gray-900 border border-gray-600 rounded-lg pl-10 p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                </div>
-
-                <div class="flex-1 overflow-y-auto p-2">
-                    <div x-show="isLoading" class="flex justify-center items-center py-8">
-                        <i class="fas fa-circle-notch fa-spin text-blue-500 text-3xl"></i>
+                <!-- 2. Content Area -->
+                <div class="flex-1 overflow-y-auto p-4 bg-gray-900 custom-scrollbar" @click="tempSelectedId = ''"> <!-- Click background to deselect -->
+                    
+                    <!-- Loading State -->
+                    <div x-show="isLoading" class="flex flex-col justify-center items-center h-full text-gray-500">
+                        <i class="fas fa-circle-notch fa-spin text-blue-500 text-4xl mb-3"></i>
+                        <p>Memuat file...</p>
                     </div>
                     
-                    <div x-show="!isLoading && filteredFiles.length === 0" class="text-center py-8 text-gray-500">
-                        Tidak ada dokumen ditemukan.
+                    <!-- Empty State -->
+                    <div x-show="!isLoading && (!files || files.length === 0)" class="flex flex-col justify-center items-center h-full text-gray-500">
+                        <i class="fas fa-folder-open text-6xl mb-4 text-gray-700"></i>
+                        <p>Tidak ada item di sini.</p>
                     </div>
 
-                    <div class="space-y-1" x-show="!isLoading">
-                        <template x-for="file in filteredFiles" :key="file.id">
-                            <button type="button" @click="selectFile(file.id, file.name)" class="w-full flex items-center gap-3 p-3 hover:bg-gray-700/50 rounded-lg transition text-left group">
-                                <i class="fas fa-file-word text-blue-400 text-lg group-hover:scale-110 transition"></i>
-                                <span class="text-gray-300 group-hover:text-white font-medium" x-text="file.name"></span>
-                            </button>
-                        </template>
+                    <!-- Files Container -->
+                    <div x-show="!isLoading && files.length > 0">
+                        
+                        <!-- Header for List View -->
+                        <div x-show="viewMode === 'list'" class="grid grid-cols-12 gap-4 px-3 py-2 text-gray-500 text-xs font-medium border-b border-gray-800 mb-2 sticky top-0 bg-gray-900 z-10">
+                            <div class="col-span-8 sm:col-span-6">Nama</div>
+                            <div class="col-span-4 sm:col-span-4 hidden sm:block">Diubah Terakhir</div>
+                            <div class="col-span-2 hidden sm:block">Ukuran</div>
+                        </div>
+
+                        <!-- LIST VIEW -->
+                        <div x-show="viewMode === 'list'" class="space-y-1">
+                            <template x-for="file in files" :key="file.id">
+                                <div @click.stop="onItemClick(file)" @dblclick.stop="onItemDoubleClick(file)"
+                                    class="grid grid-cols-12 gap-4 px-3 py-3 rounded-lg cursor-pointer transition items-center text-sm border border-transparent group"
+                                    :class="tempSelectedId === file.id ? 'bg-blue-900/40 border-blue-500/50' : 'hover:bg-gray-800 border-transparent'">
+                                    
+                                    <!-- Name Column -->
+                                    <div class="col-span-8 sm:col-span-6 flex items-center gap-3 min-w-0">
+                                        <!-- Icon -->
+                                        <div class="flex-shrink-0 w-6 text-center">
+                                            <template x-if="file.mimeType === 'application/vnd.google-apps.folder'">
+                                                <i class="fas fa-folder text-yellow-500 text-lg"></i>
+                                            </template>
+                                            <template x-if="file.mimeType !== 'application/vnd.google-apps.folder'">
+                                                <div class="relative">
+                                                     <template x-if="file.iconLink">
+                                                        <img :src="file.iconLink" class="w-5 h-5">
+                                                     </template>
+                                                     <template x-if="!file.iconLink">
+                                                        <i class="fas fa-file text-blue-400 text-lg"></i>
+                                                     </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <span class="truncate font-medium" :class="tempSelectedId === file.id ? 'text-white' : 'text-gray-300 group-hover:text-white'" x-text="file.name"></span>
+                                    </div>
+
+                                    <!-- Date Column -->
+                                    <div class="col-span-4 sm:col-span-4 hidden sm:block text-gray-500 text-xs truncate">
+                                        <span x-text="new Date(file.modifiedTime).toLocaleDateString() + ' ' + new Date(file.modifiedTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
+                                    </div>
+
+                                    <!-- Size Column (Dummy for now) -->
+                                    <div class="col-span-2 hidden sm:block text-gray-500 text-xs">
+                                        -
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- GRID VIEW -->
+                        <div x-show="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                            <template x-for="file in files" :key="file.id">
+                                <div @click.stop="onItemClick(file)" @dblclick.stop="onItemDoubleClick(file)"
+                                    class="flex flex-col p-3 rounded-xl cursor-pointer transition border border-transparent group aspect-[4/5] relative"
+                                    :class="tempSelectedId === file.id ? 'bg-blue-900/40 border-blue-500/50' : 'bg-gray-800 hover:bg-gray-700 border-gray-700/50'">
+                                    
+                                    <!-- Thumbnail / Icon Area -->
+                                    <div class="flex-1 flex items-center justify-center p-2 rounded-lg bg-gray-900/50 mb-3 overflow-hidden">
+                                        
+                                        <!-- Folder -->
+                                        <template x-if="file.mimeType === 'application/vnd.google-apps.folder'">
+                                            <i class="fas fa-folder text-yellow-500 text-5xl drop-shadow-lg"></i>
+                                        </template>
+                                        
+                                        <!-- File -->
+                                        <template x-if="file.mimeType !== 'application/vnd.google-apps.folder'">
+                                            <div class="flex flex-col items-center justify-center w-full h-full">
+                                                <template x-if="file.thumbnailLink">
+                                                    <img :src="file.thumbnailLink" class="w-full h-full object-cover rounded shadow-sm opacity-90 group-hover:opacity-100 transition" loading="lazy">
+                                                </template>
+                                                <template x-if="!file.thumbnailLink">
+                                                    <i class="fas fa-file text-blue-400 text-4xl"></i>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <!-- Name -->
+                                    <div class="flex items-start gap-2 h-10">
+                                        <div class="flex-shrink-0 mt-0.5">
+                                             <template x-if="file.mimeType === 'application/vnd.google-apps.folder'">
+                                                <i class="fas fa-folder text-yellow-500 text-xs"></i>
+                                            </template>
+                                             <template x-if="file.mimeType !== 'application/vnd.google-apps.folder'">
+                                                <img :src="file.iconLink" class="w-3 h-3"  onerror="this.style.display='none'">
+                                            </template>
+                                        </div>
+                                        <span class="text-xs font-medium text-gray-300 group-hover:text-white line-clamp-2 leading-snug break-all" x-text="file.name"></span>
+                                    </div>
+                                    
+                                    <!-- Checkmark for selection -->
+                                    <div x-show="tempSelectedId === file.id" class="absolute top-2 right-2 text-blue-400 bg-gray-900 rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+
+                                </div>
+                            </template>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 3. Footer -->
+                <div class="p-4 border-t border-gray-700 bg-gray-900 rounded-b-2xl flex justify-between items-center">
+                    <div class="text-xs text-gray-500 hidden sm:block">
+                        <span x-text="files.length"></span> item ditampilkan
+                    </div>
+                    <div class="flex gap-3 ml-auto">
+                        <button type="button" @click="isOpen = false" class="px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition font-medium text-sm">
+                            Batal
+                        </button>
+                        <button type="button" @click="confirmSelection()" id="btn-confirm-selection"
+                            :disabled="!tempSelectedId || tempSelectedMimeType === 'application/vnd.google-apps.folder'"
+                            class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm">
+                            <span x-text="tempSelectedMimeType === 'application/vnd.google-apps.folder' ? 'Buka Folder' : 'Pilih'"></span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
     {% endif %}
 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-blue-500/30">
@@ -123,51 +286,204 @@
         </div>
     </div>
     {% include 'alert.html' %}
+    
+    <!-- Load Google API Script -->
+    <!-- Google API Script Not Needed for Custom UI -->
+
     <script>
         document.addEventListener('alpine:init', () => {
-    Alpine.data('googleDriveSync', () => ({
-        isOpen: false,
-        isLoading: false,
-        files: [],
-        // Ambil data yang sudah ada di DB kalau lagi mode edit
-        selectedDocId: '{{ logbook.google_doc_id if logbook else "" }}',
-        selectedDocName: '{{ logbook.google_doc_name if logbook else "" }}',
-        searchQuery: '',
+            Alpine.data('googleDriveSync', () => ({
+                isOpen: false,
+                searchQuery: '',
+                files: [],
+                isLoading: false,
+                selectedDocId: '{{ logbook.google_doc_id if logbook and logbook.google_doc_id else "" }}',
+                selectedDocName: '{{ logbook.google_doc_name if logbook and logbook.google_doc_name else "" }}',
+                
+                // Temp state for modal selection
+                tempSelectedId: '',
+                tempSelectedName: '',
+                tempSelectedMimeType: '',
 
-        openModal() {
-            this.isOpen = true;
-            if (this.files.length === 0) {
-                this.fetchFiles();
-            }
-        },
-        async fetchFiles() {
-            this.isLoading = true;
-            try {
-                // Endpoint ini harus lu buat di Flask untuk nembak Google Drive API
-                const res = await fetch('/api/google/drive/docs'); 
-                const data = await res.json();
-                this.files = data.files || [];
-            } catch (e) {
-                console.error(e);
-                alert('Gagal mengambil file dari Google Drive. Pastikan akun sudah terhubung.');
-            } finally {
-                this.isLoading = false;
-            }
-        },
-        selectFile(id, name) {
-            this.selectedDocId = id;
-            this.selectedDocName = name;
-            this.isOpen = false;
-        },
-        clearSelection() {
-            this.selectedDocId = '';
-            this.selectedDocName = '';
-        },
-        get filteredFiles() {
-            return this.files.filter(f => f.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
-        }
-    }));
-});
+                // File Manager State
+                currentFolderId: 'root',
+                breadcrumbs: [{id: 'root', name: 'Drive Saya'}],
+                viewMode: 'list', // 'list' or 'grid'
+
+                init() {
+                    // Watch searchQuery: if cleared, fetch current folder again
+                    this.$watch('searchQuery', (val) => {
+                        this.fetchFiles();
+                    });
+
+                    // Auto-open check
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('open_drive') === 'true') {
+                        this.openModal();
+                        const newUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                    }
+                },
+
+                openModal() {
+                    this.isOpen = true;
+                    this.tempSelectedId = this.selectedDocId;
+                    this.tempSelectedName = this.selectedDocName;
+                    this.currentFolderId = 'root';
+                    this.breadcrumbs = [{id: 'root', name: 'Drive Saya'}];
+                    this.searchQuery = '';
+                    this.fetchFiles();
+                },
+
+                async fetchFiles() {
+                    this.isLoading = true;
+                    try {
+                        let url = `/api/google/drive/docs`;
+                        const params = new URLSearchParams();
+                        
+                        if (this.searchQuery) {
+                            params.append('q', this.searchQuery);
+                        } else {
+                            // If no search, use folder navigation
+                            params.append('folderId', this.currentFolderId);
+                        }
+                        
+                        const res = await fetch(`${url}?${params.toString()}`);
+                        const data = await res.json();
+                        
+                        if (data.files) {
+                            this.files = data.files;
+                        } else {
+                            this.files = [];
+                        }
+                    } catch (error) {
+                        console.error('Error fetching files:', error);
+                        this.files = [];
+                    } finally {
+                        this.isLoading = false;
+                    }
+                },
+                
+                onItemClick(file) {
+                    this.tempSelectedId = file.id;
+                    this.tempSelectedName = file.name;
+                    this.tempSelectedMimeType = file.mimeType;
+                },
+
+                onItemDoubleClick(file) {
+                    if (file.mimeType === 'application/vnd.google-apps.folder') {
+                        // Enter Folder
+                        this.currentFolderId = file.id;
+                        this.breadcrumbs.push({id: file.id, name: file.name});
+                        this.searchQuery = ''; // Clear search to show folder content
+                        this.tempSelectedId = ''; // Deselect logic
+                        this.fetchFiles();
+                    } else {
+                        // Select File and Confirm
+                        this.tempSelectedId = file.id;
+                        this.tempSelectedName = file.name;
+                        this.confirmSelection();
+                    }
+                },
+
+                navigateToCrumb(index) {
+                    // Navigate to specific breadcrumb level
+                    const target = this.breadcrumbs[index];
+                    this.currentFolderId = target.id;
+                    // Trim breadcrumbs
+                    this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
+                    this.searchQuery = '';
+                    this.fetchFiles();
+                },
+
+                async confirmSelection() {
+                    // If folder selected via single click, maybe Open it?
+                    if (this.tempSelectedMimeType === 'application/vnd.google-apps.folder') {
+                        // Open folder instead of selecting
+                         const folderId = this.tempSelectedId;
+                         const folderName = this.tempSelectedName;
+                         // Simulate double click logic
+                         this.currentFolderId = folderId;
+                         this.breadcrumbs.push({id: folderId, name: folderName});
+                         this.searchQuery = '';
+                         this.tempSelectedId = '';
+                         this.fetchFiles();
+                         return;
+                    }
+
+                    if (this.tempSelectedId) {
+                        // Auto-Fill Logic
+                        const confirmBtn = document.querySelector('#btn-confirm-selection');
+                        const originalText = confirmBtn ? confirmBtn.innerText : 'Pilih';
+                        if(confirmBtn) {
+                            confirmBtn.innerText = 'Memproses...';
+                            confirmBtn.disabled = true;
+                        }
+
+                        try {
+                            const res = await fetch(`/api/google/drive/parse/${this.tempSelectedId}`);
+                            const result = await res.json();
+                            
+                            if (result.success && result.data) {
+                                const d = result.data;
+                                const setVal = (name, val) => {
+                                    const el = document.querySelector(`[name="${name}"]`);
+                                    if (el && val) {
+                                         el.value = val;
+                                         el.dispatchEvent(new Event('input'));
+                                    }
+                                };
+                                
+                                setVal('nama', d.nama);
+                                setVal('nim', d.nim);
+                                setVal('fakultas', d.fakultas);
+                                setVal('prodi', d.prodi);
+                                setVal('nama_mitra', d.nama_mitra);
+                                setVal('posisi_magang', d.posisi_magang);
+                                setVal('nama_mentor', d.nama_mentor);
+                                setVal('wa_mentor', d.wa_mentor);
+                                setVal('email_mentor', d.email_mentor);
+                                
+                                // Dates (Handle Flatpickr)
+                                const setDate = (name, val) => {
+                                    const el = document.querySelector(`[name="${name}"]`);
+                                    if (el && val) {
+                                        if (el._flatpickr) el._flatpickr.setDate(val);
+                                        else el.value = val;
+                                    }
+                                };
+                                setDate('waktu_mulai', d.waktu_mulai);
+                                setDate('waktu_selesai', d.waktu_selesai);
+                            }
+                        } catch (e) {
+                            console.error("Auto-fill error:", e);
+                            // We don't block selection if parse fails, just log it
+                        } finally {
+                            if(confirmBtn) {
+                                confirmBtn.innerText = originalText;
+                                confirmBtn.disabled = false;
+                            }
+                            this.selectedDocId = this.tempSelectedId;
+                            this.selectedDocName = this.tempSelectedName;
+                            this.isOpen = false;
+                        }
+                    }
+                },
+
+                clearSelection() {
+                    this.selectedDocId = '';
+                    this.selectedDocName = '';
+                    this.tempSelectedId = '';
+                    this.tempSelectedName = '';
+                },
+                
+                // Helper for compatibility if template uses filteredFiles
+                get filteredFiles() {
+                    return this.files;
+                }
+            }));
+        });
+
     // Inisialisasi Flatpickr
     flatpickr(".datepicker", {
         altInput: true,          // Mengaktifkan fitur ilusi (tampilan vs data asli berbeda)

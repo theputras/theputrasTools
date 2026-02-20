@@ -1,19 +1,20 @@
 from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g, redirect
-import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re, random, string, html
+import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re, random, string, html, re
+
 from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
 from models.gate import GateSession, GateUser
 from datetime import datetime
 import google.oauth2.credentials
 from googleapiclient.discovery import build
-
 # Impor SEMUA fungsi scraper
 from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks, get_csrf_token_gate, fetch_profil_mhs, fetch_sskm_data
 from controller.GateController import get_session_status
 # from app import photo_cache, majorID, executor, JADWAL_STATUS, log_file, _valid_role
 api_bp = Blueprint('api', __name__)
-from manajemenUltah import ultah_model # Import model ultah
-
+from controller.manajemenultahController import ultah_model # Import model ultah
+from models.googleOuth import google_cal_service # Import inside function to avoid circular import if necessary
+from connection import get_connection
 
 # variabel global untuk diinject
 photo_cache = None
@@ -1106,30 +1107,38 @@ def add_sskm_data():
 @api_bp.route('/google/drive/docs', methods=['GET'])
 @login_required
 def get_google_docs():
-    """Endpoint API untuk mengambil list Google Docs milik user"""
-    if 'drive_credentials' not in session:
-        return jsonify({'error': 'Not authenticated with Google'}), 401
+    """Endpoint API untuk mengambil list Google Docs milik user (Unified Auth)"""
+    
+
+    user_id = g.user.get('sub')
+    service = google_cal_service.build_drive_service(user_id)
+    
+    if not service:
+        return jsonify({'error': 'Google account belum terhubung'}), 401
         
     try:
-        creds_data = session['drive_credentials']
-        creds = google.oauth2.credentials.Credentials(
-            token=creds_data['token'],
-            refresh_token=creds_data['refresh_token'],
-            token_uri=creds_data['token_uri'],
-            client_id=creds_data['client_id'],
-            client_secret=creds_data['client_secret'],
-            scopes=creds_data['scopes']
-        )
+        # Ambil query pencarian dan folder ID dari frontend
+        search_query = request.args.get('q', '')
+        folder_id = request.args.get('folderId', 'root')
         
-        # Bangun service Google Drive API versi 3
-        service = build('drive', 'v3', credentials=creds)
+        # Base query: Tidak di sampah
+        q_clause = "trashed=false"
         
-        # Query nyari file spesifik: Harus Google Docs dan Bukan di tempat sampah
+        if search_query:
+            # Mode Pencarian: Search global (abaikan folder)
+            safe_query = search_query.replace("'", "\\'") 
+            q_clause += f" and name contains '{safe_query}'"
+        else:
+            # Mode Navigasi: List isi folder tertentu
+            # Default 'root' kalau tidak ada folderId
+            q_clause += f" and '{folder_id}' in parents"
+            
+        # Query nyari file
         results = service.files().list(
-            q="mimeType='application/vnd.google-apps.document' and trashed=false",
+            q=q_clause,
             pageSize=100,
-            fields="nextPageToken, files(id, name, modifiedTime)",
-            orderBy="modifiedTime desc" # Diurutkan dari yang paling baru diedit
+            fields="nextPageToken, files(id, name, modifiedTime, mimeType, iconLink, thumbnailLink)", # Tambah thumbnailLink
+            orderBy="folder,modifiedTime desc" # Folder di atas, lalu urut waktu
         ).execute()
         
         files = results.get('files', [])
@@ -1137,4 +1146,374 @@ def get_google_docs():
         
     except Exception as e:
         logging.error(f"[Google Drive API] Error fetch docs: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@api_bp.route('/google/drive/parse/<file_id>', methods=['GET'])
+@login_required
+def parse_google_doc(file_id):
+    """Parse Google Doc content to extract logbook metadata"""
+
+    
+    user_id = g.user.get('sub')
+    
+    # Use the new build_docs_service logic
+    service = google_cal_service.build_docs_service(user_id)
+    if not service:
+        return jsonify({'error': 'Failed to build Docs service'}), 500
+
+    # Validate File Type (Must be Google Doc)
+    drive_service = google_cal_service.build_drive_service(user_id)
+    if drive_service:
+        try:
+            file_meta = drive_service.files().get(fileId=file_id, fields='mimeType').execute()
+            if file_meta.get('mimeType') != 'application/vnd.google-apps.document':
+                 return jsonify({'error': 'File yang dipilih bukan Google Doc. Mohon simpan file sebagai Google Doc terlebih dahulu via Drive.'}), 400
+        except Exception as e:
+            logging.warn(f"[Google Meta Check] Failed: {e}")
+
+
+    try:
+        # Fetch document
+        document = service.documents().get(documentId=file_id).execute()
+        
+        # Helper to extract text
+        def read_structural_elements(elements):
+            text = ''
+            for value in elements:
+                if 'paragraph' in value:
+                    elements = value.get('paragraph').get('elements')
+                    for elem in elements:
+                        text += elem.get('textRun', {}).get('content', '')
+                elif 'table' in value:
+                    table = value.get('table')
+                    for row in table.get('tableRows'):
+                        for cell in row.get('tableCells'):
+                            text += read_structural_elements(cell.get('content'))
+                elif 'tableOfContents' in value:
+                     text += read_structural_elements(value.get('tableOfContents').get('content'))
+            return text
+
+        doc_content = document.get('body').get('content')
+        full_text = read_structural_elements(doc_content)
+        
+        # Extract data using Regex
+        data = {}
+        
+        patterns = {
+            'nama': r'Nama\s*:\s*(.*)',
+            'nim': r'Nim\s*:\s*(.*)',
+            'fakultas': r'Fakultas\s*:\s*(.*)',
+            'prodi': r'Prodi\s*:\s*(.*)',
+            'nama_mitra': r'Nama Mitra\s*:\s*(.*)',
+            'posisi_magang': r'Posisi Magang\s*:\s*(.*)',
+            'nama_mentor': r'Nama Mentor\s*:\s*(.*)',
+            'wa_mentor': r'Whatsapp Mentor\s*:\s*(.*)',
+            'email_mentor': r'Email Mentor\s*:\s*(.*)',
+        }
+        
+        for key, pattern in patterns.items():
+            match = re.search(pattern, full_text, re.IGNORECASE)
+            if match:
+                data[key] = match.group(1).strip()
+                
+        # Handle Date Range
+        # Format: "10-02-2026 sampai 10-07-2026"
+        waktu_match = re.search(r'Waktu Pelaksanaan\s*:\s*(.*)', full_text, re.IGNORECASE)
+        if waktu_match:
+            date_str = waktu_match.group(1).strip()
+            # Try splitting by 'sampai' or '-' or 'to'
+            dates = re.split(r'\s+sampai\s+|\s+-\s+|\s+to\s+', date_str)
+            
+            def convert_date(d_str):
+                try:
+                    # Input is typically DD-MM-YYYY
+                    # Return YYYY-MM-DD
+                    from datetime import datetime
+                    dt = datetime.strptime(d_str.strip(), '%d-%m-%Y')
+                    return dt.strftime('%Y-%m-%d')
+                except:
+                    return d_str # Return original if parse fails
+
+            if len(dates) >= 2:
+                data['waktu_mulai'] = convert_date(dates[0])
+                data['waktu_selesai'] = convert_date(dates[1])
+        
+        return jsonify({'success': True, 'data': data}), 200
+
+    except Exception as e:
+        logging.error(f"[Google Docs Parse] Error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@api_bp.route('/google/drive/sync-activities/<int:logbook_id>', methods=['POST'])
+@login_required
+def sync_custom_activities(logbook_id):
+    """Sync activities from Logbook Entries (DB) TO Google Doc Table"""
+
+
+    data_in = request.json
+    file_id = data_in.get('file_id')
+    
+    if not file_id:
+         return jsonify({'error': 'File ID required'}), 400
+
+    user_id = g.user.get('sub')
+    service = google_cal_service.build_docs_service(user_id)
+    if not service:
+        return jsonify({'error': 'Failed to build Docs service'}), 500
+        
+    # Validate File Type (Must be Google Doc)
+    drive_service = google_cal_service.build_drive_service(user_id)
+    if drive_service:
+        try:
+            file_meta = drive_service.files().get(fileId=file_id, fields='mimeType').execute()
+            if file_meta.get('mimeType') != 'application/vnd.google-apps.document':
+                 return jsonify({'error': 'File yang dipilih bukan Google Doc. Mohon simpan file sebagai Google Doc terlebih dahulu via Drive.'}), 400
+        except Exception as e:
+            logging.warn(f"[Google Meta Check] Failed: {e}")
+
+    try:
+        # 1. Fetch Entries from DB
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC, id ASC", (logbook_id,))
+        entries = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        if not entries:
+            return jsonify({'error': 'Belum ada data kegiatan di website untuk disinkronkan.'}), 400
+
+        # 2. Fetch Doc Structure to find Table
+        document = service.documents().get(documentId=file_id).execute()
+        doc_content = document.get('body').get('content')
+        
+        table_start_index = -1
+        table_end_index = -1
+        found_header = False
+        
+        # Helper to extract text
+        def get_text_simple(elements):
+            text = ""
+            for v in elements:
+                if 'paragraph' in v:
+                    for el in v.get('paragraph').get('elements'):
+                        text += el.get('textRun', {}).get('content', '')
+            return text
+
+        for element in doc_content:
+            if 'paragraph' in element:
+                txt = get_text_simple([element])
+                if "Aktivitas Bulan" in txt:
+                    found_header = True
+                    continue
+            
+            if found_header and 'table' in element:
+                table_start_index = element.get('startIndex')
+                table_end_index = element.get('endIndex')
+                # Check rows
+                rows = element.get('table').get('tableRows')
+                # Try to limit scope to this table
+                break
+        
+        if table_start_index == -1:
+             return jsonify({'error': 'Tabel aktivitas tidak ditemukan di Google Doc (Cari header "Aktivitas Bulan...").'}), 404
+
+        # 3. Prepare Batch Requests
+        requests = []
+        
+        # A. Clear existing rows (keep header row index 0)
+        # We need to find the table again or just assume we can delete rows 1 to N.
+        # But indices shift.
+        # Best strategy: 
+        # 1. Delete all rows from index 1 to end of table.
+        # Using deleteTableRow implies we know the table index? No, it uses tableCellLocation or tableStartLocation?
+        # Docs API: deleteTableRow(tableCellLocation={tableStartLocation: {index: ...}, rowIndex: 1}, )?
+        # Actually simplest is to delete content of cells? No, we want to replace rows.
+        
+        # Let's inspect rows count
+        # We can just iterate backwards and delete rows?
+        # But we need tableStartLocation.
+        # element['startIndex'] is the table start.
+        
+        # Better: Calculate how many rows currently exist.
+        # Then delete them one by one or batch?
+        # Actually, standard approach:
+        # 1. Delete rows 1..N (if they exist).
+        # 2. Insert empty rows for new data.
+        # 3. Insert text.
+
+        current_rows = len(element.get('table').get('tableRows'))
+        
+        # Delete existing data rows (from index current_rows-1 down to 1)
+        # We delete from bottom up to avoid index shifting issues for remaining rows
+        if current_rows > 1:
+            for i in range(current_rows - 1, 0, -1):
+                 requests.append({
+                    'deleteTableRow': {
+                        'tableCellLocation': {
+                            'tableStartLocation': {
+                                'index': table_start_index
+                            },
+                            'rowIndex': i
+                        }
+                    }
+                })
+
+        # B. Insert New Rows
+        # Insert entries sequentially.
+        # We start with 1 row (Header at index 0).
+        # To insert Row 1: target index 0, insertBelow=True.
+        # To insert Row 2: target index 1, insertBelow=True.
+        # So target index = i.
+        
+        for i in range(len(entries)):
+             requests.append({
+                'insertTableRow': {
+                    'tableCellLocation': {
+                        'tableStartLocation': {
+                            'index': table_start_index
+                        },
+                        'rowIndex': i
+                    },
+                    'insertBelow': True
+                }
+            })
+        # Wait, if we use 'insertBelow': True at rowIndex=1, it inserts below row 1 (so index 2).
+        # We typically want to append.
+        # Simplest: Insert 'count' rows at rowIndex 1?
+        # The API documentation says: "Inserts an empty row into a table."
+        
+        # Let's try simpler strategy:
+        # Just use Python to build the requests.
+        # We deleted all rows. Now we have 1 row.
+        # We append entries.
+        # Warning: Batch requests are executed atomically but order matters.
+        # If we delete, extracting indices again is hard without re-fetching.
+        # But here we rely on tableStartIndex which doesn't change if we only edit the table itself (usually).
+        # But deleting rows changes the doc length!
+        # So `table_start_index` might invalid if there were edits BEFORE it.
+        # But we are editing THIS table. Content before it is untouched.
+        # Content AFTER it shifts.
+        # content INSIDE it changes.
+        # The `tableStartLocation` is the index of the table *element*.
+        # Does it change if we delete rows inside it?
+        # The table start index should remain constant relative to start of doc IF we don't touch sending before it.
+        # So using table_start_index is safe.
+
+        # However, inserting Text requires VALID indices.
+        # Since we changed the table structure in the same batch, we CANNOT know the new indices to insert text!
+        # Docs API doesn't return new indices in batch response usable for subsequent requests in same batch (unless using explicit structure).
+        # So we MUST split into 2 batches.
+        # Batch 1: Delete old rows, Create new rows.
+        # Batch 2: Insert text (requires refetching doc to get cell indices).
+
+        # Execute Batch 1
+        if requests:
+            service.documents().batchUpdate(documentId=file_id, body={'requests': requests}).execute()
+        
+        # 4. Refetch Doc to get Cell Indices
+        document = service.documents().get(documentId=file_id).execute()
+        doc_content = document.get('body').get('content')
+        
+        # Find table again (indices might have shifted if we deleted stuff?) No, should be same place.
+        # But let's scan again to be safe.
+        new_table = None
+        for element in doc_content:
+             if element.get('startIndex') == table_start_index:
+                 new_table = element.get('table')
+                 break
+        
+        if not new_table:
+             # Fallback scan
+             for element in doc_content:
+                if 'table' in element and element['startIndex'] >= table_start_index: # Roughly
+                    new_table = element.get('table') 
+                    break
+        
+        if not new_table:
+             return jsonify({'error': 'Gagal menemukan tabel setelah reset.'}), 500
+
+        # 5. Build Requests for Text Insertion
+        text_requests = []
+        rows = new_table.get('tableRows')
+        
+        def get_insert_idx(cell):
+            # Helper to find valid insertion index in a cell
+            content = cell.get('content', [])
+            if content:
+                # Use the start index of the first structural element (usually a paragraph)
+                return content[0].get('startIndex')
+            return cell.get('startIndex') + 1 # Fallback
+
+        def clean_html(raw_html):
+            if not raw_html: return '-'
+            # Basic HTML cleanup
+            # Replace list items with bullet points
+            txt = re.sub(r'<li>', '\n• ', str(raw_html))
+            # Replace breaks/paragraphs with newlines
+            txt = re.sub(r'<br\s*/?>', '\n', txt)
+            txt = re.sub(r'</p>', '\n', txt)
+            # Remove all other tags
+            txt = re.sub(r'<[^>]+>', '', txt)
+            # Fix multiple newlines
+            txt = re.sub(r'\n\s*\n', '\n', txt)
+            return txt.strip()
+
+        for i, entry in enumerate(entries):
+            # Row index in 'rows' list is i + 1 (0 is header)
+            if i + 1 >= len(rows): break
+            
+            row = rows[i+1]
+            cells = row.get('tableCells')
+            
+            # Col 0: No
+            if len(cells) > 0:
+                text_requests.append({
+                    'insertText': {
+                        'location': {'index': get_insert_idx(cells[0])},
+                        'text': str(i + 1)
+                    }
+                })
+            
+            # Col 1: Aktivitas
+            if len(cells) > 1:
+                # Format: [Tanggal] Aktivitas
+                try: 
+                    tgl_obj = datetime.strptime(str(entry['tanggal']), '%Y-%m-%d')
+                    tgl_str = tgl_obj.strftime('%d/%m')
+                except:
+                    tgl_str = str(entry['tanggal'])
+                
+                aktiv_text = f"[{tgl_str}] {entry['aktivitas']}"
+                text_requests.append({
+                    'insertText': {
+                        'location': {'index': get_insert_idx(cells[1])},
+                        'text': aktiv_text
+                    }
+                })
+                
+            # Col 2: Deskripsi
+            if len(cells) > 2:
+                desc = clean_html(entry['deskripsi'])
+                text_requests.append({
+                    'insertText': {
+                        'location': {'index': get_insert_idx(cells[2])},
+                        'text': desc
+                    }
+                })
+
+        text_requests.sort(key=lambda req: req['insertText']['location']['index'], reverse=True)
+
+        # Setelah diurutkan mundur, baru kita tembak API-nya
+        if text_requests:
+             service.documents().batchUpdate(documentId=file_id, body={'requests': text_requests}).execute()
+
+        return jsonify({'success': True, 'message': f'Berhasil mengekspor {len(entries)} kegiatan ke Google Doc.'})
+
+    except Exception as e:
+        logging.error(f"[Google Doc Sync] Error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+    except Exception as e:
+        logging.error(f"[Google Docs Parse] Error: {e}")
         return jsonify({'error': str(e)}), 500

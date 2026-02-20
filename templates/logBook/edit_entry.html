@@ -43,7 +43,7 @@
         </div>
 
         <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-6 sm:p-8">
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" x-data="{ isSubmitting: false }" @submit="isSubmitting = true">
                 <div class="grid grid-cols-1 gap-4 mb-4">
                     <div>
                         <label class="block text-sm mb-1 text-gray-400">Tanggal</label>
@@ -313,8 +313,13 @@
                                 </div>
                             </div>
                         </div> </div> </div> <div class="flex flex-col sm:flex-row gap-3 mt-6">
-                    <button type="submit" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-yellow-500/30">
-                        <i class="fas fa-save mr-2"></i> Perbarui Kegiatan
+                    <button type="submit" :disabled="isSubmitting" class="flex-1 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-800 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition shadow-lg shadow-yellow-500/30 flex items-center justify-center">
+                        <template x-if="!isSubmitting">
+                            <span><i class="fas fa-save mr-2"></i> Perbarui Kegiatan</span>
+                        </template>
+                        <template x-if="isSubmitting">
+                            <span><i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...</span>
+                        </template>
                     </button>
                     
                     <a href="{{ url_for('logbook_delete_entry', logbook_id=logbook.id, entry_id=entry.id) }}" 
@@ -706,6 +711,10 @@
                                 const data = await res.json();
                                 if (res.ok && data.new_url) {
                                     this.existingImages[this.gallery.index].url = data.new_url;
+                                    // Update path agar saat submit form data tidak hilang (karena path berubah di DB)
+                                    if (data.new_path) {
+                                        this.existingImages[this.gallery.index].path = data.new_path;
+                                    }
                                     if(typeof window.showAlert === 'function') window.showAlert('success', 'Gambar berhasil diperbarui!');
                                 } else {
                                     alert(data.message || 'Gagal menyimpan perubahan.');
