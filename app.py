@@ -82,6 +82,7 @@ CORS(
     origins=[
         "http://localhost:5000",
         "https://tools.theputras.my.id", # Ganti dengan domain asli lu
+        "https://theputras.my.id", # Ganti dengan domain asli lu
     ]
 )
 
