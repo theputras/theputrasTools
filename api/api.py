@@ -4,7 +4,8 @@ from middleware.auth_quard import login_required
 from yt_dlp.utils import sanitize_filename
 from models.gate import GateSession, GateUser
 from datetime import datetime
-
+import google.oauth2.credentials
+from googleapiclient.discovery import build
 
 # Impor SEMUA fungsi scraper
 from scrapper_requests import   search_mahasiswa, search_staff, fetch_photo_from_sicyca, fetch_data_ultah, scrape_krs, scrape_krs_detail, fetch_masa_studi, get_authenticated_session, fetch_sks, get_csrf_token_gate, fetch_profil_mhs, fetch_sskm_data
@@ -1098,3 +1099,42 @@ def add_sskm_data():
     except Exception as e:
         logging.error(f"Error adding SSKM data: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# ======================================================
+# GOOGLE DRIVE INTEGRATION
+# ======================================================
+@api_bp.route('/google/drive/docs', methods=['GET'])
+@login_required
+def get_google_docs():
+    """Endpoint API untuk mengambil list Google Docs milik user"""
+    if 'drive_credentials' not in session:
+        return jsonify({'error': 'Not authenticated with Google'}), 401
+        
+    try:
+        creds_data = session['drive_credentials']
+        creds = google.oauth2.credentials.Credentials(
+            token=creds_data['token'],
+            refresh_token=creds_data['refresh_token'],
+            token_uri=creds_data['token_uri'],
+            client_id=creds_data['client_id'],
+            client_secret=creds_data['client_secret'],
+            scopes=creds_data['scopes']
+        )
+        
+        # Bangun service Google Drive API versi 3
+        service = build('drive', 'v3', credentials=creds)
+        
+        # Query nyari file spesifik: Harus Google Docs dan Bukan di tempat sampah
+        results = service.files().list(
+            q="mimeType='application/vnd.google-apps.document' and trashed=false",
+            pageSize=100,
+            fields="nextPageToken, files(id, name, modifiedTime)",
+            orderBy="modifiedTime desc" # Diurutkan dari yang paling baru diedit
+        ).execute()
+        
+        files = results.get('files', [])
+        return jsonify({'files': files}), 200
+        
+    except Exception as e:
+        logging.error(f"[Google Drive API] Error fetch docs: {e}")
+        return jsonify({'error': str(e)}), 500

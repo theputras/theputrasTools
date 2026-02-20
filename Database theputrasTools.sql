@@ -123,6 +123,8 @@ CREATE TABLE logbooks (
     nama_mentor VARCHAR(150),
     wa_mentor VARCHAR(20),
     email_mentor VARCHAR(100),
+    google_doc_id VARCHAR(255) NULL,
+    google_doc_name VARCHAR(255) NULL,
     CONSTRAINT fk_logbooks_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

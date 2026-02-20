@@ -13,6 +13,9 @@ from datetime import datetime, timedelta
 import time
 import jwt
 
+import google.oauth2.credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
 from extensions import limiter
 from connection import get_connection
 # import base64  # Untuk encode image ke base64
@@ -91,7 +94,8 @@ CORS(
 #     ]
 # )
 
-
+# Disable HTTPS requirement for OAuth testing (HAPUS ATAU COMMENT SAAT DEPLOY KE PRODUCTION!)
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
@@ -1500,8 +1504,9 @@ def logbook_setup():
         # Simpan logbook baru dengan menyertakan ID usernya
         new_id = create_logbook(current_user, request.form)
         return redirect(url_for('logbook_detail', logbook_id=new_id))
-        
-    return render_template('logBook/setup.html', logbook=None)
+    # Cek apakah session google drive udah ada
+    is_google_connected = 'drive_credentials' in session
+    return render_template('logBook/setup.html', logbook=None, is_google_connected=is_google_connected)
 
 # 3. Edit Setup Logbook (INI YANG TADI DUPLIKAT DAN SALAH ROUTE)
 @app.route('/logbook/edit/<int:logbook_id>', methods=['GET', 'POST'])
@@ -1518,8 +1523,9 @@ def logbook_edit(logbook_id):
     logbook = get_logbook_by_id_and_user(logbook_id, current_user)
     if not logbook:
         return "Akses Ditolak! Ini bukan logbook Anda.", 403
-        
-    return render_template('logBook/setup.html', logbook=logbook)
+# TAMBAHAN: Cek apakah session google drive udah ada
+    is_google_connected = 'drive_credentials' in session
+    return render_template('logBook/setup.html', logbook=logbook, is_google_connected=is_google_connected)
 
 # 4. Hapus Setup Logbook
 @app.route('/logbook/delete/<int:logbook_id>', methods=['POST'])
@@ -1661,6 +1667,79 @@ def replace_logbook_image_route(image_id):
         return jsonify({'status': 'success', 'new_url': new_url}), 200
     else:
         return jsonify({'status': 'error', 'message': result}), 403
+
+# ======================================================
+# ROUTES GOOGLE DRIVE OAUTH
+# ======================================================
+# Scope untuk melihat semua isi Google Drive (readonly) 
+# & mengedit file (kalo lu nanti mau auto-write ke docs)
+DRIVE_SCOPES = [
+    'https://www.googleapis.com/auth/drive.readonly',
+    'https://www.googleapis.com/auth/drive.file'
+]
+
+@app.route('/google_login')
+@login_required
+def google_login():
+    """Route untuk melempar user ke halaman login Google"""
+    # Tangkap next url buat redirect balik ke tempat asal (setup atau edit)
+    next_url = request.args.get('next', url_for('logbook_setup'))
+    session['google_next_url'] = next_url
+    
+    flow = Flow.from_client_secrets_file(
+        'credentials.json', # Pastikan file ini ada di root folder lu
+        scopes=DRIVE_SCOPES,
+        redirect_uri=url_for('google_callback', _external=True)
+    )
+    
+    authorization_url, state = flow.authorization_url(
+        access_type='offline',
+        include_granted_scopes='true',
+        prompt='consent' # Maksa minta refresh token
+    )
+    session['google_auth_state'] = state
+    return redirect(authorization_url)
+
+@app.route('/google_callback')
+@login_required
+def google_callback():
+    """Route untuk menangkap kembalian dari Google setelah user login"""
+    state = session.get('google_auth_state')
+    
+    if not state:
+        flash('Sesi Google tidak valid, silakan coba lagi.', 'error')
+        return redirect(url_for('logbook_setup'))
+        
+    try:
+        flow = Flow.from_client_secrets_file(
+            'credentials.json',
+            scopes=DRIVE_SCOPES,
+            state=state,
+            redirect_uri=url_for('google_callback', _external=True)
+        )
+        
+        # Ambil token dari URL balikan google
+        flow.fetch_token(authorization_response=request.url)
+        credentials = flow.credentials
+        
+        # Simpan token credentials ke session
+        session['drive_credentials'] = {
+            'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes
+        }
+        
+        flash('Akun Google berhasil dihubungkan!', 'success')
+        
+    except Exception as e:
+        logging.error(f"[Google OAuth] Error callback: {e}")
+        flash('Gagal menghubungkan ke Google.', 'error')
+        
+    next_url = session.pop('google_next_url', url_for('logbook_setup'))
+    return redirect(next_url)
 
 # ======================================================
 # ROUTES SUPER ADMIN (1 HTML DENGAN TABS)

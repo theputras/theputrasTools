@@ -86,10 +86,15 @@ def create_logbook(user_id, data):
     conn = get_connection()
     cursor = conn.cursor()
     query = """
-    INSERT INTO logbooks (user_id, fakultas, prodi, nama, nim, nama_mitra, waktu_mulai, waktu_selesai, posisi_magang, nama_mentor, wa_mentor, email_mentor)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO logbooks (user_id, fakultas, prodi, nama, nim, nama_mitra, waktu_mulai, waktu_selesai, posisi_magang, nama_mentor, wa_mentor, email_mentor, google_doc_id, google_doc_name)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
-    val = (user_id, data['fakultas'], data['prodi'], data['nama'], data['nim'], data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'])
+    val = (
+        user_id, data['fakultas'], data['prodi'], data['nama'], data['nim'], 
+        data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], 
+        data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'],
+        data.get('google_doc_id'), data.get('google_doc_name') # Ambil dari form
+    )
     cursor.execute(query, val)
     conn.commit()
     new_id = cursor.lastrowid
@@ -99,19 +104,20 @@ def create_logbook(user_id, data):
 def update_logbook(id, data, user_id):
     conn = get_connection()
     cursor = conn.cursor()
-    # Tambahin filter AND user_id = %s biar aman
     query = """
     UPDATE logbooks SET 
     fakultas=%s, prodi=%s, nama=%s, nim=%s, nama_mitra=%s, 
     waktu_mulai=%s, waktu_selesai=%s, posisi_magang=%s, 
-    nama_mentor=%s, wa_mentor=%s, email_mentor=%s 
+    nama_mentor=%s, wa_mentor=%s, email_mentor=%s,
+    google_doc_id=%s, google_doc_name=%s
     WHERE id = %s AND user_id = %s
     """
     val = (
         data['fakultas'], data['prodi'], data['nama'], data['nim'], 
         data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], 
-        data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], 
-        data['email_mentor'], id, user_id
+        data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'],
+        data.get('google_doc_id'), data.get('google_doc_name'), # Tambahan 2 field ini
+        id, user_id
     )
     cursor.execute(query, val)
     conn.commit()
