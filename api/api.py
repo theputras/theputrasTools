@@ -1576,7 +1576,7 @@ def sync_custom_activities(logbook_id):
                                     style_requests.append({
                                         'updateParagraphStyle': {
                                             'range': {'startIndex': c_start, 'endIndex': c_end},
-                                            'paragraphStyle': {'alignment': 'LEFT'},
+                                            'paragraphStyle': {'alignment': 'START'},
                                             'fields': 'alignment'
                                         }
                                     })
