@@ -1401,7 +1401,7 @@ def sync_custom_activities(logbook_id):
                         'text': header_text
                     }
                 },
-                # Style the header as NORMAL_TEXT (not heading — match screenshot format)
+                # Style the header as NORMAL_TEXT (inherit doc font)
                 {
                     'updateParagraphStyle': {
                         'range': {
@@ -1409,14 +1409,12 @@ def sync_custom_activities(logbook_id):
                             'endIndex': insert_index + len(header_text)
                         },
                         'paragraphStyle': {
-                            'namedStyleType': 'NORMAL_TEXT',
-                            'spaceAbove': {'magnitude': 12, 'unit': 'PT'},
-                            'spaceBelow': {'magnitude': 6, 'unit': 'PT'}
+                            'namedStyleType': 'NORMAL_TEXT'
                         },
-                        'fields': 'namedStyleType,spaceAbove,spaceBelow'
+                        'fields': 'namedStyleType'
                     }
                 },
-                # Make header text red, bold, slightly larger
+                # Make header text red + bold (inherit font from doc)
                 {
                     'updateTextStyle': {
                         'range': {
@@ -1430,10 +1428,9 @@ def sync_custom_activities(logbook_id):
                                 }
                             },
                             'bold': True,
-                            'underline': False,
-                            'fontSize': {'magnitude': 13, 'unit': 'PT'}
+                            'underline': False
                         },
-                        'fields': 'foregroundColor,bold,underline,fontSize'
+                        'fields': 'foregroundColor,bold,underline'
                     }
                 }
             ]
@@ -1579,7 +1576,7 @@ def sync_custom_activities(logbook_id):
                                     style_requests.append({
                                         'updateParagraphStyle': {
                                             'range': {'startIndex': c_start, 'endIndex': c_end},
-                                            'paragraphStyle': {'alignment': 'CENTER'},
+                                            'paragraphStyle': {'alignment': 'LEFT'},
                                             'fields': 'alignment'
                                         }
                                     })
@@ -1695,7 +1692,7 @@ def sync_custom_activities(logbook_id):
                     }
                 })
             
-            # Bold + RED for mentor name
+            # Bold for mentor name (black, same as doc)
             mentor_offset = sig_text.find(nama_mentor)
             if mentor_offset >= 0:
                 sig_requests.append({
@@ -1705,14 +1702,9 @@ def sync_custom_activities(logbook_id):
                             'endIndex': sig_insert_index + mentor_offset + len(nama_mentor)
                         },
                         'textStyle': {
-                            'bold': True,
-                            'foregroundColor': {
-                                'color': {
-                                    'rgbColor': {'red': 0.8, 'green': 0.0, 'blue': 0.0}
-                                }
-                            }
+                            'bold': True
                         },
-                        'fields': 'bold,foregroundColor'
+                        'fields': 'bold'
                     }
                 })
             
