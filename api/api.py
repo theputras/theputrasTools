@@ -1244,6 +1244,203 @@ def parse_google_doc(file_id):
         logging.error(f"[Google Docs Parse] Error: {e}")
         return jsonify({'error': str(e)}), 500
 
+@api_bp.route('/google/drive/sync-metadata/<int:logbook_id>', methods=['POST'])
+@login_required
+def sync_metadata_to_doc(logbook_id):
+    """Export logbook metadata FROM DB TO Google Doc header/identity section"""
+    
+    data_in = request.json
+    file_id = data_in.get('file_id')
+    
+    if not file_id:
+        return jsonify({'error': 'File ID required'}), 400
+
+    user_id = g.user.get('sub')
+    service = google_cal_service.build_docs_service(user_id)
+    if not service:
+        return jsonify({'error': 'Failed to build Docs service'}), 500
+
+    try:
+        # 1. Fetch logbook metadata from DB
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM logbooks WHERE id = %s", (logbook_id,))
+        logbook = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        
+        if not logbook:
+            return jsonify({'error': 'Logbook tidak ditemukan.'}), 404
+
+        # 2. Fetch document structure
+        document = service.documents().get(documentId=file_id).execute()
+        doc_content = document.get('body').get('content')
+        
+        # 3. Build mapping: label keyword -> new value from DB
+        # Handle waktu_pelaksanaan as combined date range
+        waktu_mulai = logbook.get('waktu_mulai', '')
+        waktu_selesai = logbook.get('waktu_selesai', '')
+        if waktu_mulai and waktu_selesai:
+            try:
+                from datetime import datetime as dt_local
+                wm = dt_local.strptime(str(waktu_mulai), '%Y-%m-%d').strftime('%d-%m-%Y') if isinstance(waktu_mulai, str) else waktu_mulai.strftime('%d-%m-%Y')
+                ws = dt_local.strptime(str(waktu_selesai), '%Y-%m-%d').strftime('%d-%m-%Y') if isinstance(waktu_selesai, str) else waktu_selesai.strftime('%d-%m-%Y')
+                waktu_str = f"{wm} sampai {ws}"
+            except:
+                waktu_str = f"{waktu_mulai} sampai {waktu_selesai}"
+        else:
+            waktu_str = ''
+        
+        field_map = {
+            'Nama': logbook.get('nama', ''),
+            'Nim': logbook.get('nim', ''),
+            'Fakultas': logbook.get('fakultas', ''),
+            'Prodi': logbook.get('prodi', ''),
+            'Nama Mitra': logbook.get('nama_mitra', ''),
+            'Posisi Magang': logbook.get('posisi_magang', ''),
+            'Nama Mentor': logbook.get('nama_mentor', ''),
+            'Whatsapp Mentor': logbook.get('wa_mentor', ''),
+            'Email Mentor': logbook.get('email_mentor', ''),
+            'Waktu Pelaksanaan': waktu_str,
+        }
+        
+        # 4. Scan document for "Label : value" patterns and collect replacements
+        all_requests = []
+        
+        def scan_elements(elements):
+            """Scan paragraphs for 'Label : value' and build replacement requests"""
+            for element in elements:
+                if 'paragraph' in element:
+                    para = element.get('paragraph')
+                    para_elements = para.get('elements', [])
+                    
+                    # Build full paragraph text and track positions
+                    full_text = ''
+                    for pe in para_elements:
+                        tr = pe.get('textRun', {})
+                        full_text += tr.get('content', '')
+                    
+                    # Check if this paragraph matches any label
+                    for label, new_value in field_map.items():
+                        # Match "Label : old_value" or "Label: old_value"
+                        pattern = re.compile(rf'({re.escape(label)}\s*:\s*)(.*)', re.IGNORECASE)
+                        match = pattern.search(full_text)
+                        if match:
+                            # Found! Calculate the position of "old_value" part
+                            prefix = match.group(1)  # "Label : "
+                            old_value = match.group(2).rstrip('\n')  # old value text
+                            
+                            # Get paragraph start index
+                            para_start = element.get('startIndex', 0)
+                            
+                            # Calculate indices
+                            value_start = para_start + match.start() + len(prefix)
+                            value_end = value_start + len(old_value)
+                            
+                            if value_end > value_start:
+                                # Delete old value
+                                all_requests.append({
+                                    'deleteContentRange': {
+                                        'range': {
+                                            'startIndex': value_start,
+                                            'endIndex': value_end
+                                        }
+                                    }
+                                })
+                            
+                            if new_value:
+                                # Insert new value at same position
+                                all_requests.append({
+                                    'insertText': {
+                                        'location': {'index': value_start},
+                                        'text': str(new_value)
+                                    }
+                                })
+                            
+                            break  # Found match for this paragraph, move on
+                
+                elif 'table' in element:
+                    # Scan table cells recursively
+                    table = element.get('table')
+                    for row in table.get('tableRows', []):
+                        for cell in row.get('tableCells', []):
+                            scan_elements(cell.get('content', []))
+        
+        scan_elements(doc_content)
+        
+        if not all_requests:
+            return jsonify({'success': True, 'message': 'Tidak ada field identity yang ditemukan di Google Doc untuk diupdate.'}), 200
+        
+        # 5. Execute one field at a time (to avoid index conflicts)
+        # Group requests by field: each field has delete + insert
+        # Process them one by one, re-fetching doc each time
+        
+        fields_processed = 0
+        for label, new_value in field_map.items():
+            # Re-fetch document for fresh indices
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
+            
+            field_requests = []
+            
+            def find_and_replace(elements):
+                for element in elements:
+                    if 'paragraph' in element:
+                        para_elements = element.get('paragraph', {}).get('elements', [])
+                        full_text = ''
+                        for pe in para_elements:
+                            full_text += pe.get('textRun', {}).get('content', '')
+                        
+                        pattern = re.compile(rf'({re.escape(label)}\s*:\s*)(.*)', re.IGNORECASE)
+                        match = pattern.search(full_text)
+                        if match:
+                            prefix = match.group(1)
+                            old_value = match.group(2).rstrip('\n')
+                            para_start = element.get('startIndex', 0)
+                            value_start = para_start + match.start() + len(prefix)
+                            value_end = value_start + len(old_value)
+                            
+                            reqs = []
+                            if value_end > value_start:
+                                reqs.append({
+                                    'deleteContentRange': {
+                                        'range': {
+                                            'startIndex': value_start,
+                                            'endIndex': value_end
+                                        }
+                                    }
+                                })
+                            if new_value:
+                                reqs.append({
+                                    'insertText': {
+                                        'location': {'index': value_start},
+                                        'text': str(new_value)
+                                    }
+                                })
+                            return reqs
+                    
+                    elif 'table' in element:
+                        table = element.get('table')
+                        for row in table.get('tableRows', []):
+                            for cell in row.get('tableCells', []):
+                                result = find_and_replace(cell.get('content', []))
+                                if result:
+                                    return result
+                return None
+            
+            reqs = find_and_replace(doc_content)
+            if reqs:
+                service.documents().batchUpdate(documentId=file_id, body={'requests': reqs}).execute()
+                fields_processed += 1
+        
+        return jsonify({'success': True, 'message': f'Berhasil mengupdate {fields_processed} field metadata ke Google Doc.'})
+
+    except Exception as e:
+        logging.error(f"[Google Doc Sync Metadata] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
 @api_bp.route('/google/drive/sync-activities/<int:logbook_id>', methods=['POST'])
 @login_required
 def sync_custom_activities(logbook_id):

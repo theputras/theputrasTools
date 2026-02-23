@@ -36,7 +36,8 @@
                           .then(async (res) => {
                               if (res.ok || res.redirected) {
                                   {% if logbook and logbook.google_doc_id %}
-                                  if(typeof window.showAlert === 'function') window.showAlert('info', 'Tersimpan! Menyinkronkan ke Google Docs...');
+                                  if(typeof window.showAlert === 'function') window.showAlert('info', 'Tersimpan! Mengekspor data ke Google Docs...');
+                                  await syncMetadataToDoc('{{ logbook.id }}', '{{ logbook.google_doc_id }}');
                                   await autoSyncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}');
                                   {% endif %}
                                   {% if logbook %}
@@ -526,6 +527,25 @@
         dateFormat: "Y-m-d",     // Format yang DIKIRIM ke database Python (yyyy-mm-dd)
         disableMobile: "true"    // Memaksa HP pakai kalender Flatpickr, bukan bawaan browser
     });
+    // Sync metadata (nama, nim, dll) dari website KE Google Doc header
+    async function syncMetadataToDoc(logbookId, fileId) {
+        try {
+            const res = await fetch(`/api/google/drive/sync-metadata/${logbookId}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({file_id: fileId})
+            });
+            const data = await res.json();
+            if(data.success) {
+                console.log('Metadata synced:', data.message);
+            } else {
+                console.warn('Metadata sync warning:', data.error);
+            }
+        } catch(e) {
+            console.warn('Metadata sync failed:', e);
+        }
+    }
+
     // Auto sync tanpa konfirmasi (dipanggil setelah simpan/edit setup)
     async function autoSyncActivities(logbookId, fileId) {
         try {
