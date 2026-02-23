@@ -128,7 +128,34 @@
              x-transition:leave-end="opacity-0"
              class="bg-gray-800 rounded-2xl shadow-xl border border-blue-500/30 p-6 mb-8">
             <h2 class="text-lg font-bold text-white mb-4">Isi Kegiatan Baru</h2>
-            <form action="{{ url_for('logbook_add_entry', logbook_id=logbook.id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url_for('logbook_add_entry', logbook_id=logbook.id) }}" method="POST" enctype="multipart/form-data"
+                  x-data="{ isSubmitting: false }"
+                  @submit.prevent="
+                      if (isSubmitting) return;
+                      isSubmitting = true;
+                      const form = $el;
+                      const formData = new FormData(form);
+                      fetch(form.action, { method: 'POST', body: formData })
+                          .then(async (res) => {
+                              if (res.ok) {
+                                  {% if logbook.google_doc_id %}
+                                  if(typeof window.showAlert === 'function') window.showAlert('info', 'Tersimpan! Menyinkronkan ke Google Docs...');
+                                  await autoSyncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}');
+                                  {% endif %}
+                                  window.location.href = '{{ url_for('logbook_detail', logbook_id=logbook.id) }}';
+                              } else {
+                                  isSubmitting = false;
+                                  if(typeof window.showAlert === 'function') window.showAlert('error', 'Gagal menyimpan kegiatan.');
+                                  else alert('Gagal menyimpan kegiatan.');
+                              }
+                          })
+                          .catch((e) => {
+                              isSubmitting = false;
+                              console.error(e);
+                              if(typeof window.showAlert === 'function') window.showAlert('error', 'Error koneksi: ' + e);
+                              else alert('Error koneksi: ' + e);
+                          });
+                  ">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-sm mb-1 text-gray-400">Tanggal</label>
@@ -203,8 +230,13 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition shadow-lg shadow-blue-500/30">
-                    Simpan Kegiatan
+                <button type="submit" :disabled="isSubmitting" class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-lg transition shadow-lg shadow-blue-500/30 flex items-center justify-center">
+                    <template x-if="!isSubmitting">
+                        <span><i class="fas fa-save mr-2"></i> Simpan Kegiatan</span>
+                    </template>
+                    <template x-if="isSubmitting">
+                        <span><i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan & Sinkronisasi...</span>
+                    </template>
                 </button>
             </form>
         </div>
@@ -956,6 +988,28 @@
             } catch(e) {
                 window.showAlert('error', 'Gagal menghubungi server: ' + e);
             }
+        }
+    }
+
+    // Auto sync tanpa konfirmasi (dipanggil setelah simpan/edit)
+    async function autoSyncActivities(logbookId, fileId) {
+        try {
+            const res = await fetch(`/api/google/drive/sync-activities/${logbookId}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({file_id: fileId})
+            });
+            const data = await res.json();
+            
+            if(data.success) {
+                if(typeof window.showAlert === 'function') window.showAlert('success', 'Sinkronisasi Google Docs berhasil!');
+            } else {
+                console.warn('Sync warning:', data.error);
+                if(typeof window.showAlert === 'function') window.showAlert('error', 'Sync gagal: ' + (data.error || 'Unknown error'));
+            }
+        } catch(e) {
+            console.warn('Auto sync failed:', e);
+            // Tidak block flow utama, hanya log warning
         }
     }
 

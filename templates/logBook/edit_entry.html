@@ -43,7 +43,33 @@
         </div>
 
         <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-6 sm:p-8">
-            <form method="POST" enctype="multipart/form-data" x-data="{ isSubmitting: false }" @submit="isSubmitting = true">
+            <form method="POST" enctype="multipart/form-data" x-data="{ isSubmitting: false }"
+                  @submit.prevent="
+                      if (isSubmitting) return;
+                      isSubmitting = true;
+                      const form = $el;
+                      const formData = new FormData(form);
+                      fetch(form.action || window.location.href, { method: 'POST', body: formData })
+                          .then(async (res) => {
+                              if (res.ok) {
+                                  {% if logbook.google_doc_id %}
+                                  if(typeof window.showAlert === 'function') window.showAlert('info', 'Tersimpan! Menyinkronkan ke Google Docs...');
+                                  await autoSyncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}');
+                                  {% endif %}
+                                  window.location.href = '{{ url_for('logbook_detail', logbook_id=logbook.id) }}';
+                              } else {
+                                  isSubmitting = false;
+                                  if(typeof window.showAlert === 'function') window.showAlert('error', 'Gagal memperbarui kegiatan.');
+                                  else alert('Gagal memperbarui kegiatan.');
+                              }
+                          })
+                          .catch((e) => {
+                              isSubmitting = false;
+                              console.error(e);
+                              if(typeof window.showAlert === 'function') window.showAlert('error', 'Error koneksi: ' + e);
+                              else alert('Error koneksi: ' + e);
+                          });
+                  ">
                 <div class="grid grid-cols-1 gap-4 mb-4">
                     <div>
                         <label class="block text-sm mb-1 text-gray-400">Tanggal</label>
@@ -318,7 +344,7 @@
                             <span><i class="fas fa-save mr-2"></i> Perbarui Kegiatan</span>
                         </template>
                         <template x-if="isSubmitting">
-                            <span><i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...</span>
+                            <span><i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan & Sinkronisasi...</span>
                         </template>
                     </button>
                     
@@ -814,6 +840,28 @@
             }
         }
     }
+
+    // Auto sync tanpa konfirmasi (dipanggil setelah simpan/edit)
+    async function autoSyncActivities(logbookId, fileId) {
+        try {
+            const res = await fetch(`/api/google/drive/sync-activities/${logbookId}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({file_id: fileId})
+            });
+            const data = await res.json();
+            
+            if(data.success) {
+                if(typeof window.showAlert === 'function') window.showAlert('success', 'Sinkronisasi Google Docs berhasil!');
+            } else {
+                console.warn('Sync warning:', data.error);
+                if(typeof window.showAlert === 'function') window.showAlert('error', 'Sync gagal: ' + (data.error || 'Unknown error'));
+            }
+        } catch(e) {
+            console.warn('Auto sync failed:', e);
+        }
+    }
+
         // Init Flatpickr
         document.addEventListener('DOMContentLoaded', function() {
             flatpickr(".datepicker", { altInput: true, altFormat: "d-m-Y", dateFormat: "Y-m-d", disableMobile: "true" });

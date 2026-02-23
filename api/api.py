@@ -1247,8 +1247,7 @@ def parse_google_doc(file_id):
 @api_bp.route('/google/drive/sync-activities/<int:logbook_id>', methods=['POST'])
 @login_required
 def sync_custom_activities(logbook_id):
-    """Sync activities from Logbook Entries (DB) TO Google Doc Table"""
-
+    """Sync activities from Logbook Entries (DB) TO Google Doc — Per Month Tables"""
 
     data_in = request.json
     file_id = data_in.get('file_id')
@@ -1272,9 +1271,13 @@ def sync_custom_activities(logbook_id):
             logging.warn(f"[Google Meta Check] Failed: {e}")
 
     try:
-        # 1. Fetch Entries from DB
+        # 1. Fetch Logbook metadata (for nama_mentor)
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM logbooks WHERE id = %s", (logbook_id,))
+        logbook = cursor.fetchone()
+        
+        # 2. Fetch Entries from DB
         cursor.execute("SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC, id ASC", (logbook_id,))
         entries = cursor.fetchall()
         cursor.close()
@@ -1283,15 +1286,30 @@ def sync_custom_activities(logbook_id):
         if not entries:
             return jsonify({'error': 'Belum ada data kegiatan di website untuk disinkronkan.'}), 400
 
-        # 2. Fetch Doc Structure to find Table
+        nama_mentor = logbook.get('nama_mentor', 'Nama Mentor') if logbook else 'Nama Mentor'
+
+        # 3. Group entries by month
+        months_id = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        
+        grouped_entries = {}
+        for entry in entries:
+            tgl = entry['tanggal']
+            if tgl:
+                if isinstance(tgl, str):
+                    tgl = datetime.strptime(tgl, '%Y-%m-%d')
+                month_key = f"{months_id[tgl.month]} {tgl.year}"
+            else:
+                month_key = "Belum Diketahui"
+            
+            if month_key not in grouped_entries:
+                grouped_entries[month_key] = []
+            grouped_entries[month_key].append(entry)
+
+        # 4. Fetch Doc Structure — find first "Aktivitas Bulan" header
         document = service.documents().get(documentId=file_id).execute()
         doc_content = document.get('body').get('content')
         
-        table_start_index = -1
-        table_end_index = -1
-        found_header = False
-        
-        # Helper to extract text
         def get_text_simple(elements):
             text = ""
             for v in elements:
@@ -1300,220 +1318,341 @@ def sync_custom_activities(logbook_id):
                         text += el.get('textRun', {}).get('content', '')
             return text
 
+        # Find the start index of the first "Aktivitas Bulan" paragraph
+        section_start_index = -1
         for element in doc_content:
             if 'paragraph' in element:
                 txt = get_text_simple([element])
                 if "Aktivitas Bulan" in txt:
-                    found_header = True
-                    continue
-            
-            if found_header and 'table' in element:
-                table_start_index = element.get('startIndex')
-                table_end_index = element.get('endIndex')
-                # Check rows
-                rows = element.get('table').get('tableRows')
-                # Try to limit scope to this table
-                break
-        
-        if table_start_index == -1:
-             return jsonify({'error': 'Tabel aktivitas tidak ditemukan di Google Doc (Cari header "Aktivitas Bulan...").'}), 404
+                    section_start_index = element.get('startIndex')
+                    break
 
-        # 3. Prepare Batch Requests
-        requests = []
-        
-        # A. Clear existing rows (keep header row index 0)
-        # We need to find the table again or just assume we can delete rows 1 to N.
-        # But indices shift.
-        # Best strategy: 
-        # 1. Delete all rows from index 1 to end of table.
-        # Using deleteTableRow implies we know the table index? No, it uses tableCellLocation or tableStartLocation?
-        # Docs API: deleteTableRow(tableCellLocation={tableStartLocation: {index: ...}, rowIndex: 1}, )?
-        # Actually simplest is to delete content of cells? No, we want to replace rows.
-        
-        # Let's inspect rows count
-        # We can just iterate backwards and delete rows?
-        # But we need tableStartLocation.
-        # element['startIndex'] is the table start.
-        
-        # Better: Calculate how many rows currently exist.
-        # Then delete them one by one or batch?
-        # Actually, standard approach:
-        # 1. Delete rows 1..N (if they exist).
-        # 2. Insert empty rows for new data.
-        # 3. Insert text.
+        if section_start_index == -1:
+            return jsonify({'error': 'Header "Aktivitas Bulan..." tidak ditemukan di Google Doc.'}), 404
 
-        current_rows = len(element.get('table').get('tableRows'))
+        # 5. Find end of document body
+        doc_body_end = doc_content[-1].get('endIndex', section_start_index + 1)
         
-        # Delete existing data rows (from index current_rows-1 down to 1)
-        # We delete from bottom up to avoid index shifting issues for remaining rows
-        if current_rows > 1:
-            for i in range(current_rows - 1, 0, -1):
-                 requests.append({
-                    'deleteTableRow': {
-                        'tableCellLocation': {
-                            'tableStartLocation': {
-                                'index': table_start_index
-                            },
-                            'rowIndex': i
-                        }
+        # 6. Delete everything from section_start_index to end of doc body
+        # We must keep at least index (end-1) because doc always ends with \n
+        delete_end = doc_body_end - 1  # Don't delete the final newline
+        
+        delete_requests = []
+        if delete_end > section_start_index:
+            delete_requests.append({
+                'deleteContentRange': {
+                    'range': {
+                        'startIndex': section_start_index,
+                        'endIndex': delete_end
                     }
-                })
-
-        # B. Insert New Rows
-        # Insert entries sequentially.
-        # We start with 1 row (Header at index 0).
-        # To insert Row 1: target index 0, insertBelow=True.
-        # To insert Row 2: target index 1, insertBelow=True.
-        # So target index = i.
-        
-        for i in range(len(entries)):
-             requests.append({
-                'insertTableRow': {
-                    'tableCellLocation': {
-                        'tableStartLocation': {
-                            'index': table_start_index
-                        },
-                        'rowIndex': i
-                    },
-                    'insertBelow': True
                 }
             })
-        # Wait, if we use 'insertBelow': True at rowIndex=1, it inserts below row 1 (so index 2).
-        # We typically want to append.
-        # Simplest: Insert 'count' rows at rowIndex 1?
-        # The API documentation says: "Inserts an empty row into a table."
         
-        # Let's try simpler strategy:
-        # Just use Python to build the requests.
-        # We deleted all rows. Now we have 1 row.
-        # We append entries.
-        # Warning: Batch requests are executed atomically but order matters.
-        # If we delete, extracting indices again is hard without re-fetching.
-        # But here we rely on tableStartIndex which doesn't change if we only edit the table itself (usually).
-        # But deleting rows changes the doc length!
-        # So `table_start_index` might invalid if there were edits BEFORE it.
-        # But we are editing THIS table. Content before it is untouched.
-        # Content AFTER it shifts.
-        # content INSIDE it changes.
-        # The `tableStartLocation` is the index of the table *element*.
-        # Does it change if we delete rows inside it?
-        # The table start index should remain constant relative to start of doc IF we don't touch sending before it.
-        # So using table_start_index is safe.
+        if delete_requests:
+            service.documents().batchUpdate(documentId=file_id, body={'requests': delete_requests}).execute()
 
-        # However, inserting Text requires VALID indices.
-        # Since we changed the table structure in the same batch, we CANNOT know the new indices to insert text!
-        # Docs API doesn't return new indices in batch response usable for subsequent requests in same batch (unless using explicit structure).
-        # So we MUST split into 2 batches.
-        # Batch 1: Delete old rows, Create new rows.
-        # Batch 2: Insert text (requires refetching doc to get cell indices).
-
-        # Execute Batch 1
-        if requests:
-            service.documents().batchUpdate(documentId=file_id, body={'requests': requests}).execute()
-        
-        # 4. Refetch Doc to get Cell Indices
-        document = service.documents().get(documentId=file_id).execute()
-        doc_content = document.get('body').get('content')
-        
-        # Find table again (indices might have shifted if we deleted stuff?) No, should be same place.
-        # But let's scan again to be safe.
-        new_table = None
-        for element in doc_content:
-             if element.get('startIndex') == table_start_index:
-                 new_table = element.get('table')
-                 break
-        
-        if not new_table:
-             # Fallback scan
-             for element in doc_content:
-                if 'table' in element and element['startIndex'] >= table_start_index: # Roughly
-                    new_table = element.get('table') 
-                    break
-        
-        if not new_table:
-             return jsonify({'error': 'Gagal menemukan tabel setelah reset.'}), 500
-
-        # 5. Build Requests for Text Insertion
-        text_requests = []
-        rows = new_table.get('tableRows')
-        
-        def get_insert_idx(cell):
-            # Helper to find valid insertion index in a cell
-            content = cell.get('content', [])
-            if content:
-                # Use the start index of the first structural element (usually a paragraph)
-                return content[0].get('startIndex')
-            return cell.get('startIndex') + 1 # Fallback
+        # 7. Now insert fresh content for each month at section_start_index
+        # We build all text and structures from bottom to top (reverse order)
+        # because we insert at the same index each time.
+        # 
+        # Strategy: Build text content first, then insert tables separately.
+        # Actually, the Google Docs API has an 'insertTable' request!
+        # 
+        # Approach: Insert everything as text first (headers + signatures),
+        # then insert tables. But tables need specific indices.
+        #
+        # Simplest approach: Build content month by month in FORWARD order,
+        # inserting at the cursor position which advances each time.
+        # We must re-fetch the doc after each month to get correct indices.
+        #
+        # BETTER approach: Insert all content in one batch using text + table requests,
+        # but this requires careful index calculation.
+        #
+        # PRACTICAL approach: Process each month group sequentially.
 
         def clean_html(raw_html):
             if not raw_html: return '-'
-            # Basic HTML cleanup
-            # Replace list items with bullet points
             txt = re.sub(r'<li>', '\n• ', str(raw_html))
-            # Replace breaks/paragraphs with newlines
             txt = re.sub(r'<br\s*/?>', '\n', txt)
             txt = re.sub(r'</p>', '\n', txt)
-            # Remove all other tags
             txt = re.sub(r'<[^>]+>', '', txt)
-            # Fix multiple newlines
             txt = re.sub(r'\n\s*\n', '\n', txt)
             return txt.strip()
 
-        for i, entry in enumerate(entries):
-            # Row index in 'rows' list is i + 1 (0 is header)
-            if i + 1 >= len(rows): break
+        month_keys = list(grouped_entries.keys())
+        
+        for month_idx, month_key in enumerate(month_keys):
+            month_entries = grouped_entries[month_key]
             
-            row = rows[i+1]
-            cells = row.get('tableCells')
+            # Re-fetch doc to get current indices
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
             
-            # Col 0: No
-            if len(cells) > 0:
-                text_requests.append({
+            # Find insertion point (end of doc body - 1, before final newline)
+            insert_index = doc_content[-1].get('endIndex', 1) - 1
+            
+            # A. Insert header text: "Aktivitas Bulan {month_key}\n"
+            header_text = f"Aktivitas Bulan {month_key}\n"
+            
+            batch1_requests = [
+                {
                     'insertText': {
-                        'location': {'index': get_insert_idx(cells[0])},
-                        'text': str(i + 1)
+                        'location': {'index': insert_index},
+                        'text': header_text
                     }
-                })
+                },
+                # Style the header as HEADING_2
+                {
+                    'updateParagraphStyle': {
+                        'range': {
+                            'startIndex': insert_index,
+                            'endIndex': insert_index + len(header_text)
+                        },
+                        'paragraphStyle': {
+                            'namedStyleType': 'HEADING_2'
+                        },
+                        'fields': 'namedStyleType'
+                    }
+                },
+                # Make header text red/colored
+                {
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': insert_index,
+                            'endIndex': insert_index + len(header_text) - 1
+                        },
+                        'textStyle': {
+                            'foregroundColor': {
+                                'color': {
+                                    'rgbColor': {'red': 0.8, 'green': 0.0, 'blue': 0.0}
+                                }
+                            },
+                            'bold': True
+                        },
+                        'fields': 'foregroundColor,bold'
+                    }
+                }
+            ]
             
-            # Col 1: Aktivitas
-            if len(cells) > 1:
-                # Format: [Tanggal] Aktivitas
-                try: 
-                    tgl_obj = datetime.strptime(str(entry['tanggal']), '%Y-%m-%d')
-                    tgl_str = tgl_obj.strftime('%d/%m')
-                except:
-                    tgl_str = str(entry['tanggal'])
+            service.documents().batchUpdate(documentId=file_id, body={'requests': batch1_requests}).execute()
+            
+            # B. Re-fetch and insert table
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
+            table_insert_index = doc_content[-1].get('endIndex', 1) - 1
+            
+            num_rows = len(month_entries) + 1  # +1 for header row
+            num_cols = 3  # No, Aktivitas, Deskripsi Kegiatan
+            
+            table_requests = [
+                {
+                    'insertTable': {
+                        'rows': num_rows,
+                        'columns': num_cols,
+                        'location': {'index': table_insert_index}
+                    }
+                }
+            ]
+            
+            service.documents().batchUpdate(documentId=file_id, body={'requests': table_requests}).execute()
+            
+            # C. Re-fetch doc to get table cell indices
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
+            
+            # Find the table we just inserted (it should be near table_insert_index)
+            new_table = None
+            new_table_start = -1
+            new_table_end = -1
+            for element in doc_content:
+                if 'table' in element and element.get('startIndex', 0) >= table_insert_index:
+                    new_table = element.get('table')
+                    new_table_start = element.get('startIndex')
+                    new_table_end = element.get('endIndex')
+                    break
+            
+            if not new_table:
+                logging.error(f"[Google Doc Sync] Could not find inserted table for {month_key}")
+                continue
+            
+            # D. Fill table cells with text
+            def get_insert_idx(cell):
+                content = cell.get('content', [])
+                if content:
+                    return content[0].get('startIndex')
+                return cell.get('startIndex') + 1
+            
+            text_requests = []
+            table_rows = new_table.get('tableRows')
+            
+            # Header row (row 0)
+            if len(table_rows) > 0:
+                header_cells = table_rows[0].get('tableCells')
+                header_texts = ['No', 'Aktivitas', 'Deskripsi Kegiatan']
+                for col_idx, h_text in enumerate(header_texts):
+                    if col_idx < len(header_cells):
+                        idx = get_insert_idx(header_cells[col_idx])
+                        text_requests.append({
+                            'insertText': {
+                                'location': {'index': idx},
+                                'text': h_text
+                            }
+                        })
+            
+            # Data rows
+            for i, entry in enumerate(month_entries):
+                row_idx = i + 1
+                if row_idx >= len(table_rows):
+                    break
                 
-                aktiv_text = f"[{tgl_str}] {entry['aktivitas']}"
-                text_requests.append({
-                    'insertText': {
-                        'location': {'index': get_insert_idx(cells[1])},
-                        'text': aktiv_text
-                    }
-                })
+                row = table_rows[row_idx]
+                cells = row.get('tableCells')
                 
-            # Col 2: Deskripsi
-            if len(cells) > 2:
-                desc = clean_html(entry['deskripsi'])
-                text_requests.append({
+                # Col 0: No
+                if len(cells) > 0:
+                    text_requests.append({
+                        'insertText': {
+                            'location': {'index': get_insert_idx(cells[0])},
+                            'text': str(i + 1)
+                        }
+                    })
+                
+                # Col 1: Aktivitas (with date dd/mm)
+                if len(cells) > 1:
+                    try:
+                        tgl = entry['tanggal']
+                        if isinstance(tgl, str):
+                            tgl = datetime.strptime(tgl, '%Y-%m-%d')
+                        tgl_str = tgl.strftime('%d/%m')
+                    except:
+                        tgl_str = str(entry['tanggal'])
+                    
+                    aktiv_text = f"[{tgl_str}] {entry['aktivitas']}"
+                    text_requests.append({
+                        'insertText': {
+                            'location': {'index': get_insert_idx(cells[1])},
+                            'text': aktiv_text
+                        }
+                    })
+                
+                # Col 2: Deskripsi
+                if len(cells) > 2:
+                    desc = clean_html(entry['deskripsi'])
+                    text_requests.append({
+                        'insertText': {
+                            'location': {'index': get_insert_idx(cells[2])},
+                            'text': desc
+                        }
+                    })
+            
+            # Sort by index descending to avoid shifting issues
+            text_requests.sort(key=lambda req: req['insertText']['location']['index'], reverse=True)
+            
+            if text_requests:
+                service.documents().batchUpdate(documentId=file_id, body={'requests': text_requests}).execute()
+            
+            # E. Bold the header row text
+            # Re-fetch to get updated indices
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
+            
+            # Find table again for header styling
+            for element in doc_content:
+                if 'table' in element and element.get('startIndex', 0) >= table_insert_index:
+                    styled_table = element.get('table')
+                    if styled_table and len(styled_table.get('tableRows', [])) > 0:
+                        header_cells = styled_table['tableRows'][0].get('tableCells', [])
+                        style_requests = []
+                        for cell in header_cells:
+                            cell_content = cell.get('content', [])
+                            if cell_content:
+                                c_start = cell_content[0].get('startIndex', 0)
+                                c_end = cell_content[-1].get('endIndex', c_start + 1)
+                                style_requests.append({
+                                    'updateTextStyle': {
+                                        'range': {'startIndex': c_start, 'endIndex': c_end - 1},
+                                        'textStyle': {'bold': True},
+                                        'fields': 'bold'
+                                    }
+                                })
+                        if style_requests:
+                            service.documents().batchUpdate(documentId=file_id, body={'requests': style_requests}).execute()
+                    break
+            
+            # F. Insert signature block after table
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
+            sig_insert_index = doc_content[-1].get('endIndex', 1) - 1
+            
+            sig_text = f"\nDisetujui Oleh\n\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
+            
+            sig_requests = [
+                {
                     'insertText': {
-                        'location': {'index': get_insert_idx(cells[2])},
-                        'text': desc
+                        'location': {'index': sig_insert_index},
+                        'text': sig_text
                     }
-                })
+                },
+                # Reset to NORMAL style for signature (not heading)
+                {
+                    'updateParagraphStyle': {
+                        'range': {
+                            'startIndex': sig_insert_index,
+                            'endIndex': sig_insert_index + len(sig_text)
+                        },
+                        'paragraphStyle': {
+                            'namedStyleType': 'NORMAL_TEXT',
+                            'alignment': 'END'
+                        },
+                        'fields': 'namedStyleType,alignment'
+                    }
+                },
+                # Bold "Disetujui Oleh" and mentor name
+                {
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': sig_insert_index + 1,  # after \n
+                            'endIndex': sig_insert_index + 1 + len('Disetujui Oleh')
+                        },
+                        'textStyle': {'bold': True},
+                        'fields': 'bold'
+                    }
+                },
+                {
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': sig_insert_index + 1,
+                            'endIndex': sig_insert_index + len(sig_text) - 1
+                        },
+                        'textStyle': {
+                            'foregroundColor': {
+                                'color': {
+                                    'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
+                                }
+                            }
+                        },
+                        'fields': 'foregroundColor'
+                    }
+                }
+            ]
+            
+            # Bold the mentor name
+            mentor_start = sig_insert_index + len(sig_text) - len(nama_mentor) - 2  # before \n\n
+            mentor_end = mentor_start + len(nama_mentor)
+            sig_requests.append({
+                'updateTextStyle': {
+                    'range': {'startIndex': mentor_start, 'endIndex': mentor_end},
+                    'textStyle': {'bold': True},
+                    'fields': 'bold'
+                }
+            })
+            
+            service.documents().batchUpdate(documentId=file_id, body={'requests': sig_requests}).execute()
 
-        text_requests.sort(key=lambda req: req['insertText']['location']['index'], reverse=True)
-
-        # Setelah diurutkan mundur, baru kita tembak API-nya
-        if text_requests:
-             service.documents().batchUpdate(documentId=file_id, body={'requests': text_requests}).execute()
-
-        return jsonify({'success': True, 'message': f'Berhasil mengekspor {len(entries)} kegiatan ke Google Doc.'})
+        return jsonify({'success': True, 'message': f'Berhasil mengekspor {len(entries)} kegiatan ({len(month_keys)} bulan) ke Google Doc.'})
 
     except Exception as e:
         logging.error(f"[Google Doc Sync] Error: {e}")
-        return jsonify({'error': str(e)}), 500
-
-    except Exception as e:
-        logging.error(f"[Google Docs Parse] Error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
