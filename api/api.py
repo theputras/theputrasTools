@@ -1535,8 +1535,20 @@ def sync_custom_activities(logbook_id):
         # 2. Fetch Entries from DB
         cursor.execute("SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC, id ASC", (logbook_id,))
         entries = cursor.fetchall()
+        
+        # 2b. Fetch images for each entry
+        entry_images = {}
+        for entry in entries:
+            cursor.execute("SELECT path, nama_asli FROM logbook_images WHERE entry_id = %s", (entry['id'],))
+            imgs = cursor.fetchall()
+            if imgs:
+                entry_images[entry['id']] = imgs
+        
         cursor.close()
         conn.close()
+        
+        # Build base URL for images
+        base_url = request.host_url.rstrip('/')
 
         if not entries:
             return jsonify({'error': 'Belum ada data kegiatan di website untuk disinkronkan.'}), 400
@@ -1866,6 +1878,91 @@ def sync_custom_activities(logbook_id):
                         if style_requests:
                             service.documents().batchUpdate(documentId=file_id, body={'requests': style_requests}).execute()
                     break
+            
+            # E2. Insert images into Deskripsi cells (after text + styling)
+            # Re-fetch doc after styling to get fresh indices
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
+            
+            # Find the table again
+            styled_table_el = None
+            for element in doc_content:
+                if 'table' in element and element.get('startIndex', 0) >= table_insert_index:
+                    styled_table_el = element
+                    break
+            
+            if styled_table_el:
+                styled_table = styled_table_el.get('table')
+                all_rows = styled_table.get('tableRows', [])
+                
+                # Process entries in reverse order (higher index first) to avoid shifting
+                for i in range(len(month_entries) - 1, -1, -1):
+                    entry = month_entries[i]
+                    entry_id = entry['id']
+                    
+                    if entry_id not in entry_images:
+                        continue
+                    
+                    images = entry_images[entry_id]
+                    row_idx = i + 1  # +1 for header row
+                    
+                    if row_idx >= len(all_rows):
+                        continue
+                    
+                    row = all_rows[row_idx]
+                    cells = row.get('tableCells', [])
+                    
+                    if len(cells) < 3:
+                        continue
+                    
+                    # Get the Deskripsi cell (col 2) end index for inserting images
+                    desc_cell = cells[2]
+                    desc_content = desc_cell.get('content', [])
+                    if not desc_content:
+                        continue
+                    
+                    # Insert at end of cell content (before trailing newline)
+                    desc_end = desc_content[-1].get('endIndex', 0) - 1
+                    
+                    # Insert images in reverse order so they appear in correct order
+                    img_requests = []
+                    for img in reversed(images):
+                        img_path = img['path']
+                        img_url = f"{base_url}/static/uploads/logbook/{img_path}"
+                        
+                        # Add newline before image
+                        img_requests.append({
+                            'insertText': {
+                                'location': {'index': desc_end},
+                                'text': '\n'
+                            }
+                        })
+                        img_requests.append({
+                            'insertInlineImage': {
+                                'location': {'index': desc_end + 1},
+                                'uri': img_url,
+                                'objectSize': {
+                                    'width': {'magnitude': 150, 'unit': 'PT'},
+                                    'height': {'magnitude': 100, 'unit': 'PT'}
+                                }
+                            }
+                        })
+                    
+                    if img_requests:
+                        try:
+                            service.documents().batchUpdate(documentId=file_id, body={'requests': img_requests}).execute()
+                            # Re-fetch doc for fresh indices after each entry's images
+                            document = service.documents().get(documentId=file_id).execute()
+                            doc_content = document.get('body').get('content')
+                            # Re-find table for next iteration
+                            for element in doc_content:
+                                if 'table' in element and element.get('startIndex', 0) >= table_insert_index:
+                                    styled_table_el = element
+                                    styled_table = element.get('table')
+                                    all_rows = styled_table.get('tableRows', [])
+                                    break
+                        except Exception as img_err:
+                            logging.warning(f"[Google Doc Sync] Image insert failed for entry {entry_id}: {img_err}")
             
             # F. Insert signature block after table
             document = service.documents().get(documentId=file_id).execute()
