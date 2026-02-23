@@ -599,22 +599,30 @@ function ultahApp() {
                     .then(res => res.json())
                     .then(data => {
                         if (!data.error) {
-                            this.rows = data.rows;
+                            // Sukses — update data (bisa kosong kalau tidak ada ultah hari ini)
+                            this.rows = data.rows || [];
                             this.tanggal_hari_ini = data.tanggal_hari_ini;
                             
-                            // Simpan struktur utuh ke LocalStorage
+                            // Simpan ke cache
                             const storageObject = {
                                 timestamp: new Date().getTime(), 
                                 data: data 
                             };
                             localStorage.setItem('dataUltah', JSON.stringify(storageObject));
+                            // Tidak set error — biar badge "Updated" tampil (hijau)
                         } else {
-                            if(this.rows.length === 0) this.error = data.message;
+                            // API error (scraper gagal) — jangan tampilkan error teknis
+                            // Kalau sudah ada data cache, abaikan error 
+                            if (this.rows.length === 0) {
+                                // Belum ada data sama sekali — tampilkan pesan generic
+                                this.error = "Gagal memuat data.";
+                            }
+                            // Kalau rows sudah ada (dari cache), badge tetap "Updated"
                         }
                     })
                     .catch(err => {
                         console.error(err);
-                        if(this.rows.length === 0) this.error = "Gagal koneksi.";
+                        if (this.rows.length === 0) this.error = "Gagal koneksi.";
                     })
                     .finally(() => {
                         this.isLoading = false;
