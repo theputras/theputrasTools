@@ -1247,7 +1247,7 @@ def parse_google_doc(file_id):
 @api_bp.route('/google/drive/sync-metadata/<int:logbook_id>', methods=['POST'])
 @login_required
 def sync_metadata_to_doc(logbook_id):
-    """Export logbook metadata FROM DB TO Google Doc header/identity section"""
+    """Export logbook metadata FROM DB TO Google Doc header/identity table"""
     
     data_in = request.json
     file_id = data_in.get('file_id')
@@ -1272,166 +1272,224 @@ def sync_metadata_to_doc(logbook_id):
         if not logbook:
             return jsonify({'error': 'Logbook tidak ditemukan.'}), 404
 
-        # 2. Fetch document structure
-        document = service.documents().get(documentId=file_id).execute()
-        doc_content = document.get('body').get('content')
-        
-        # 3. Build mapping: label keyword -> new value from DB
-        # Handle waktu_pelaksanaan as combined date range
+        # 2. Build mapping: label keyword -> new value from DB
         waktu_mulai = logbook.get('waktu_mulai', '')
         waktu_selesai = logbook.get('waktu_selesai', '')
         if waktu_mulai and waktu_selesai:
             try:
-                from datetime import datetime as dt_local
-                wm = dt_local.strptime(str(waktu_mulai), '%Y-%m-%d').strftime('%d-%m-%Y') if isinstance(waktu_mulai, str) else waktu_mulai.strftime('%d-%m-%Y')
-                ws = dt_local.strptime(str(waktu_selesai), '%Y-%m-%d').strftime('%d-%m-%Y') if isinstance(waktu_selesai, str) else waktu_selesai.strftime('%d-%m-%Y')
+                wm = waktu_mulai.strftime('%d-%m-%Y') if hasattr(waktu_mulai, 'strftime') else datetime.strptime(str(waktu_mulai), '%Y-%m-%d').strftime('%d-%m-%Y')
+                ws = waktu_selesai.strftime('%d-%m-%Y') if hasattr(waktu_selesai, 'strftime') else datetime.strptime(str(waktu_selesai), '%Y-%m-%d').strftime('%d-%m-%Y')
                 waktu_str = f"{wm} sampai {ws}"
             except:
                 waktu_str = f"{waktu_mulai} sampai {waktu_selesai}"
         else:
             waktu_str = ''
         
-        field_map = {
-            'Nama': logbook.get('nama', ''),
-            'Nim': logbook.get('nim', ''),
-            'Fakultas': logbook.get('fakultas', ''),
-            'Prodi': logbook.get('prodi', ''),
-            'Nama Mitra': logbook.get('nama_mitra', ''),
-            'Posisi Magang': logbook.get('posisi_magang', ''),
-            'Nama Mentor': logbook.get('nama_mentor', ''),
-            'Whatsapp Mentor': logbook.get('wa_mentor', ''),
-            'Email Mentor': logbook.get('email_mentor', ''),
-            'Waktu Pelaksanaan': waktu_str,
-        }
+        # Labels to match (case-insensitive) -> DB value
+        # Order matters: more specific labels first to avoid partial matches
+        # Waktu Pelaksanaan handled separately (5-cell row)
+        field_map = [
+            ('Nama Mitra', logbook.get('nama_mitra', '')),
+            ('Nama Mentor', logbook.get('nama_mentor', '')),
+            ('Nama', logbook.get('nama', '')),
+            ('Nim', logbook.get('nim', '')),
+            ('Fakultas', logbook.get('fakultas', '')),
+            ('Prodi', logbook.get('prodi', '')),
+            ('Posisi Magang', logbook.get('posisi_magang', '')),
+            ('Whatsapp Mentor', logbook.get('wa_mentor', '')),
+            ('Email Mentor', logbook.get('email_mentor', '')),
+        ]
         
-        # 4. Scan document for "Label : value" patterns and collect replacements
-        all_requests = []
+        def get_cell_text(cell):
+            """Extract plain text from a table cell"""
+            text = ''
+            for content in cell.get('content', []):
+                if 'paragraph' in content:
+                    for elem in content['paragraph'].get('elements', []):
+                        text += elem.get('textRun', {}).get('content', '')
+            return text.strip()
         
-        def scan_elements(elements):
-            """Scan paragraphs for 'Label : value' and build replacement requests"""
-            for element in elements:
-                if 'paragraph' in element:
-                    para = element.get('paragraph')
-                    para_elements = para.get('elements', [])
-                    
-                    # Build full paragraph text and track positions
-                    full_text = ''
-                    for pe in para_elements:
-                        tr = pe.get('textRun', {})
-                        full_text += tr.get('content', '')
-                    
-                    # Check if this paragraph matches any label
-                    for label, new_value in field_map.items():
-                        # Match "Label : old_value" or "Label: old_value"
-                        pattern = re.compile(rf'({re.escape(label)}\s*:\s*)(.*)', re.IGNORECASE)
-                        match = pattern.search(full_text)
-                        if match:
-                            # Found! Calculate the position of "old_value" part
-                            prefix = match.group(1)  # "Label : "
-                            old_value = match.group(2).rstrip('\n')  # old value text
-                            
-                            # Get paragraph start index
-                            para_start = element.get('startIndex', 0)
-                            
-                            # Calculate indices
-                            value_start = para_start + match.start() + len(prefix)
-                            value_end = value_start + len(old_value)
-                            
-                            if value_end > value_start:
-                                # Delete old value
-                                all_requests.append({
-                                    'deleteContentRange': {
-                                        'range': {
-                                            'startIndex': value_start,
-                                            'endIndex': value_end
-                                        }
-                                    }
-                                })
-                            
-                            if new_value:
-                                # Insert new value at same position
-                                all_requests.append({
-                                    'insertText': {
-                                        'location': {'index': value_start},
-                                        'text': str(new_value)
-                                    }
-                                })
-                            
-                            break  # Found match for this paragraph, move on
-                
-                elif 'table' in element:
-                    # Scan table cells recursively
-                    table = element.get('table')
-                    for row in table.get('tableRows', []):
-                        for cell in row.get('tableCells', []):
-                            scan_elements(cell.get('content', []))
+        def replace_cell_content(svc, doc_id, cell):
+            """Get the content range of a cell for delete+insert"""
+            cell_content = cell.get('content', [])
+            if not cell_content:
+                return None, None
+            c_start = cell_content[0].get('startIndex', 0)
+            c_end = cell_content[-1].get('endIndex', c_start + 1)
+            return c_start, c_end - 1  # end-1 = don't delete cell's trailing newline
         
-        scan_elements(doc_content)
+        def update_cell(svc, doc_id, cell, new_text):
+            """Delete old cell text and insert new text"""
+            c_start, c_end = replace_cell_content(svc, doc_id, cell)
+            if c_start is None:
+                return False
+            
+            reqs = []
+            if c_end > c_start:
+                reqs.append({
+                    'deleteContentRange': {
+                        'range': {'startIndex': c_start, 'endIndex': c_end}
+                    }
+                })
+            reqs.append({
+                'insertText': {
+                    'location': {'index': c_start},
+                    'text': str(new_text)
+                }
+            })
+            svc.documents().batchUpdate(documentId=doc_id, body={'requests': reqs}).execute()
+            return True
         
-        if not all_requests:
-            return jsonify({'success': True, 'message': 'Tidak ada field identity yang ditemukan di Google Doc untuk diupdate.'}), 200
+        def find_value_cell(cells, label_cell_idx):
+            """
+            Table structure: [Label] [:] [Value]
+            Given the label cell index, find the VALUE cell (skip colon cell).
+            """
+            # Next cell after label
+            next_idx = label_cell_idx + 1
+            if next_idx >= len(cells):
+                return None
+            
+            next_text = get_cell_text(cells[next_idx])
+            
+            # If next cell is just ":" or ":", skip it -> value is in next_idx + 1
+            if next_text.strip() == ':':
+                value_idx = next_idx + 1
+                if value_idx < len(cells):
+                    return cells[value_idx]
+                return None
+            else:
+                # Next cell IS the value (2-column layout)
+                return cells[next_idx]
         
-        # 5. Execute one field at a time (to avoid index conflicts)
-        # Group requests by field: each field has delete + insert
-        # Process them one by one, re-fetching doc each time
-        
+        # 3. Process each field one by one (re-fetch doc each time for fresh indices)
         fields_processed = 0
-        for label, new_value in field_map.items():
-            # Re-fetch document for fresh indices
+        
+        for label, new_value in field_map:
+            if not new_value and new_value != 0:
+                continue
+                
+            # Re-fetch document for fresh indices each time
             document = service.documents().get(documentId=file_id).execute()
             doc_content = document.get('body').get('content')
             
-            field_requests = []
+            found = False
             
-            def find_and_replace(elements):
-                for element in elements:
-                    if 'paragraph' in element:
-                        para_elements = element.get('paragraph', {}).get('elements', [])
-                        full_text = ''
-                        for pe in para_elements:
-                            full_text += pe.get('textRun', {}).get('content', '')
-                        
-                        pattern = re.compile(rf'({re.escape(label)}\s*:\s*)(.*)', re.IGNORECASE)
-                        match = pattern.search(full_text)
-                        if match:
-                            prefix = match.group(1)
-                            old_value = match.group(2).rstrip('\n')
-                            para_start = element.get('startIndex', 0)
-                            value_start = para_start + match.start() + len(prefix)
-                            value_end = value_start + len(old_value)
-                            
-                            reqs = []
-                            if value_end > value_start:
-                                reqs.append({
-                                    'deleteContentRange': {
-                                        'range': {
-                                            'startIndex': value_start,
-                                            'endIndex': value_end
-                                        }
-                                    }
-                                })
-                            if new_value:
-                                reqs.append({
-                                    'insertText': {
-                                        'location': {'index': value_start},
-                                        'text': str(new_value)
-                                    }
-                                })
-                            return reqs
+            for element in doc_content:
+                if found:
+                    break
+                if 'table' not in element:
+                    continue
                     
-                    elif 'table' in element:
-                        table = element.get('table')
-                        for row in table.get('tableRows', []):
-                            for cell in row.get('tableCells', []):
-                                result = find_and_replace(cell.get('content', []))
-                                if result:
-                                    return result
-                return None
+                table = element.get('table')
+                for row in table.get('tableRows', []):
+                    if found:
+                        break
+                    cells = row.get('tableCells', [])
+                    if len(cells) < 2:
+                        continue
+                    
+                    # Check cell[0] for the label
+                    cell_text = get_cell_text(cells[0])
+                    
+                    if re.search(rf'^{re.escape(label)}\s*:?\s*$', cell_text, re.IGNORECASE):
+                        # Found label! Find the value cell (skip ":" cell)
+                        value_cell = find_value_cell(cells, 0)
+                        
+                        if value_cell:
+                            try:
+                                update_cell(service, file_id, value_cell, new_value)
+                                fields_processed += 1
+                            except Exception as field_err:
+                                logging.warning(f"[Metadata Sync] Failed to update '{label}': {field_err}")
+                        
+                        found = True
+                        break
+        
+        # 4. Handle Waktu Pelaksanaan separately (5-cell row: Label | : | start | sampai | end)
+        if waktu_mulai and waktu_selesai:
+            try:
+                wm_str = waktu_mulai.strftime('%d-%m-%Y') if hasattr(waktu_mulai, 'strftime') else datetime.strptime(str(waktu_mulai), '%Y-%m-%d').strftime('%d-%m-%Y')
+                ws_str = waktu_selesai.strftime('%d-%m-%Y') if hasattr(waktu_selesai, 'strftime') else datetime.strptime(str(waktu_selesai), '%Y-%m-%d').strftime('%d-%m-%Y')
+            except:
+                wm_str = str(waktu_mulai)
+                ws_str = str(waktu_selesai)
             
-            reqs = find_and_replace(doc_content)
-            if reqs:
-                service.documents().batchUpdate(documentId=file_id, body={'requests': reqs}).execute()
-                fields_processed += 1
+            # Re-fetch doc
+            document = service.documents().get(documentId=file_id).execute()
+            doc_content = document.get('body').get('content')
+            
+            for element in doc_content:
+                if 'table' not in element:
+                    continue
+                table = element.get('table')
+                for row in table.get('tableRows', []):
+                    cells = row.get('tableCells', [])
+                    cell0_text = get_cell_text(cells[0]) if cells else ''
+                    
+                    if re.search(r'Waktu\s+Pelaksanaan', cell0_text, re.IGNORECASE):
+                        # 5-cell row: [Label] [:] [start_date] [sampai] [end_date]
+                        # or 3-cell row: [Label] [:] [full_date_string]
+                        
+                        if len(cells) >= 5:
+                            # Update start_date cell (cells[2]) and end_date cell (cells[4])
+                            # Find value cell after colon
+                            colon_idx = None
+                            for ci in range(1, len(cells)):
+                                if get_cell_text(cells[ci]).strip() == ':':
+                                    colon_idx = ci
+                                    break
+                            
+                            if colon_idx is not None:
+                                start_cell_idx = colon_idx + 1
+                                # Find "sampai" cell
+                                sampai_idx = None
+                                for ci in range(start_cell_idx + 1, len(cells)):
+                                    if 'sampai' in get_cell_text(cells[ci]).lower():
+                                        sampai_idx = ci
+                                        break
+                                
+                                if sampai_idx is not None and sampai_idx + 1 < len(cells):
+                                    # Update end_date FIRST (higher index)
+                                    try:
+                                        update_cell(service, file_id, cells[sampai_idx + 1], ws_str)
+                                        # Re-fetch for fresh indices before updating start
+                                        document = service.documents().get(documentId=file_id).execute()
+                                        doc_content_tmp = document.get('body').get('content')
+                                        # Re-find the row
+                                        for el2 in doc_content_tmp:
+                                            if 'table' not in el2:
+                                                continue
+                                            for row2 in el2['table'].get('tableRows', []):
+                                                c2 = row2.get('tableCells', [])
+                                                if c2 and re.search(r'Waktu\s+Pelaksanaan', get_cell_text(c2[0]), re.IGNORECASE):
+                                                    # Find colon again
+                                                    for ci2 in range(1, len(c2)):
+                                                        if get_cell_text(c2[ci2]).strip() == ':':
+                                                            update_cell(service, file_id, c2[ci2 + 1], wm_str)
+                                                            break
+                                                    break
+                                        fields_processed += 1
+                                    except Exception as e:
+                                        logging.warning(f"[Metadata Sync] Failed to update Waktu Pelaksanaan: {e}")
+                                else:
+                                    # No sampai found, just update the cell after colon
+                                    try:
+                                        update_cell(service, file_id, cells[start_cell_idx], f"{wm_str} sampai {ws_str}")
+                                        fields_processed += 1
+                                    except Exception as e:
+                                        logging.warning(f"[Metadata Sync] Failed to update Waktu Pelaksanaan: {e}")
+                        elif len(cells) >= 3:
+                            # 3-cell: [Label] [:] [full_date]
+                            value_cell = find_value_cell(cells, 0)
+                            if value_cell:
+                                try:
+                                    update_cell(service, file_id, value_cell, f"{wm_str} sampai {ws_str}")
+                                    fields_processed += 1
+                                except Exception as e:
+                                    logging.warning(f"[Metadata Sync] Failed to update Waktu Pelaksanaan: {e}")
+                        break
+                break  # Only check first table
         
         return jsonify({'success': True, 'message': f'Berhasil mengupdate {fields_processed} field metadata ke Google Doc.'})
 
@@ -1814,12 +1872,12 @@ def sync_custom_activities(logbook_id):
             doc_content = document.get('body').get('content')
             sig_insert_index = doc_content[-1].get('endIndex', 1) - 1
             
-            # Match screenshot format:
-            # "Disetujui Oleh" (bold, right-aligned)
-            # [empty space for signature]
-            # "Tanda Tangan Mentor" (bold, right-aligned)
-            # "{nama_mentor}" (bold + RED, right-aligned)
-            sig_text = f"Disetujui Oleh\n\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
+            # Layout: right-aligned, no gap between Disetujui & Tanda Tangan
+            # "Disetujui Oleh"
+            # "Tanda Tangan Mentor"
+            # [space for signature]
+            # "{nama_mentor}"
+            sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
             
             sig_requests = [
                 {
