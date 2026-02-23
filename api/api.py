@@ -1924,45 +1924,66 @@ def sync_custom_activities(logbook_id):
                     # Insert at end of cell content (before trailing newline)
                     desc_end = desc_content[-1].get('endIndex', 0) - 1
                     
-                    # Insert images in reverse order so they appear in correct order
-                    img_requests = []
-                    for img in reversed(images):
+                    # Insert images ONE AT A TIME (re-fetch doc after each to get correct indices)
+                    for img in images:
                         img_path = img['path']
-                        img_url = f"{base_url}/static/uploads/logbook/{img_path}"
+                        # URL-encode the path segments
+                        encoded_path = urllib.parse.quote(img_path, safe='/')
+                        img_url = f"{base_url}/static/uploads/logbook/{encoded_path}"
+                        logging.info(f"[Google Doc Sync] Inserting image: {img_url}")
                         
-                        # Add newline before image
-                        img_requests.append({
-                            'insertText': {
-                                'location': {'index': desc_end},
-                                'text': '\n'
-                            }
-                        })
-                        img_requests.append({
-                            'insertInlineImage': {
-                                'location': {'index': desc_end + 1},
-                                'uri': img_url,
-                                'objectSize': {
-                                    'width': {'magnitude': 150, 'unit': 'PT'},
-                                    'height': {'magnitude': 100, 'unit': 'PT'}
-                                }
-                            }
-                        })
-                    
-                    if img_requests:
+                        # Re-fetch doc to get fresh cell indices
+                        document = service.documents().get(documentId=file_id).execute()
+                        doc_content = document.get('body').get('content')
+                        
+                        # Re-find the table and cell
+                        current_table = None
+                        for element in doc_content:
+                            if 'table' in element and element.get('startIndex', 0) >= table_insert_index:
+                                current_table = element.get('table')
+                                break
+                        
+                        if not current_table:
+                            break
+                        
+                        current_rows = current_table.get('tableRows', [])
+                        if row_idx >= len(current_rows):
+                            break
+                        
+                        current_cells = current_rows[row_idx].get('tableCells', [])
+                        if len(current_cells) < 3:
+                            break
+                        
+                        desc_cell = current_cells[2]
+                        desc_content = desc_cell.get('content', [])
+                        if not desc_content:
+                            break
+                        
+                        # Insert at end of cell content (before trailing newline)
+                        insert_at = desc_content[-1].get('endIndex', 0) - 1
+                        
                         try:
-                            service.documents().batchUpdate(documentId=file_id, body={'requests': img_requests}).execute()
-                            # Re-fetch doc for fresh indices after each entry's images
-                            document = service.documents().get(documentId=file_id).execute()
-                            doc_content = document.get('body').get('content')
-                            # Re-find table for next iteration
-                            for element in doc_content:
-                                if 'table' in element and element.get('startIndex', 0) >= table_insert_index:
-                                    styled_table_el = element
-                                    styled_table = element.get('table')
-                                    all_rows = styled_table.get('tableRows', [])
-                                    break
+                            # Step 1: Insert newline
+                            service.documents().batchUpdate(documentId=file_id, body={'requests': [{
+                                'insertText': {
+                                    'location': {'index': insert_at},
+                                    'text': '\n'
+                                }
+                            }]}).execute()
+                            
+                            # Step 2: Insert image after the newline
+                            service.documents().batchUpdate(documentId=file_id, body={'requests': [{
+                                'insertInlineImage': {
+                                    'location': {'index': insert_at + 1},
+                                    'uri': img_url,
+                                    'objectSize': {
+                                        'width': {'magnitude': 150, 'unit': 'PT'},
+                                        'height': {'magnitude': 100, 'unit': 'PT'}
+                                    }
+                                }
+                            }]}).execute()
                         except Exception as img_err:
-                            logging.warning(f"[Google Doc Sync] Image insert failed for entry {entry_id}: {img_err}")
+                            logging.warning(f"[Google Doc Sync] Image insert failed for entry {entry_id}, url={img_url}: {img_err}")
             
             # F. Insert signature block after table
             document = service.documents().get(documentId=file_id).execute()
