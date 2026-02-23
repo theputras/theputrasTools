@@ -1401,7 +1401,7 @@ def sync_custom_activities(logbook_id):
                         'text': header_text
                     }
                 },
-                # Style the header as HEADING_2
+                # Style the header as NORMAL_TEXT (not heading — match screenshot format)
                 {
                     'updateParagraphStyle': {
                         'range': {
@@ -1409,12 +1409,14 @@ def sync_custom_activities(logbook_id):
                             'endIndex': insert_index + len(header_text)
                         },
                         'paragraphStyle': {
-                            'namedStyleType': 'HEADING_2'
+                            'namedStyleType': 'NORMAL_TEXT',
+                            'spaceAbove': {'magnitude': 12, 'unit': 'PT'},
+                            'spaceBelow': {'magnitude': 6, 'unit': 'PT'}
                         },
-                        'fields': 'namedStyleType'
+                        'fields': 'namedStyleType,spaceAbove,spaceBelow'
                     }
                 },
-                # Make header text red/colored
+                # Make header text red, bold, slightly larger
                 {
                     'updateTextStyle': {
                         'range': {
@@ -1427,9 +1429,10 @@ def sync_custom_activities(logbook_id):
                                     'rgbColor': {'red': 0.8, 'green': 0.0, 'blue': 0.0}
                                 }
                             },
-                            'bold': True
+                            'bold': True,
+                            'fontSize': {'magnitude': 13, 'unit': 'PT'}
                         },
-                        'fields': 'foregroundColor,bold'
+                        'fields': 'foregroundColor,bold,fontSize'
                     }
                 }
             ]
@@ -1584,7 +1587,12 @@ def sync_custom_activities(logbook_id):
             doc_content = document.get('body').get('content')
             sig_insert_index = doc_content[-1].get('endIndex', 1) - 1
             
-            sig_text = f"\nDisetujui Oleh\n\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
+            # Match screenshot format:
+            # "Disetujui Oleh" (bold, right-aligned)
+            # [empty space for signature]
+            # "Tanda Tangan Mentor" (bold, right-aligned)
+            # "{nama_mentor}" (bold + RED, right-aligned)
+            sig_text = f"Disetujui Oleh\n\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
             
             sig_requests = [
                 {
@@ -1593,7 +1601,7 @@ def sync_custom_activities(logbook_id):
                         'text': sig_text
                     }
                 },
-                # Reset to NORMAL style for signature (not heading)
+                # Set all signature text to NORMAL_TEXT + right-aligned
                 {
                     'updateParagraphStyle': {
                         'range': {
@@ -1607,45 +1615,73 @@ def sync_custom_activities(logbook_id):
                         'fields': 'namedStyleType,alignment'
                     }
                 },
-                # Bold "Disetujui Oleh" and mentor name
+                # Ensure all signature text is black first
                 {
                     'updateTextStyle': {
                         'range': {
-                            'startIndex': sig_insert_index + 1,  # after \n
-                            'endIndex': sig_insert_index + 1 + len('Disetujui Oleh')
-                        },
-                        'textStyle': {'bold': True},
-                        'fields': 'bold'
-                    }
-                },
-                {
-                    'updateTextStyle': {
-                        'range': {
-                            'startIndex': sig_insert_index + 1,
-                            'endIndex': sig_insert_index + len(sig_text) - 1
+                            'startIndex': sig_insert_index,
+                            'endIndex': sig_insert_index + len(sig_text)
                         },
                         'textStyle': {
                             'foregroundColor': {
                                 'color': {
                                     'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
                                 }
-                            }
+                            },
+                            'fontSize': {'magnitude': 11, 'unit': 'PT'},
+                            'bold': False
                         },
-                        'fields': 'foregroundColor'
+                        'fields': 'foregroundColor,fontSize,bold'
                     }
-                }
+                },
+                # Bold "Disetujui Oleh"
+                {
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': sig_insert_index,
+                            'endIndex': sig_insert_index + len('Disetujui Oleh')
+                        },
+                        'textStyle': {'bold': True},
+                        'fields': 'bold'
+                    }
+                },
             ]
             
-            # Bold the mentor name
-            mentor_start = sig_insert_index + len(sig_text) - len(nama_mentor) - 2  # before \n\n
-            mentor_end = mentor_start + len(nama_mentor)
-            sig_requests.append({
-                'updateTextStyle': {
-                    'range': {'startIndex': mentor_start, 'endIndex': mentor_end},
-                    'textStyle': {'bold': True},
-                    'fields': 'bold'
-                }
-            })
+            # Bold "Tanda Tangan Mentor"
+            ttm_text = 'Tanda Tangan Mentor'
+            ttm_offset = sig_text.find(ttm_text)
+            if ttm_offset >= 0:
+                sig_requests.append({
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': sig_insert_index + ttm_offset,
+                            'endIndex': sig_insert_index + ttm_offset + len(ttm_text)
+                        },
+                        'textStyle': {'bold': True},
+                        'fields': 'bold'
+                    }
+                })
+            
+            # Bold + RED for mentor name
+            mentor_offset = sig_text.find(nama_mentor)
+            if mentor_offset >= 0:
+                sig_requests.append({
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': sig_insert_index + mentor_offset,
+                            'endIndex': sig_insert_index + mentor_offset + len(nama_mentor)
+                        },
+                        'textStyle': {
+                            'bold': True,
+                            'foregroundColor': {
+                                'color': {
+                                    'rgbColor': {'red': 0.8, 'green': 0.0, 'blue': 0.0}
+                                }
+                            }
+                        },
+                        'fields': 'bold,foregroundColor'
+                    }
+                })
             
             service.documents().batchUpdate(documentId=file_id, body={'requests': sig_requests}).execute()
 
