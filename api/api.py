@@ -1430,9 +1430,10 @@ def sync_custom_activities(logbook_id):
                                 }
                             },
                             'bold': True,
+                            'underline': False,
                             'fontSize': {'magnitude': 13, 'unit': 'PT'}
                         },
-                        'fields': 'foregroundColor,bold,fontSize'
+                        'fields': 'foregroundColor,bold,underline,fontSize'
                     }
                 }
             ]
@@ -1554,30 +1555,62 @@ def sync_custom_activities(logbook_id):
             if text_requests:
                 service.documents().batchUpdate(documentId=file_id, body={'requests': text_requests}).execute()
             
-            # E. Bold the header row text
+            # E. Style all table cells: center-align, bold header, set font
             # Re-fetch to get updated indices
             document = service.documents().get(documentId=file_id).execute()
             doc_content = document.get('body').get('content')
             
-            # Find table again for header styling
+            # Find table again for styling
             for element in doc_content:
                 if 'table' in element and element.get('startIndex', 0) >= table_insert_index:
                     styled_table = element.get('table')
-                    if styled_table and len(styled_table.get('tableRows', [])) > 0:
-                        header_cells = styled_table['tableRows'][0].get('tableCells', [])
+                    if styled_table:
                         style_requests = []
-                        for cell in header_cells:
-                            cell_content = cell.get('content', [])
-                            if cell_content:
-                                c_start = cell_content[0].get('startIndex', 0)
-                                c_end = cell_content[-1].get('endIndex', c_start + 1)
-                                style_requests.append({
-                                    'updateTextStyle': {
-                                        'range': {'startIndex': c_start, 'endIndex': c_end - 1},
-                                        'textStyle': {'bold': True},
-                                        'fields': 'bold'
-                                    }
-                                })
+                        all_rows = styled_table.get('tableRows', [])
+                        
+                        for row_idx, row in enumerate(all_rows):
+                            for cell in row.get('tableCells', []):
+                                cell_content = cell.get('content', [])
+                                if cell_content:
+                                    c_start = cell_content[0].get('startIndex', 0)
+                                    c_end = cell_content[-1].get('endIndex', c_start + 1)
+                                    
+                                    # Center-align all cells
+                                    style_requests.append({
+                                        'updateParagraphStyle': {
+                                            'range': {'startIndex': c_start, 'endIndex': c_end},
+                                            'paragraphStyle': {'alignment': 'CENTER'},
+                                            'fields': 'alignment'
+                                        }
+                                    })
+                                    
+                                    # Set base text style (black, 11pt, no underline)
+                                    style_requests.append({
+                                        'updateTextStyle': {
+                                            'range': {'startIndex': c_start, 'endIndex': c_end - 1},
+                                            'textStyle': {
+                                                'fontSize': {'magnitude': 11, 'unit': 'PT'},
+                                                'foregroundColor': {
+                                                    'color': {
+                                                        'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
+                                                    }
+                                                },
+                                                'underline': False
+                                            },
+                                            'fields': 'fontSize,foregroundColor,underline'
+                                        }
+                                    })
+                                    
+                                    # Bold header row (row 0) only
+                                    if row_idx == 0:
+                                        style_requests.append({
+                                            'updateTextStyle': {
+                                                'range': {'startIndex': c_start, 'endIndex': c_end - 1},
+                                                'textStyle': {'bold': True},
+                                                'fields': 'bold'
+                                            }
+                                        })
+                        
                         if style_requests:
                             service.documents().batchUpdate(documentId=file_id, body={'requests': style_requests}).execute()
                     break
