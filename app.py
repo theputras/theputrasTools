@@ -977,6 +977,7 @@ import base64
 
 @app.route('/manajemenUltah')
 @login_required
+@check_permission('manajemen_ultah')
 def manajemen_ultah():
     """Halaman utama - render data dari DB + SICYCA"""
     user_id = g.user.get('sub')

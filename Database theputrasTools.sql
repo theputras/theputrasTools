@@ -162,3 +162,11 @@ CREATE TABLE webauthn_credentials (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- ==========================================================
+-- SEED DATA: TOOLS & PERMISSIONS
+-- ==========================================================
+-- Tool: Manajemen Ultah
+INSERT INTO tools (nama_tool, route_name, deskripsi) 
+VALUES ('Manajemen Ultah', 'manajemen_ultah', 'Kelola data ulang tahun & sync ke Google Calendar')
+ON DUPLICATE KEY UPDATE nama_tool = VALUES(nama_tool), deskripsi = VALUES(deskripsi);

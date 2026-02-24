@@ -123,6 +123,27 @@
             </a>
             {% endif %}
 
+            {% if 'manajemen_ultah' in allowed_tools %}
+            <a href="{{ url_for('manajemen_ultah') }}" 
+               class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
+                      bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
+                      hover:bg-gray-800 hover:border-rose-500/30 transition-all duration-300
+                      active:scale-95">
+                <div class="flex-shrink-0 p-3 bg-rose-500/10 rounded-full group-hover:bg-rose-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0A1.75 1.75 0 003 15.546V12a9 9 0 0118 0v3.546zM12 3v2m-4.243.757L6.343 7.17m8.486-1.414L16.243 7.17M12 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                    </svg>
+                </div>
+                <div class="text-left sm:text-center">
+                    <h3 class="font-bold text-white text-sm sm:text-base">Manajemen Ultah</h3>
+                    <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Kelola data ulang tahun & sync Google Calendar</p>
+                </div>
+                <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
+            {% endif %}
+
             {% if g.user and g.user.role_id == 1 %}
             <a href="{{ url_for('admin_panel') }}" 
                class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
