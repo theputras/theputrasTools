@@ -6,6 +6,7 @@
     <title>Tools - The Putras</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
     
@@ -144,6 +145,24 @@
             </a>
             {% endif %}
 
+            <!-- Muslim Tools (All Users) -->
+            <a href="{{ url_for('muslim_tools_page') }}" 
+               class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
+                      bg-gray-800/50 backdrop-blur-sm border border-white/5 rounded-2xl 
+                      hover:bg-gray-800 hover:border-emerald-500/30 transition-all duration-300
+                      active:scale-95">
+                <div class="flex-shrink-0 p-3 bg-emerald-500/10 rounded-full group-hover:bg-emerald-500/20 transition-colors mr-4 sm:mr-0 sm:mb-4">
+                    <i class="fas fa-mosque text-emerald-400"></i>
+                </div>
+                <div class="text-left sm:text-center">
+                    <h3 class="font-bold text-white text-sm sm:text-base">Muslim Tools</h3>
+                    <p class="text-xs text-gray-400 mt-0.5 sm:mt-2">Jadwal Sholat, Kalender Hijriah & Ramadhan</p>
+                </div>
+                <div class="ml-auto sm:hidden text-gray-600 group-hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
+
             {% if g.user and g.user.role_id == 1 %}
             <a href="{{ url_for('admin_panel') }}" 
                class="group flex sm:flex-col items-center sm:justify-center p-4 sm:p-6 
@@ -169,6 +188,7 @@
         
     </div>
 
+    {% include 'muslimTools/prayerWidget.html' %}
     {% include 'nativeNav.html' %}
 
 </body>

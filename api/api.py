@@ -15,6 +15,11 @@ api_bp = Blueprint('api', __name__)
 from controller.manajemenultahController import ultah_model # Import model ultah
 from models.googleOuth import google_cal_service # Import inside function to avoid circular import if necessary
 from connection import get_connection
+from controller.PrayerController import (
+    get_prayer_schedule_for_user, get_islamic_calendar_for_user,
+    get_ramadan_calendar_for_user, search_location, reverse_geocode,
+    fetch_global_hijri_calendar
+)
 
 # variabel global untuk diinject
 photo_cache = None
@@ -2090,3 +2095,74 @@ def sync_custom_activities(logbook_id):
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
+# ============================
+# JADWAL SHOLAT & KALENDER ROUTES
+# ============================
+
+@api_bp.route('/location/search')
+@login_required
+def api_location_search():
+    """API: Cari lokasi via Nominatim (debounced dari frontend)."""
+    q = request.args.get('q', '').strip()
+    if len(q) < 2:
+        return jsonify({"success": True, "results": []})
+    results = search_location(q)
+    return jsonify({"success": True, "results": results})
+
+@api_bp.route('/location/reverse')
+@login_required
+def api_location_reverse():
+    """API: Reverse geocode dari lat/lon GPS."""
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
+    if not lat or not lon:
+        return jsonify({"success": False, "message": "lat & lon required"}), 400
+    result = reverse_geocode(float(lat), float(lon))
+    if result:
+        return jsonify({"success": True, "location": result})
+    return jsonify({"success": False, "message": "Lokasi tidak ditemukan."})
+
+@api_bp.route('/prayer/schedule')
+@login_required
+def api_prayer_schedule():
+    """API: Jadwal sholat hari ini (per-user settings)."""
+    user_id = g.user.get('sub')
+    result = get_prayer_schedule_for_user(user_id)
+    return jsonify(result)
+
+@api_bp.route('/prayer/calendar')
+@login_required
+def api_prayer_calendar():
+    """API: Kalender Hijriah sebulan (query params: month, year)."""
+    user_id = g.user.get('sub')
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    result = get_islamic_calendar_for_user(user_id, month, year)
+    return jsonify(result)
+
+@api_bp.route('/prayer/global-hijri-calendar')
+@login_required
+def api_prayer_global_hijri_calendar():
+    """API: Kalender Hijriah global (tanpa city, query params: month, year)."""
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    if not month or not year:
+        today = datetime.now()
+        month = month or today.month
+        year = year or today.year
+    days = fetch_global_hijri_calendar(month, year)
+    return jsonify({
+        "success": bool(days),
+        "month": month,
+        "year": year,
+        "days": days
+    })
+
+@api_bp.route('/prayer/ramadan')
+@login_required
+def api_prayer_ramadan():
+    """API: Kalender Ramadhan dengan status & label hari ke-X."""
+    user_id = g.user.get('sub')
+    result = get_ramadan_calendar_for_user(user_id)
+    return jsonify(result)

@@ -170,3 +170,40 @@ CREATE TABLE webauthn_credentials (
 INSERT INTO tools (nama_tool, route_name, deskripsi) 
 VALUES ('Manajemen Ultah', 'manajemen_ultah', 'Kelola data ulang tahun & sync ke Google Calendar')
 ON DUPLICATE KEY UPDATE nama_tool = VALUES(nama_tool), deskripsi = VALUES(deskripsi);
+
+-- ==========================================================
+-- 7. TABEL FITUR: JADWAL SHOLAT & KALENDER HIJRIAH
+-- ==========================================================
+
+-- A. Preferensi sholat per-user (Muhammadiyah/NU, lokasi)
+CREATE TABLE user_prayer_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    preference ENUM('muhammadiyah', 'nu') DEFAULT 'nu',
+    city VARCHAR(100) DEFAULT 'Surabaya',
+    country VARCHAR(100) DEFAULT 'Indonesia',
+    hijri_adj INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_user (user_id),
+    CONSTRAINT fk_prayer_settings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- B. Konfigurasi tanggal Ramadhan (admin-only, per tahun Hijriah)
+CREATE TABLE ramadan_config (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    hijri_year INT NOT NULL,
+    start_ramadan_muhammadiyah DATE DEFAULT NULL,
+    start_ramadan_pemerintah DATE DEFAULT NULL,
+    total_days INT DEFAULT 30,
+    updated_by BIGINT UNSIGNED DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_hijri_year (hijri_year),
+    CONSTRAINT fk_ramadan_updater FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- Seed: Ramadhan 1447 H (2026)
+INSERT INTO ramadan_config (hijri_year, start_ramadan_muhammadiyah, start_ramadan_pemerintah, total_days)
+VALUES (1447, '2026-02-17', '2026-02-18', 30)
+ON DUPLICATE KEY UPDATE hijri_year = VALUES(hijri_year);

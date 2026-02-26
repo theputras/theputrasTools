@@ -1,3 +1,5 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from connection import get_connection
 
 def fix_db():
@@ -10,66 +12,66 @@ def fix_db():
     cursor = conn.cursor(dictionary=True)
     try:
         # ============================================================
-        # 0. INSERT role baru "Manajemen Ultah" ke tabel roles
+        # 1. CREATE TABLE: user_prayer_settings (Jadwal Sholat)
         # ============================================================
-        print("Inserting role 'Manajemen Ultah'...")
+        print("Creating table 'user_prayer_settings'...")
         cursor.execute("""
-            INSERT INTO roles (nama_role, deskripsi) 
-            VALUES ('Manajemen Ultah', 'Role khusus untuk akses fitur manajemen ulang tahun')
-            ON DUPLICATE KEY UPDATE deskripsi = VALUES(deskripsi)
+            CREATE TABLE IF NOT EXISTS user_prayer_settings (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id BIGINT UNSIGNED NOT NULL,
+                preference ENUM('muhammadiyah', 'nu') DEFAULT 'nu',
+                city VARCHAR(100) DEFAULT 'Surabaya',
+                state VARCHAR(100) DEFAULT NULL,
+                country VARCHAR(100) DEFAULT 'Indonesia',
+                hijri_adj INT DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY unique_user (user_id),
+                CONSTRAINT fk_prayer_settings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
         """)
-        cursor.execute("SELECT id FROM roles WHERE nama_role = 'Manajemen Ultah'")
-        new_role = cursor.fetchone()
-        print(f"✅ Role 'Manajemen Ultah' -> ID: {new_role['id']}")
+        print("✅ Tabel 'user_prayer_settings' ready.")
+
+        # Migrate: tambah kolom state jika belum ada
+        try:
+            cursor.execute("ALTER TABLE user_prayer_settings ADD COLUMN state VARCHAR(100) DEFAULT NULL AFTER city")
+            print("[OK] Kolom 'state' ditambahkan.")
+        except Exception:
+            print("[INFO] Kolom 'state' sudah ada, skip.")
 
         # ============================================================
-        # 1. INSERT tool "Manajemen Ultah" ke tabel tools
+        # 2. CREATE TABLE: ramadan_config (Admin-only Ramadhan dates)
         # ============================================================
-        print("Inserting tool 'Manajemen Ultah'...")
+        print("Creating table 'ramadan_config'...")
         cursor.execute("""
-            INSERT INTO tools (nama_tool, route_name, deskripsi) 
-            VALUES ('Manajemen Ultah', 'manajemen_ultah', 'Kelola data ulang tahun & sync ke Google Calendar')
-            ON DUPLICATE KEY UPDATE nama_tool = VALUES(nama_tool), deskripsi = VALUES(deskripsi)
+            CREATE TABLE IF NOT EXISTS ramadan_config (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                hijri_year INT NOT NULL,
+                start_ramadan_muhammadiyah DATE DEFAULT NULL,
+                start_ramadan_pemerintah DATE DEFAULT NULL,
+                total_days INT DEFAULT 30,
+                updated_by BIGINT UNSIGNED DEFAULT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY unique_hijri_year (hijri_year),
+                CONSTRAINT fk_ramadan_updater FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+            )
         """)
-        
-        # Ambil ID tool yang baru diinsert / yang sudah ada
-        cursor.execute("SELECT id FROM tools WHERE route_name = 'manajemen_ultah'")
-        tool_row = cursor.fetchone()
-        if not tool_row:
-            print("ERROR: Tool tidak ditemukan setelah insert!")
-            return
-        tool_id = tool_row['id']
-        print(f"Tool ID: {tool_id}")
+        print("✅ Tabel 'ramadan_config' ready.")
 
         # ============================================================
-        # 2. INSERT role_permissions untuk semua role yang ada
-        #    - Super Admin (1) tidak perlu karena sudah bypass di tools_page()
-        #    - Role 2 (Admin/Staff) -> allowed (1)
-        #    - Role 3 (Mahasiswa) -> allowed (1)
-        #    - Role 4 (Mahasiswa Non-Sicyca) -> not allowed (0)
+        # 3. SEED: Ramadhan 1447 H (2026)
         # ============================================================
-        print("Setting role permissions...")
-        
-        # Ambil semua role kecuali Super Admin (id=1)
-        cursor.execute("SELECT id, nama_role FROM roles WHERE id != 1")
-        roles = cursor.fetchall()
-        
-        for role in roles:
-            role_id = role['id']
-            # Default: role 2 & 3 allowed, role 4 not allowed
-            is_allowed = 1 if role_id in (2, 3) else 0
-            
-            cursor.execute("""
-                INSERT INTO role_permissions (role_id, tool_id, is_allowed)
-                VALUES (%s, %s, %s)
-                ON DUPLICATE KEY UPDATE is_allowed = VALUES(is_allowed)
-            """, (role_id, tool_id, is_allowed))
-            
-            status = "✅ ALLOWED" if is_allowed else "❌ NOT ALLOWED"
-            print(f"  Role '{role['nama_role']}' (id={role_id}): {status}")
+        print("Seeding Ramadhan 1447 config...")
+        cursor.execute("""
+            INSERT INTO ramadan_config (hijri_year, start_ramadan_muhammadiyah, start_ramadan_pemerintah, total_days)
+            VALUES (1447, '2026-02-17', '2026-02-18', 30)
+            ON DUPLICATE KEY UPDATE hijri_year = VALUES(hijri_year)
+        """)
+        print("✅ Ramadhan 1447 H (2026) config seeded.")
 
         conn.commit()
-        print("\n✅ Semua data berhasil dimasukkan!")
+        print("\n✅ SEMUA MIGRASI SELESAI!")
         
     except Exception as e:
         print(f"Error: {e}")

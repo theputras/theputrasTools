@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muslim Tools - The Putras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
+
+<div class="flex-1 flex flex-col items-center pt-6 pb-32 px-4 w-full max-w-4xl mx-auto"
+     x-data="muslimToolsApp()" x-init="init()">
+
+    <!-- Header -->
+    <div class="text-center mb-6 w-full">
+        <h1 class="text-2xl font-bold text-white tracking-tight flex items-center justify-center gap-3">
+            <i class="fas fa-mosque text-emerald-400"></i>
+            Muslim Tools
+        </h1>
+        <p class="text-gray-500 text-sm mt-1" x-text="cityLabel || 'Memuat lokasi...'"></p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="w-full flex bg-gray-800/60 rounded-2xl p-1 mb-6 border border-white/5">
+        <button @click="activeTab = 'jadwal'"
+                :class="activeTab === 'jadwal' 
+                    ? 'bg-emerald-600/20 text-emerald-300 border-emerald-500/40 shadow-lg' 
+                    : 'text-gray-500 hover:text-gray-300'"
+                class="flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border border-transparent">
+            <i class="fas fa-clock mr-1"></i> Jadwal
+        </button>
+        <button @click="activeTab = 'hijri'; if(!hijriLoaded) loadHijriCalendar()"
+                :class="activeTab === 'hijri' 
+                    ? 'bg-teal-600/20 text-teal-300 border-teal-500/40 shadow-lg' 
+                    : 'text-gray-500 hover:text-gray-300'"
+                class="flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border border-transparent">
+            <i class="fas fa-calendar-alt mr-1"></i> Hijriah
+        </button>
+        <button @click="activeTab = 'ramadan'; if(!ramadanLoaded) loadRamadan()"
+                :class="activeTab === 'ramadan' 
+                    ? 'bg-amber-600/20 text-amber-300 border-amber-500/40 shadow-lg' 
+                    : 'text-gray-500 hover:text-gray-300'"
+                class="flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border border-transparent">
+            <i class="fas fa-star-and-crescent mr-1"></i> Ramadhan
+        </button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 1: JADWAL SHOLAT                        -->
+    <!-- ============================================ -->
+    <div x-show="activeTab === 'jadwal'" class="w-full" x-cloak>
+        <!-- Loading -->
+        <template x-if="loading">
+            <div class="py-12 flex flex-col items-center text-gray-500">
+                <i class="fas fa-spinner fa-spin text-3xl mb-3 text-emerald-400"></i>
+                <span class="text-sm">Memuat jadwal sholat...</span>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template x-if="!loading && error">
+            <div class="py-12 flex flex-col items-center text-red-400">
+                <i class="fas fa-exclamation-circle text-3xl mb-3"></i>
+                <span class="text-sm" x-text="error"></span>
+                <button @click="fetchSchedule()" class="mt-3 text-xs text-emerald-400 hover:underline">
+                    <i class="fas fa-redo mr-1"></i> Coba lagi
+                </button>
+            </div>
+        </template>
+
+        <!-- Prayer Schedule -->
+        <template x-if="!loading && !error">
+            <div>
+                <!-- Hijri Date Card -->
+                <div class="bg-gradient-to-br from-emerald-600/20 via-teal-600/10 to-transparent rounded-2xl p-5 mb-4 border border-emerald-500/20">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-emerald-400/70 uppercase tracking-wider font-medium">Tanggal Hijriah</p>
+                            <p class="text-lg font-bold text-white mt-1" x-text="hijriDate || '-'"></p>
+                            <p class="text-xs text-gray-400 mt-1" x-text="gregorianDate || ''"></p>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+                            <i class="fas fa-moon text-emerald-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prayer Times List -->
+                <div class="space-y-2">
+                    <template x-for="(prayer, i) in timings" :key="i">
+                        <div class="flex items-center justify-between p-4 rounded-xl transition-all duration-300"
+                             :class="{
+                                 'bg-emerald-600/15 border border-emerald-500/30 shadow-lg shadow-emerald-900/20': prayer.isNext,
+                                 'bg-gray-800/50 border border-white/5': !prayer.isNext && !prayer.isPassed,
+                                 'bg-gray-800/30 border border-white/5 opacity-50': prayer.isPassed
+                             }">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                     :class="prayer.isNext ? 'bg-emerald-500/20' : 'bg-gray-700/50'">
+                                    <i class="fas" 
+                                       :class="{
+                                           'fa-cloud-sun text-amber-400': prayer.name === 'Imsak',
+                                           'fa-sun text-orange-400': prayer.name === 'Subuh' || prayer.name === 'Terbit',
+                                           'fa-sun text-yellow-400': prayer.name === 'Dzuhur',
+                                           'fa-cloud-sun text-orange-300': prayer.name === 'Ashar',
+                                           'fa-cloud-moon text-rose-400': prayer.name === 'Maghrib',
+                                           'fa-moon text-indigo-400': prayer.name === 'Isya'
+                                       }"></i>
+                                </div>
+                                <div>
+                                    <span class="font-semibold text-sm"
+                                          :class="prayer.isNext ? 'text-emerald-300' : (prayer.isPassed ? 'text-gray-500' : 'text-white')"
+                                          x-text="prayer.name"></span>
+                                    <template x-if="prayer.isNext">
+                                        <span class="block text-[10px] text-emerald-400 font-medium mt-0.5">Berikutnya</span>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-sm tabular-nums"
+                                      :class="prayer.isNext ? 'text-emerald-300' : (prayer.isPassed ? 'text-gray-600' : 'text-gray-300')"
+                                      x-text="prayer.time"></span>
+                                <template x-if="prayer.isNext">
+                                    <span class="block text-[10px] text-emerald-400/70 tabular-nums mt-0.5" x-text="countdown"></span>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 2: KALENDER HIJRIAH                     -->
+    <!-- ============================================ -->
+    <div x-show="activeTab === 'hijri'" class="w-full" x-cloak>
+        <!-- Loading -->
+        <template x-if="hijriLoading">
+            <div class="py-12 flex flex-col items-center text-gray-500">
+                <i class="fas fa-spinner fa-spin text-3xl mb-3 text-teal-400"></i>
+                <span class="text-sm">Memuat kalender Hijriah...</span>
+            </div>
+        </template>
+
+        <!-- Calendar -->
+        <template x-if="!hijriLoading">
+            <div>
+                <!-- Month Navigation -->
+                <div class="flex items-center justify-between mb-4 bg-gray-800/60 rounded-2xl p-3 border border-white/5">
+                    <button @click="prevMonth()" class="w-10 h-10 rounded-xl bg-gray-700/50 hover:bg-gray-700 flex items-center justify-center transition text-gray-400 hover:text-white">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="text-center">
+                        <p class="text-white font-bold text-sm" x-text="hijriCalendarTitle"></p>
+                        <p class="text-xs text-gray-500" x-text="calMonth + '/' + calYear"></p>
+                    </div>
+                    <button @click="nextMonth()" class="w-10 h-10 rounded-xl bg-gray-700/50 hover:bg-gray-700 flex items-center justify-center transition text-gray-400 hover:text-white">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Calendar Grid (Google Calendar Style) -->
+                <div class="bg-gray-800 border border-white/5 rounded-2xl overflow-hidden shadow-lg shadow-black/20">
+                    <!-- Weekday Headers -->
+                    <div class="grid grid-cols-7 border-b border-white/5 bg-gray-900/40">
+                        <template x-for="d in ['Min','Sen','Sel','Rab','Kam','Jum','Sab']" :key="d">
+                            <div class="text-center text-[10px] font-semibold uppercase tracking-wider text-gray-500 py-2 border-r border-white/5 last:border-r-0" x-text="d"></div>
+                        </template>
+                    </div>
+
+                    <!-- Grid Body -->
+                    <div class="grid grid-cols-7 bg-white/5 gap-px">
+                        <!-- Empty cells for offset -->
+                        <template x-for="n in hijriOffset" :key="'blank-'+n">
+                            <div class="bg-gray-800 min-h-[6rem] sm:min-h-[7rem]"></div>
+                        </template>
+                        
+                        <!-- Day cells -->
+                        <template x-for="day in hijriDays" :key="day.gregorian_date">
+                            <div class="bg-gray-800 p-1.5 sm:p-2 min-h-[6rem] sm:min-h-[7rem] flex flex-col relative transition group hover:bg-gray-700/30"
+                                 :class="day.isToday ? 'ring-1 ring-inset ring-teal-500/50 bg-teal-900/10' : ''">
+                                
+                                <!-- Header: Date Numbers -->
+                                <div class="flex items-start justify-between mb-1">
+                                    <!-- Gregorian Date -->
+                                    <span class="w-6 h-6 flex items-center justify-center text-xs font-bold rounded-full"
+                                          :class="day.isToday ? 'bg-teal-500 text-white shadow-md' : (day.isFriday ? 'text-emerald-400' : 'text-gray-300')"
+                                          x-text="day.gregorian_day"></span>
+                                    
+                                    <!-- Hijri Date -->
+                                    <div class="text-[9px] sm:text-[10px] font-medium text-right leading-tight"
+                                         :class="day.isToday ? 'text-teal-400/80' : 'text-gray-500'">
+                                        <span x-text="day.hijri_day"></span>
+                                        <span class="block text-amber-400/90" x-show="day.hijri_day === '1'" x-text="day.hijri_month.substring(0,3)"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Events (Holidays) -->
+                                <div class="mt-auto space-y-1">
+                                    <template x-if="day.holiday">
+                                        <div class="px-1.5 py-1 rounded text-[9px] sm:text-[10px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 line-clamp-2 leading-tight"
+                                             :title="day.holiday">
+                                            <i class="fas fa-star text-[8px] mr-1 text-indigo-400"></i>
+                                            <span x-text="day.holiday"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                        
+                        <!-- Extra padding cells to fill the last row (optional cleanup) -->
+                        <template x-for="n in (42 - (hijriDays.length + hijriOffset))" :key="'pad-'+n">
+                            <!-- Only show padding if it doesn't create an entirely empty extra row -->
+                            <template x-if="(hijriDays.length + hijriOffset) > 35 || n <= (35 - (hijriDays.length + hijriOffset))">
+                                <div class="bg-gray-800 min-h-[6rem] sm:min-h-[7rem]"></div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-400">
+                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span> Hari ini</span>
+                    <span class="flex items-center gap-2"><div class="px-1.5 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-[10px]"><i class="fas fa-star mr-1"></i>Hari Besar</div></span>
+                    <span class="flex items-center gap-2"><span class="text-emerald-400 font-bold">12</span> Jumat</span>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 3: KALENDER RAMADHAN                    -->
+    <!-- ============================================ -->
+    <div x-show="activeTab === 'ramadan'" class="w-full" x-cloak>
+        <!-- Loading -->
+        <template x-if="ramadanLoading">
+            <div class="py-12 flex flex-col items-center text-gray-500">
+                <i class="fas fa-spinner fa-spin text-3xl mb-3 text-amber-400"></i>
+                <span class="text-sm">Memuat kalender Ramadhan...</span>
+            </div>
+        </template>
+
+        <!-- Not configured -->
+        <template x-if="!ramadanLoading && ramadanError">
+            <div class="py-12 flex flex-col items-center text-gray-500 text-center">
+                <i class="fas fa-star-and-crescent text-3xl mb-3 text-amber-400/40"></i>
+                <span class="text-sm" x-text="ramadanError"></span>
+            </div>
+        </template>
+
+        <!-- Ramadan Calendar -->
+        <template x-if="!ramadanLoading && !ramadanError && ramadanData">
+            <div>
+                <!-- Status Header -->
+                <div class="rounded-2xl p-5 mb-4 border"
+                     :class="{
+                         'bg-gradient-to-br from-amber-600/20 via-orange-600/10 to-transparent border-amber-500/20': ramadanData.status === 'active',
+                         'bg-gradient-to-br from-gray-600/20 via-gray-600/10 to-transparent border-gray-500/20': ramadanData.status !== 'active'
+                     }">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-wider font-medium"
+                               :class="ramadanData.status === 'active' ? 'text-amber-400/70' : 'text-gray-500'">
+                                Ramadhan <span x-text="ramadanData.hijri_year"></span> H
+                            </p>
+                            <template x-if="ramadanData.status === 'active'">
+                                <p class="text-2xl font-bold text-white mt-1">Hari ke-<span x-text="ramadanData.current_day"></span></p>
+                            </template>
+                            <template x-if="ramadanData.status === 'upcoming'">
+                                <p class="text-lg font-bold text-white mt-1">Belum dimulai</p>
+                            </template>
+                            <template x-if="ramadanData.status === 'finished'">
+                                <p class="text-lg font-bold text-gray-400 mt-1">Sudah selesai</p>
+                            </template>
+                            <p class="text-xs text-gray-400 mt-1" x-text="ramadanData.total_days + ' hari'"></p>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center"
+                             :class="ramadanData.status === 'active' ? 'bg-amber-500/10' : 'bg-gray-700/50'">
+                            <i class="fas fa-star-and-crescent text-2xl"
+                               :class="ramadanData.status === 'active' ? 'text-amber-400' : 'text-gray-500'"></i>
+                        </div>
+                    </div>
+
+                    <!-- Imsak & Buka times (if active) -->
+                    <template x-if="ramadanData.status === 'active' && ramadanData.today_timings">
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <div class="bg-black/20 rounded-xl p-3 text-center">
+                                <p class="text-[10px] text-amber-400/70 uppercase tracking-wider">Imsak</p>
+                                <p class="text-lg font-bold text-white tabular-nums" x-text="ramadanData.today_timings.Imsak || '-'"></p>
+                            </div>
+                            <div class="bg-black/20 rounded-xl p-3 text-center">
+                                <p class="text-[10px] text-amber-400/70 uppercase tracking-wider">Buka Puasa</p>
+                                <p class="text-lg font-bold text-white tabular-nums" x-text="ramadanData.today_timings.Maghrib || '-'"></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Ramadan Days List -->
+                <div class="space-y-1.5">
+                    <template x-for="day in ramadanData.days" :key="day.day_number">
+                        <div class="flex items-center justify-between px-4 py-3 rounded-xl transition-all"
+                             :class="{
+                                 'bg-amber-600/15 border border-amber-500/30 shadow-lg': day.status === 'today',
+                                 'bg-gray-800/30 border border-white/5 opacity-40': day.status === 'passed',
+                                 'bg-gray-800/50 border border-white/5': day.status === 'upcoming'
+                             }">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold"
+                                     :class="{
+                                         'bg-amber-500/20 text-amber-300': day.status === 'today',
+                                         'bg-gray-700/30 text-gray-600': day.status === 'passed',
+                                         'bg-gray-700/50 text-gray-400': day.status === 'upcoming'
+                                     }"
+                                     x-text="day.day_number"></div>
+                                <div>
+                                    <span class="text-sm font-medium"
+                                          :class="{
+                                              'text-amber-200': day.status === 'today',
+                                              'text-gray-600': day.status === 'passed',
+                                              'text-white': day.status === 'upcoming'
+                                          }"
+                                          x-text="day.date_display"></span>
+                                    <span class="block text-[10px]"
+                                          :class="day.status === 'today' ? 'text-amber-400/70' : 'text-gray-600'"
+                                          x-text="day.weekday"></span>
+                                </div>
+                            </div>
+                            <template x-if="day.status === 'today'">
+                                <span class="text-[10px] font-semibold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full uppercase tracking-wider">Hari ini</span>
+                            </template>
+                            <template x-if="day.status === 'passed'">
+                                <i class="fas fa-check text-gray-600 text-xs"></i>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+
+{% include 'nativeNav.html' %}
+
+<script>
+function muslimToolsApp() {
+    return {
+        activeTab: 'jadwal',
+        loading: true,
+        error: null,
+        timings: [],
+        cityLabel: '',
+        hijriDate: '',
+        gregorianDate: '',
+        countdown: '--:--',
+        _countdownInterval: null,
+
+        // Hijri calendar
+        hijriLoaded: false,
+        hijriLoading: false,
+        hijriDays: [],
+        hijriOffset: 0,
+        hijriCalendarTitle: '',
+        calMonth: 0,
+        calYear: 0,
+
+        // Ramadan
+        ramadanLoaded: false,
+        ramadanLoading: false,
+        ramadanData: null,
+        ramadanError: null,
+
+        async init() {
+            const now = new Date();
+            this.calMonth = now.getMonth() + 1;
+            this.calYear = now.getFullYear();
+            await this.fetchSchedule();
+            this.startCountdown();
+        },
+
+        async fetchSchedule() {
+            this.loading = true;
+            this.error = null;
+            try {
+                const res = await fetch('/api/prayer/schedule');
+                const data = await res.json();
+                if (data.success) {
+                    this.cityLabel = [data.city, data.country].filter(Boolean).join(', ');
+                    const h = data.hijri || {};
+                    if (h.day && h.month && h.year) {
+                        this.hijriDate = `${h.day} ${h.month.en || ''} ${h.year} H`;
+                    }
+                    const g = data.gregorian || {};
+                    if (g.day && g.month && g.year) {
+                        this.gregorianDate = `${g.weekday?.en || ''}, ${g.day} ${g.month?.en || ''} ${g.year}`;
+                    }
+                    const now = new Date();
+                    const prayerOrder = ['Imsak', 'Subuh', 'Terbit', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+                    const raw = data.timings || {};
+                    let foundNext = false;
+                    this.timings = prayerOrder.map(name => {
+                        const timeStr = raw[name] || '';
+                        const [hr, mn] = (timeStr || '00:00').split(':').map(Number);
+                        const pd = new Date(now);
+                        pd.setHours(hr, mn, 0, 0);
+                        const isPassed = now > pd;
+                        const isNext = !isPassed && !foundNext;
+                        if (isNext) foundNext = true;
+                        return { name, time: timeStr, isPassed, isNext };
+                    });
+                    this.updateCountdown();
+                } else {
+                    this.error = data.message || 'Gagal memuat jadwal sholat.';
+                }
+            } catch (e) {
+                this.error = 'Tidak dapat terhubung ke server.';
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        startCountdown() {
+            this._countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+        },
+
+        updateCountdown() {
+            if (!this.timings || this.timings.length === 0) return;
+            const now = new Date();
+            const nextPrayer = this.timings.find(p => p.isNext);
+            if (!nextPrayer) { this.countdown = 'Besok'; return; }
+            const [h, m] = nextPrayer.time.split(':').map(Number);
+            const target = new Date(now);
+            target.setHours(h, m, 0, 0);
+            const diff = target - now;
+            if (diff <= 0) { this.countdown = 'Sekarang!'; return; }
+            const hours = Math.floor(diff / 3600000);
+            const mins = Math.floor((diff % 3600000) / 60000);
+            const secs = Math.floor((diff % 60000) / 1000);
+            if (hours > 0) this.countdown = `${hours}j ${mins}m`;
+            else if (mins > 0) this.countdown = `${mins}m ${secs}d`;
+            else this.countdown = `${secs}d`;
+        },
+
+        // ===== HIJRI CALENDAR =====
+        async loadHijriCalendar() {
+            this.hijriLoading = true;
+            try {
+                const res = await fetch(`/api/prayer/global-hijri-calendar?month=${this.calMonth}&year=${this.calYear}`);
+                const data = await res.json();
+                if (data.success && data.days) {
+                    const today = new Date();
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const yyyy = today.getFullYear();
+                    const todayStr = `${dd}-${mm}-${yyyy}`;
+                    
+                    this.hijriDays = data.days.map(d => ({
+                        ...d,
+                        isToday: d.gregorian_date === todayStr,
+                        isFriday: d.gregorian_weekday === 'Friday'
+                    }));
+
+                    // Calculate weekday offset for first day
+                    if (this.hijriDays.length > 0) {
+                        const firstDay = this.hijriDays[0];
+                        const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                        this.hijriOffset = dayNames.indexOf(firstDay.gregorian_weekday);
+                        if (this.hijriOffset < 0) this.hijriOffset = 0;
+
+                        // Build title from first day's hijri info
+                        const hm = firstDay.hijri_month || '';
+                        const hy = firstDay.hijri_year || '';
+                        this.hijriCalendarTitle = `${hm} ${hy} H`;
+                    }
+                    this.hijriLoaded = true;
+                }
+            } catch (e) {
+                console.error('[Hijri] Load error:', e);
+            } finally {
+                this.hijriLoading = false;
+            }
+        },
+
+        prevMonth() {
+            this.calMonth--;
+            if (this.calMonth < 1) { this.calMonth = 12; this.calYear--; }
+            this.loadHijriCalendar();
+        },
+        nextMonth() {
+            this.calMonth++;
+            if (this.calMonth > 12) { this.calMonth = 1; this.calYear++; }
+            this.loadHijriCalendar();
+        },
+
+        // ===== RAMADAN =====
+        async loadRamadan() {
+            this.ramadanLoading = true;
+            this.ramadanError = null;
+            try {
+                const res = await fetch('/api/prayer/ramadan');
+                const data = await res.json();
+                if (data.success) {
+                    this.ramadanData = data;
+                    this.ramadanLoaded = true;
+                } else {
+                    this.ramadanError = data.message || 'Konfigurasi Ramadhan belum tersedia.';
+                }
+            } catch (e) {
+                this.ramadanError = 'Gagal memuat data Ramadhan.';
+            } finally {
+                this.ramadanLoading = false;
+            }
+        }
+    };
+}
+</script>
+
+</body>
+</html>

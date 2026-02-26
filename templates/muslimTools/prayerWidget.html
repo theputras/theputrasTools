@@ -1,0 +1,462 @@
+<!-- 
+    muslimTools/prayerWidget.html
+    Widget Pengingat & Jadwal Sholat - Floating Pop-up
+    Posisi: kiri atas
+-->
+
+<div x-data="prayerWidget()" x-init="init()" x-cloak>
+
+    <!-- ========================================= -->
+    <!-- FLOATING TRIGGER BUTTON (Kiri atas) -->
+    <!-- ========================================= -->
+    <button @click="togglePopup()" 
+            class="fixed z-40 group transition-all duration-300"
+            :class="isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'"
+            style="left: 1rem; top: 1rem;"
+            id="prayer-trigger-btn">
+        
+        <!-- Glow effect saat mendekati waktu sholat -->
+        <div class="absolute inset-0 rounded-2xl transition-all duration-1000"
+             :class="isNearPrayer ? 'bg-emerald-500/30 animate-pulse shadow-lg shadow-emerald-500/40' : ''"></div>
+        
+        <div class="relative flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl border transition-all duration-300 backdrop-blur-xl"
+             :class="isNearPrayer 
+                ? 'bg-emerald-600/90 border-emerald-400/50 text-white shadow-lg shadow-emerald-500/30' 
+                : 'bg-gray-900/80 border-white/10 text-gray-300 hover:bg-gray-800/90 hover:border-white/20'">
+            
+            <!-- Mosque icon -->
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C10.34 2 9 3.34 9 5c0 .71.25 1.36.67 1.87C7.08 8.05 5.5 10.28 5.5 13H4v2h1v6h2v-6h2v6h2v-6h2v6h2v-6h2v6h2v-2h-1.5C18.5 10.28 16.92 8.05 14.33 6.87 14.75 6.36 15 5.71 15 5c0-1.66-1.34-3-3-3z"/>
+            </svg>
+            
+            <!-- Countdown / nama sholat -->
+            <div class="hidden sm:flex flex-col leading-none">
+                <span class="text-[10px] font-bold uppercase tracking-wider opacity-70" x-text="nextPrayerLabel"></span>
+                <span class="text-sm font-bold tabular-nums" x-text="countdown"></span>
+            </div>
+
+            <!-- Mobile: hanya countdown -->
+            <span class="sm:hidden text-xs font-bold tabular-nums" x-text="countdown"></span>
+        </div>
+    </button>
+
+    <!-- ========================================= -->
+    <!-- POPUP JADWAL SHOLAT -->
+    <!-- ========================================= -->
+    <div x-show="isOpen" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2 sm:translate-y-0 sm:-translate-x-4"
+         x-transition:enter-end="opacity-100 translate-y-0 sm:translate-x-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0 sm:translate-x-0"
+         x-transition:leave-end="opacity-0 translate-y-2 sm:translate-y-0 sm:-translate-x-4"
+         class="fixed z-50 
+                sm:left-4 sm:top-4 sm:w-80
+                inset-x-0 bottom-0 sm:bottom-auto sm:inset-x-auto
+                sm:rounded-2xl rounded-t-3xl
+                bg-gray-900/95 backdrop-blur-xl border border-white/10
+                shadow-2xl shadow-black/50
+                overflow-hidden max-h-[85vh] sm:max-h-[90vh]">
+        
+        <!-- Header -->
+        <div class="relative overflow-hidden">
+            <!-- Gradient background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-600/30 via-teal-600/20 to-transparent"></div>
+            
+            <div class="relative px-5 pt-4 pb-3"
+                 @touchstart.passive="_touchStartY = $event.touches[0].clientY"
+                 @touchmove.passive="_handleSwipe($event)"
+                 @touchend="_endSwipe($event)">
+                <!-- Mobile handle bar (drag to close) -->
+                <div class="sm:hidden w-10 h-1.5 bg-white/30 rounded-full mx-auto mb-3 cursor-grab active:cursor-grabbing"></div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-mosque text-emerald-400"></i>
+                            Jadwal Sholat
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5" x-text="cityLabel"></p>
+                    </div>
+                    <button @click="isOpen = false" 
+                            class="text-gray-400 hover:text-white transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Hijri Date -->
+                <div class="mt-2 text-xs text-emerald-300/80 font-medium" x-show="hijriDate" x-text="hijriDate"></div>
+            </div>
+        </div>
+
+        <!-- Prayer Times List -->
+        <div class="px-5 pb-28 sm:pb-4 space-y-1 overflow-y-auto" style="max-height: calc(85vh - 120px);">
+            
+            <!-- Loading State -->
+            <template x-if="loading">
+                <div class="py-8 flex flex-col items-center text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <span class="text-sm">Memuat jadwal...</span>
+                </div>
+            </template>
+
+            <!-- Error State -->
+            <template x-if="error && !loading">
+                <div class="py-6 flex flex-col items-center text-gray-500">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mb-2"></i>
+                    <span class="text-sm text-center" x-text="error"></span>
+                    <button @click="fetchSchedule()" class="mt-3 text-xs text-emerald-400 hover:text-emerald-300">
+                        <i class="fas fa-redo mr-1"></i> Coba lagi
+                    </button>
+                </div>
+            </template>
+
+            <!-- Prayer Times -->
+            <template x-if="!loading && !error && timings.length > 0">
+                <div class="space-y-0.5">
+                    <template x-for="(prayer, i) in timings" :key="i">
+                        <div class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-300"
+                             :class="{
+                                'bg-emerald-500/15 border border-emerald-500/30 shadow-sm shadow-emerald-500/10': prayer.isNext,
+                                'bg-white/[0.03] hover:bg-white/[0.06]': !prayer.isNext && !prayer.isPassed,
+                                'opacity-40': prayer.isPassed
+                             }">
+                            
+                            <div class="flex items-center gap-3">
+                                <!-- Status dot -->
+                                <div class="w-2 h-2 rounded-full flex-shrink-0"
+                                     :class="{
+                                        'bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse': prayer.isNext,
+                                        'bg-gray-600': !prayer.isNext && !prayer.isPassed,
+                                        'bg-gray-700': prayer.isPassed
+                                     }"></div>
+                                
+                                <span class="text-sm font-medium"
+                                      :class="prayer.isNext ? 'text-emerald-300' : 'text-gray-300'"
+                                      x-text="prayer.name"></span>
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold tabular-nums"
+                                      :class="prayer.isNext ? 'text-emerald-300' : 'text-gray-400'"
+                                      x-text="prayer.time"></span>
+                                
+                                <!-- Next prayer indicator -->
+                                <span x-show="prayer.isNext" 
+                                      class="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                                    Next
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Ramadan Notice -->
+            <div x-show="isRamadan" class="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <div class="flex items-start gap-2">
+                    <i class="fas fa-star-and-crescent text-amber-400 mt-0.5"></i>
+                    <div>
+                        <p class="text-xs font-semibold text-amber-300" x-text="'Ramadhan Hari ke-' + ramadanDay"></p>
+                        <p class="text-[10px] text-amber-400/70 mt-0.5">Selamat menunaikan ibadah puasa</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer: Link to Muslim Tools -->
+        <div class="px-5 py-3 border-t border-white/5">
+            <a href="/muslim-tools" class="flex items-center justify-center gap-2 text-xs text-emerald-400 hover:text-emerald-300 transition font-medium">
+                <span>Lihat Selengkapnya</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- NOTIFIKASI PRE-ADZAN (10 menit sebelum)  -->
+    <!-- ========================================= -->
+    <div x-show="preReminderShow" x-cloak
+         x-transition:enter="transition ease-out duration-500"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-4"
+         class="fixed z-[80] left-4 top-4 right-4 sm:right-auto sm:w-96
+                bg-amber-600/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-amber-900/50 border border-amber-400/30
+                p-4 cursor-pointer"
+         @click="preReminderShow = false">
+        <div class="flex items-start gap-3">
+            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-bell text-white text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-amber-100/70 text-[10px] uppercase tracking-wider font-medium">Persiapan Sholat</p>
+                <p class="text-white font-bold text-sm mt-0.5" x-text="'10 menit menuju ' + preReminderName"></p>
+                <p class="text-amber-100/60 text-xs mt-1" x-text="'Adzan ' + preReminderName + ' pukul ' + preReminderTime"></p>
+            </div>
+            <button class="text-white/60 hover:text-white flex-shrink-0 mt-1"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- NOTIFIKASI ADZAN (tepat waktu)            -->
+    <!-- ========================================= -->
+    <div x-show="reminderShow" x-cloak
+         x-transition:enter="transition ease-out duration-500"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-4"
+         class="fixed z-[80] left-4 top-4 right-4 sm:right-auto sm:w-96
+                bg-emerald-600/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-emerald-900/50 border border-emerald-400/30
+                p-5 cursor-pointer"
+         @click="reminderShow = false">
+        <div class="flex items-start gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-mosque text-white text-2xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-emerald-100/70 text-[10px] uppercase tracking-wider font-medium">Adzan</p>
+                <p class="text-white font-extrabold text-base mt-0.5" x-text="'Waktu ' + reminderName + ' telah tiba'"></p>
+                <p class="text-emerald-100/80 text-sm mt-1 font-semibold tabular-nums" x-text="reminderTime + ' WIB'"></p>
+            </div>
+            <button class="text-white/60 hover:text-white flex-shrink-0 mt-1"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+</div>
+
+<script>
+function prayerWidget() {
+    return {
+        isOpen: false,
+        loading: true,
+        error: null,
+        timings: [],
+        nextPrayerLabel: '...',
+        countdown: '--:--',
+        cityLabel: '',
+        hijriDate: '',
+        isNearPrayer: false,
+        isRamadan: false,
+        ramadanDay: 0,
+        reminderShow: false,
+        reminderName: '',
+        reminderTime: '',
+        preReminderShow: false,
+        preReminderName: '',
+        preReminderTime: '',
+        _rawTimings: {},
+        _countdownInterval: null,
+        _reminderCheck: null,
+        _remindedPrayers: new Set(),
+        _preRemindedPrayers: new Set(),
+
+        async init() {
+            await this.fetchSchedule();
+            this.startCountdown();
+            this.startReminderCheck();
+            // Check Ramadan status
+            this.checkRamadan();
+        },
+
+        togglePopup() {
+            this.isOpen = !this.isOpen;
+            if (this.isOpen && this.timings.length === 0) {
+                this.fetchSchedule();
+            }
+        },
+
+        // Touch swipe-down to close (mobile)
+        _touchStartY: 0,
+        _swipeDelta: 0,
+
+        _handleSwipe(e) {
+            this._swipeDelta = e.touches[0].clientY - this._touchStartY;
+        },
+
+        _endSwipe(e) {
+            // Kalau geser ke bawah > 80px → tutup popup
+            if (this._swipeDelta > 80) {
+                this.isOpen = false;
+            }
+            this._swipeDelta = 0;
+        },
+
+        async fetchSchedule() {
+            this.loading = true;
+            this.error = null;
+            try {
+                const res = await fetch('/api/prayer/schedule');
+                const data = await res.json();
+                
+                if (data.success) {
+                    this.cityLabel = (data.city || 'Surabaya') + ', ' + (data.country || 'Indonesia');
+                    
+                    // Format Hijri date
+                    const h = data.hijri || {};
+                    if (h.day && h.month && h.year) {
+                        this.hijriDate = `${h.day} ${h.month.en || ''} ${h.year} H`;
+                    }
+
+                    // Build timings array
+                    const now = new Date();
+                    const prayerOrder = ['Imsak', 'Subuh', 'Terbit', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+                    const raw = data.timings || {};
+                    this._rawTimings = raw;
+
+                    let foundNext = false;
+                    this.timings = prayerOrder.map(name => {
+                        const timeStr = raw[name] || '';
+                        const [h, m] = (timeStr || '00:00').split(':').map(Number);
+                        const prayerDate = new Date(now);
+                        prayerDate.setHours(h, m, 0, 0);
+                        
+                        const isPassed = now > prayerDate;
+                        const isNext = !isPassed && !foundNext;
+                        if (isNext) foundNext = true;
+
+                        return { name, time: timeStr, isPassed, isNext };
+                    });
+
+                    this.updateCountdown();
+                } else {
+                    this.error = data.message || 'Gagal memuat jadwal sholat.';
+                }
+            } catch (e) {
+                console.error('[PrayerWidget] Fetch error:', e);
+                this.error = 'Tidak dapat terhubung ke server.';
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async checkRamadan() {
+            try {
+                const res = await fetch('/api/prayer/ramadan');
+                const data = await res.json();
+                if (data.success && data.status === 'active') {
+                    this.isRamadan = true;
+                    this.ramadanDay = data.current_day || 0;
+                }
+            } catch (e) {
+                // Silently fail
+            }
+        },
+
+        startCountdown() {
+            this._countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+        },
+
+        updateCountdown() {
+            if (!this.timings || this.timings.length === 0) return;
+
+            const now = new Date();
+            const nextPrayer = this.timings.find(p => p.isNext);
+
+            if (!nextPrayer) {
+                // Semua sholat sudah lewat hari ini
+                this.nextPrayerLabel = 'Subuh';
+                this.countdown = 'Besok';
+                this.isNearPrayer = false;
+                return;
+            }
+
+            this.nextPrayerLabel = nextPrayer.name;
+            const [h, m] = nextPrayer.time.split(':').map(Number);
+            const target = new Date(now);
+            target.setHours(h, m, 0, 0);
+
+            const diff = target - now;
+            if (diff <= 0) {
+                this.countdown = 'Sekarang!';
+                this.isNearPrayer = true;
+                return;
+            }
+
+            const hours = Math.floor(diff / 3600000);
+            const mins = Math.floor((diff % 3600000) / 60000);
+            const secs = Math.floor((diff % 60000) / 1000);
+
+            if (hours > 0) {
+                this.countdown = `${hours}j ${mins}m`;
+            } else if (mins > 0) {
+                this.countdown = `${mins}m ${secs}d`;
+            } else {
+                this.countdown = `${secs}d`;
+            }
+
+            // Near prayer = kurang dari 15 menit
+            this.isNearPrayer = diff <= 900000;
+        },
+
+        startReminderCheck() {
+            // Cek setiap 30 detik
+            this._reminderCheck = setInterval(() => this.checkReminder(), 30000);
+        },
+
+        checkReminder() {
+            if (!this.timings || this.timings.length === 0) return;
+
+            const now = new Date();
+            const REMINDER_PRAYERS = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+
+            for (const prayer of this.timings) {
+                if (!REMINDER_PRAYERS.includes(prayer.name)) continue;
+
+                const [h, m] = prayer.time.split(':').map(Number);
+                const target = new Date(now);
+                target.setHours(h, m, 0, 0);
+
+                const diff = target - now; // ms
+
+                // 10 menit sebelum (between 9-11 minutes)
+                if (diff >= 540000 && diff <= 660000 && !this._preRemindedPrayers.has(prayer.name)) {
+                    this._preRemindedPrayers.add(prayer.name);
+                    this.showPreReminder(prayer.name, prayer.time);
+                    break;
+                }
+
+                // Tepat waktu (within 1 minute)
+                if (diff >= -60000 && diff <= 60000 && !this._remindedPrayers.has(prayer.name)) {
+                    this._remindedPrayers.add(prayer.name);
+                    this.preReminderShow = false; // tutup pre-reminder
+                    this.showReminder(prayer.name, prayer.time);
+                    break;
+                }
+            }
+        },
+
+        showPreReminder(name, time) {
+            this.preReminderName = name;
+            this.preReminderTime = time;
+            this.preReminderShow = true;
+            setTimeout(() => { this.preReminderShow = false; }, 15000);
+        },
+
+        showReminder(name, time) {
+            this.reminderName = name;
+            this.reminderTime = time;
+            this.reminderShow = true;
+            setTimeout(() => { this.reminderShow = false; }, 15000);
+        },
+
+        destroy() {
+            if (this._countdownInterval) clearInterval(this._countdownInterval);
+            if (this._reminderCheck) clearInterval(this._reminderCheck);
+        }
+    };
+}
+</script>
+
+<style>
+    /* Override posisi trigger di mobile */
+    @media (max-width: 639px) {
+        #prayer-trigger-btn {
+            left: 0.75rem !important;
+            top: 0.75rem !important;
+        }
+    }
+</style>

@@ -674,6 +674,96 @@ def update_password():
         flash(message, 'error')
 
     return redirect(url_for('account_page'))
+
+# ============================
+# JADWAL SHOLAT & KALENDER ROUTES
+# ============================
+from models.prayer import prayer_settings_model, ramadan_config_model
+
+@app.route('/muslim-tools')
+@login_required
+def muslim_tools_page():
+    """Halaman Muslim Tools — jadwal sholat, kalender Hijriah & Ramadhan."""
+    return render_template('muslimTools/muslimTools.html')
+
+
+@app.route('/account/prayer-settings', methods=['GET'])
+@login_required
+def get_prayer_settings():
+    """Ambil settings prayer user saat ini."""
+    user_id = g.user.get('sub')
+    settings = prayer_settings_model.get_by_user_id(user_id)
+    return jsonify({"success": True, "settings": settings})
+
+@app.route('/account/prayer-settings', methods=['POST'])
+@login_required
+def save_prayer_settings():
+    """Simpan/update settings prayer user."""
+    user_id = g.user.get('sub')
+    
+    data = {
+        'preference': request.form.get('preference', 'nu'),
+        'city': request.form.get('city', 'Surabaya'),
+        'state': request.form.get('state', ''),
+        'country': request.form.get('country', 'Indonesia'),
+        'hijri_adj': int(request.form.get('hijri_adj', 0))
+    }
+    
+    # Validasi preference
+    if data['preference'] not in ('muhammadiyah', 'nu'):
+        return jsonify({"success": False, "message": "Preferensi tidak valid."}), 400
+    
+    success = prayer_settings_model.upsert(user_id, data)
+    if success:
+        return jsonify({"success": True, "message": "Preferensi berhasil disimpan."})
+    return jsonify({"success": False, "message": "Gagal menyimpan preferensi."}), 500
+
+@app.route('/admin/ramadan-config', methods=['GET'])
+@login_required
+def get_ramadan_config():
+    """Ambil semua Ramadan config (admin-only)."""
+    role_id = g.user.get('role_id', 3)
+    if role_id not in (1, 2):
+        return jsonify({"success": False, "message": "Akses ditolak."}), 403
+    
+    configs = ramadan_config_model.get_all()
+    
+    # Convert date objects to string for JSON serialization
+    for cfg in configs:
+        for key in ['start_ramadan_muhammadiyah', 'start_ramadan_pemerintah']:
+            if cfg.get(key) and hasattr(cfg[key], 'isoformat'):
+                cfg[key] = cfg[key].isoformat()
+        for key in ['created_at', 'updated_at']:
+            if cfg.get(key) and hasattr(cfg[key], 'isoformat'):
+                cfg[key] = cfg[key].isoformat()
+    
+    return jsonify({"success": True, "configs": configs})
+
+@app.route('/admin/ramadan-config', methods=['POST'])
+@login_required
+def save_ramadan_config():
+    """Simpan/update Ramadan config (admin-only)."""
+    role_id = g.user.get('role_id', 3)
+    user_id = g.user.get('sub')
+    
+    if role_id not in (1, 2):
+        return jsonify({"success": False, "message": "Akses ditolak."}), 403
+    
+    data = {
+        'hijri_year': request.form.get('hijri_year', type=int),
+        'start_ramadan_muhammadiyah': request.form.get('start_ramadan_muhammadiyah'),
+        'start_ramadan_pemerintah': request.form.get('start_ramadan_pemerintah'),
+        'total_days': request.form.get('total_days', 30, type=int)
+    }
+    
+    if not data['hijri_year']:
+        return jsonify({"success": False, "message": "Tahun Hijriah wajib diisi."}), 400
+    
+    success = ramadan_config_model.upsert(data, updated_by=user_id)
+    if success:
+        return jsonify({"success": True, "message": "Konfigurasi Ramadhan berhasil disimpan."})
+    return jsonify({"success": False, "message": "Gagal menyimpan konfigurasi."}), 500
+
 # Route untuk reset session scraper (hapus cookies.json)
 @app.route('/reset-scraper-session')
 @login_required
