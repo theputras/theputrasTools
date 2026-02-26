@@ -3,7 +3,11 @@
     Widget Pengingat & Jadwal Sholat - Floating Pop-up
     Posisi: kiri atas
 -->
-
+ <style>
+        /* Styling khusus input date biar icon kalendernya warna putih di chrome */
+        
+        [x-cloak] { display: none !important; }
+    </style>
 <div x-data="prayerWidget()" x-init="init()" x-cloak>
 
     <!-- ========================================= -->
@@ -176,54 +180,68 @@
     <!-- ========================================= -->
     <!-- NOTIFIKASI PRE-ADZAN (10 menit sebelum)  -->
     <!-- ========================================= -->
+    <!-- Backdrop overlay -->
     <div x-show="preReminderShow" x-cloak
-         x-transition:enter="transition ease-out duration-500"
-         x-transition:enter-start="opacity-0 -translate-y-4"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-300"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-4"
-         class="fixed z-[80] left-4 top-4 right-4 sm:right-auto sm:w-96
-                bg-amber-600/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-amber-900/50 border border-amber-400/30
-                p-4 cursor-pointer"
-         @click="preReminderShow = false">
-        <div class="flex items-start gap-3">
-            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-bell text-white text-xl"></i>
+         x-transition.opacity
+         class="fixed inset-0 z-[79] bg-black/40 backdrop-blur-sm"></div>
+
+    <div x-show="preReminderShow" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed z-[80] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-80
+                bg-amber-600/95 text-center backdrop-blur-xl rounded-3xl shadow-2xl shadow-amber-900/50 border border-amber-400/30
+                p-6">
+        <div class="flex flex-col items-center gap-2">
+            <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-2 shadow-inner">
+                <i class="fas fa-bell text-white text-3xl animate-pulse"></i>
             </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-amber-100/70 text-[10px] uppercase tracking-wider font-medium">Persiapan Sholat</p>
-                <p class="text-white font-bold text-sm mt-0.5" x-text="'10 menit menuju ' + preReminderName"></p>
-                <p class="text-amber-100/60 text-xs mt-1" x-text="'Adzan ' + preReminderName + ' pukul ' + preReminderTime"></p>
+            <div class="w-full">
+                <p class="text-amber-100/70 text-[10px] uppercase tracking-wider font-bold">Persiapan Sholat</p>
+                <p class="text-white font-extrabold text-lg mt-1" x-text="'10 Menit Menuju ' + preReminderName"></p>
+                <p class="text-amber-50 text-sm mt-1" x-text="'Adzan ' + preReminderName + ' pukul ' + preReminderTime"></p>
             </div>
-            <button class="text-white/60 hover:text-white flex-shrink-0 mt-1"><i class="fas fa-times"></i></button>
+            <button @click="preReminderShow = false" 
+                    class="mt-5 w-full py-3 bg-white text-amber-700 font-bold rounded-xl hover:bg-amber-50 active:scale-95 transition-all shadow-md">
+                Baik, Siap-siap!
+            </button>
         </div>
     </div>
 
     <!-- ========================================= -->
     <!-- NOTIFIKASI ADZAN (tepat waktu)            -->
     <!-- ========================================= -->
+    <!-- Backdrop overlay -->
     <div x-show="reminderShow" x-cloak
-         x-transition:enter="transition ease-out duration-500"
-         x-transition:enter-start="opacity-0 -translate-y-4"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-300"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-4"
-         class="fixed z-[80] left-4 top-4 right-4 sm:right-auto sm:w-96
-                bg-emerald-600/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-emerald-900/50 border border-emerald-400/30
-                p-5 cursor-pointer"
-         @click="reminderShow = false">
-        <div class="flex items-start gap-3">
-            <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-mosque text-white text-2xl"></i>
+         x-transition.opacity
+         class="fixed inset-0 z-[79] bg-black/50 backdrop-blur-sm"></div>
+
+    <div x-show="reminderShow" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed z-[80] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-80
+                bg-emerald-600/95 text-center backdrop-blur-xl rounded-3xl shadow-2xl shadow-emerald-900/50 border border-emerald-400/30
+                p-6">
+        <div class="flex flex-col items-center gap-2">
+            <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-2 shadow-inner">
+                <i class="fas fa-mosque text-white text-3xl"></i>
             </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-emerald-100/70 text-[10px] uppercase tracking-wider font-medium">Adzan</p>
-                <p class="text-white font-extrabold text-base mt-0.5" x-text="'Waktu ' + reminderName + ' telah tiba'"></p>
-                <p class="text-emerald-100/80 text-sm mt-1 font-semibold tabular-nums" x-text="reminderTime + ' WIB'"></p>
+            <div class="w-full">
+                <p class="text-emerald-100/70 text-[10px] uppercase tracking-wider font-bold">Panggilan Adzan</p>
+                <p class="text-white font-black text-xl mt-1 tracking-wide" x-text="'Waktu ' + reminderName"></p>
+                <p class="text-emerald-100/90 text-sm mt-1 font-medium" x-text="'Telah tiba pukul ' + reminderTime + ' WIB'"></p>
             </div>
-            <button class="text-white/60 hover:text-white flex-shrink-0 mt-1"><i class="fas fa-times"></i></button>
+            <button @click="reminderShow = false" 
+                    class="mt-5 w-full py-3 bg-white text-emerald-700 font-bold rounded-xl hover:bg-emerald-50 active:scale-95 transition-all shadow-md">
+                Utiwi Sholat
+            </button>
         </div>
     </div>
 </div>
