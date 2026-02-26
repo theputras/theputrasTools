@@ -319,25 +319,9 @@ function prayerWidget() {
                         this.hijriDate = `${h.day} ${h.month.en || ''} ${h.year} H`;
                     }
 
-                    // Build timings array
-                    const now = new Date();
-                    const prayerOrder = ['Imsak', 'Subuh', 'Terbit', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+                    // Store raw timings and trigger the first countdown update
                     const raw = data.timings || {};
                     this._rawTimings = raw;
-
-                    let foundNext = false;
-                    this.timings = prayerOrder.map(name => {
-                        const timeStr = raw[name] || '';
-                        const [h, m] = (timeStr || '00:00').split(':').map(Number);
-                        const prayerDate = new Date(now);
-                        prayerDate.setHours(h, m, 0, 0);
-                        
-                        const isPassed = now > prayerDate;
-                        const isNext = !isPassed && !foundNext;
-                        if (isNext) foundNext = true;
-
-                        return { name, time: timeStr, isPassed, isNext };
-                    });
 
                     this.updateCountdown();
                 } else {
@@ -369,12 +353,36 @@ function prayerWidget() {
         },
 
         updateCountdown() {
-            if (!this.timings || this.timings.length === 0) return;
+            if (!this._rawTimings || Object.keys(this._rawTimings).length === 0) return;
 
             const now = new Date();
-            const nextPrayer = this.timings.find(p => p.isNext);
+            const prayerOrder = ['Imsak', 'Subuh', 'Terbit', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+            
+            let foundNext = false;
+            let currentNextPrayer = null;
 
-            if (!nextPrayer) {
+            // Rebuild timings dynamically based on current time
+            this.timings = prayerOrder.map(name => {
+                const timeStr = this._rawTimings[name] || '';
+                const [h, m] = (timeStr || '00:00').split(':').map(Number);
+                const prayerDate = new Date(now);
+                prayerDate.setHours(h, m, 0, 0);
+                
+                // Allow "Sekarang!" for 1 minute (60000 ms)
+                // It is considered passed only strictly 1 minute after the exact start time
+                const prayerEndGrace = new Date(prayerDate.getTime() + 60000);
+                const isPassed = now >= prayerEndGrace; 
+                
+                const isNext = !isPassed && !foundNext;
+                if (isNext) {
+                    foundNext = true;
+                    currentNextPrayer = { name, time: timeStr, target: prayerDate };
+                }
+
+                return { name, time: timeStr, isPassed, isNext };
+            });
+
+            if (!currentNextPrayer) {
                 // Semua sholat sudah lewat hari ini
                 this.nextPrayerLabel = 'Subuh';
                 this.countdown = 'Besok';
@@ -382,12 +390,10 @@ function prayerWidget() {
                 return;
             }
 
-            this.nextPrayerLabel = nextPrayer.name;
-            const [h, m] = nextPrayer.time.split(':').map(Number);
-            const target = new Date(now);
-            target.setHours(h, m, 0, 0);
-
-            const diff = target - now;
+            this.nextPrayerLabel = currentNextPrayer.name;
+            const diff = currentNextPrayer.target - now;
+            
+            // Jika masuk rentang 1 menit pertama setelah masuk waktu
             if (diff <= 0) {
                 this.countdown = 'Sekarang!';
                 this.isNearPrayer = true;
