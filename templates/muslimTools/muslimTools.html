@@ -342,13 +342,8 @@
                                     </div>
                                 </div>
                                 
-                                <div class="mt-auto hidden sm:block">
-                                    <template x-if="day.timings">
-                                        <div class="space-y-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
-                                            <p class="text-[9px] text-gray-400">Imsak: <span class="text-white" x-text="day.timings.Imsak"></span></p>
-                                            <p class="text-[9px] text-gray-400">Buka: <span class="text-white" x-text="day.timings.Maghrib"></span></p>
-                                        </div>
-                                    </template>
+                                <div class="mt-auto hidden sm:block opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <!-- Optional small indicators could go here, but for now we keep it clean -->
                                 </div>
                             </div>
                         </template>
@@ -409,6 +404,7 @@
                         </template>
                     </div>
                 </div>
+
             </div>
         </template>
     </div>
@@ -602,32 +598,10 @@ function muslimToolsApp() {
         },
 
         selectedRamadanDay: null,
-        async showRamadanDetail(day) {
+        showRamadanDetail(day) {
+            // Because timings are now already in day.timings from the backend via fetch_monthly_calendar,
+            // we don't need to do any additional API fetching here.
             this.selectedRamadanDay = day;
-            // Fetch timings if not available
-            if (!day.timings) {
-                try {
-                    // Extract YYYY-MM-DD from day.date
-                    const d = new Date(day.date);
-                    const dd = String(d.getDate()).padStart(2, '0');
-                    const mm = String(d.getMonth() + 1).padStart(2, '0');
-                    const yyyy = d.getFullYear();
-                    const formattedDate = `${dd}-${mm}-${yyyy}`;
-                    
-                    // Call Aladhan API directly since we might not have it in backend for future dates
-                    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity/${formattedDate}?city=${encodeURIComponent(this.cityLabel.split(',')[0])}&country=${encodeURIComponent(this.cityLabel.split(',')[1])}&method=20`);
-                    const json = await res.json();
-                    
-                    if (json.code === 200 && json.data && json.data.timings) {
-                        day.timings = {
-                            Imsak: json.data.timings.Imsak,
-                            Maghrib: json.data.timings.Maghrib
-                        };
-                    }
-                } catch (err) {
-                    console.error('Failed fetching individual timings', err);
-                }
-            }
         }
     };
 }

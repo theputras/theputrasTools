@@ -418,6 +418,32 @@ def get_ramadan_calendar_for_user(user_id):
     else:
         ramadan_status = "finished"
 
+    # Pre-fetch monthly calendars from Aladhan API so we have timings for all 30 days
+    timings_by_date = {}
+    start_month, start_year = start_date.month, start_date.year
+    end_month, end_year = end_date.month, end_date.year
+
+    def process_monthly_data(month_data):
+        for d in month_data:
+            greg_date_str = d.get("date", {}).get("gregorian", {}).get("date", "")
+            if greg_date_str:
+                parts = greg_date_str.split("-")
+                if len(parts) == 3:
+                    iso_str = f"{parts[2]}-{parts[1]}-{parts[0]}"
+                    timings_by_date[iso_str] = {
+                        "Imsak": d.get("timings", {}).get("Imsak", "").split(" ")[0],
+                        "Maghrib": d.get("timings", {}).get("Maghrib", "").split(" ")[0]
+                    }
+
+    # Fetch first month
+    month1_data = fetch_monthly_calendar(city, country, start_month, start_year)
+    process_monthly_data(month1_data)
+
+    # Fetch second month if it crosses over
+    if start_month != end_month or start_year != end_year:
+        month2_data = fetch_monthly_calendar(city, country, end_month, end_year)
+        process_monthly_data(month2_data)
+
     # Generate daftar hari Ramadhan
     ramadan_days = []
     for i in range(total_days):
@@ -432,24 +458,20 @@ def get_ramadan_calendar_for_user(user_id):
         else:
             day_status = "upcoming"     # Akan datang
 
+        day_iso = day_date.isoformat()
+        day_timings = timings_by_date.get(day_iso)
+
         ramadan_days.append({
             "day_number": day_num,
-            "date": day_date.isoformat(),
+            "date": day_iso,
             "date_display": day_date.strftime("%d %b %Y"),
             "weekday": day_date.strftime("%A"),
-            "status": day_status
+            "status": day_status,
+            "timings": day_timings
         })
 
-    # Ambil jadwal sholat untuk hari ini (untuk imsak & buka puasa)
-    today_timings = None
-    if ramadan_status == "active":
-        prayer_data = fetch_prayer_times(city, country)
-        if prayer_data:
-            today_timings = {
-                "Imsak": prayer_data["timings"].get("Imsak", "").split(" ")[0],
-                "Fajr": prayer_data["timings"].get("Fajr", "").split(" ")[0],
-                "Maghrib": prayer_data["timings"].get("Maghrib", "").split(" ")[0],
-            }
+    # Ambil jadwal sholat untuk hari ini (untuk imsak & buka puasa global)
+    today_timings = timings_by_date.get(today.isoformat())
 
     # Hitung hari ke-X kalau Ramadhan aktif
     current_day = None
