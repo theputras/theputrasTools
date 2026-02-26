@@ -298,45 +298,116 @@
                         </div>
                     </template>
                 </div>
+            <!-- Ramadan Days List -->
+                <!-- Grid Kalender Ramadhan -->
+                <div class="bg-gray-800 border border-white/5 rounded-2xl overflow-hidden shadow-lg shadow-black/20">
+                    <!-- Weekday Headers -->
+                    <div class="grid grid-cols-7 border-b border-white/5 bg-gray-900/40">
+                        <template x-for="d in ['Min','Sen','Sel','Rab','Kam','Jum','Sab']" :key="d">
+                            <div class="text-center text-[10px] font-semibold uppercase tracking-wider text-gray-500 py-2 border-r border-white/5 last:border-r-0" x-text="d"></div>
+                        </template>
+                    </div>
 
-                <!-- Ramadan Days List -->
-                <div class="space-y-1.5">
-                    <template x-for="day in ramadanData.days" :key="day.day_number">
-                        <div class="flex items-center justify-between px-4 py-3 rounded-xl transition-all"
-                             :class="{
-                                 'bg-amber-600/15 border border-amber-500/30 shadow-lg': day.status === 'today',
-                                 'bg-gray-800/30 border border-white/5 opacity-40': day.status === 'passed',
-                                 'bg-gray-800/50 border border-white/5': day.status === 'upcoming'
-                             }">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold"
-                                     :class="{
-                                         'bg-amber-500/20 text-amber-300': day.status === 'today',
-                                         'bg-gray-700/30 text-gray-600': day.status === 'passed',
-                                         'bg-gray-700/50 text-gray-400': day.status === 'upcoming'
-                                     }"
-                                     x-text="day.day_number"></div>
-                                <div>
-                                    <span class="text-sm font-medium"
+                    <!-- Grid Body -->
+                    <div class="grid grid-cols-7 bg-white/5 gap-px">
+                        <!-- Empty cells for offset -->
+                        <template x-for="n in ramadanData.offset" :key="'blank-'+n">
+                            <div class="bg-gray-800 min-h-[5rem] sm:min-h-[6rem]"></div>
+                        </template>
+                        
+                        <!-- Day cells -->
+                        <template x-for="day in ramadanData.days" :key="day.day_number">
+                            <div class="bg-gray-800 p-1.5 sm:p-2 min-h-[5rem] sm:min-h-[6rem] flex flex-col relative transition group cursor-pointer hover:bg-gray-700/50"
+                                 @click="showRamadanDetail(day)"
+                                 :class="{
+                                    'ring-1 ring-inset ring-amber-500/50 bg-amber-900/10': day.status === 'today',
+                                    'opacity-50 grayscale': day.status === 'passed'
+                                 }">
+                                
+                                <div class="flex items-start justify-between mb-1">
+                                    <!-- Day Number in Ramadan -->
+                                    <span class="w-6 h-6 flex items-center justify-center text-xs font-bold rounded-full"
                                           :class="{
-                                              'text-amber-200': day.status === 'today',
-                                              'text-gray-600': day.status === 'passed',
-                                              'text-white': day.status === 'upcoming'
+                                            'bg-amber-500 text-white shadow-md': day.status === 'today',
+                                            'text-gray-500': day.status === 'passed',
+                                            'text-gray-300': day.status === 'upcoming'
                                           }"
-                                          x-text="day.date_display"></span>
-                                    <span class="block text-[10px]"
-                                          :class="day.status === 'today' ? 'text-amber-400/70' : 'text-gray-600'"
-                                          x-text="day.weekday"></span>
+                                          x-text="day.day_number"></span>
+                                    
+                                    <!-- Gregorian Date -->
+                                    <div class="text-[9px] sm:text-[10px] font-medium text-right leading-tight"
+                                         :class="day.status === 'today' ? 'text-amber-400/80' : 'text-gray-500'">
+                                        <span x-text="day.date_display.split(' ')[0]"></span>
+                                        <span class="block" x-text="day.date_display.split(' ')[1].substring(0,3)"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-auto hidden sm:block">
+                                    <template x-if="day.timings">
+                                        <div class="space-y-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <p class="text-[9px] text-gray-400">Imsak: <span class="text-white" x-text="day.timings.Imsak"></span></p>
+                                            <p class="text-[9px] text-gray-400">Buka: <span class="text-white" x-text="day.timings.Maghrib"></span></p>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
-                            <template x-if="day.status === 'today'">
-                                <span class="text-[10px] font-semibold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full uppercase tracking-wider">Hari ini</span>
-                            </template>
-                            <template x-if="day.status === 'passed'">
-                                <i class="fas fa-check text-gray-600 text-xs"></i>
-                            </template>
-                        </div>
-                    </template>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-400">
+                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Hari ini</span>
+                    <span class="flex items-center gap-2"> Klik tanggal untuk melihat waktu sholat</span>
+                </div>
+
+                <!-- Modal Detail Ramadhan -->
+                <div x-show="selectedRamadanDay" x-cloak
+                     class="fixed inset-0 z-[100] flex items-center justify-center px-4"
+                     x-transition.opacity>
+                    
+                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="selectedRamadanDay = null"></div>
+
+                    <div class="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-sm relative z-10 shadow-2xl p-6"
+                         x-transition:enter="transition ease-out duration-300 transform"
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                         x-show="selectedRamadanDay">
+                        
+                        <button @click="selectedRamadanDay = null" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        
+                        <template x-if="selectedRamadanDay">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-star-and-crescent text-2xl text-amber-500"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-1">Hari ke-<span x-text="selectedRamadanDay.day_number"></span></h3>
+                                <p class="text-sm text-gray-400 mb-6" x-text="selectedRamadanDay.weekday + ', ' + selectedRamadanDay.date_display"></p>
+
+                                <template x-if="selectedRamadanDay.timings">
+                                    <div class="grid grid-cols-2 gap-3 mb-6">
+                                        <div class="bg-gray-800 rounded-xl p-3 border border-white/5">
+                                            <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Imsak</p>
+                                            <p class="text-2xl font-bold text-white tabular-nums" x-text="selectedRamadanDay.timings.Imsak"></p>
+                                        </div>
+                                        <div class="bg-gray-800 rounded-xl p-3 border border-amber-500/20 shadow-inner shadow-amber-900/20">
+                                            <p class="text-[10px] text-amber-400/80 uppercase tracking-wider mb-1">Buka Puasa</p>
+                                            <p class="text-2xl font-bold text-amber-500 tabular-nums" x-text="selectedRamadanDay.timings.Maghrib"></p>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template x-if="!selectedRamadanDay.timings">
+                                    <div class="p-4 bg-gray-800 rounded-xl mb-6 border border-white/5">
+                                        <p class="text-gray-400 text-sm">Jadwal sholat belum tersedia untuk tanggal ini.</p>
+                                    </div>
+                                </template>
+                                
+                                <button @click="selectedRamadanDay = null" class="w-full py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition font-medium">Tutup</button>
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </div>
         </template>
@@ -505,6 +576,20 @@ function muslimToolsApp() {
                 const data = await res.json();
                 if (data.success) {
                     this.ramadanData = data;
+                    
+                    // Parse the first day's date to calculate grid offset
+                    if (data.days && data.days.length > 0) {
+                        const firstDayIso = data.days[0].date; // "YYYY-MM-DD"
+                        if(firstDayIso) {
+                            const d = new Date(firstDayIso);
+                            this.ramadanData.offset = d.getDay(); // 0 (Sunday) to 6 (Saturday)
+                        } else {
+                            this.ramadanData.offset = 0;
+                        }
+                    } else {
+                        this.ramadanData.offset = 0;
+                    }
+                    
                     this.ramadanLoaded = true;
                 } else {
                     this.ramadanError = data.message || 'Konfigurasi Ramadhan belum tersedia.';
@@ -513,6 +598,35 @@ function muslimToolsApp() {
                 this.ramadanError = 'Gagal memuat data Ramadhan.';
             } finally {
                 this.ramadanLoading = false;
+            }
+        },
+
+        selectedRamadanDay: null,
+        async showRamadanDetail(day) {
+            this.selectedRamadanDay = day;
+            // Fetch timings if not available
+            if (!day.timings) {
+                try {
+                    // Extract YYYY-MM-DD from day.date
+                    const d = new Date(day.date);
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const yyyy = d.getFullYear();
+                    const formattedDate = `${dd}-${mm}-${yyyy}`;
+                    
+                    // Call Aladhan API directly since we might not have it in backend for future dates
+                    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity/${formattedDate}?city=${encodeURIComponent(this.cityLabel.split(',')[0])}&country=${encodeURIComponent(this.cityLabel.split(',')[1])}&method=20`);
+                    const json = await res.json();
+                    
+                    if (json.code === 200 && json.data && json.data.timings) {
+                        day.timings = {
+                            Imsak: json.data.timings.Imsak,
+                            Maghrib: json.data.timings.Maghrib
+                        };
+                    }
+                } catch (err) {
+                    console.error('Failed fetching individual timings', err);
+                }
             }
         }
     };
