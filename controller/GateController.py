@@ -321,6 +321,132 @@ def get_authenticated_session(user_id):
         
         return None
 
+def gate_sso_launch(user_id, target_url):
+    """
+    Browser-side Gate Login:
+    1. Ambil CSRF token dari gate.dinamika.ac.id/login
+    2. Ambil kredensial asli user dari DB (dekripsi)
+    3. Return data form untuk auto-submit dari browser ke Gate
+    
+    Browser yang POST langsung ke Gate → Gate set SSO_TOKEN cookie → 
+    Semua app kampus bisa diakses.
+    
+    Returns:
+        dict: {"csrf_token", "userid", "password", "target_url"} atau None
+    """
+    if not user_id:
+        return None
+    
+    try:
+        # 1. Ambil kredensial dari DB
+        gate_id, gate_username, gate_password = gate_user_model.get_credentials_by_user_id(user_id)
+        
+        if not gate_username or not gate_password:
+            logging.warning(f"[SSO Launch] Kredensial Gate tidak ditemukan untuk User {user_id}")
+            return None
+        
+        # 2. Fetch CSRF token dari Gate login page
+        logging.info(f"[SSO Launch] Mengambil CSRF token dari Gate...")
+        s = create_session_obj()
+        r = s.get(f"{GATE_ROOT}/login", timeout=15)
+        
+        csrf_token = ""
+        if r.status_code == 200:
+            soup = BeautifulSoup(r.text, "lxml")
+            token_input = soup.find("input", {"name": "_token"})
+            if token_input:
+                csrf_token = token_input.get("value", "")
+            else:
+                # Coba meta tag
+                meta_token = soup.find("meta", {"name": "csrf-token"})
+                if meta_token:
+                    csrf_token = meta_token.get("content", "")
+        
+        if not csrf_token:
+            logging.warning("[SSO Launch] CSRF token tidak ditemukan!")
+            return None
+        
+        logging.info(f"[SSO Launch] CSRF token didapat. Menyiapkan form untuk User {user_id} → {target_url}")
+        
+        return {
+            "csrf_token": csrf_token,
+            "userid": gate_username,
+            "password": gate_password,
+            "target_url": target_url
+        }
+        
+    except Exception as e:
+        logging.error(f"[SSO Launch] Error: {e}")
+        return None
+
+
+def _build_gate_login_html(csrf_token, userid, password, target_url):
+    """
+    Membuat halaman HTML dengan form hidden yang auto-submit ke Gate login.
+    Setelah Gate login sukses, JS redirect ke target app.
+    Password di-sanitize untuk HTML attributes.
+    """
+    # Escape values untuk keamanan HTML attribute
+    import html as html_mod
+    safe_token = html_mod.escape(csrf_token, quote=True)
+    safe_userid = html_mod.escape(userid, quote=True)
+    safe_password = html_mod.escape(password, quote=True)
+    safe_target = html_mod.escape(target_url, quote=True)
+    
+    return f"""<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menghubungkan ke Layanan Kampus...</title>
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #e2e8f0;
+        }}
+        .container {{
+            text-align: center;
+            padding: 2rem;
+        }}
+        .spinner {{
+            width: 48px; height: 48px;
+            border: 4px solid rgba(99, 102, 241, 0.2);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1.5rem;
+        }}
+        @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
+        h2 {{ font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }}
+        p {{ font-size: 0.875rem; color: #94a3b8; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h2>Sedang login ke Gate...</h2>
+        <p>Kamu akan dialihkan ke layanan kampus.</p>
+    </div>
+    <form id="gate-login" method="POST" action="https://gate.dinamika.ac.id/login">
+        <input type="hidden" name="_token" value="{safe_token}">
+        <input type="hidden" name="userid" value="{safe_userid}">
+        <input type="hidden" name="password" value="{safe_password}">
+    </form>
+    <script>
+        // Auto-submit ke Gate, lalu nanti Gate redirect ke dashboard
+        // Kita gak bisa kontrol redirect Gate, tapi SSO_TOKEN sudah ke-set
+        document.getElementById('gate-login').submit();
+    </script>
+</body>
+</html>"""
+
+
 def reset_session_user(user_id):
     with _session_lock:
         if user_id in _active_sessions:

@@ -864,26 +864,23 @@ def public_api_ultah():
 @login_required
 def get_my_credentials():
     """
-    Endpoint untuk mengambil password user (dekripsi) agar bisa di-copy di frontend.
+    Endpoint untuk mengambil credentials user (dekripsi) untuk auto-login Gate.
+    Password dikembalikan utuh agar bisa di-copy ke clipboard oleh frontend.
+    Protected by @login_required — hanya user pemilik yang bisa akses.
     """
     try:
         user_id = g.user.get('sub')
-        gate_model = GateUser() # Init model
+        gate_model = GateUser()
         
-        # Ambil credentials dari database
         _, username, decrypted_password = gate_model.get_credentials_by_user_id(user_id)
         
         if not decrypted_password:
              return jsonify({"success": False, "message": "Password belum di-set"})
-        csrf_token = get_csrf_token_gate()
         
-        # Mask password: tampilkan 3 karakter pertama + ***
-        masked_pw = decrypted_password[:3] + '***' if len(decrypted_password) > 3 else '***'
         return jsonify({
             "success": True, 
             "userid": username,
-            "password": masked_pw,
-            "gate_token": csrf_token
+            "password": decrypted_password
         })
     except Exception as e:
         logging.error(f"[API] Error get-my-credentials: {e}")

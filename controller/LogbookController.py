@@ -181,6 +181,9 @@ def update_logbook(id, data, user_id, ttd_path=None, remove_ttd=False):
         old = cursor.fetchone()
         if old and old.get('ttd_mentor_path'):
             delete_signature_file(old['ttd_mentor_path'])
+        
+        # Reset signature approvals
+        cursor.execute("DELETE FROM logbook_signatures WHERE logbook_id = %s", (id,))
     
     # Build query dynamically
     fields = """fakultas=%s, prodi=%s, nama=%s, nim=%s, nama_mitra=%s, 

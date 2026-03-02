@@ -31,7 +31,7 @@ from cryptography.fernet import Fernet
 
 # Impor SEMUA fungsi scraper
 from scrapper_requests import scrape_data, search_mahasiswa, dahsboard_nilai, fetch_sks, fetch_sskm_data
-from controller.GateController import reset_session_user
+from controller.GateController import reset_session_user, gate_sso_launch, _build_gate_login_html
 from middleware.auth_quard import login_required, check_permission
 from werkzeug.middleware.proxy_fix import ProxyFix
 from models.auth_api import _revoke_refresh_token, _revoke_all_user_sessions
@@ -890,6 +890,41 @@ def gate_undika():
     
     
     return render_template('undika/gate/gateUndika.html')
+
+# === SSO REDIRECT LAUNCH ===
+GATE_LAUNCH_APPS = {
+    'brilian':  'https://mybrilian.dinamika.ac.id',
+    'support':  'https://support.dinamika.ac.id',
+    'prgo':     'https://intranet.dinamika.ac.id/pr-go',
+    'sicyca':   'https://sicyca.dinamika.ac.id',
+    'afiliasi': 'https://afiliasi.dinamika.ac.id',
+    'pkm':      'https://pkm.dinamika.ac.id',
+}
+
+@app.route('/gate/launch/<app_key>')
+@login_required
+def gate_launch_app(app_key):
+    """Browser-side Gate Login: POST credentials ke Gate dari browser user."""
+    target_url = GATE_LAUNCH_APPS.get(app_key)
+    if not target_url:
+        flash('Aplikasi tidak ditemukan.', 'error')
+        return redirect(url_for('gate_undika'))
+    
+    user_id = g.user.get('sub')
+    result = gate_sso_launch(user_id, target_url)
+    
+    if not result:
+        flash('Gagal menyiapkan login. Pastikan kredensial Gate sudah di-setup.', 'error')
+        return redirect(url_for('gate_undika'))
+    
+    # Render HTML auto-submit form
+    html = _build_gate_login_html(
+        csrf_token=result['csrf_token'],
+        userid=result['userid'],
+        password=result['password'],
+        target_url=result['target_url']
+    )
+    return html
 
 @app.route('/sicyca_undika')
 @login_required
