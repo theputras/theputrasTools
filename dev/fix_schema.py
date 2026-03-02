@@ -70,6 +70,33 @@ def fix_db():
         """)
         print("✅ Ramadhan 1447 H (2026) config seeded.")
 
+        # ============================================================
+        # 4. MIGRATE: logbooks.ttd_mentor_path (Tanda Tangan Mentor)
+        # ============================================================
+        print("Migrating 'logbooks' table for TTD...")
+        try:
+            cursor.execute("ALTER TABLE logbooks ADD COLUMN ttd_mentor_path VARCHAR(255) NULL")
+            print("[OK] Kolom 'ttd_mentor_path' ditambahkan ke 'logbooks'.")
+        except Exception:
+            print("[INFO] Kolom 'ttd_mentor_path' sudah ada, skip.")
+
+        # ============================================================
+        # 5. CREATE TABLE: logbook_signatures (TTD approval per bulan)
+        # ============================================================
+        print("Creating table 'logbook_signatures'...")
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS logbook_signatures (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                logbook_id INT NOT NULL,
+                bulan VARCHAR(20) NOT NULL,
+                is_approved TINYINT(1) DEFAULT 0,
+                approved_at TIMESTAMP NULL,
+                CONSTRAINT fk_sig_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_logbook_month (logbook_id, bulan)
+            )
+        """)
+        print("✅ Tabel 'logbook_signatures' ready.")
+
         conn.commit()
         print("\n✅ SEMUA MIGRASI SELESAI!")
         

@@ -20,6 +20,75 @@ ALLOWED_TAGS = [
     'p', 'ul', 'ol', 'li', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'br'
 ]
 ALLOWED_IMAGE_EXT = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.ico', '.avif', '.heic', '.heif'}
+ALLOWED_TTD_EXT = {'.png'}
+MAX_TTD_SIZE = 2 * 1024 * 1024  # 2MB
+
+# --- HELPER: SAVE/DELETE FILE TANDA TANGAN ---
+def save_signature_file(file, nim):
+    """Simpan file tanda tangan mentor ke disk dengan auto-compress. Return relative path atau None jika gagal."""
+    if not file or file.filename == '':
+        return None
+    
+    filename = secure_filename(file.filename)
+    _, ext = os.path.splitext(filename)
+    ext = ext.lower()
+    
+    # Validasi ekstensi (hanya PNG)
+    if ext not in ALLOWED_TTD_EXT:
+        return None
+    
+    # Validasi ukuran file (max 2MB)
+    file.seek(0, 2)  # Seek to end
+    file_size = file.tell()
+    file.seek(0)  # Reset
+    if file_size > MAX_TTD_SIZE:
+        return None
+    
+    # Validasi MIME type
+    if file.content_type not in ('image/png',):
+        return None
+    
+    # Folder: static/uploads/logbook/{nim}/ttd/
+    ttd_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', str(nim), 'ttd')
+    os.makedirs(ttd_folder, exist_ok=True)
+    
+    # Nama file tetap: signature.png (overwrite jika sudah ada)
+    save_path = os.path.join(ttd_folder, 'signature.png')
+    
+    # Auto-compress: resize + optimize PNG otomatis
+    try:
+        img = Image.open(file)
+        # Pertahankan transparency (RGBA)
+        if img.mode not in ('RGBA', 'LA'):
+            img = img.convert('RGBA')
+        
+        # Resize jika terlalu besar (max width 500px, proporsional)
+        max_w = 500
+        if img.width > max_w:
+            ratio = max_w / img.width
+            new_h = int(img.height * ratio)
+            img = img.resize((max_w, new_h), Image.LANCZOS)
+        
+        # Simpan dengan optimize
+        img.save(save_path, format='PNG', optimize=True)
+        img.close()
+    except Exception as e:
+        print(f"Gagal compress TTD, simpan apa adanya: {e}")
+        file.seek(0)
+        file.save(save_path)
+    
+    return f"{nim}/ttd/signature.png"
+
+def delete_signature_file(ttd_path):
+    """Hapus file tanda tangan dari disk."""
+    if not ttd_path:
+        return
+    full_path = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', ttd_path)
+    if os.path.exists(full_path):
+        try:
+            os.remove(full_path)
+        except OSError:
+            pass
 
 def compress_and_save_image(image_file, nim, entry_id):
     if not image_file or image_file.filename == '':
@@ -82,18 +151,19 @@ def get_logbook_by_id_and_user(id, user_id):
     conn.close()
     return logbook
 
-def create_logbook(user_id, data):
+def create_logbook(user_id, data, ttd_path=None):
     conn = get_connection()
     cursor = conn.cursor()
     query = """
-    INSERT INTO logbooks (user_id, fakultas, prodi, nama, nim, nama_mitra, waktu_mulai, waktu_selesai, posisi_magang, nama_mentor, wa_mentor, email_mentor, google_doc_id, google_doc_name)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO logbooks (user_id, fakultas, prodi, nama, nim, nama_mitra, waktu_mulai, waktu_selesai, posisi_magang, nama_mentor, wa_mentor, email_mentor, google_doc_id, google_doc_name, ttd_mentor_path)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     val = (
         user_id, data['fakultas'], data['prodi'], data['nama'], data['nim'], 
         data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], 
         data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'],
-        data.get('google_doc_id'), data.get('google_doc_name') # Ambil dari form
+        data.get('google_doc_id'), data.get('google_doc_name'),
+        ttd_path
     )
     cursor.execute(query, val)
     conn.commit()
@@ -101,25 +171,40 @@ def create_logbook(user_id, data):
     conn.close()
     return new_id
 
-def update_logbook(id, data, user_id):
+def update_logbook(id, data, user_id, ttd_path=None, remove_ttd=False):
     conn = get_connection()
-    cursor = conn.cursor()
-    query = """
-    UPDATE logbooks SET 
-    fakultas=%s, prodi=%s, nama=%s, nim=%s, nama_mitra=%s, 
+    cursor = conn.cursor(dictionary=True)
+    
+    # Jika ada file TTD baru atau remove, hapus file lama dulu
+    if ttd_path or remove_ttd:
+        cursor.execute("SELECT ttd_mentor_path FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
+        old = cursor.fetchone()
+        if old and old.get('ttd_mentor_path'):
+            delete_signature_file(old['ttd_mentor_path'])
+    
+    # Build query dynamically
+    fields = """fakultas=%s, prodi=%s, nama=%s, nim=%s, nama_mitra=%s, 
     waktu_mulai=%s, waktu_selesai=%s, posisi_magang=%s, 
     nama_mentor=%s, wa_mentor=%s, email_mentor=%s,
-    google_doc_id=%s, google_doc_name=%s
-    WHERE id = %s AND user_id = %s
-    """
-    val = (
+    google_doc_id=%s, google_doc_name=%s"""
+    
+    val = [
         data['fakultas'], data['prodi'], data['nama'], data['nim'], 
         data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], 
         data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'],
-        data.get('google_doc_id'), data.get('google_doc_name'), # Tambahan 2 field ini
-        id, user_id
-    )
-    cursor.execute(query, val)
+        data.get('google_doc_id'), data.get('google_doc_name'),
+    ]
+    
+    if ttd_path:
+        fields += ", ttd_mentor_path=%s"
+        val.append(ttd_path)
+    elif remove_ttd:
+        fields += ", ttd_mentor_path=NULL"
+    
+    val.extend([id, user_id])
+    
+    query = f"UPDATE logbooks SET {fields} WHERE id = %s AND user_id = %s"
+    cursor.execute(query, tuple(val))
     conn.commit()
     conn.close()
 
@@ -573,10 +658,43 @@ def generate_word(logbook_id, user_id):
             doc.add_heading(f'Resume Kegiatan Bulan {month_name}:', level=3)
             doc.add_paragraph("...\n\n") 
         
+        # Cek apakah bulan ini sudah di-approve TTD
+        cursor.execute(
+            "SELECT is_approved FROM logbook_signatures WHERE logbook_id = %s AND bulan = %s",
+            (logbook_id, month_key)
+        )
+        sig_row = cursor.fetchone()
+        month_approved = sig_row and sig_row.get('is_approved', 0) == 1
+        
         sig_p = doc.add_paragraph()
         sig_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         sig_p.add_run("Disetujui Oleh\n")
-        sig_p.add_run("Tanda Tangan Mentor\n\n\n\n")
+        sig_p.add_run("Tanda Tangan Mentor\n")
+        
+        # Insert gambar TTD jika bulan sudah approved DAN file TTD ada
+        ttd_path = logbook.get('ttd_mentor_path')
+        if month_approved and ttd_path:
+            ttd_full_path = os.path.join('static', 'uploads', 'logbook', ttd_path)
+            if os.path.exists(ttd_full_path):
+                run_ttd = sig_p.add_run()
+                try:
+                    # Ukuran kecil sesuai proporsi TTD
+                    with Image.open(ttd_full_path) as ttd_img:
+                        w, h = ttd_img.size
+                        # Max width 1.5 inch, height proporsional
+                        target_w = Inches(1.5)
+                        ratio = h / w
+                        target_h = Inches(1.5 * ratio)
+                    run_ttd.add_picture(ttd_full_path, width=target_w, height=target_h)
+                except Exception as e:
+                    print(f"Gagal insert TTD ke Word: {e}")
+                    sig_p.add_run("\n\n\n")
+                sig_p.add_run("\n")
+            else:
+                sig_p.add_run("\n\n\n")
+        else:
+            sig_p.add_run("\n\n\n")  # Placeholder kosong jika belum approve
+        
         sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}").bold = True
 
     # Tutup koneksi setelah selesai looping
@@ -730,5 +848,110 @@ def replace_image_file(image_id, user_id, new_file):
         print(f"Error replace image: {e}")
         conn.rollback()
         return False, str(e)
+    finally:
+        conn.close()
+
+# --- CRUD TANDA TANGAN / SIGNATURES ---
+
+def get_available_months(logbook_id):
+    """Ambil daftar bulan unik dari logbook_entries untuk logbook tertentu."""
+    months_id = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT DISTINCT MONTH(tanggal) as bulan, YEAR(tanggal) as tahun FROM logbook_entries WHERE logbook_id = %s ORDER BY tahun ASC, bulan ASC",
+        (logbook_id,)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    
+    result = []
+    for row in rows:
+        if row['bulan'] and row['tahun']:
+            month_name = months_id[row['bulan']]
+            result.append(f"{month_name} {row['tahun']}")
+    return result
+
+def get_signatures_by_logbook(logbook_id):
+    """Ambil semua data signature approval untuk logbook tertentu, di-merge dengan bulan dari entries."""
+    available_months = get_available_months(logbook_id)
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT bulan, is_approved, approved_at FROM logbook_signatures WHERE logbook_id = %s",
+        (logbook_id,)
+    )
+    sig_rows = cursor.fetchall()
+    conn.close()
+    
+    # Map bulan -> approval data
+    sig_map = {}
+    for row in sig_rows:
+        sig_map[row['bulan']] = {
+            'is_approved': row['is_approved'],
+            'approved_at': row['approved_at'].strftime('%d-%m-%Y %H:%M') if row['approved_at'] else None
+        }
+    
+    # Merge: setiap bulan yang ada entry-nya punya status approval
+    result = []
+    for month in available_months:
+        data = sig_map.get(month, {'is_approved': 0, 'approved_at': None})
+        result.append({
+            'bulan': month,
+            'is_approved': data['is_approved'],
+            'approved_at': data['approved_at']
+        })
+    
+    return result
+
+def approve_signature(logbook_id, bulan, user_id):
+    """Approve tanda tangan untuk bulan tertentu. Validasi ownership."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Validasi ownership
+    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    if not cursor.fetchone():
+        conn.close()
+        return False
+    
+    try:
+        cursor.execute("""
+            INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at) 
+            VALUES (%s, %s, 1, NOW())
+            ON DUPLICATE KEY UPDATE is_approved = 1, approved_at = NOW()
+        """, (logbook_id, bulan))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error approve signature: {e}")
+        return False
+    finally:
+        conn.close()
+
+def revoke_signature(logbook_id, bulan, user_id):
+    """Revoke/cabut tanda tangan untuk bulan tertentu."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Validasi ownership
+    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    if not cursor.fetchone():
+        conn.close()
+        return False
+    
+    try:
+        cursor.execute("""
+            INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at) 
+            VALUES (%s, %s, 0, NULL)
+            ON DUPLICATE KEY UPDATE is_approved = 0, approved_at = NULL
+        """, (logbook_id, bulan))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error revoke signature: {e}")
+        return False
     finally:
         conn.close()

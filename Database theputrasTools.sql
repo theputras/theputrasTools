@@ -125,6 +125,7 @@ CREATE TABLE logbooks (
     email_mentor VARCHAR(100),
     google_doc_id VARCHAR(255) NULL,
     google_doc_name VARCHAR(255) NULL,
+    ttd_mentor_path VARCHAR(255) NULL,  -- Path file gambar tanda tangan mentor (PNG)
     CONSTRAINT fk_logbooks_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -149,6 +150,17 @@ CREATE TABLE logbook_images (
     ukuran_berkas BIGINT NULL,         -- Dalam Bytes
     dimensi VARCHAR(20) NULL,          -- Contoh: 1920x1080
     CONSTRAINT fk_logbook_images_parent FOREIGN KEY (entry_id) REFERENCES logbook_entries(id) ON DELETE CASCADE
+);
+
+-- D. Tracking approval tanda tangan per bulan
+CREATE TABLE logbook_signatures (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    logbook_id INT NOT NULL,
+    bulan VARCHAR(20) NOT NULL,        -- e.g. "Maret 2026"
+    is_approved TINYINT(1) DEFAULT 0,
+    approved_at TIMESTAMP NULL,
+    CONSTRAINT fk_sig_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_logbook_month (logbook_id, bulan)
 );
 
 

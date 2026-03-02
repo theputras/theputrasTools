@@ -40,7 +40,8 @@ from models.gate import GateUser
 from controller.LogbookController import (
     get_logbooks_by_user, get_logbook_by_id_and_user, create_logbook, update_logbook, 
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
-    get_entry_by_id, update_entry, delete_single_image, update_image_metadata, get_image_by_id, replace_image_file
+    get_entry_by_id, update_entry, delete_single_image, update_image_metadata, get_image_by_id, replace_image_file,
+    save_signature_file, get_signatures_by_logbook, approve_signature, revoke_signature
 )
 from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password, update_user_password
 from models.auth_api import generate_access_token, generate_refresh_token
@@ -1602,8 +1603,15 @@ def logbook_setup():
     current_user = g.user.get('sub')
     
     if request.method == 'POST':
+        # Handle file TTD (opsional)
+        ttd_path = None
+        ttd_file = request.files.get('ttd_file')
+        if ttd_file and ttd_file.filename:
+            nim = request.form.get('nim', 'unknown')
+            ttd_path = save_signature_file(ttd_file, nim)
+        
         # Simpan logbook baru dengan menyertakan ID usernya
-        new_id = create_logbook(current_user, request.form)
+        new_id = create_logbook(current_user, request.form, ttd_path=ttd_path)
         return redirect(url_for('logbook_detail', logbook_id=new_id))
     # Cek Google account status (unified via DB token)
     # Trigger refresh logic via build_drive_service if needed
@@ -1637,14 +1645,22 @@ def logbook_setup():
 def logbook_edit(logbook_id):
     current_user = g.user.get('sub')
     
-    if request.method == 'POST':
-        update_logbook(logbook_id, request.form, current_user)
-        return redirect(url_for('logbook_detail', logbook_id=logbook_id))
-        
-    # Ambil datanya buat diisi ke form
+    # Fetch logbook dulu (untuk GET maupun POST)
     logbook = get_logbook_by_id_and_user(logbook_id, current_user)
     if not logbook:
         return "Akses Ditolak! Ini bukan logbook Anda.", 403
+    
+    if request.method == 'POST':
+        # Handle file TTD (opsional)
+        ttd_path = None
+        remove_ttd = request.form.get('remove_ttd') == '1'
+        ttd_file = request.files.get('ttd_file')
+        if ttd_file and ttd_file.filename:
+            nim = request.form.get('nim', logbook['nim'] if logbook else 'unknown')
+            ttd_path = save_signature_file(ttd_file, nim)
+        
+        update_logbook(logbook_id, request.form, current_user, ttd_path=ttd_path, remove_ttd=remove_ttd)
+        return redirect(url_for('logbook_detail', logbook_id=logbook_id))
     # Google account status (unified via DB token)
     # Trigger refresh logic via build_drive_service if needed
     try:
@@ -1694,7 +1710,9 @@ def logbook_detail(logbook_id):
     entries = get_entries_by_logbook(logbook_id)
     # Google account status
     google_user = google_cal_service.get_token_by_user(current_user)
-    return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user)
+    # Signature data per bulan
+    signatures = get_signatures_by_logbook(logbook_id)
+    return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user, signatures=signatures)
 
 # 6. Tambah Kegiatan Harian
 @app.route('/logbook/<int:logbook_id>/add_entry', methods=['POST'])
@@ -1759,6 +1777,36 @@ def logbook_delete_entry(logbook_id, entry_id):
 def logbook_download(logbook_id):
     current_user = g.user.get('sub')
     return generate_word(logbook_id, current_user)
+
+# 9. Approve Tanda Tangan (JSON API)
+@app.route('/logbook/<int:logbook_id>/approve-signature', methods=['POST'])
+@login_required
+def logbook_approve_signature(logbook_id):
+    current_user = g.user.get('sub')
+    data = request.get_json()
+    bulan = data.get('bulan')
+    
+    if not bulan:
+        return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
+    
+    if approve_signature(logbook_id, bulan, current_user):
+        return jsonify({'success': True, 'message': f'TTD bulan {bulan} disetujui!'})
+    return jsonify({'success': False, 'error': 'Gagal menyetujui TTD'}), 400
+
+# 10. Revoke Tanda Tangan (JSON API)
+@app.route('/logbook/<int:logbook_id>/revoke-signature', methods=['POST'])
+@login_required
+def logbook_revoke_signature(logbook_id):
+    current_user = g.user.get('sub')
+    data = request.get_json()
+    bulan = data.get('bulan')
+    
+    if not bulan:
+        return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
+    
+    if revoke_signature(logbook_id, bulan, current_user):
+        return jsonify({'success': True, 'message': f'TTD bulan {bulan} dicabut!'})
+    return jsonify({'success': False, 'error': 'Gagal mencabut TTD'}), 400
 
 # ==========================================
 # API KHUSUS GAMBAR LOGBOOK (JSON RESPONSES)

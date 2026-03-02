@@ -242,15 +242,55 @@
         </div>
 
         <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 overflow-hidden">
-            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+            <div class="p-6 border-b border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 class="text-lg font-bold text-white">Riwayat Kegiatan</h2>
-                {% if logbook.google_doc_id %}
-                <button onclick="syncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}')" 
-                        class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-green-500/20">
-                    <i class="fas fa-sync-alt"></i> Sync Activities
-                </button>
-                {% endif %}
+                <div class="flex flex-wrap gap-2">
+                    {% if logbook.google_doc_id %}
+                    <button onclick="syncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}')" 
+                            class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-green-500/20">
+                        <i class="fas fa-sync-alt"></i> Sync Activities
+                    </button>
+                    {% endif %}
+                    {% if logbook.ttd_mentor_path %}
+                    <button onclick="document.getElementById('ttdModal').classList.remove('hidden')" 
+                            class="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-purple-500/20">
+                        <i class="fas fa-file-signature"></i> Kelola TTD
+                    </button>
+                    {% else %}
+                    <a href="{{ url_for('logbook_edit', logbook_id=logbook.id) }}" 
+                       class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition" title="Upload TTD dulu di halaman edit">
+                        <i class="fas fa-file-signature"></i> Upload TTD
+                    </a>
+                    {% endif %}
+                </div>
             </div>
+
+            <!-- Signature Status Notification -->
+            {% if signatures and signatures|length > 0 %}
+            <div class="px-6 py-3 bg-gray-900/50 border-b border-gray-700">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fas fa-stamp text-purple-400 text-sm"></i>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Status Tanda Tangan Per Bulan</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    {% for sig in signatures %}
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+                        {% if sig.is_approved %}
+                            bg-green-500/20 text-green-400 border border-green-500/30
+                        {% else %}
+                            bg-yellow-500/20 text-yellow-400 border border-yellow-500/30
+                        {% endif %}">
+                        {% if sig.is_approved %}
+                            <i class="fas fa-check-circle"></i>
+                        {% else %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% endif %}
+                        {{ sig.bulan }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-sm min-w-[500px]">
                     <thead>
@@ -455,6 +495,94 @@
         </div>
 
     </div>
+
+    <!-- TTD Management Modal -->
+    {% if logbook.ttd_mentor_path and signatures %}
+    <div id="ttdModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-gray-800 w-full max-w-lg rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="p-5 border-b border-gray-700 bg-gray-900 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-signature text-purple-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold">Kelola Tanda Tangan</h3>
+                        <p class="text-xs text-gray-500">Setujui TTD per bulan</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('ttdModal').classList.add('hidden')" class="text-gray-400 hover:text-white transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- TTD Preview -->
+            <div class="px-5 pt-5">
+                <div class="bg-gray-900 rounded-lg p-4 flex items-center justify-center border border-gray-700">
+                    <img src="{{ url_for('static', filename='uploads/logbook/' ~ logbook.ttd_mentor_path) }}" 
+                         class="max-h-20 object-contain" alt="Tanda Tangan Mentor">
+                </div>
+                <p class="text-xs text-gray-500 text-center mt-2">TTD Mentor: {{ logbook.nama_mentor }}</p>
+            </div>
+
+            <!-- Month List -->
+            <div class="p-5 space-y-2 max-h-[50vh] overflow-y-auto">
+                {% for sig in signatures %}
+                <div id="sig-{{ loop.index }}" class="flex items-center justify-between px-4 py-3 rounded-xl border transition
+                    {% if sig.is_approved %}
+                        bg-green-500/10 border-green-500/30
+                    {% else %}
+                        bg-gray-900 border-gray-700 hover:border-gray-600
+                    {% endif %}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm
+                            {% if sig.is_approved %}
+                                bg-green-500/20 text-green-400
+                            {% else %}
+                                bg-gray-800 text-gray-500
+                            {% endif %}">
+                            {% if sig.is_approved %}
+                                <i class="fas fa-check"></i>
+                            {% else %}
+                                <i class="fas fa-clock"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-white">{{ sig.bulan }}</p>
+                            {% if sig.is_approved and sig.approved_at %}
+                            <p class="text-xs text-green-400/70">Disetujui: {{ sig.approved_at }}</p>
+                            {% else %}
+                            <p class="text-xs text-yellow-400/70">Belum disetujui</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        {% if sig.is_approved %}
+                        <button onclick="revokeSignature('{{ logbook.id }}', '{{ sig.bulan }}', this)" 
+                                class="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fas fa-times"></i> Cabut
+                        </button>
+                        {% else %}
+                        <button onclick="approveSignature('{{ logbook.id }}', '{{ sig.bulan }}', this)" 
+                                class="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fas fa-check"></i> Setujui
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 border-t border-gray-700 bg-gray-900">
+                <button onclick="document.getElementById('ttdModal').classList.add('hidden')" 
+                        class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2.5 rounded-lg font-medium transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <script>
         document.addEventListener('alpine:init', () => {
@@ -988,6 +1116,73 @@
             } catch(e) {
                 window.showAlert('error', 'Gagal menghubungi server: ' + e);
             }
+        }
+    }
+
+    // --- TTD APPROVAL FUNCTIONS ---
+    async function approveSignature(logbookId, bulan, btn) {
+        const confirmed = await window.showConfirm(
+            'Setujui Tanda Tangan?',
+            `Apakah Anda yakin ingin menyetujui TTD untuk bulan <b>${bulan}</b>? TTD akan muncul di Word & Google Docs.`,
+            'info'
+        );
+        if (!confirmed) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+        try {
+            const res = await fetch(`/logbook/${logbookId}/approve-signature`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ bulan })
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.showAlert('success', data.message || 'TTD disetujui!');
+                setTimeout(() => location.reload(), 800);
+            } else {
+                window.showAlert('error', data.error || 'Gagal menyetujui TTD');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Setujui';
+            }
+        } catch(e) {
+            window.showAlert('error', 'Koneksi error: ' + e);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> Setujui';
+        }
+    }
+
+    async function revokeSignature(logbookId, bulan, btn) {
+        const confirmed = await window.showConfirm(
+            'Cabut Tanda Tangan?',
+            `Apakah Anda yakin ingin mencabut TTD untuk bulan <b>${bulan}</b>? TTD tidak akan muncul lagi di dokumen.`,
+            'danger'
+        );
+        if (!confirmed) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+        try {
+            const res = await fetch(`/logbook/${logbookId}/revoke-signature`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ bulan })
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.showAlert('success', data.message || 'TTD dicabut!');
+                setTimeout(() => location.reload(), 800);
+            } else {
+                window.showAlert('error', data.error || 'Gagal mencabut TTD');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-times"></i> Cabut';
+            }
+        } catch(e) {
+            window.showAlert('error', 'Koneksi error: ' + e);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-times"></i> Cabut';
         }
     }
 

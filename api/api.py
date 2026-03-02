@@ -1995,12 +1995,33 @@ def sync_custom_activities(logbook_id):
             doc_content = document.get('body').get('content')
             sig_insert_index = doc_content[-1].get('endIndex', 1) - 1
             
-            # Layout: right-aligned, no gap between Disetujui & Tanda Tangan
+            # Check approval status for this month
+            conn2 = get_connection()
+            cursor2 = conn2.cursor(dictionary=True)
+            cursor2.execute(
+                "SELECT is_approved FROM logbook_signatures WHERE logbook_id = %s AND bulan = %s",
+                (logbook_id, month_key)
+            )
+            sig_row = cursor2.fetchone()
+            month_approved = sig_row and sig_row.get('is_approved', 0) == 1
+            
+            # Get TTD path
+            ttd_path = logbook.get('ttd_mentor_path') if logbook else None
+            should_insert_ttd = month_approved and ttd_path
+            cursor2.close()
+            conn2.close()
+            
+            # Layout: right-aligned
             # "Disetujui Oleh"
             # "Tanda Tangan Mentor"
-            # [space for signature]
+            # [TTD image / empty space]
             # "{nama_mentor}"
-            sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
+            # Jika TTD akan di-insert, pakai gap kecil (\n\n) karena gambar akan masuk di situ
+            # Jika tidak, pakai gap besar (\n\n\n\n) sebagai placeholder kosong
+            if should_insert_ttd:
+                sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n{nama_mentor}\n\n"
+            else:
+                sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
             
             sig_requests = [
                 {
@@ -2070,7 +2091,7 @@ def sync_custom_activities(logbook_id):
                     }
                 })
             
-            # Bold for mentor name (black, same as doc)
+            # Bold for mentor name
             mentor_offset = sig_text.find(nama_mentor)
             if mentor_offset >= 0:
                 sig_requests.append({
@@ -2087,6 +2108,45 @@ def sync_custom_activities(logbook_id):
                 })
             
             service.documents().batchUpdate(documentId=file_id, body={'requests': sig_requests}).execute()
+            
+            # F2. Insert TTD image di antara "Tanda Tangan Mentor" dan nama mentor
+            if should_insert_ttd:
+                ttd_encoded = urllib.parse.quote(ttd_path, safe='/')
+                ttd_url = f"{base_url}/static/uploads/logbook/{ttd_encoded}"
+                logging.info(f"[Google Doc Sync] Inserting TTD image for {month_key}: {ttd_url}")
+                
+                try:
+                    # Re-fetch doc for fresh indices
+                    document = service.documents().get(documentId=file_id).execute()
+                    doc_content = document.get('body').get('content')
+                    
+                    # Cari paragraph "Tanda Tangan Mentor", insert gambar tepat setelahnya
+                    # Gambar harus masuk di newline kosong antara TTM dan nama mentor
+                    ttd_insert_idx = None
+                    for element in doc_content:
+                        if 'paragraph' in element:
+                            for elem in element.get('paragraph', {}).get('elements', []):
+                                txt = elem.get('textRun', {}).get('content', '')
+                                if 'Tanda Tangan Mentor' in txt:
+                                    # Insert di awal baris kosong setelah "Tanda Tangan Mentor\n"
+                                    ttd_insert_idx = element.get('endIndex', 0)
+                                    break
+                        if ttd_insert_idx:
+                            break
+                    
+                    if ttd_insert_idx:
+                        service.documents().batchUpdate(documentId=file_id, body={'requests': [{
+                            'insertInlineImage': {
+                                'location': {'index': ttd_insert_idx},
+                                'uri': ttd_url,
+                                'objectSize': {
+                                    'width': {'magnitude': 100, 'unit': 'PT'},
+                                    'height': {'magnitude': 50, 'unit': 'PT'}
+                                }
+                            }
+                        }]}).execute()
+                except Exception as ttd_err:
+                    logging.warning(f"[Google Doc Sync] TTD image insert failed for {month_key}: {ttd_err}")
 
         return jsonify({'success': True, 'message': f'Berhasil mengekspor {len(entries)} kegiatan ({len(month_keys)} bulan) ke Google Doc.'})
 
