@@ -669,11 +669,11 @@ def generate_word(logbook_id, user_id):
         sig_p = doc.add_paragraph()
         sig_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         sig_p.add_run("Disetujui Oleh\n")
-        sig_p.add_run("Tanda Tangan Mentor\n")
         
         # Insert gambar TTD jika bulan sudah approved DAN file TTD ada
         ttd_path = logbook.get('ttd_mentor_path')
         if month_approved and ttd_path:
+            # Kalau sudah approved, hapus label "Tanda Tangan Mentor" — langsung gambar
             ttd_full_path = os.path.join('static', 'uploads', 'logbook', ttd_path)
             if os.path.exists(ttd_full_path):
                 run_ttd = sig_p.add_run()
@@ -688,11 +688,14 @@ def generate_word(logbook_id, user_id):
                     run_ttd.add_picture(ttd_full_path, width=target_w, height=target_h)
                 except Exception as e:
                     print(f"Gagal insert TTD ke Word: {e}")
+                    sig_p.add_run("Tanda Tangan Mentor\n")
                     sig_p.add_run("\n\n\n")
                 sig_p.add_run("\n")
             else:
+                sig_p.add_run("Tanda Tangan Mentor\n")
                 sig_p.add_run("\n\n\n")
         else:
+            sig_p.add_run("Tanda Tangan Mentor\n")
             sig_p.add_run("\n\n\n")  # Placeholder kosong jika belum approve
         
         sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}").bold = True

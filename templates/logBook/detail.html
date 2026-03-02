@@ -1123,7 +1123,7 @@
     async function approveSignature(logbookId, bulan, btn) {
         const confirmed = await window.showConfirm(
             'Setujui Tanda Tangan?',
-            `Apakah Anda yakin ingin menyetujui TTD untuk bulan <b>${bulan}</b>? TTD akan muncul di Word & Google Docs.`,
+            `Apakah Anda yakin ingin menyetujui TTD untuk bulan "${bulan}"? TTD akan muncul di Word & Google Docs.`,
             'info'
         );
         if (!confirmed) return;
@@ -1156,7 +1156,7 @@
     async function revokeSignature(logbookId, bulan, btn) {
         const confirmed = await window.showConfirm(
             'Cabut Tanda Tangan?',
-            `Apakah Anda yakin ingin mencabut TTD untuk bulan <b>${bulan}</b>? TTD tidak akan muncul lagi di dokumen.`,
+            `Apakah Anda yakin ingin mencabut TTD untuk bulan "${bulan}"? TTD tidak akan muncul lagi di dokumen.`,
             'danger'
         );
         if (!confirmed) return;

@@ -1578,7 +1578,7 @@ def sync_custom_activities(logbook_id):
                 grouped_entries[month_key] = []
             grouped_entries[month_key].append(entry)
 
-        # 4. Fetch Doc Structure — find first "Aktivitas Bulan" header
+        # 4. Fetch Doc Structure — find ALL "Aktivitas Bulan" headers and map their sections
         document = service.documents().get(documentId=file_id).execute()
         doc_content = document.get('body').get('content')
         
@@ -1590,57 +1590,35 @@ def sync_custom_activities(logbook_id):
                         text += el.get('textRun', {}).get('content', '')
             return text
 
-        # Find the start index of the first "Aktivitas Bulan" paragraph
-        section_start_index = -1
+        # Build section map: { "Maret 2026": { "startIndex": N, "endIndex": M } }
+        # Each section spans from "Aktivitas Bulan X" header to the next "Aktivitas Bulan Y" or end of doc
+        existing_sections = {}  # month_key -> { startIndex, endIndex }
+        section_headers = []  # list of (month_key, startIndex)
+        
         for element in doc_content:
             if 'paragraph' in element:
                 txt = get_text_simple([element])
                 if "Aktivitas Bulan" in txt:
-                    section_start_index = element.get('startIndex')
-                    break
-
-        if section_start_index == -1:
-            return jsonify({'error': 'Header "Aktivitas Bulan..." tidak ditemukan di Google Doc.'}), 404
-
-        # 5. Find end of document body
-        doc_body_end = doc_content[-1].get('endIndex', section_start_index + 1)
+                    # Extract month_key from "Aktivitas Bulan Maret 2026\n"
+                    match = txt.strip().replace("Aktivitas Bulan ", "").strip()
+                    if match:
+                        section_headers.append((match, element.get('startIndex')))
         
-        # 6. Delete everything from section_start_index to end of doc body
-        # We must keep at least index (end-1) because doc always ends with \n
-        delete_end = doc_body_end - 1  # Don't delete the final newline
+        # Determine end index for each section (next header's start, or doc end)
+        doc_body_end = doc_content[-1].get('endIndex', 1)
+        for i, (month, start) in enumerate(section_headers):
+            if i + 1 < len(section_headers):
+                end = section_headers[i + 1][1]
+            else:
+                end = doc_body_end - 1  # Don't include final newline
+            existing_sections[month] = {'startIndex': start, 'endIndex': end}
         
-        delete_requests = []
-        if delete_end > section_start_index:
-            delete_requests.append({
-                'deleteContentRange': {
-                    'range': {
-                        'startIndex': section_start_index,
-                        'endIndex': delete_end
-                    }
-                }
-            })
-        
-        if delete_requests:
-            service.documents().batchUpdate(documentId=file_id, body={'requests': delete_requests}).execute()
+        logging.info(f"[Google Doc Sync] Existing sections in doc: {list(existing_sections.keys())}")
+        logging.info(f"[Google Doc Sync] Months to sync: {list(grouped_entries.keys())}")
 
-        # 7. Now insert fresh content for each month at section_start_index
-        # We build all text and structures from bottom to top (reverse order)
-        # because we insert at the same index each time.
-        # 
-        # Strategy: Build text content first, then insert tables separately.
-        # Actually, the Google Docs API has an 'insertTable' request!
-        # 
-        # Approach: Insert everything as text first (headers + signatures),
-        # then insert tables. But tables need specific indices.
-        #
-        # Simplest approach: Build content month by month in FORWARD order,
-        # inserting at the cursor position which advances each time.
-        # We must re-fetch the doc after each month to get correct indices.
-        #
-        # BETTER approach: Insert all content in one batch using text + table requests,
-        # but this requires careful index calculation.
-        #
-        # PRACTICAL approach: Process each month group sequentially.
+        # 5. Determine which months need processing
+        # Process months that exist in our data — if section exists, delete it first
+        # Process in REVERSE order to avoid index shifting
 
         def clean_html(raw_html):
             if not raw_html: return '-'
@@ -1653,15 +1631,49 @@ def sync_custom_activities(logbook_id):
 
         month_keys = list(grouped_entries.keys())
         
-        for month_idx, month_key in enumerate(month_keys):
+        # Sort month keys by their existing section position (if exists), new months last
+        # Process in REVERSE so deleting doesn't shift earlier months' indices
+        def month_sort_key(mk):
+            if mk in existing_sections:
+                return existing_sections[mk]['startIndex']
+            return 999999  # New months go to end
+        
+        month_keys_sorted = sorted(month_keys, key=month_sort_key, reverse=True)
+        
+        for month_key in month_keys_sorted:
             month_entries = grouped_entries[month_key]
             
-            # Re-fetch doc to get current indices
+            # 5a. If this month already exists in doc, delete its section first
+            if month_key in existing_sections:
+                section = existing_sections[month_key]
+                delete_start = section['startIndex']
+                delete_end = section['endIndex']
+                
+                if delete_end > delete_start:
+                    logging.info(f"[Google Doc Sync] Deleting existing section '{month_key}': {delete_start}-{delete_end}")
+                    service.documents().batchUpdate(documentId=file_id, body={'requests': [{
+                        'deleteContentRange': {
+                            'range': {
+                                'startIndex': delete_start,
+                                'endIndex': delete_end
+                            }
+                        }
+                    }]}).execute()
+            
+            # 5b. Re-fetch doc to get current indices after deletion
             document = service.documents().get(documentId=file_id).execute()
             doc_content = document.get('body').get('content')
             
-            # Find insertion point (end of doc body - 1, before final newline)
-            insert_index = doc_content[-1].get('endIndex', 1) - 1
+            # 5c. Determine insert position
+            if month_key in existing_sections:
+                # Re-insert at original position (which has shifted after delete)
+                # Use the startIndex of the deleted section
+                # After deletion, content below shifted up, so we insert at delete_start
+                insert_index = min(existing_sections[month_key]['startIndex'], 
+                                   doc_content[-1].get('endIndex', 1) - 1)
+            else:
+                # New month: append at end of doc
+                insert_index = doc_content[-1].get('endIndex', 1) - 1
             
             # A. Insert header text: "Aktivitas Bulan {month_key}\n"
             header_text = f"Aktivitas Bulan {month_key}\n"
@@ -1709,10 +1721,18 @@ def sync_custom_activities(logbook_id):
             
             service.documents().batchUpdate(documentId=file_id, body={'requests': batch1_requests}).execute()
             
-            # B. Re-fetch and insert table
+            # B. Re-fetch and insert table right after the header we just inserted
             document = service.documents().get(documentId=file_id).execute()
             doc_content = document.get('body').get('content')
-            table_insert_index = doc_content[-1].get('endIndex', 1) - 1
+            
+            # Find the "Aktivitas Bulan {month_key}" header we just inserted
+            table_insert_index = doc_content[-1].get('endIndex', 1) - 1  # fallback: end of doc
+            for element in doc_content:
+                if 'paragraph' in element:
+                    txt = get_text_simple([element])
+                    if f"Aktivitas Bulan {month_key}" in txt:
+                        table_insert_index = element.get('endIndex', table_insert_index)
+                        break
             
             num_rows = len(month_entries) + 1  # +1 for header row
             num_cols = 3  # No, Aktivitas, Deskripsi Kegiatan
@@ -1990,10 +2010,46 @@ def sync_custom_activities(logbook_id):
                         except Exception as img_err:
                             logging.warning(f"[Google Doc Sync] Image insert failed for entry {entry_id}, url={img_url}: {img_err}")
             
-            # F. Insert signature block after table
+            # F. Insert signature block after this month's table (not at doc end)
             document = service.documents().get(documentId=file_id).execute()
             doc_content = document.get('body').get('content')
-            sig_insert_index = doc_content[-1].get('endIndex', 1) - 1
+            
+            # Find the table for this month by looking for table after our header
+            sig_insert_index = doc_content[-1].get('endIndex', 1) - 1  # fallback
+            found_header = False
+            for element in doc_content:
+                if 'paragraph' in element and not found_header:
+                    txt = get_text_simple([element])
+                    if f"Aktivitas Bulan {month_key}" in txt:
+                        found_header = True
+                        continue
+                if found_header and 'table' in element:
+                    # Signature goes right after this table
+                    sig_insert_index = element.get('endIndex', sig_insert_index)
+                    break
+            
+            # F0. Detect font dari paragraf sebelum insert point (inherit, bukan hardcode)  
+            detected_font_size = 11  # fallback default
+            detected_font_family = None
+            try:
+                # Ambil paragraf terdekat sebelum sig_insert_index
+                nearby_paragraphs = [el for el in doc_content 
+                                     if 'paragraph' in el and el.get('startIndex', 0) < sig_insert_index]
+                if nearby_paragraphs:
+                    # Ambil 2 paragraf terakhir sebelum insert point
+                    check_para = nearby_paragraphs[-2] if len(nearby_paragraphs) >= 2 else nearby_paragraphs[-1]
+                    for elem in check_para.get('paragraph', {}).get('elements', []):
+                        ts = elem.get('textRun', {}).get('textStyle', {})
+                        fs = ts.get('fontSize', {})
+                        if fs.get('magnitude'):
+                            detected_font_size = fs['magnitude']
+                        wf = ts.get('weightedFontFamily', {})
+                        if wf.get('fontFamily'):
+                            detected_font_family = wf['fontFamily']
+                        if detected_font_size and detected_font_family:
+                            break
+            except Exception:
+                pass
             
             # Check approval status for this month
             conn2 = get_connection()
@@ -2013,15 +2069,30 @@ def sync_custom_activities(logbook_id):
             
             # Layout: right-aligned
             # "Disetujui Oleh"
-            # "Tanda Tangan Mentor"
-            # [TTD image / empty space]
+            # [jika belum approve: "Tanda Tangan Mentor" + space kosong]
+            # [jika sudah approve: langsung gambar TTD]
             # "{nama_mentor}"
-            # Jika TTD akan di-insert, pakai gap kecil (\n\n) karena gambar akan masuk di situ
-            # Jika tidak, pakai gap besar (\n\n\n\n) sebagai placeholder kosong
             if should_insert_ttd:
-                sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n{nama_mentor}\n\n"
+                # Approved: tanpa "Tanda Tangan Mentor", gap kecil untuk gambar
+                sig_text = f"Disetujui Oleh\n\n{nama_mentor}\n\n"
             else:
+                # Belum approved: pakai placeholder text + space kosong
                 sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
+            
+            # Build text style dengan font yang di-detect
+            text_style = {
+                'foregroundColor': {
+                    'color': {
+                        'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
+                    }
+                },
+                'fontSize': {'magnitude': detected_font_size, 'unit': 'PT'},
+                'bold': False
+            }
+            text_style_fields = 'foregroundColor,fontSize,bold'
+            if detected_font_family:
+                text_style['weightedFontFamily'] = {'fontFamily': detected_font_family, 'weight': 400}
+                text_style_fields += ',weightedFontFamily'
             
             sig_requests = [
                 {
@@ -2044,23 +2115,15 @@ def sync_custom_activities(logbook_id):
                         'fields': 'namedStyleType,alignment'
                     }
                 },
-                # Ensure all signature text is black first
+                # Apply detected font style
                 {
                     'updateTextStyle': {
                         'range': {
                             'startIndex': sig_insert_index,
                             'endIndex': sig_insert_index + len(sig_text)
                         },
-                        'textStyle': {
-                            'foregroundColor': {
-                                'color': {
-                                    'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
-                                }
-                            },
-                            'fontSize': {'magnitude': 11, 'unit': 'PT'},
-                            'bold': False
-                        },
-                        'fields': 'foregroundColor,fontSize,bold'
+                        'textStyle': text_style,
+                        'fields': text_style_fields
                     }
                 },
                 # Bold "Disetujui Oleh"
@@ -2076,20 +2139,21 @@ def sync_custom_activities(logbook_id):
                 },
             ]
             
-            # Bold "Tanda Tangan Mentor"
-            ttm_text = 'Tanda Tangan Mentor'
-            ttm_offset = sig_text.find(ttm_text)
-            if ttm_offset >= 0:
-                sig_requests.append({
-                    'updateTextStyle': {
-                        'range': {
-                            'startIndex': sig_insert_index + ttm_offset,
-                            'endIndex': sig_insert_index + ttm_offset + len(ttm_text)
-                        },
-                        'textStyle': {'bold': True},
-                        'fields': 'bold'
-                    }
-                })
+            # Bold "Tanda Tangan Mentor" (hanya jika belum approved)
+            if not should_insert_ttd:
+                ttm_text = 'Tanda Tangan Mentor'
+                ttm_offset = sig_text.find(ttm_text)
+                if ttm_offset >= 0:
+                    sig_requests.append({
+                        'updateTextStyle': {
+                            'range': {
+                                'startIndex': sig_insert_index + ttm_offset,
+                                'endIndex': sig_insert_index + ttm_offset + len(ttm_text)
+                            },
+                            'textStyle': {'bold': True},
+                            'fields': 'bold'
+                        }
+                    })
             
             # Bold for mentor name
             mentor_offset = sig_text.find(nama_mentor)
@@ -2109,7 +2173,7 @@ def sync_custom_activities(logbook_id):
             
             service.documents().batchUpdate(documentId=file_id, body={'requests': sig_requests}).execute()
             
-            # F2. Insert TTD image di antara "Tanda Tangan Mentor" dan nama mentor
+            # F2. Insert TTD image di antara "Disetujui Oleh" dan nama mentor
             if should_insert_ttd:
                 ttd_encoded = urllib.parse.quote(ttd_path, safe='/')
                 ttd_url = f"{base_url}/static/uploads/logbook/{ttd_encoded}"
@@ -2120,15 +2184,13 @@ def sync_custom_activities(logbook_id):
                     document = service.documents().get(documentId=file_id).execute()
                     doc_content = document.get('body').get('content')
                     
-                    # Cari paragraph "Tanda Tangan Mentor", insert gambar tepat setelahnya
-                    # Gambar harus masuk di newline kosong antara TTM dan nama mentor
+                    # Cari paragraph "Disetujui Oleh" yang baru saja kita insert (terdekat ke sig_insert_index)
                     ttd_insert_idx = None
                     for element in doc_content:
-                        if 'paragraph' in element:
+                        if 'paragraph' in element and element.get('startIndex', 0) >= sig_insert_index:
                             for elem in element.get('paragraph', {}).get('elements', []):
                                 txt = elem.get('textRun', {}).get('content', '')
-                                if 'Tanda Tangan Mentor' in txt:
-                                    # Insert di awal baris kosong setelah "Tanda Tangan Mentor\n"
+                                if 'Disetujui Oleh' in txt:
                                     ttd_insert_idx = element.get('endIndex', 0)
                                     break
                         if ttd_insert_idx:
