@@ -51,10 +51,25 @@ def save_signature_file(file, nim):
     # Auto-compress: resize + optimize PNG otomatis
     try:
         img = Image.open(file)
-        # Pertahankan transparency (RGBA)
-        if img.mode not in ('RGBA', 'LA'):
-            img = img.convert('RGBA')
+        # Convert ke RGBA wajib untuk manipulasi transparansi (Alpha channel)
+        img = img.convert("RGBA")
         
+        # --- PROSES HILANGKAN BACKGROUND ---
+        datas = img.getdata()
+        newData = []
+        
+        # Threshold: Warna RGB di atas 200 (mendekati putih) akan dianggap background.
+        # Lu bisa atur nilainya (0-255). Makin kecil makin agresif hapus warnanya.
+        threshold = 200 
+        
+        for item in datas:
+            # item is (R, G, B, A)
+            if item[0] > threshold and item[1] > threshold and item[2] > threshold:
+                newData.append((255, 255, 255, 0)) # Jadikan transparan
+            else:
+                newData.append(item)
+                
+        img.putdata(newData)
         # Resize jika terlalu besar (max width 500px, proporsional)
         max_w = 500
         if img.width > max_w:

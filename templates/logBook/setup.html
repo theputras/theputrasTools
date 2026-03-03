@@ -313,7 +313,7 @@
 
                 <h3 class="text-lg font-semibold text-blue-400 mb-4 border-b border-gray-700 pb-2 mt-6">Tanda Tangan Mentor</h3>
                 <div class="mb-6" x-data="ttdUploader()">
-                    <p class="text-xs text-gray-500 mb-3">Upload gambar tanda tangan mentor (format PNG, maks 2MB). TTD ini akan otomatis masuk ke Word & Google Docs setelah disetujui.</p>
+                    <p class="text-xs text-gray-500 mb-3">Upload gambar tanda tangan mentor. <span class="text-blue-400">Background gambar akan dihapus & dikompres otomatis oleh sistem.</span> TTD ini akan masuk ke Word & Docs setelah disetujui.</p>
                     
                     <!-- Preview gambar existing (mode edit) -->
                     <div x-show="existingTtd" class="mb-4">
@@ -347,10 +347,10 @@
                         <div class="flex flex-col items-center justify-center py-4 pointer-events-none">
                             <i class="fas fa-signature text-3xl mb-2 transition-colors" :class="isDragging ? 'text-blue-500' : 'text-gray-400'"></i>
                             <p class="text-sm text-gray-400"><span class="font-bold text-white">Klik untuk upload TTD</span> atau drag and drop</p>
-                            <p class="text-xs text-gray-500">Hanya PNG (maks 2MB)</p>
+                            <p class="text-xs text-gray-500">Bebas upload gambar format apapun</p>
                         </div>
                     </div>
-                    <input type="file" x-ref="ttdInput" name="ttd_file" accept=".png,image/png" @change="handleFile($event)" class="hidden">
+                    <input type="file" x-ref="ttdInput" name="ttd_file" accept="image/*" @change="handleFile($event)" class="hidden">
                     <input type="hidden" name="remove_ttd" :value="removedTtd ? '1' : '0'">
                 </div>
 
@@ -575,20 +575,6 @@
             handleFile(e) {
                 const file = e.target.files[0];
                 if (!file) return;
-                
-                // Validasi client-side
-                if (file.type !== 'image/png') {
-                    if(typeof window.showAlert === 'function') window.showAlert('error', 'Hanya file PNG yang diperbolehkan!');
-                    else alert('Hanya file PNG yang diperbolehkan!');
-                    e.target.value = '';
-                    return;
-                }
-                if (file.size > 2 * 1024 * 1024) {
-                    if(typeof window.showAlert === 'function') window.showAlert('error', 'Ukuran file maks 2MB!');
-                    else alert('Ukuran file maks 2MB!');
-                    e.target.value = '';
-                    return;
-                }
 
                 this.existingTtd = '';
                 this.removedTtd = false;
@@ -600,12 +586,7 @@
             handleDrop(e) {
                 this.isDragging = false;
                 const file = e.dataTransfer.files[0];
-                if (!file || file.type !== 'image/png') {
-                    if(typeof window.showAlert === 'function') window.showAlert('error', 'Hanya file PNG yang diperbolehkan!');
-                    return;
-                }
-                if (file.size > 2 * 1024 * 1024) {
-                    if(typeof window.showAlert === 'function') window.showAlert('error', 'Ukuran file maks 2MB!');
+                if (!file) {
                     return;
                 }
                 
