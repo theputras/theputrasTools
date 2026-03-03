@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Logbook - The Putras</title>
+    <title>Detail Logbook {{ logbook.nama_mitra }} - The Putras Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -79,7 +79,31 @@
                 <div class="w-full md:w-auto">
                     <div class="flex items-center gap-3 mb-1">
                         <a href="{{ url_for('logbook_list') }}" class="text-gray-400 hover:text-white transition shrink-0"><i class="fas fa-arrow-left"></i></a>
-                        <h1 class="text-xl sm:text-2xl font-bold text-white leading-tight">{{ logbook.nama_mitra }}</h1>
+                        
+                        <div x-data="{ showMitra: true }" x-init="setInterval(() => showMitra = !showMitra, 10000)" class="grid overflow-visible py-1">
+                            
+                            <h1 x-show="!showMitra" 
+                                x-transition:enter="transition-all duration-700 ease-[cubic-bezier(0.68,-0.15,0.265,1.55)] origin-left"
+                                x-transition:enter-start="opacity-0 translate-y-8 scale-50 rotate-3 blur-sm"
+                                x-transition:enter-end="opacity-100 translate-y-0 scale-100 rotate-0 blur-0"
+                                x-transition:leave="transition-all duration-400 ease-in"
+                                x-transition:leave-start="opacity-100 translate-y-0 scale-100 rotate-0"
+                                x-transition:leave-end="opacity-0 -translate-y-8 scale-75 -rotate-3 blur-sm"
+                                class="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 leading-tight col-start-1 row-start-1 drop-shadow-lg tracking-wide" x-cloak>
+                                Logbook Kegiatan
+                            </h1>
+                            
+                            <h1 x-show="showMitra" 
+                                x-transition:enter="transition-all duration-700 ease-[cubic-bezier(0.68,-0.15,0.265,1.55)] origin-left"
+                                x-transition:enter-start="opacity-0 translate-y-8 scale-50 rotate-3 blur-sm"
+                                x-transition:enter-end="opacity-100 translate-y-0 scale-100 rotate-0 blur-0"
+                                x-transition:leave="transition-all duration-400 ease-in"
+                                x-transition:leave-start="opacity-100 translate-y-0 scale-100 rotate-0"
+                                x-transition:leave-end="opacity-0 -translate-y-8 scale-75 -rotate-3 blur-sm"
+                                class="text-xl sm:text-2xl font-bold text-white leading-tight col-start-1 row-start-1 drop-shadow-md">
+                                {{ logbook.nama_mitra }}
+                            </h1>
+                        </div>
                     </div>
                     <p class="text-blue-400 font-medium ml-8 text-sm sm:text-base">{{ logbook.posisi_magang }}</p>
                 </div>
@@ -559,7 +583,7 @@
                     <img src="{{ url_for('static', filename='uploads/logbook/' ~ logbook.ttd_mentor_path) }}" 
                          class="max-h-20 object-contain" alt="Tanda Tangan Mentor">
                 </div>
-                <p class="text-xs text-gray-500 text-center mt-2">TTD Mentor: {{ logbook.nama_mentor }}</p>
+                <p class="text-xs text-gray-500 text-center mt-2">Approval by {{ logbook.nama_mentor }}</p>
             </div>
 
             <div class="p-5 space-y-2 max-h-[50vh] overflow-y-auto">
