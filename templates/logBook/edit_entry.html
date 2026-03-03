@@ -43,7 +43,7 @@
         </div>
 
         <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-6 sm:p-8">
-            <form method="POST" enctype="multipart/form-data" x-data="{ isSubmitting: false }"
+            <form method="POST" enctype="multipart/form-data" x-data="{ isSubmitting: false, isDeleting: false }"
                   @submit.prevent="
                       if (isSubmitting) return;
                       isSubmitting = true;
@@ -348,11 +348,19 @@
                         </template>
                     </button>
                     
-                    <a href="{{ url_for('logbook_delete_entry', logbook_id=logbook.uuid, entry_id=entry.uuid) }}" 
-                       onclick="handleCustomDelete(event, 'Hapus Kegiatan?', 'Yakin ingin menghapus kegiatan ini? Data tidak bisa dikembalikan!')" 
-                       class="sm:flex-none w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-lg shadow-red-500/30 text-center flex justify-center items-center">
-                        <i class="fas fa-trash-alt mr-2"></i> Hapus
-                    </a>
+                    <button type="button" 
+                       href="{{ url_for('logbook_delete_entry', logbook_id=logbook.uuid, entry_id=entry.uuid) }}" 
+                       @click="handleCustomDelete($event, 'Hapus Kegiatan?', 'Yakin ingin menghapus kegiatan ini? Data tidak bisa dikembalikan!', () => isDeleting = true, () => isDeleting = false)" 
+                       :disabled="isDeleting"
+                       class="sm:flex-none w-full sm:w-auto bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition shadow-lg shadow-red-500/30 text-center flex justify-center items-center">
+                        
+                        <template x-if="!isDeleting">
+                            <span><i class="fas fa-trash-alt mr-2"></i> Hapus</span>
+                        </template>
+                        <template x-if="isDeleting">
+                            <span><i class="fas fa-spinner fa-spin mr-2"></i> Menghapus & Sync...</span>
+                        </template>
+                    </button>
                 </div>
             </form>
         </div>
@@ -792,14 +800,14 @@
         });
 
         // Helper delete confirm
-        async function handleCustomDelete(event, title, message) {
+        async function handleCustomDelete(event, title, message, onStartLoading, onFinishLoading) {
             event.preventDefault();
             const deleteUrl = event.currentTarget.getAttribute('href');
             if (typeof window.showConfirm === 'function') {
              // Jika user klik "Ya"
             const isConfirmed = await window.showConfirm(title, message, 'danger');
             if (isConfirmed) {
-                 // Modified for Security H3: Use POST instead of GET
+                if (onStartLoading) onStartLoading();
                 try {
                     const response = await fetch(deleteUrl, {
                         method: 'POST',
@@ -809,6 +817,11 @@
                     });
                     
                     if (response.ok) {
+                    // --- TAMBAHAN SINKRONISASI OTOMATIS SAAT DIHAPUS ---
+                            {% if logbook.google_doc_id %}
+                            if(typeof window.showAlert === 'function') window.showAlert('info', 'Terhapus! Menyinkronkan ke Google Docs...');
+                            await autoSyncActivities('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
+                            {% endif %}
                         // Redirect logic depending on where we are
                         // If deleting entry, reload or go back to logbook detail?
                         // Usually deleting entry -> reload current page (which might be detail?)
@@ -822,9 +835,11 @@
                              window.location.href = "{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}";
                         }
                     } else {
+                        if (onStopLoading) onStopLoading();
                         alert('Gagal menghapus kegiatan. Silakan coba lagi.');
                     }
                 } catch (e) {
+                    if (onStopLoading) onStopLoading();
                     console.error('Delete error:', e);
                     alert('Terjadi kesalahan koneksi.');
                 }
@@ -832,6 +847,7 @@
         } else {
              // Fallback
             if (confirm(message)) {
+                if (onStartLoading) onStartLoading();
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = deleteUrl;
