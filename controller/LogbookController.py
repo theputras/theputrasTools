@@ -609,11 +609,11 @@ def generate_word(logbook_id, user_id):
 
     # 4. Render Logbook Per Bulan
     for month_key, group in grouped_entries.items():
-        doc.add_paragraph() 
         heading = doc.add_heading('', level=2)
         run_h = heading.add_run(f'Aktivitas Bulan {month_key}')
         run_h.font.color.rgb = RGBColor(255, 0, 0)
         run_h.font.name = 'Times New Roman'
+        heading.paragraph_format.space_after = Pt(4)
         
         table = doc.add_table(rows=1, cols=3)
         table.style = 'Table Grid'
@@ -640,15 +640,22 @@ def generate_word(logbook_id, user_id):
             row_cells = table.add_row().cells
             row_cells[0].text = str(idx)
             row_cells[0].width = Inches(0.5)
+            for paragraph in row_cells[0].paragraphs:
+                for run in paragraph.runs:
+                    run.bold = False
             
             tgl_str = entry['tanggal'].strftime('%d-%m-%Y') if entry['tanggal'] else '-'
             row_cells[1].text = f"{tgl_str}\n{entry['aktivitas']}"
             row_cells[1].width = Inches(1.5)
+            for paragraph in row_cells[1].paragraphs:
+                for run in paragraph.runs:
+                    run.bold = False
             
             row_cells[2].width = Inches(4.5)
             p = row_cells[2].paragraphs[0]
             clean_deskripsi = clean_html_for_word(entry['deskripsi'])
-            p.add_run(clean_deskripsi + "\n")
+            desc_run = p.add_run(clean_deskripsi + "\n")
+            desc_run.bold = False
             
             # --- MODIFIKASI: AMBIL MULTIPLE GAMBAR DARI DATABASE ---
             cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry['id'],))

@@ -1694,9 +1694,10 @@ def sync_custom_activities(logbook_id):
                             'endIndex': insert_index + len(header_text)
                         },
                         'paragraphStyle': {
-                            'namedStyleType': 'NORMAL_TEXT'
+                            'namedStyleType': 'NORMAL_TEXT',
+                            'spaceBelow': {'magnitude': 4, 'unit': 'PT'}
                         },
-                        'fields': 'namedStyleType'
+                        'fields': 'namedStyleType,spaceBelow'
                     }
                 },
                 # Make header text black + bold with Times New Roman 12pt
@@ -1928,9 +1929,10 @@ def sync_custom_activities(logbook_id):
                                                         'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
                                                     }
                                                 },
-                                                'underline': False
+                                                'underline': False,
+                                                'bold': False
                                             },
-                                            'fields': 'fontSize,foregroundColor,underline'
+                                            'fields': 'fontSize,foregroundColor,underline,bold'
                                         }
                                     })
                                     
