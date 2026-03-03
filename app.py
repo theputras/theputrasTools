@@ -1820,6 +1820,7 @@ def logbook_edit_entry(logbook_id, entry_id):
 
 
     return render_template('logBook/edit_entry.html', logbook=logbook, entry=entry)
+    
 # 7. Hapus Kegiatan Harian
 @app.route('/logbook/<string:logbook_id>/delete_entry/<string:entry_id>', methods=['POST'])
 @login_required
@@ -1827,9 +1828,18 @@ def logbook_edit_entry(logbook_id, entry_id):
 def logbook_delete_entry(logbook_id, entry_id):
     current_user = g.user.get('sub')
     
-    # Keamanan: Pastikan logbook milik dia sebelum hapus kegiatan
-    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
-    entry = get_entry_by_id(entry_id)
+    # KONVERSI UUID DARI URL JADI ID ASLI
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    real_entry_id = get_entry_id_by_uuid(entry_id)
+    
+    # Kalau data ga ketemu, balikin ke detail
+    if not real_logbook_id or not real_entry_id:
+        return redirect(url_for('logbook_detail', logbook_id=logbook_id))
+    
+    # Keamanan: Pastikan logbook milik dia sebelum hapus kegiatan (Pakai Real ID)
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
+    entry = get_entry_by_id(real_entry_id)
+    
     if logbook and entry:
         delete_entry(entry['id'], logbook['id'])
         
