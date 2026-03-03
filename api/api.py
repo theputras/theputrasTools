@@ -1695,7 +1695,7 @@ def sync_custom_activities(logbook_id):
                         },
                         'paragraphStyle': {
                             'namedStyleType': 'NORMAL_TEXT',
-                            'spaceBelow': {'magnitude': 4, 'unit': 'PT'}
+                            'spaceBelow': {'magnitude': 0, 'unit': 'PT'}
                         },
                         'fields': 'namedStyleType,spaceBelow'
                     }
@@ -1710,7 +1710,7 @@ def sync_custom_activities(logbook_id):
                         'textStyle': {
                             'foregroundColor': {
                                 'color': {
-                                    'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
+                                    'rgbColor': {'red': 1.0, 'green': 0.0, 'blue': 0.0}
                                 }
                             },
                             'bold': True,
@@ -1923,7 +1923,7 @@ def sync_custom_activities(logbook_id):
                                         'updateTextStyle': {
                                             'range': {'startIndex': c_start, 'endIndex': c_end - 1},
                                             'textStyle': {
-                                                'fontSize': {'magnitude': 11, 'unit': 'PT'},
+                                                'fontSize': {'magnitude': 12, 'unit': 'PT'},
                                                 'foregroundColor': {
                                                     'color': {
                                                         'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
@@ -2038,7 +2038,7 @@ def sync_custom_activities(logbook_id):
                             service.documents().batchUpdate(documentId=file_id, body={'requests': [{
                                 'insertText': {
                                     'location': {'index': insert_at},
-                                    'text': '\n'
+                                    'text': ' '
                                 }
                             }]}).execute()
                             

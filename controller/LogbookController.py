@@ -689,8 +689,8 @@ def generate_word(logbook_id, user_id):
                     img_path = os.path.join('static', 'uploads', 'logbook', img['path'])
                     if os.path.exists(img_path):
                         run = p_images.add_run()
-                        run.add_picture(img_path, width=Inches(2.0)) # Kecilin dikit biar muat banyak
-                        run.add_text("\n") # Enter setelah gambar
+                        run.add_picture(img_path, width=Inches(1.8)) # Kecilin dikit biar muat banyak
+                        run.add_text(" ") # Enter setelah gambar
                         
                         # Tampilkan Keterangan Gambar jika ada
                         nama = img.get('nama_asli')
@@ -705,7 +705,7 @@ def generate_word(logbook_id, user_id):
                             if nama: info_text.append(f"[{nama}]")
                             if desc: info_text.append(desc)
                             
-                            caption_run.add_text(" ".join(info_text) + "\n\n")
+                            caption_run.add_text(" ".join(info_text) + "   ")
                         else:
                             run.add_text("\n")
             
