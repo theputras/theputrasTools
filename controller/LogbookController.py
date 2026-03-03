@@ -13,6 +13,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH # Tambahkan ini di bagian atas fil
 import bleach
 from PIL import Image
 from datetime import datetime
+import uuid
 
 # UPLOAD_FOLDER = os.path.join('static', 'uploads', 'logbook')
 # os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -143,25 +144,44 @@ def get_logbook_by_id_and_user(id, user_id):
     conn.close()
     return logbook
 
+def get_logbook_id_by_uuid(uuid_str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM logbooks WHERE uuid = %s", (uuid_str,))
+    result = cursor.fetchone()
+    conn.close()
+    return result[0] if result else None
+
+def get_entry_id_by_uuid(uuid_str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM logbook_entries WHERE uuid = %s", (uuid_str,))
+    result = cursor.fetchone()
+    conn.close()
+    return result[0] if result else None
+
 def create_logbook(user_id, data, ttd_path=None):
     conn = get_connection()
     cursor = conn.cursor()
+    
+    new_uuid = str(uuid.uuid4())[:8]
+    
     query = """
-    INSERT INTO logbooks (user_id, fakultas, prodi, nama, nim, nama_mitra, waktu_mulai, waktu_selesai, posisi_magang, nama_mentor, wa_mentor, email_mentor, google_doc_id, google_doc_name, ttd_mentor_path)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO logbooks (uuid, user_id, fakultas, prodi, nama, nim, nama_mitra, waktu_mulai, waktu_selesai, posisi_magang, nama_mentor, wa_mentor, email_mentor, google_doc_id, google_doc_name, ttd_mentor_path)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     val = (
-        user_id, data['fakultas'], data['prodi'], data['nama'], data['nim'], 
+        new_uuid, user_id, data['fakultas'], data['prodi'], data['nama'], data['nim'], 
         data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], 
         data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'],
         data.get('google_doc_id'), data.get('google_doc_name'),
         ttd_path
     )
     cursor.execute(query, val)
+    
     conn.commit()
-    new_id = cursor.lastrowid
     conn.close()
-    return new_id
+    return new_uuid
 
 def update_logbook(id, data, user_id, ttd_path=None, remove_ttd=False):
     conn = get_connection()
@@ -311,9 +331,10 @@ def add_entry(logbook_id, tanggal, aktivitas, deskripsi, files):
         nim_user = str(row[0]) # Menggunakan NIM asli
 
         # 1. Insert Entry
+        new_uuid = str(uuid.uuid4())[:8]
         cursor.execute(
-            "INSERT INTO logbook_entries (logbook_id, tanggal, aktivitas, deskripsi) VALUES (%s, %s, %s, %s)",
-            (logbook_id, tanggal, aktivitas, deskripsi)
+            "INSERT INTO logbook_entries (uuid, logbook_id, tanggal, aktivitas, deskripsi) VALUES (%s, %s, %s, %s, %s)",
+            (new_uuid, logbook_id, tanggal, aktivitas, deskripsi)
         )
         entry_id = cursor.lastrowid
         

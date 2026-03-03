@@ -1246,7 +1246,7 @@ def parse_google_doc(file_id):
         logging.error(f"[Google Docs Parse] Error: {e}")
         return jsonify({'error': str(e)}), 500
 
-@api_bp.route('/google/drive/sync-metadata/<int:logbook_id>', methods=['POST'])
+@api_bp.route('/google/drive/sync-metadata/<string:logbook_id>', methods=['POST'])
 @login_required
 def sync_metadata_to_doc(logbook_id):
     """Export logbook metadata FROM DB TO Google Doc header/identity table"""
@@ -1266,7 +1266,7 @@ def sync_metadata_to_doc(logbook_id):
         # 1. Fetch logbook metadata from DB
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM logbooks WHERE id = %s", (logbook_id,))
+        cursor.execute("SELECT * FROM logbooks WHERE uuid = %s", (logbook_id,))
         logbook = cursor.fetchone()
         cursor.close()
         conn.close()
@@ -1501,7 +1501,7 @@ def sync_metadata_to_doc(logbook_id):
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-@api_bp.route('/google/drive/sync-activities/<int:logbook_id>', methods=['POST'])
+@api_bp.route('/google/drive/sync-activities/<string:logbook_id>', methods=['POST'])
 @login_required
 def sync_custom_activities(logbook_id):
     """Sync activities from Logbook Entries (DB) TO Google Doc — Per Month Tables"""
@@ -1531,11 +1531,15 @@ def sync_custom_activities(logbook_id):
         # 1. Fetch Logbook metadata (for nama_mentor)
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM logbooks WHERE id = %s", (logbook_id,))
+        cursor.execute("SELECT * FROM logbooks WHERE uuid = %s", (logbook_id,))
         logbook = cursor.fetchone()
+        if not logbook:
+            return jsonify({'error': 'Logbook not found'}), 404
+        
+        real_logbook_id = logbook['id']
         
         # 2. Fetch Entries from DB
-        cursor.execute("SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC, id ASC", (logbook_id,))
+        cursor.execute("SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC, id ASC", (real_logbook_id,))
         entries = cursor.fetchall()
         
         # 2b. Fetch images for each entry
@@ -2014,7 +2018,7 @@ def sync_custom_activities(logbook_id):
             cursor_res = conn_res.cursor(dictionary=True)
             cursor_res.execute(
                 "SELECT content FROM logbook_resumes WHERE logbook_id = %s AND bulan = %s",
-                (logbook_id, month_key)
+                (real_logbook_id, month_key)
             )
             resume_row = cursor_res.fetchone()
             cursor_res.close()
@@ -2172,7 +2176,7 @@ def sync_custom_activities(logbook_id):
                 cursor2 = conn2.cursor(dictionary=True)
                 cursor2.execute(
                     "SELECT is_approved FROM logbook_signatures WHERE logbook_id = %s AND bulan = %s",
-                    (logbook_id, month_key)
+                    (real_logbook_id, month_key)
                 )
                 sig_row = cursor2.fetchone()
                 month_approved = sig_row and sig_row.get('is_approved', 0) == 1

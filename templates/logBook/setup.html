@@ -37,11 +37,11 @@
                               if (res.ok || res.redirected) {
                                   {% if logbook and logbook.google_doc_id %}
                                   if(typeof window.showAlert === 'function') window.showAlert('info', 'Tersimpan! Mengekspor data ke Google Docs...');
-                                  await syncMetadataToDoc('{{ logbook.id }}', '{{ logbook.google_doc_id }}');
-                                  await autoSyncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}');
+                                  await syncMetadataToDoc('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
+                                  await autoSyncActivities('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
                                   {% endif %}
                                   {% if logbook %}
-                                  window.location.href = '{{ url_for('logbook_detail', logbook_id=logbook.id) }}';
+                                  window.location.href = '{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}';
                                   {% else %}
                                   window.location.href = res.url || '{{ url_for('logbook_list') }}';
                                   {% endif %}

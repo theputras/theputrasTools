@@ -41,8 +41,8 @@
                     </div>
                 </div>
                 <div class="mt-5 pt-4 border-t border-gray-700 flex justify-between items-center">
-                    <a href="{{ url_for('logbook_detail', logbook_id=lb.id) }}" class="text-sm text-white bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full transition">Buka Logbook</a>
-                    <a href="{{ url_for('logbook_delete', logbook_id=lb.id) }}" 
+                    <a href="{{ url_for('logbook_detail', logbook_id=lb.uuid) }}" class="text-sm text-white bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full transition">Buka Logbook</a>
+                    <a href="{{ url_for('logbook_delete', logbook_id=lb.uuid) }}" 
    onclick="handleCustomDelete(event, 'Hapus Logbook?', 'Yakin ingin menghapus logbook ini? Semua data di dalamnya akan hilang!')" 
    class="text-red-400 hover:text-red-300 transition">
     <i class="fas fa-trash-alt"></i>

@@ -42,7 +42,7 @@ from controller.LogbookController import (
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
     get_entry_by_id, update_entry, delete_single_image, update_image_metadata, get_image_by_id, replace_image_file,
     save_signature_file, get_signatures_by_logbook, approve_signature, revoke_signature,
-    get_resumes_by_logbook, save_resume, delete_resume
+    get_resumes_by_logbook, save_resume, delete_resume, get_logbook_id_by_uuid, get_entry_id_by_uuid
 )
 from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password, update_user_password
 from models.auth_api import generate_access_token, generate_refresh_token
@@ -1675,14 +1675,18 @@ def logbook_setup():
     )
 
 # 3. Edit Setup Logbook (INI YANG TADI DUPLIKAT DAN SALAH ROUTE)
-@app.route('/logbook/edit/<int:logbook_id>', methods=['GET', 'POST'])
+@app.route('/logbook/edit/<string:logbook_id>', methods=['GET', 'POST'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_edit(logbook_id):
     current_user = g.user.get('sub')
     
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return "Logbook tidak ditemukan", 404
+        
     # Fetch logbook dulu (untuk GET maupun POST)
-    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
     if not logbook:
         return "Akses Ditolak! Ini bukan logbook Anda.", 403
     
@@ -1695,7 +1699,7 @@ def logbook_edit(logbook_id):
             nim = request.form.get('nim', logbook['nim'] if logbook else 'unknown')
             ttd_path = save_signature_file(ttd_file, nim)
         
-        update_logbook(logbook_id, request.form, current_user, ttd_path=ttd_path, remove_ttd=remove_ttd)
+        update_logbook(logbook['id'], request.form, current_user, ttd_path=ttd_path, remove_ttd=remove_ttd)
         return redirect(url_for('logbook_detail', logbook_id=logbook_id))
     # Google account status (unified via DB token)
     # Trigger refresh logic via build_drive_service if needed
@@ -1723,47 +1727,61 @@ def logbook_edit(logbook_id):
     )
 
 # 4. Hapus Setup Logbook
-@app.route('/logbook/delete/<int:logbook_id>', methods=['POST'])
+@app.route('/logbook/delete/<string:logbook_id>', methods=['POST'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_delete(logbook_id):
     current_user = g.user.get('sub')
-    delete_logbook(logbook_id, current_user)
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return redirect(url_for('logbook_list'))
+        
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
+    if logbook:
+        delete_logbook(logbook['id'], current_user)
     return redirect(url_for('logbook_list'))
 
 # 5. HALAMAN UTAMA LOGBOOK (Isi Kegiatan Harian)
-@app.route('/logbook/<int:logbook_id>', methods=['GET'])
+@app.route('/logbook/<string:logbook_id>', methods=['GET'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_detail(logbook_id):
     current_user = g.user.get('sub')
     
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return "Logbook tidak ditemukan", 404
+    
     # Cek apakah logbook ini beneran milik dia
-    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
     if not logbook:
         return "Akses Ditolak! Ini bukan logbook Anda.", 403
         
-    entries = get_entries_by_logbook(logbook_id)
+    entries = get_entries_by_logbook(logbook['id'])
     # Google account status
     google_user = google_cal_service.get_token_by_user(current_user)
     # Signature data per bulan
-    signatures = get_signatures_by_logbook(logbook_id)
+    signatures = get_signatures_by_logbook(logbook['id'])
     # Resume data per bulan
-    resumes = get_resumes_by_logbook(logbook_id)
+    resumes = get_resumes_by_logbook(logbook['id'])
     return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user, signatures=signatures, resumes=resumes)
 
 # 6. Tambah Kegiatan Harian
-@app.route('/logbook/<int:logbook_id>/add_entry', methods=['POST'])
+@app.route('/logbook/<string:logbook_id>/add_entry', methods=['POST'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_add_entry(logbook_id):
     current_user = g.user.get('sub')
     
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return "Logbook tidak ditemukan", 404
+        
     # Keamanan: Pastikan logbook milik dia sebelum nambah kegiatan
-    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
     if logbook:
         add_entry(
-            logbook_id, 
+            logbook['id'], 
             request.form.get('tanggal'), 
             request.form.get('aktivitas'), 
             request.form.get('deskripsi'), 
@@ -1772,30 +1790,38 @@ def logbook_add_entry(logbook_id):
         
     return redirect(url_for('logbook_detail', logbook_id=logbook_id))
 # 6.5 Edit Kegiatan Harian
-@app.route('/logbook/<int:logbook_id>/edit_entry/<int:entry_id>', methods=['GET', 'POST'])
+@app.route('/logbook/<string:logbook_id>/edit_entry/<string:entry_id>', methods=['GET', 'POST'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_edit_entry(logbook_id, entry_id):
     current_user = g.user.get('sub')
     
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    real_entry_id = get_entry_id_by_uuid(entry_id)
+    
+    if not real_logbook_id or not real_entry_id:
+        return "Data tidak ditemukan", 404
+    
     # Keamanan: Pastikan logbook ini beneran milik dia sebelum ngedit
-    logbook = get_logbook_by_id_and_user(logbook_id, current_user)
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
     if not logbook:
         return "Akses Ditolak!", 403
 
-    # Jika disubmit (POST)
-    if request.method == 'POST':
-        update_entry(entry_id, logbook_id, request.form, request.files)
-        return redirect(url_for('logbook_detail', logbook_id=logbook_id))
-
     # Jika cuma ngebuka halaman (GET)
-    entry = get_entry_by_id(entry_id)
+    entry = get_entry_by_id(real_entry_id)
     if not entry:
         return "Data kegiatan tidak ditemukan", 404
 
+    # Jika disubmit (POST)
+    if request.method == 'POST':
+        update_entry(entry['id'], logbook['id'], request.form, request.files)
+        return redirect(url_for('logbook_detail', logbook_id=logbook_id))
+
+
+
     return render_template('logBook/edit_entry.html', logbook=logbook, entry=entry)
 # 7. Hapus Kegiatan Harian
-@app.route('/logbook/<int:logbook_id>/delete_entry/<int:entry_id>', methods=['POST'])
+@app.route('/logbook/<string:logbook_id>/delete_entry/<string:entry_id>', methods=['POST'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_delete_entry(logbook_id, entry_id):
@@ -1803,21 +1829,30 @@ def logbook_delete_entry(logbook_id, entry_id):
     
     # Keamanan: Pastikan logbook milik dia sebelum hapus kegiatan
     logbook = get_logbook_by_id_and_user(logbook_id, current_user)
-    if logbook:
-        delete_entry(entry_id, logbook_id)
+    entry = get_entry_by_id(entry_id)
+    if logbook and entry:
+        delete_entry(entry['id'], logbook['id'])
         
     return redirect(url_for('logbook_detail', logbook_id=logbook_id))
 
 # 8. Download Word
-@app.route('/logbook/<int:logbook_id>/download', methods=['GET'])
+@app.route('/logbook/<string:logbook_id>/download', methods=['GET'])
 @login_required
 @check_permission('logbook_magang')
 def logbook_download(logbook_id):
     current_user = g.user.get('sub')
-    return generate_word(logbook_id, current_user)
+    
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return "Logbook tidak ditemukan", 404
+        
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
+    if logbook:
+        return generate_word(logbook['id'], current_user)
+    return "Akses Ditolak", 403
 
 # 9. Approve Tanda Tangan (JSON API)
-@app.route('/logbook/<int:logbook_id>/approve-signature', methods=['POST'])
+@app.route('/logbook/<string:logbook_id>/approve-signature', methods=['POST'])
 @login_required
 def logbook_approve_signature(logbook_id):
     current_user = g.user.get('sub')
@@ -1827,12 +1862,20 @@ def logbook_approve_signature(logbook_id):
     if not bulan:
         return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
     
-    if approve_signature(logbook_id, bulan, current_user):
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return jsonify({'success': False, 'error': 'Logbook tidak ditemukan'}), 404
+    
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
+    if not logbook:
+        return jsonify({'success': False, 'error': 'Akses ditolak'}), 403
+        
+    if approve_signature(logbook['id'], bulan, current_user):
         return jsonify({'success': True, 'message': f'TTD bulan {bulan} disetujui!'})
     return jsonify({'success': False, 'error': 'Gagal menyetujui TTD'}), 400
 
 # 10. Revoke Tanda Tangan (JSON API)
-@app.route('/logbook/<int:logbook_id>/revoke-signature', methods=['POST'])
+@app.route('/logbook/<string:logbook_id>/revoke-signature', methods=['POST'])
 @login_required
 def logbook_revoke_signature(logbook_id):
     current_user = g.user.get('sub')
@@ -1842,12 +1885,20 @@ def logbook_revoke_signature(logbook_id):
     if not bulan:
         return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
     
-    if revoke_signature(logbook_id, bulan, current_user):
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return jsonify({'success': False, 'error': 'Logbook tidak ditemukan'}), 404
+        
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
+    if not logbook:
+        return jsonify({'success': False, 'error': 'Akses ditolak'}), 403
+        
+    if revoke_signature(logbook['id'], bulan, current_user):
         return jsonify({'success': True, 'message': f'TTD bulan {bulan} dicabut!'})
     return jsonify({'success': False, 'error': 'Gagal mencabut TTD'}), 400
 
 # 11. Save Resume Kegiatan (JSON API)
-@app.route('/logbook/<int:logbook_id>/save-resume', methods=['POST'])
+@app.route('/logbook/<string:logbook_id>/save-resume', methods=['POST'])
 @login_required
 def logbook_save_resume(logbook_id):
     current_user = g.user.get('sub')
@@ -1858,12 +1909,20 @@ def logbook_save_resume(logbook_id):
     if not bulan:
         return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
     
-    if save_resume(logbook_id, bulan, content, current_user):
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return jsonify({'success': False, 'error': 'Logbook tidak ditemukan'}), 404
+    
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
+    if not logbook:
+        return jsonify({'success': False, 'error': 'Akses ditolak'}), 403
+        
+    if save_resume(logbook['id'], bulan, content, current_user):
         return jsonify({'success': True, 'message': f'Resume bulan {bulan} berhasil disimpan!'})
     return jsonify({'success': False, 'error': 'Gagal menyimpan resume'}), 400
 
 # 12. Delete Resume Kegiatan (JSON API)
-@app.route('/logbook/<int:logbook_id>/delete-resume', methods=['POST'])
+@app.route('/logbook/<string:logbook_id>/delete-resume', methods=['POST'])
 @login_required
 def logbook_delete_resume(logbook_id):
     current_user = g.user.get('sub')
@@ -1873,7 +1932,15 @@ def logbook_delete_resume(logbook_id):
     if not bulan:
         return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
     
-    if delete_resume(logbook_id, bulan, current_user):
+    real_logbook_id = get_logbook_id_by_uuid(logbook_id)
+    if not real_logbook_id:
+        return jsonify({'success': False, 'error': 'Logbook tidak ditemukan'}), 404
+        
+    logbook = get_logbook_by_id_and_user(real_logbook_id, current_user)
+    if not logbook:
+        return jsonify({'success': False, 'error': 'Akses ditolak'}), 403
+        
+    if delete_resume(logbook['id'], bulan, current_user):
         return jsonify({'success': True, 'message': f'Resume bulan {bulan} berhasil dikosongkan!'})
     return jsonify({'success': False, 'error': 'Gagal menghapus resume'}), 400
 

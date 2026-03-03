@@ -111,6 +111,7 @@ CREATE TABLE google_oauth_tokens (
 -- A. Induk: logbooks
 CREATE TABLE logbooks (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE,
     user_id BIGINT UNSIGNED NOT NULL,
     fakultas VARCHAR(100),
     prodi VARCHAR(100),
@@ -132,6 +133,7 @@ CREATE TABLE logbooks (
 -- B. Anak dari logbooks: logbook_entries
 CREATE TABLE logbook_entries (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE,
     logbook_id INT NOT NULL,
     tanggal DATE NOT NULL,
     aktivitas VARCHAR(255) NOT NULL,
