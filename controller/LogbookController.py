@@ -9,7 +9,7 @@ import html
 from docx.shared import Inches, Pt, RGBColor
 from flask import send_file, current_app
 from connection import get_connection
-from docx.enum.text import WD_ALIGN_PARAGRAPH # Tambahkan ini di bagian atas file import lu
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE # Tambahkan ini di bagian atas file import lu
 import bleach
 from PIL import Image
 from datetime import datetime
@@ -617,23 +617,35 @@ def generate_word(logbook_id, user_id):
         
         table = doc.add_table(rows=1, cols=3)
         table.style = 'Table Grid'
+        table.autofit = False
+        table.allow_autofit = False
+        
+        # Set explicitly column widths
+        table.columns[0].width = Inches(0.5)
+        table.columns[1].width = Inches(1.5)
+        table.columns[2].width = Inches(4.5)
+        
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'No'
         hdr_cells[1].text = 'Aktivitas'
         hdr_cells[2].text = 'Deskripsi Kegiatan'
         
+        # Also set the cell widths for the header just in case
         hdr_cells[0].width = Inches(0.5)
-        hdr_cells[1].width = Inches(2.0)
-        hdr_cells[2].width = Inches(4.0)
+        hdr_cells[1].width = Inches(1.5)
+        hdr_cells[2].width = Inches(4.5)
 
         # Isi Tabel
         for idx, entry in enumerate(group['data'], start=1):
             row_cells = table.add_row().cells
             row_cells[0].text = str(idx)
+            row_cells[0].width = Inches(0.5)
             
             tgl_str = entry['tanggal'].strftime('%d-%m-%Y') if entry['tanggal'] else '-'
             row_cells[1].text = f"{tgl_str}\n{entry['aktivitas']}"
+            row_cells[1].width = Inches(1.5)
             
+            row_cells[2].width = Inches(4.5)
             p = row_cells[2].paragraphs[0]
             clean_deskripsi = clean_html_for_word(entry['deskripsi'])
             p.add_run(clean_deskripsi + "\n")
@@ -741,7 +753,7 @@ def generate_word(logbook_id, user_id):
         
         mentor_run = sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}")
         mentor_run.bold = True
-        mentor_run.underline = True
+        mentor_run.underline = WD_UNDERLINE.SINGLE
         mentor_run.font.name = 'Times New Roman'
         mentor_run.font.size = Pt(12)
 

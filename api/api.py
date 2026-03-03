@@ -1771,6 +1771,47 @@ def sync_custom_activities(logbook_id):
                 logging.error(f"[Google Doc Sync] Could not find inserted table for {month_key}")
                 continue
             
+            # C2. Set Explicit Column Widths (narrow No, medium Aktivitas, wide Deskripsi)
+            col_width_requests = [
+                {
+                    'updateTableColumnProperties': {
+                        'tableStartLocation': {'index': new_table_start},
+                        'columnIndices': [0],
+                        'tableColumnProperties': {
+                            'widthType': 'FIXED_WIDTH',
+                            'width': {'magnitude': 36, 'unit': 'PT'}
+                        },
+                        'fields': 'width,widthType'
+                    }
+                },
+                {
+                    'updateTableColumnProperties': {
+                        'tableStartLocation': {'index': new_table_start},
+                        'columnIndices': [1],
+                        'tableColumnProperties': {
+                            'widthType': 'FIXED_WIDTH',
+                            'width': {'magnitude': 108, 'unit': 'PT'}
+                        },
+                        'fields': 'width,widthType'
+                    }
+                },
+                {
+                    'updateTableColumnProperties': {
+                        'tableStartLocation': {'index': new_table_start},
+                        'columnIndices': [2],
+                        'tableColumnProperties': {
+                            'widthType': 'FIXED_WIDTH',
+                            'width': {'magnitude': 324, 'unit': 'PT'}
+                        },
+                        'fields': 'width,widthType'
+                    }
+                }
+            ]
+            try:
+                service.documents().batchUpdate(documentId=file_id, body={'requests': col_width_requests}).execute()
+            except Exception as e:
+                logging.warning(f"[Google Doc Sync] Failed to set column widths: {e}")
+            
             # D. Fill table cells with text
             def get_insert_idx(cell):
                 content = cell.get('content', [])
@@ -2275,7 +2316,7 @@ def sync_custom_activities(logbook_id):
                             }
                         })
                 
-                # Bold for mentor name
+                # Bold and Underline for mentor name
                 mentor_offset = sig_text.find(nama_mentor)
                 if mentor_offset >= 0:
                     sig_requests.append({
@@ -2285,9 +2326,10 @@ def sync_custom_activities(logbook_id):
                                 'endIndex': sig_insert_index + mentor_offset + len(nama_mentor)
                             },
                             'textStyle': {
-                                'bold': True
+                                'bold': True,
+                                'underline': True
                             },
-                            'fields': 'bold'
+                            'fields': 'bold,underline'
                         }
                     })
                 
