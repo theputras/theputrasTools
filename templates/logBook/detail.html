@@ -292,12 +292,13 @@
                     {% if logbook.ttd_mentor_path %}
                     <button onclick="document.getElementById('ttdModal').classList.remove('hidden')" 
                             class="flex-1 sm:flex-none justify-center bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-purple-500/20">
-                        <i class="fas fa-file-signature"></i> TTD
+                        <i class="fas fa-file-signature"></i> List Aprroval
+                        <span id="ttdBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold animate-pulse">0</span>
                     </button>
                     {% else %}
                     <a href="{{ url_for('logbook_edit', logbook_id=logbook.uuid) }}" 
                        class="flex-1 sm:flex-none justify-center bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition" title="Upload TTD dulu di halaman edit">
-                        <i class="fas fa-file-signature"></i> TTD
+                        <i class="fas fa-file-signature"></i> Upload TTD
                     </a>
                     {% endif %}
                 </div>
@@ -536,9 +537,8 @@
 
     <!-- TTD Management Modal -->
     {% if logbook.ttd_mentor_path and signatures %}
-    <div id="ttdModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div id="ttdModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-data="ttdManager()">
         <div class="bg-gray-800 w-full max-w-lg rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
-            <!-- Header -->
             <div class="p-5 border-b border-gray-700 bg-gray-900 flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -546,7 +546,7 @@
                     </div>
                     <div>
                         <h3 class="text-white font-bold">Kelola Tanda Tangan</h3>
-                        <p class="text-xs text-gray-500">Setujui TTD per bulan</p>
+                        <p class="text-xs text-gray-500">Bisa disetujui mulai tanggal 25</p>
                     </div>
                 </div>
                 <button onclick="document.getElementById('ttdModal').classList.add('hidden')" class="text-gray-400 hover:text-white transition">
@@ -554,7 +554,6 @@
                 </button>
             </div>
 
-            <!-- TTD Preview -->
             <div class="px-5 pt-5">
                 <div class="bg-white rounded-lg p-4 flex items-center justify-center border border-gray-700">
                     <img src="{{ url_for('static', filename='uploads/logbook/' ~ logbook.ttd_mentor_path) }}" 
@@ -563,10 +562,9 @@
                 <p class="text-xs text-gray-500 text-center mt-2">TTD Mentor: {{ logbook.nama_mentor }}</p>
             </div>
 
-            <!-- Month List -->
             <div class="p-5 space-y-2 max-h-[50vh] overflow-y-auto">
                 {% for sig in signatures %}
-                <div id="sig-{{ loop.index }}" class="flex items-center justify-between px-4 py-3 rounded-xl border transition
+                <div id="sig-{{ loop.index }}" x-data="{ allowed: isMonthAllowed('{{ sig.bulan }}') }" class="flex items-center justify-between px-4 py-3 rounded-xl border transition
                     {% if sig.is_approved %}
                         bg-green-500/10 border-green-500/30
                     {% else %}
@@ -578,11 +576,11 @@
                                 bg-green-500/20 text-green-400
                             {% else %}
                                 bg-gray-800 text-gray-500
-                            {% endif %}">
+                            {% endif %}" :class="!allowed && !{{ 'true' if sig.is_approved else 'false' }} ? 'opacity-50' : ''">
                             {% if sig.is_approved %}
                                 <i class="fas fa-check"></i>
                             {% else %}
-                                <i class="fas fa-clock"></i>
+                                <i class="fas" :class="allowed ? 'fa-clock' : 'fa-lock'"></i>
                             {% endif %}
                         </div>
                         <div>
@@ -590,7 +588,7 @@
                             {% if sig.is_approved and sig.approved_at %}
                             <p class="text-xs text-green-400/70">Disetujui: {{ sig.approved_at }}</p>
                             {% else %}
-                            <p class="text-xs text-yellow-400/70">Belum disetujui</p>
+                            <p class="text-xs" :class="allowed ? 'text-yellow-400/70' : 'text-gray-500'" x-text="allowed ? 'Belum disetujui' : 'Terkunci hingga tgl 25'"></p>
                             {% endif %}
                         </div>
                     </div>
@@ -601,17 +599,23 @@
                             <i class="fas fa-times"></i> Cabut
                         </button>
                         {% else %}
-                        <button onclick="approveSignature('{{ logbook.uuid }}', '{{ sig.bulan }}', this)" 
-                                class="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-                            <i class="fas fa-check"></i> Setujui
-                        </button>
+                        <template x-if="allowed">
+                            <button onclick="approveSignature('{{ logbook.uuid }}', '{{ sig.bulan }}', this)" 
+                                    class="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                                <i class="fas fa-check"></i> Setujui
+                            </button>
+                        </template>
+                        <template x-if="!allowed">
+                            <div class="text-xs bg-gray-800 text-gray-500 px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-not-allowed border border-gray-700" title="Terkunci hingga tanggal 25">
+                                <i class="fas fa-lock text-gray-600"></i> Terkunci
+                            </div>
+                        </template>
                         {% endif %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
 
-            <!-- Footer -->
             <div class="p-4 border-t border-gray-700 bg-gray-900">
                 <button onclick="document.getElementById('ttdModal').classList.add('hidden')" 
                         class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2.5 rounded-lg font-medium transition">
@@ -780,6 +784,19 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
+        Alpine.data('ttdManager', () => ({
+                isMonthAllowed(bulan) {
+                    const months = {'Januari':0,'Februari':1,'Maret':2,'April':3,'Mei':4,'Juni':5,'Juli':6,'Agustus':7,'September':8,'Oktober':9,'November':10,'Desember':11};
+                    const parts = bulan.split(' ');
+                    const monthIdx = months[parts[0]];
+                    const year = parseInt(parts[1]);
+                    if (monthIdx === undefined || isNaN(year)) return false;
+                    
+                    // Batas buka TTD: Tanggal 25 jam 00:00
+                    const threshold = new Date(year, monthIdx, 25, 0, 0, 0);
+                    return new Date() >= threshold;
+                }
+            }));
             Alpine.data('logbookApp', (initialData) => ({
                 entries: initialData,
                 showForm: false, 
@@ -1382,6 +1399,33 @@
                 const badge = document.getElementById('resumeBadge');
                 if (badge) {
                     badge.textContent = unfilled;
+                    badge.classList.remove('hidden');
+                }
+            }
+        })();// TTD Badge Notification (per-month check)
+        (function() {
+            const months = {'Januari':0,'Februari':1,'Maret':2,'April':3,'Mei':4,'Juni':5,'Juli':6,'Agustus':7,'September':8,'Oktober':9,'November':10,'Desember':11};
+            const now = new Date();
+            const ttdData = [
+                {% if signatures %}{% for sig in signatures %}{ bulan: {{ sig.bulan | tojson }}, approved: {{ 'true' if sig.is_approved else 'false' }} }{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+            ];
+            const pendingTtd = ttdData.filter(s => {
+                // Jangan hitung yang udah disetujui
+                if (s.approved) return false;
+                const parts = s.bulan.split(' ');
+                const mi = months[parts[0]];
+                const yr = parseInt(parts[1]);
+                if (mi === undefined || isNaN(yr)) return false;
+                
+                // Cuma hitung yang bulannya udah masuk tgl 25 ke atas
+                const threshold = new Date(yr, mi, 25, 0, 0, 0);
+                return now >= threshold;
+            }).length;
+            
+            if (pendingTtd > 0) {
+                const badge = document.getElementById('ttdBadge');
+                if (badge) {
+                    badge.textContent = pendingTtd;
                     badge.classList.remove('hidden');
                 }
             }
