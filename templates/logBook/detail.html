@@ -74,70 +74,71 @@
 
     <div class="flex-1 container mx-auto p-4 sm:p-6 pb-32 max-w-5xl" x-data="logbookApp(initialLogbookData)">
         
-        <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-6 mb-6 item-center">
-            <div class="flex flex-wrap justify-between items-start gap-4">
-                <div>
+        <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-4 sm:p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="w-full md:w-auto">
                     <div class="flex items-center gap-3 mb-1">
-                        <a href="{{ url_for('logbook_list') }}" class="text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left"></i></a>
-                        <h1 class="text-2xl font-bold text-white">{{ logbook.nama_mitra }}</h1>
+                        <a href="{{ url_for('logbook_list') }}" class="text-gray-400 hover:text-white transition shrink-0"><i class="fas fa-arrow-left"></i></a>
+                        <h1 class="text-xl sm:text-2xl font-bold text-white leading-tight">{{ logbook.nama_mitra }}</h1>
                     </div>
-                    <p class="text-blue-400 font-medium ml-7">{{ logbook.posisi_magang }}</p>
+                    <p class="text-blue-400 font-medium ml-8 text-sm sm:text-base">{{ logbook.posisi_magang }}</p>
                 </div>
-                <div class="flex gap-2">
+                
+                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
                     {% if google_user %}
-                    <div class="flex items-center gap-3 px-4 py-2 bg-green-500/20 rounded-lg border border-green-500/30">
+                    <div class="flex items-center gap-2 sm:gap-3 px-3 py-2 bg-green-500/20 rounded-lg border border-green-500/30">
                         {% if google_user.picture %}
-                        <img src="{{ google_user.picture }}" class="w-8 h-8 rounded-full border border-green-400/50" alt="Google Avatar">
+                        <img src="{{ google_user.picture }}" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-green-400/50" alt="Avatar">
                         {% else %}
-                        <i class="fab fa-google text-green-400 text-xl"></i>
+                        <i class="fab fa-google text-green-400 text-lg sm:text-xl"></i>
                         {% endif %}
                         <div class="flex flex-col">
-                            <span class="text-green-300 text-sm font-semibold">{{ google_user.name }}</span>
-                            <span class="text-green-400/60 text-xs">{{ google_user.email }}</span>
+                            <span class="text-green-300 text-xs sm:text-sm font-semibold max-w-[100px] sm:max-w-none truncate">{{ google_user.name }}</span>
                         </div>
                     </div>
                     {% else %}
-                    <a href="{{ url_for('account_page') }}" class="bg-white hover:bg-gray-100 text-gray-900 font-semibold px-4 py-2 rounded-lg text-sm transition shadow-lg flex items-center gap-2" title="Hubungkan ke Google Drive">
+                    <a href="{{ url_for('account_page') }}" class="bg-white hover:bg-gray-100 text-gray-900 font-semibold px-3 py-2 rounded-lg text-xs sm:text-sm transition shadow-lg flex items-center gap-2">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" class="w-4 h-4">
                         <span class="hidden sm:inline">Hubungkan Google</span>
+                        <span class="sm:hidden">Google</span>
                     </a>
                     {% endif %}
-                    <a href="{{ url_for('logbook_edit', logbook_id=logbook.uuid) }}" class="flex items-center bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition" title="Edit Identitas">
+                    
+                    <a href="{{ url_for('logbook_edit', logbook_id=logbook.uuid) }}" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm transition flex items-center justify-center" title="Edit Identitas">
                         <i class="fas fa-edit"></i>
                     </a>
-                   <div x-data="{ openExport: false }" class="relative inline-block text-left">
-    <button @click="openExport = !openExport" @click.away="openExport = false" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-5 rounded-lg text-sm transition shadow-lg shadow-green-500/30 flex items-center gap-2">
-        <i class="fas fa-file-export"></i> Export Dokumen
-        <i class="fas fa-chevron-down text-xs ml-1 transition-transform duration-200" :class="openExport ? 'rotate-180' : ''"></i>
-    </button>
-    
-    <div x-show="openExport" 
-         x-transition:enter="transition ease-out duration-100" 
-         x-transition:enter-start="transform opacity-0 scale-95" 
-         x-transition:enter-end="transform opacity-100 scale-100" 
-         x-transition:leave="transition ease-in duration-75" 
-         x-transition:leave-start="transform opacity-100 scale-100" 
-         x-transition:leave-end="transform opacity-0 scale-95" 
-         class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-xl z-50 ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" 
-         style="display: none;">
-         
-        <div class="py-1">
-            <a href="{{ url_for('logbook_download', logbook_id=logbook.uuid) }}" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
-                <i class="fas fa-file-word text-blue-600 text-lg"></i> Download Word
-            </a>
-            
-            {% if logbook.google_doc_id %}
-            <a href="https://docs.google.com/document/d/{{ logbook.google_doc_id }}/edit" target="_blank" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition border-t border-gray-100">
-                <i class="fas fa-file-alt text-blue-400 text-lg"></i> Buka Google Docs
-            </a>
-            {% else %}
-            <div class="flex items-center gap-3 px-4 py-3 text-sm text-gray-400 border-t border-gray-100 cursor-not-allowed bg-gray-50" title="Anda belum melakukan setup Google Docs">
-                <i class="fas fa-file-alt text-gray-400 text-lg"></i> Buka Google Docs
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
+                    
+                    <div x-data="{ openExport: false }" class="relative inline-block text-left z-50">
+                        <button @click="openExport = !openExport" @click.away="openExport = false" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-2 rounded-lg text-xs sm:text-sm transition shadow-lg shadow-green-500/30 flex items-center gap-2">
+                            <i class="fas fa-file-export"></i> <span class="hidden sm:inline">Export Dokumen</span><span class="sm:hidden">Export</span>
+                            <i class="fas fa-chevron-down text-xs ml-1 transition-transform duration-200" :class="openExport ? 'rotate-180' : ''"></i>
+                        </button>
+                        
+                        <div x-show="openExport" 
+                             x-transition:enter="transition ease-out duration-100" 
+                             x-transition:enter-start="transform opacity-0 scale-95" 
+                             x-transition:enter-end="transform opacity-100 scale-100" 
+                             x-transition:leave="transition ease-in duration-75" 
+                             x-transition:leave-start="transform opacity-100 scale-100" 
+                             x-transition:leave-end="transform opacity-0 scale-95" 
+                             class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" 
+                             style="display: none;">
+                            <div class="py-1">
+                                <a href="{{ url_for('logbook_download', logbook_id=logbook.uuid) }}" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-file-word text-blue-600 text-lg"></i> Download Word
+                                </a>
+                                {% if logbook.google_doc_id %}
+                                <a href="https://docs.google.com/document/d/{{ logbook.google_doc_id }}/edit" target="_blank" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition border-t border-gray-100">
+                                    <i class="fas fa-file-alt text-blue-400 text-lg"></i> Buka Google Docs
+                                </a>
+                                {% else %}
+                                <div class="flex items-center gap-3 px-4 py-3 text-sm text-gray-400 border-t border-gray-100 cursor-not-allowed bg-gray-50" title="Anda belum melakukan setup Google Docs">
+                                    <i class="fas fa-file-alt text-gray-400 text-lg"></i> Buka Google Docs
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -272,32 +273,31 @@
         </div>
 
         <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 overflow-hidden">
-            <div class="p-6 border-b border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="p-4 sm:p-6 border-b border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 class="text-lg font-bold text-white">Riwayat Kegiatan</h2>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap w-full md:w-auto gap-2">
                     {% if logbook.google_doc_id %}
                     <button onclick="syncActivities('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}')" 
                             id="btn-sync-activities"
-                            class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-green-500/20">
-                        <i class="fas fa-sync-alt"></i> Sync Activities
+                            class="flex-1 sm:flex-none justify-center bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-green-500/20">
+                        <i class="fas fa-sync-alt"></i> Sync
                     </button>
                     {% endif %} 
                     <button onclick="document.getElementById('resumeModal').classList.remove('hidden')" 
-                            class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-amber-500/20 relative"
+                            class="flex-1 sm:flex-none justify-center bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-amber-500/20 relative"
                             id="resumeBtn">
-                        <i class="fas fa-file-alt"></i> Kelola Resume
+                        <i class="fas fa-file-alt"></i> Resume
                         <span id="resumeBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold animate-pulse">0</span>
                     </button>
                     {% if logbook.ttd_mentor_path %}
-                   
                     <button onclick="document.getElementById('ttdModal').classList.remove('hidden')" 
-                            class="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-purple-500/20">
-                        <i class="fas fa-file-signature"></i> Kelola TTD
+                            class="flex-1 sm:flex-none justify-center bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-purple-500/20">
+                        <i class="fas fa-file-signature"></i> TTD
                     </button>
                     {% else %}
                     <a href="{{ url_for('logbook_edit', logbook_id=logbook.uuid) }}" 
-                       class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition" title="Upload TTD dulu di halaman edit">
-                        <i class="fas fa-file-signature"></i> Upload TTD
+                       class="flex-1 sm:flex-none justify-center bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition" title="Upload TTD dulu di halaman edit">
+                        <i class="fas fa-file-signature"></i> TTD
                     </a>
                     {% endif %}
                 </div>
@@ -384,7 +384,7 @@
                 
                 <div class="flex-1 bg-black relative flex items-center justify-center group" :class="gallery.isVisualEditing ? 'overflow-visible' : 'overflow-hidden'">
                     
-                    <img x-show="!gallery.isVisualEditing" :src="currentImage?.url" class="max-w-full max-h-[50vh] sm:max-h-[85vh] object-contain shadow-2xl">
+                    <img x-show="!gallery.isVisualEditing" :src="currentImage?.url" class="max-w-full h-[40vh] sm:h-auto sm:max-h-[85vh] object-contain shadow-2xl">
                     
                     <div x-show="gallery.isVisualEditing" class="w-full h-full p-6 flex items-center justify-center">
                         <img id="editor-image" class="max-w-full max-h-full block">
