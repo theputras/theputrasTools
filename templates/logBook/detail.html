@@ -247,6 +247,7 @@
                 <div class="flex flex-wrap gap-2">
                     {% if logbook.google_doc_id %}
                     <button onclick="syncActivities('{{ logbook.id }}', '{{ logbook.google_doc_id }}')" 
+                            id="btn-sync-activities"
                             class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-green-500/20">
                         <i class="fas fa-sync-alt"></i> Sync Activities
                     </button>
@@ -524,7 +525,7 @@
 
             <!-- TTD Preview -->
             <div class="px-5 pt-5">
-                <div class="bg-gray-900 rounded-lg p-4 flex items-center justify-center border border-gray-700">
+                <div class="bg-white rounded-lg p-4 flex items-center justify-center border border-gray-700">
                     <img src="{{ url_for('static', filename='uploads/logbook/' ~ logbook.ttd_mentor_path) }}" 
                          class="max-h-20 object-contain" alt="Tanda Tangan Mentor">
                 </div>
@@ -716,16 +717,20 @@
                         <div x-ref="editorElement"></div>
                     </div>
 
-                    <!-- Save Button -->
-                    <div class="p-4 border-t border-gray-700 bg-gray-900 shrink-0">
+                    <!-- Save + Clear Buttons -->
+                    <div class="p-4 border-t border-gray-700 bg-gray-900 shrink-0 flex gap-2">
                         <button @click="saveResume(content)" :disabled="isSaving"
-                                class="w-full bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800 disabled:cursor-not-allowed text-white py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2">
+                                class="flex-1 bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800 disabled:cursor-not-allowed text-white py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2">
                             <template x-if="!isSaving">
                                 <span><i class="fas fa-save"></i> Simpan Resume</span>
                             </template>
                             <template x-if="isSaving">
                                 <span><i class="fas fa-spinner fa-spin"></i> Menyimpan...</span>
                             </template>
+                        </button>
+                        <button @click="clearResume()" :disabled="isSaving"
+                                class="bg-red-600/20 hover:bg-red-600/40 disabled:opacity-50 text-red-400 py-2.5 px-4 rounded-lg font-medium transition flex items-center justify-center gap-2 border border-red-500/30">
+                            <i class="fas fa-trash-alt"></i> Kosongi
                         </button>
                     </div>
                 </div>
@@ -1287,6 +1292,34 @@
                         if(typeof window.showAlert === 'function') window.showAlert('error', 'Koneksi error: ' + e);
                         this.isSaving = false;
                     }
+                },
+
+                async clearResume() {
+                    if (!this.selectedMonth || this.isSaving) return;
+                    const confirmed = typeof window.showConfirm === 'function'
+                        ? await window.showConfirm('Kosongi Resume?', `Resume bulan ${this.selectedMonth} akan dihapus dari database.`, 'danger')
+                        : confirm(`Kosongi resume bulan ${this.selectedMonth}?`);
+                    if (!confirmed) return;
+
+                    this.isSaving = true;
+                    try {
+                        const res = await fetch(`/logbook/{{ logbook.id }}/delete-resume`, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ bulan: this.selectedMonth })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            if(typeof window.showAlert === 'function') window.showAlert('success', data.message || 'Resume berhasil dikosongkan!');
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            if(typeof window.showAlert === 'function') window.showAlert('error', data.error || 'Gagal menghapus resume');
+                            this.isSaving = false;
+                        }
+                    } catch(e) {
+                        if(typeof window.showAlert === 'function') window.showAlert('error', 'Koneksi error: ' + e);
+                        this.isSaving = false;
+                    }
                 }
             }));
         });
@@ -1334,8 +1367,22 @@
         );
 
         if (confirmed) {
+            const syncBtn = document.getElementById('btn-sync-activities');
+            if (syncBtn) {
+                syncBtn.disabled = true;
+                syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyinkronkan...';
+                syncBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            }
+            
             window.showAlert('info', 'Sedang memproses, mohon tunggu...');
             
+            // Mencegah user refresh/tutup tab saat loading
+            const handleBeforeUnload = (e) => {
+                e.preventDefault();
+                e.returnValue = 'Sinkronisasi sedang berjalan, apakah Anda yakin ingin meninggalkan halaman ini?';
+            };
+            window.addEventListener('beforeunload', handleBeforeUnload);
+
             try {
                 const res = await fetch(`/api/google/drive/sync-activities/${logbookId}`, {
                     method: 'POST',
@@ -1345,12 +1392,25 @@
                 const data = await res.json();
                 
                 if(data.success) {
+                    window.removeEventListener('beforeunload', handleBeforeUnload);
                     window.showAlert('success', data.message || 'Berhasil!');
                     setTimeout(() => location.reload(), 1500);
                 } else {
+                    window.removeEventListener('beforeunload', handleBeforeUnload);
+                    if (syncBtn) {
+                        syncBtn.disabled = false;
+                        syncBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Sync Activities';
+                        syncBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    }
                     window.showAlert('error', data.error || "Terjadi kesalahan");
                 }
             } catch(e) {
+                window.removeEventListener('beforeunload', handleBeforeUnload);
+                if (syncBtn) {
+                    syncBtn.disabled = false;
+                    syncBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Sync Activities';
+                    syncBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                }
                 window.showAlert('error', 'Gagal menghubungi server: ' + e);
             }
         }

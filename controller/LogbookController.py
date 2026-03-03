@@ -6,7 +6,7 @@ from docx import Document
 import time
 import re
 import html
-from docx.shared import Inches
+from docx.shared import Inches, Pt, RGBColor
 from flask import send_file, current_app
 from connection import get_connection
 from docx.enum.text import WD_ALIGN_PARAGRAPH # Tambahkan ini di bagian atas file import lu
@@ -20,8 +20,7 @@ ALLOWED_TAGS = [
     'p', 'ul', 'ol', 'li', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'br'
 ]
 ALLOWED_IMAGE_EXT = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.ico', '.avif', '.heic', '.heif'}
-ALLOWED_TTD_EXT = {'.png'}
-MAX_TTD_SIZE = 2 * 1024 * 1024  # 2MB
+ALLOWED_TTD_EXT = {'.png', '.jpg', '.jpeg'}
 
 # --- HELPER: SAVE/DELETE FILE TANDA TANGAN ---
 def save_signature_file(file, nim):
@@ -37,15 +36,8 @@ def save_signature_file(file, nim):
     if ext not in ALLOWED_TTD_EXT:
         return None
     
-    # Validasi ukuran file (max 2MB)
-    file.seek(0, 2)  # Seek to end
-    file_size = file.tell()
-    file.seek(0)  # Reset
-    if file_size > MAX_TTD_SIZE:
-        return None
-    
-    # Validasi MIME type
-    if file.content_type not in ('image/png',):
+    # Validasi MIME type (terima PNG dan JPEG, nanti dikonversi ke PNG)
+    if file.content_type not in ('image/png', 'image/jpeg', 'image/jpg'):
         return None
     
     # Folder: static/uploads/logbook/{nim}/ttd/
@@ -540,6 +532,12 @@ def generate_word(logbook_id, user_id):
 
     doc = Document()
     
+    # Global font: Times New Roman, 12pt
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = 'Times New Roman'
+    font.size = Pt(12)
+    
     # 1. Judul Utama
     doc.add_heading('Log Book Bulanan Dinamika Industrial Internship', 0)
 
@@ -591,7 +589,10 @@ def generate_word(logbook_id, user_id):
     # 4. Render Logbook Per Bulan
     for month_key, group in grouped_entries.items():
         doc.add_paragraph() 
-        doc.add_heading(f'Aktivitas Bulan {month_key}', level=2)
+        heading = doc.add_heading('', level=2)
+        run_h = heading.add_run(f'Aktivitas Bulan {month_key}')
+        run_h.font.color.rgb = RGBColor(255, 0, 0)
+        run_h.font.name = 'Times New Roman'
         
         table = doc.add_table(rows=1, cols=3)
         table.style = 'Table Grid'
@@ -658,14 +659,20 @@ def generate_word(logbook_id, user_id):
         # 5. Tambahkan Format Resume & Tanda Tangan
         month_name = group['month_only']
         if month_name:
-            doc.add_heading(f'Resume Kegiatan Bulan {month_name}:', level=3)
+            # Resume header sebagai paragraf bold biasa (bukan heading berwarna)
+            resume_p = doc.add_paragraph()
+            resume_run = resume_p.add_run(f'Resume Kegiatan Bulan {month_name}:')
+            resume_run.bold = True
+            resume_run.font.name = 'Times New Roman'
+            resume_run.font.size = Pt(12)
+            
             # Ambil resume dari database
             resume_content = get_resume_content(logbook_id, month_key)
             if resume_content:
                 clean_resume = clean_html_for_word(resume_content)
                 doc.add_paragraph(clean_resume)
             else:
-                doc.add_paragraph("...\n\n") 
+                doc.add_paragraph("...") 
         
         # Cek apakah bulan ini sudah di-approve TTD
         cursor.execute(
@@ -677,37 +684,45 @@ def generate_word(logbook_id, user_id):
         
         sig_p = doc.add_paragraph()
         sig_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        sig_p.add_run("Disetujui Oleh\n")
+        run_label = sig_p.add_run("Disetujui Oleh\n")
+        run_label.bold = True
+        run_label.font.name = 'Times New Roman'
+        run_label.font.size = Pt(12)
         
         # Insert gambar TTD jika bulan sudah approved DAN file TTD ada
         ttd_path = logbook.get('ttd_mentor_path')
         if month_approved and ttd_path:
-            # Kalau sudah approved, hapus label "Tanda Tangan Mentor" — langsung gambar
+            # Kalau sudah approved, langsung gambar
             ttd_full_path = os.path.join('static', 'uploads', 'logbook', ttd_path)
             if os.path.exists(ttd_full_path):
                 run_ttd = sig_p.add_run()
                 try:
-                    # Ukuran kecil sesuai proporsi TTD
                     with Image.open(ttd_full_path) as ttd_img:
                         w, h = ttd_img.size
-                        # Max width 1.5 inch, height proporsional
                         target_w = Inches(1.5)
                         ratio = h / w
                         target_h = Inches(1.5 * ratio)
                     run_ttd.add_picture(ttd_full_path, width=target_w, height=target_h)
                 except Exception as e:
                     print(f"Gagal insert TTD ke Word: {e}")
-                    sig_p.add_run("Tanda Tangan Mentor\n")
-                    sig_p.add_run("\n\n\n")
+                    r = sig_p.add_run("Tanda Tangan Mentor\n\n\n")
+                    r.font.name = 'Times New Roman'
+                    r.font.size = Pt(12)
                 sig_p.add_run("\n")
             else:
-                sig_p.add_run("Tanda Tangan Mentor\n")
-                sig_p.add_run("\n\n\n")
+                r = sig_p.add_run("Tanda Tangan Mentor\n\n\n")
+                r.font.name = 'Times New Roman'
+                r.font.size = Pt(12)
         else:
-            sig_p.add_run("Tanda Tangan Mentor\n")
-            sig_p.add_run("\n\n\n")  # Placeholder kosong jika belum approve
+            r = sig_p.add_run("Tanda Tangan Mentor\n\n\n")
+            r.font.name = 'Times New Roman'
+            r.font.size = Pt(12)
         
-        sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}").bold = True
+        mentor_run = sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}")
+        mentor_run.bold = True
+        mentor_run.underline = True
+        mentor_run.font.name = 'Times New Roman'
+        mentor_run.font.size = Pt(12)
 
     # Tutup koneksi setelah selesai looping
     cursor.close()
@@ -1025,6 +1040,27 @@ def save_resume(logbook_id, bulan, content, user_id):
         return True
     except Exception as e:
         print(f"Error save resume: {e}")
+        return False
+    finally:
+        conn.close()
+
+def delete_resume(logbook_id, bulan, user_id):
+    """Hapus resume untuk bulan tertentu. Validasi ownership."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Validasi ownership
+    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    if not cursor.fetchone():
+        conn.close()
+        return False
+    
+    try:
+        cursor.execute("DELETE FROM logbook_resumes WHERE logbook_id = %s AND bulan = %s", (logbook_id, bulan))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error delete resume: {e}")
         return False
     finally:
         conn.close()

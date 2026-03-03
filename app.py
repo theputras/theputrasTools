@@ -42,7 +42,7 @@ from controller.LogbookController import (
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
     get_entry_by_id, update_entry, delete_single_image, update_image_metadata, get_image_by_id, replace_image_file,
     save_signature_file, get_signatures_by_logbook, approve_signature, revoke_signature,
-    get_resumes_by_logbook, save_resume
+    get_resumes_by_logbook, save_resume, delete_resume
 )
 from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password, update_user_password
 from models.auth_api import generate_access_token, generate_refresh_token
@@ -1861,6 +1861,21 @@ def logbook_save_resume(logbook_id):
     if save_resume(logbook_id, bulan, content, current_user):
         return jsonify({'success': True, 'message': f'Resume bulan {bulan} berhasil disimpan!'})
     return jsonify({'success': False, 'error': 'Gagal menyimpan resume'}), 400
+
+# 12. Delete Resume Kegiatan (JSON API)
+@app.route('/logbook/<int:logbook_id>/delete-resume', methods=['POST'])
+@login_required
+def logbook_delete_resume(logbook_id):
+    current_user = g.user.get('sub')
+    data = request.get_json()
+    bulan = data.get('bulan')
+    
+    if not bulan:
+        return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
+    
+    if delete_resume(logbook_id, bulan, current_user):
+        return jsonify({'success': True, 'message': f'Resume bulan {bulan} berhasil dikosongkan!'})
+    return jsonify({'success': False, 'error': 'Gagal menghapus resume'}), 400
 
 # ==========================================
 # API KHUSUS GAMBAR LOGBOOK (JSON RESPONSES)

@@ -1695,7 +1695,7 @@ def sync_custom_activities(logbook_id):
                         'fields': 'namedStyleType'
                     }
                 },
-                # Make header text red + bold (inherit font from doc)
+                # Make header text black + bold with Times New Roman 12pt
                 {
                     'updateTextStyle': {
                         'range': {
@@ -1705,13 +1705,15 @@ def sync_custom_activities(logbook_id):
                         'textStyle': {
                             'foregroundColor': {
                                 'color': {
-                                    'rgbColor': {'red': 0.8, 'green': 0.0, 'blue': 0.0}
+                                    'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
                                 }
                             },
                             'bold': True,
-                            'underline': False
+                            'underline': False,
+                            'fontSize': {'magnitude': 12, 'unit': 'PT'},
+                            'weightedFontFamily': {'fontFamily': 'Times New Roman', 'weight': 400}
                         },
-                        'fields': 'foregroundColor,bold,underline'
+                        'fields': 'foregroundColor,bold,underline,fontSize,weightedFontFamily'
                     }
                 }
             ]
@@ -2042,7 +2044,7 @@ def sync_custom_activities(logbook_id):
                 month_only = month_key.split(' ')[0] if ' ' in month_key else month_key
                 resume_header = f"Resume Kegiatan Bulan {month_only}:"
                 resume_body = clean_html(resume_content_raw)
-                resume_full_text = f"{resume_header}\n{resume_body}\n\n"
+                resume_full_text = f"{resume_header}\n{resume_body}\n"
                 
                 resume_requests = [
                     {
@@ -2062,7 +2064,7 @@ def sync_custom_activities(logbook_id):
                             'fields': 'namedStyleType'
                         }
                     },
-                    # Red + bold for resume header
+                    # Black + bold for resume header
                     {
                         'updateTextStyle': {
                             'range': {
@@ -2072,15 +2074,17 @@ def sync_custom_activities(logbook_id):
                             'textStyle': {
                                 'foregroundColor': {
                                     'color': {
-                                        'rgbColor': {'red': 0.8, 'green': 0.0, 'blue': 0.0}
+                                        'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
                                     }
                                 },
-                                'bold': True
+                                'bold': True,
+                                'fontSize': {'magnitude': 12, 'unit': 'PT'},
+                                'weightedFontFamily': {'fontFamily': 'Times New Roman', 'weight': 400}
                             },
-                            'fields': 'foregroundColor,bold'
+                            'fields': 'foregroundColor,bold,fontSize,weightedFontFamily'
                         }
                     },
-                    # Black normal text for resume body
+                    # Black normal text for resume body + Times New Roman 12pt
                     {
                         'updateTextStyle': {
                             'range': {
@@ -2093,9 +2097,11 @@ def sync_custom_activities(logbook_id):
                                         'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
                                     }
                                 },
-                                'bold': False
+                                'bold': False,
+                                'fontSize': {'magnitude': 12, 'unit': 'PT'},
+                                'weightedFontFamily': {'fontFamily': 'Times New Roman', 'weight': 400}
                             },
-                            'fields': 'foregroundColor,bold'
+                            'fields': 'foregroundColor,bold,fontSize,weightedFontFamily'
                         }
                     }
                 ]
@@ -2103,177 +2109,187 @@ def sync_custom_activities(logbook_id):
                 service.documents().batchUpdate(documentId=file_id, body={'requests': resume_requests}).execute()
             
             # F. Insert signature block after this month's table (not at doc end)
-            document = service.documents().get(documentId=file_id).execute()
-            doc_content = document.get('body').get('content')
-            
-            # Find the end of this month's content (after table + resume) 
-            sig_insert_index = doc_content[-1].get('endIndex', 1) - 1  # fallback
-            found_header = False
-            found_table = False
-            for element in doc_content:
-                if 'paragraph' in element and not found_header:
-                    txt = get_text_simple([element])
-                    if f"Aktivitas Bulan {month_key}" in txt:
-                        found_header = True
-                        continue
-                if found_header and 'table' in element and not found_table:
-                    found_table = True
-                    sig_insert_index = element.get('endIndex', sig_insert_index)
-                    continue
-                # After table, skip through any resume paragraphs until next section header or end
-                if found_table and 'paragraph' in element:
-                    txt = get_text_simple([element]).strip()
-                    # Stop if we hit another "Aktivitas Bulan" header (next month)
-                    if "Aktivitas Bulan" in txt:
-                        break
-                    sig_insert_index = element.get('endIndex', sig_insert_index)
-                elif found_table and 'table' in element:
-                    break  # Hit another table, stop
-            
-            # F0. Detect font dari paragraf sebelum insert point (inherit, bukan hardcode)  
-            detected_font_size = 11  # fallback default
-            detected_font_family = None
+            should_insert_ttd = False
             try:
-                # Ambil paragraf terdekat sebelum sig_insert_index
-                nearby_paragraphs = [el for el in doc_content 
-                                     if 'paragraph' in el and el.get('startIndex', 0) < sig_insert_index]
-                if nearby_paragraphs:
-                    # Ambil 2 paragraf terakhir sebelum insert point
-                    check_para = nearby_paragraphs[-2] if len(nearby_paragraphs) >= 2 else nearby_paragraphs[-1]
-                    for elem in check_para.get('paragraph', {}).get('elements', []):
-                        ts = elem.get('textRun', {}).get('textStyle', {})
-                        fs = ts.get('fontSize', {})
-                        if fs.get('magnitude'):
-                            detected_font_size = fs['magnitude']
-                        wf = ts.get('weightedFontFamily', {})
-                        if wf.get('fontFamily'):
-                            detected_font_family = wf['fontFamily']
-                        if detected_font_size and detected_font_family:
+                document = service.documents().get(documentId=file_id).execute()
+                doc_content = document.get('body').get('content')
+                
+                # Find the end of this month's content (after table + resume) 
+                sig_insert_index = doc_content[-1].get('endIndex', 1) - 1  # fallback
+                found_header = False
+                found_table = False
+                for element in doc_content:
+                    if 'paragraph' in element and not found_header:
+                        txt = get_text_simple([element])
+                        if f"Aktivitas Bulan {month_key}" in txt:
+                            found_header = True
+                            continue
+                    if found_header and 'table' in element and not found_table:
+                        found_table = True
+                        sig_insert_index = element.get('endIndex', sig_insert_index)
+                        continue
+                    # After table, skip through any resume paragraphs until next section header or end
+                    if found_table and 'paragraph' in element:
+                        txt = get_text_simple([element]).strip()
+                        # Stop if we hit another "Aktivitas Bulan" header (next month)
+                        if "Aktivitas Bulan" in txt:
                             break
-            except Exception:
-                pass
-            
-            # Check approval status for this month
-            conn2 = get_connection()
-            cursor2 = conn2.cursor(dictionary=True)
-            cursor2.execute(
-                "SELECT is_approved FROM logbook_signatures WHERE logbook_id = %s AND bulan = %s",
-                (logbook_id, month_key)
-            )
-            sig_row = cursor2.fetchone()
-            month_approved = sig_row and sig_row.get('is_approved', 0) == 1
-            
-            # Get TTD path
-            ttd_path = logbook.get('ttd_mentor_path') if logbook else None
-            should_insert_ttd = month_approved and ttd_path
-            cursor2.close()
-            conn2.close()
-            
-            # Layout: right-aligned
-            # "Disetujui Oleh"
-            # [jika belum approve: "Tanda Tangan Mentor" + space kosong]
-            # [jika sudah approve: langsung gambar TTD]
-            # "{nama_mentor}"
-            if should_insert_ttd:
-                # Approved: tanpa "Tanda Tangan Mentor", gap kecil untuk gambar
-                sig_text = f"Disetujui Oleh\n\n{nama_mentor}\n\n"
-            else:
-                # Belum approved: pakai placeholder text + space kosong
-                sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n\n\n{nama_mentor}\n\n"
-            
-            # Build text style dengan font yang di-detect
-            text_style = {
-                'foregroundColor': {
-                    'color': {
-                        'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
-                    }
-                },
-                'fontSize': {'magnitude': detected_font_size, 'unit': 'PT'},
-                'bold': False
-            }
-            text_style_fields = 'foregroundColor,fontSize,bold'
-            if detected_font_family:
-                text_style['weightedFontFamily'] = {'fontFamily': detected_font_family, 'weight': 400}
-                text_style_fields += ',weightedFontFamily'
-            
-            sig_requests = [
-                {
-                    'insertText': {
-                        'location': {'index': sig_insert_index},
-                        'text': sig_text
-                    }
-                },
-                # Set all signature text to NORMAL_TEXT + right-aligned
-                {
-                    'updateParagraphStyle': {
-                        'range': {
-                            'startIndex': sig_insert_index,
-                            'endIndex': sig_insert_index + len(sig_text)
-                        },
-                        'paragraphStyle': {
-                            'namedStyleType': 'NORMAL_TEXT',
-                            'alignment': 'END'
-                        },
-                        'fields': 'namedStyleType,alignment'
-                    }
-                },
-                # Apply detected font style
-                {
-                    'updateTextStyle': {
-                        'range': {
-                            'startIndex': sig_insert_index,
-                            'endIndex': sig_insert_index + len(sig_text)
-                        },
-                        'textStyle': text_style,
-                        'fields': text_style_fields
-                    }
-                },
-                # Bold "Disetujui Oleh"
-                {
-                    'updateTextStyle': {
-                        'range': {
-                            'startIndex': sig_insert_index,
-                            'endIndex': sig_insert_index + len('Disetujui Oleh')
-                        },
-                        'textStyle': {'bold': True},
-                        'fields': 'bold'
-                    }
-                },
-            ]
-            
-            # Bold "Tanda Tangan Mentor" (hanya jika belum approved)
-            if not should_insert_ttd:
-                ttm_text = 'Tanda Tangan Mentor'
-                ttm_offset = sig_text.find(ttm_text)
-                if ttm_offset >= 0:
-                    sig_requests.append({
+                        sig_insert_index = element.get('endIndex', sig_insert_index)
+                    elif found_table and 'table' in element:
+                        break  # Hit another table, stop
+                
+                # Prevent index out of bounds (cannot insert at exact EOF)
+                max_index = doc_content[-1].get('endIndex', 1) - 1
+                sig_insert_index = min(sig_insert_index, max_index)
+                
+                logging.info(f"[Google Doc Sync] Sig block for {month_key}: found_header={found_header}, found_table={found_table}, sig_insert_index={sig_insert_index}")
+                
+                # F0. Detect font dari paragraf sebelum insert point (inherit, bukan hardcode)  
+                detected_font_size = 12  # default: 12pt Times New Roman
+                detected_font_family = 'Times New Roman'
+                try:
+                    # Ambil paragraf terdekat sebelum sig_insert_index
+                    nearby_paragraphs = [el for el in doc_content 
+                                         if 'paragraph' in el and el.get('startIndex', 0) < sig_insert_index]
+                    if nearby_paragraphs:
+                        # Ambil 2 paragraf terakhir sebelum insert point
+                        check_para = nearby_paragraphs[-2] if len(nearby_paragraphs) >= 2 else nearby_paragraphs[-1]
+                        for elem in check_para.get('paragraph', {}).get('elements', []):
+                            ts = elem.get('textRun', {}).get('textStyle', {})
+                            fs = ts.get('fontSize', {})
+                            if fs.get('magnitude'):
+                                detected_font_size = fs['magnitude']
+                            wf = ts.get('weightedFontFamily', {})
+                            if wf.get('fontFamily'):
+                                detected_font_family = wf['fontFamily']
+                            if detected_font_size and detected_font_family:
+                                break
+                except Exception:
+                    pass
+                
+                # Check approval status for this month
+                conn2 = get_connection()
+                cursor2 = conn2.cursor(dictionary=True)
+                cursor2.execute(
+                    "SELECT is_approved FROM logbook_signatures WHERE logbook_id = %s AND bulan = %s",
+                    (logbook_id, month_key)
+                )
+                sig_row = cursor2.fetchone()
+                month_approved = sig_row and sig_row.get('is_approved', 0) == 1
+                
+                # Get TTD path
+                ttd_path = logbook.get('ttd_mentor_path') if logbook else None
+                should_insert_ttd = month_approved and ttd_path
+                cursor2.close()
+                conn2.close()
+                
+                # Layout: right-aligned
+                # "Disetujui Oleh"
+                # [jika belum approve: "Tanda Tangan Mentor" + space kosong]
+                # [jika sudah approve: langsung gambar TTD]
+                # "{nama_mentor}"
+                if should_insert_ttd:
+                    # Approved: tanpa "Tanda Tangan Mentor", gap kecil untuk gambar
+                    sig_text = f"Disetujui Oleh\n\n{nama_mentor}\n"
+                else:
+                    # Belum approved: pakai placeholder text + space kosong
+                    sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n\n{nama_mentor}\n"
+                
+                # Build text style dengan font yang di-detect
+                text_style = {
+                    'foregroundColor': {
+                        'color': {
+                            'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
+                        }
+                    },
+                    'fontSize': {'magnitude': detected_font_size, 'unit': 'PT'},
+                    'bold': False
+                }
+                text_style_fields = 'foregroundColor,fontSize,bold'
+                if detected_font_family:
+                    text_style['weightedFontFamily'] = {'fontFamily': detected_font_family, 'weight': 400}
+                    text_style_fields += ',weightedFontFamily'
+                
+                sig_requests = [
+                    {
+                        'insertText': {
+                            'location': {'index': sig_insert_index},
+                            'text': sig_text
+                        }
+                    },
+                    # Set all signature text to NORMAL_TEXT + right-aligned
+                    {
+                        'updateParagraphStyle': {
+                            'range': {
+                                'startIndex': sig_insert_index,
+                                'endIndex': sig_insert_index + len(sig_text)
+                            },
+                            'paragraphStyle': {
+                                'namedStyleType': 'NORMAL_TEXT',
+                                'alignment': 'END'
+                            },
+                            'fields': 'namedStyleType,alignment'
+                        }
+                    },
+                    # Apply detected font style
+                    {
                         'updateTextStyle': {
                             'range': {
-                                'startIndex': sig_insert_index + ttm_offset,
-                                'endIndex': sig_insert_index + ttm_offset + len(ttm_text)
+                                'startIndex': sig_insert_index,
+                                'endIndex': sig_insert_index + len(sig_text)
+                            },
+                            'textStyle': text_style,
+                            'fields': text_style_fields
+                        }
+                    },
+                    # Bold "Disetujui Oleh"
+                    {
+                        'updateTextStyle': {
+                            'range': {
+                                'startIndex': sig_insert_index,
+                                'endIndex': sig_insert_index + len('Disetujui Oleh')
                             },
                             'textStyle': {'bold': True},
                             'fields': 'bold'
                         }
+                    },
+                ]
+                
+                # Bold "Tanda Tangan Mentor" (hanya jika belum approved)
+                if not should_insert_ttd:
+                    ttm_text = 'Tanda Tangan Mentor'
+                    ttm_offset = sig_text.find(ttm_text)
+                    if ttm_offset >= 0:
+                        sig_requests.append({
+                            'updateTextStyle': {
+                                'range': {
+                                    'startIndex': sig_insert_index + ttm_offset,
+                                    'endIndex': sig_insert_index + ttm_offset + len(ttm_text)
+                                },
+                                'textStyle': {'bold': True},
+                                'fields': 'bold'
+                            }
+                        })
+                
+                # Bold for mentor name
+                mentor_offset = sig_text.find(nama_mentor)
+                if mentor_offset >= 0:
+                    sig_requests.append({
+                        'updateTextStyle': {
+                            'range': {
+                                'startIndex': sig_insert_index + mentor_offset,
+                                'endIndex': sig_insert_index + mentor_offset + len(nama_mentor)
+                            },
+                            'textStyle': {
+                                'bold': True
+                            },
+                            'fields': 'bold'
+                        }
                     })
-            
-            # Bold for mentor name
-            mentor_offset = sig_text.find(nama_mentor)
-            if mentor_offset >= 0:
-                sig_requests.append({
-                    'updateTextStyle': {
-                        'range': {
-                            'startIndex': sig_insert_index + mentor_offset,
-                            'endIndex': sig_insert_index + mentor_offset + len(nama_mentor)
-                        },
-                        'textStyle': {
-                            'bold': True
-                        },
-                        'fields': 'bold'
-                    }
-                })
-            
-            service.documents().batchUpdate(documentId=file_id, body={'requests': sig_requests}).execute()
+                
+                service.documents().batchUpdate(documentId=file_id, body={'requests': sig_requests}).execute()
+            except Exception as sig_err:
+                logging.error(f"[Google Doc Sync] FAILED to insert signature block for {month_key}: {sig_err}")
             
             # F2. Insert TTD image di antara "Disetujui Oleh" dan nama mentor
             if should_insert_ttd:
