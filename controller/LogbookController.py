@@ -52,8 +52,8 @@ def save_signature_file(file, nim):
     ttd_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', str(nim), 'ttd')
     os.makedirs(ttd_folder, exist_ok=True)
     
-    # Nama file tetap: signature.png (overwrite jika sudah ada)
-    save_path = os.path.join(ttd_folder, 'signature.png')
+    # Nama file: signature-{nim}.png (overwrite jika sudah ada)
+    save_path = os.path.join(ttd_folder, f'signature-{nim}.png')
     
     # Auto-compress: resize + optimize PNG otomatis
     try:
@@ -77,7 +77,7 @@ def save_signature_file(file, nim):
         file.seek(0)
         file.save(save_path)
     
-    return f"{nim}/ttd/signature.png"
+    return f"{nim}/ttd/signature-{nim}.png"
 
 def delete_signature_file(ttd_path):
     """Hapus file tanda tangan dari disk."""
@@ -659,7 +659,13 @@ def generate_word(logbook_id, user_id):
         month_name = group['month_only']
         if month_name:
             doc.add_heading(f'Resume Kegiatan Bulan {month_name}:', level=3)
-            doc.add_paragraph("...\n\n") 
+            # Ambil resume dari database
+            resume_content = get_resume_content(logbook_id, month_key)
+            if resume_content:
+                clean_resume = clean_html_for_word(resume_content)
+                doc.add_paragraph(clean_resume)
+            else:
+                doc.add_paragraph("...\n\n") 
         
         # Cek apakah bulan ini sudah di-approve TTD
         cursor.execute(
@@ -961,3 +967,76 @@ def revoke_signature(logbook_id, bulan, user_id):
         return False
     finally:
         conn.close()
+
+# --- CRUD RESUME KEGIATAN BULANAN ---
+
+def get_resumes_by_logbook(logbook_id):
+    """Ambil semua resume per bulan untuk logbook tertentu, di-merge dengan bulan dari entries."""
+    available_months = get_available_months(logbook_id)
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT bulan, content, updated_at FROM logbook_resumes WHERE logbook_id = %s",
+        (logbook_id,)
+    )
+    resume_rows = cursor.fetchall()
+    conn.close()
+    
+    # Map bulan -> resume data
+    resume_map = {}
+    for row in resume_rows:
+        resume_map[row['bulan']] = {
+            'content': row['content'] or '',
+            'updated_at': row['updated_at'].strftime('%d-%m-%Y %H:%M') if row['updated_at'] else None
+        }
+    
+    # Merge: setiap bulan yang ada entry-nya punya status resume
+    result = []
+    for month in available_months:
+        data = resume_map.get(month, {'content': '', 'updated_at': None})
+        result.append({
+            'bulan': month,
+            'content': data['content'],
+            'updated_at': data['updated_at'],
+            'is_filled': bool(data['content'] and data['content'].strip())
+        })
+    
+    return result
+
+def save_resume(logbook_id, bulan, content, user_id):
+    """Simpan/update resume untuk bulan tertentu. Validasi ownership."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Validasi ownership
+    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    if not cursor.fetchone():
+        conn.close()
+        return False
+    
+    try:
+        cursor.execute("""
+            INSERT INTO logbook_resumes (logbook_id, bulan, content) 
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE content = VALUES(content)
+        """, (logbook_id, bulan, content))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error save resume: {e}")
+        return False
+    finally:
+        conn.close()
+
+def get_resume_content(logbook_id, bulan):
+    """Ambil konten resume untuk bulan tertentu (dipakai di generate_word & Google Docs sync)."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT content FROM logbook_resumes WHERE logbook_id = %s AND bulan = %s",
+        (logbook_id, bulan)
+    )
+    row = cursor.fetchone()
+    conn.close()
+    return row['content'] if row and row['content'] else None

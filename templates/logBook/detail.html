@@ -252,6 +252,12 @@
                     </button>
                     {% endif %}
                     {% if logbook.ttd_mentor_path %}
+                    <button onclick="document.getElementById('resumeModal').classList.remove('hidden')" 
+                            class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-amber-500/20 relative"
+                            id="resumeBtn">
+                        <i class="fas fa-file-alt"></i> Kelola Resume
+                        <span id="resumeBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold animate-pulse">0</span>
+                    </button>
                     <button onclick="document.getElementById('ttdModal').classList.remove('hidden')" 
                             class="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-purple-500/20">
                         <i class="fas fa-file-signature"></i> Kelola TTD
@@ -576,6 +582,158 @@
             <!-- Footer -->
             <div class="p-4 border-t border-gray-700 bg-gray-900">
                 <button onclick="document.getElementById('ttdModal').classList.add('hidden')" 
+                        class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2.5 rounded-lg font-medium transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Resume Kegiatan Modal -->
+    {% if resumes and resumes|length > 0 %}
+    <script>window.__RESUME_DATA = { {% for r in resumes %}{{ r.bulan | tojson }}: {{ r.content | tojson }}{% if not loop.last %},{% endif %}{% endfor %} };</script>
+    <div id="resumeModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-gray-800 w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-700 overflow-hidden max-h-[90vh] flex flex-col" x-data="resumeManager()">
+            <!-- Header -->
+            <div class="p-5 border-b border-gray-700 bg-gray-900 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-alt text-amber-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold">Resume Kegiatan Bulanan</h3>
+                        <p class="text-xs text-gray-500" x-text="selectedMonth ? 'Editing: ' + selectedMonth : 'Pilih bulan untuk menulis resume'"></p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('resumeModal').classList.add('hidden')" class="text-gray-400 hover:text-white transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Month List (shown when no month selected) -->
+            <div x-show="!selectedMonth" class="p-5 space-y-2 overflow-y-auto flex-1">
+                {% for resume in resumes %}
+                <div class="flex items-center justify-between px-4 py-3 rounded-xl border transition
+                    {% if resume.is_filled %}
+                        bg-green-500/10 border-green-500/30
+                    {% else %}
+                        bg-gray-900 border-gray-700 hover:border-gray-600
+                    {% endif %}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm
+                            {% if resume.is_filled %}
+                                bg-green-500/20 text-green-400
+                            {% else %}
+                                bg-gray-800 text-gray-500
+                            {% endif %}">
+                            {% if resume.is_filled %}
+                                <i class="fas fa-check"></i>
+                            {% else %}
+                                <i class="fas fa-pen"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-white">{{ resume.bulan }}</p>
+                            {% if resume.is_filled and resume.updated_at %}
+                            <p class="text-xs text-green-400/70">Diupdate: {{ resume.updated_at }}</p>
+                            {% else %}
+                            <p class="text-xs text-yellow-400/70">Belum diisi</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <button @click="openEditor('{{ resume.bulan }}')"
+                                class="text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5
+                                {% if resume.is_filled %}
+                                    bg-blue-500/20 hover:bg-blue-500/30 text-blue-400
+                                {% else %}
+                                    bg-amber-500/20 hover:bg-amber-500/30 text-amber-400
+                                {% endif %}">
+                            <i class="fas fa-edit"></i>
+                            <span x-text="isMonthAllowed('{{ resume.bulan }}') ? '{% if resume.is_filled %}Edit{% else %}Tulis{% endif %}' : 'Lihat'"></span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Info tanggal (removed global messages, status is per-month now via lock icon in list) -->
+            </div>
+
+            <!-- Editor View (shown when month selected) -->
+            <div x-show="selectedMonth" class="flex flex-col flex-1 overflow-hidden">
+                <!-- Back + Month Label -->
+                <div class="px-5 py-3 border-b border-gray-700 flex items-center gap-3 shrink-0">
+                    <button @click="closeEditor()" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h4 class="text-white font-bold text-sm" x-text="'Resume Kegiatan Bulan ' + selectedMonth"></h4>
+                </div>
+
+                <!-- Locked State -->
+                <div x-show="!isEditorAllowed" class="p-5 flex-1 overflow-y-auto">
+                    <div class="bg-gray-900 rounded-xl p-4 border border-gray-700">
+                        <div class="text-center py-6">
+                            <i class="fas fa-lock text-4xl text-gray-600 mb-3"></i>
+                            <p class="text-gray-400 text-sm">Editor dikunci sampai tanggal 25 bulan ini</p>
+                            <p class="text-gray-500 text-xs mt-1">Resume baru bisa diedit mulai tanggal 25 <span x-text="selectedMonth"></span></p>
+                        </div>
+                        <!-- Show existing content as read-only -->
+                        <template x-if="editorContent">
+                            <div class="mt-4 border-t border-gray-700 pt-4">
+                                <p class="text-xs text-gray-500 mb-2 font-bold uppercase">Isi Resume Sebelumnya:</p>
+                                <div class="text-gray-300 text-sm editor-content" x-html="editorContent"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Editor Active -->
+                <div x-show="isEditorAllowed" class="flex flex-col flex-1 overflow-hidden" x-data="tiptapEditor('')" x-init="$watch('selectedMonth', val => { if(val && isEditorAllowed) { $nextTick(() => { if(editor) { Alpine.raw(editor).commands.setContent(editorContent || ''); content = editorContent || ''; } }); } })">
+                    <div class="bg-gray-900 border-b border-gray-700 p-2 shrink-0 min-h-[48px] flex items-center">
+                        <template x-if="editor">
+                            <div class="flex flex-wrap gap-1">
+                                <button type="button" title="Tebal" @click="Alpine.raw(editor).chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs font-bold w-8 h-8 flex items-center justify-center">B</button>
+                                <button type="button" title="Miring" @click="Alpine.raw(editor).chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all italic text-xs w-8 h-8 flex items-center justify-center">I</button>
+                                <button type="button" title="Coret" @click="Alpine.raw(editor).chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all line-through text-xs w-8 h-8 flex items-center justify-center">S</button>
+                                <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                                <button type="button" title="Daftar Poin" @click="Alpine.raw(editor).chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
+                                <button type="button" title="Daftar Nomor" @click="Alpine.raw(editor).chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ol"></i></button>
+                                <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                                <button type="button" title="Kode Inline" @click="Alpine.raw(editor).chain().focus().toggleCode().run()" :class="editor.isActive('code') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center font-mono">&lt;&gt;</button>
+                                <button type="button" title="Blok Kode" @click="Alpine.raw(editor).chain().focus().toggleCodeBlock().run()" :class="editor.isActive('codeBlock') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-file-code"></i></button>
+                                <button type="button" title="Kutipan" @click="Alpine.raw(editor).chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-quote-right"></i></button>
+                                <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                                <button type="button" title="Tautan" @click="toggleLink()" :class="editor.isActive('link') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-link"></i></button>
+                                <button type="button" title="Garis Pemisah" @click="Alpine.raw(editor).chain().focus().setHorizontalRule().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-minus"></i></button>
+                                <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
+                                <button type="button" title="Undo" @click="Alpine.raw(editor).chain().focus().undo().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-undo"></i></button>
+                                <button type="button" title="Redo" @click="Alpine.raw(editor).chain().focus().redo().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-redo"></i></button>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="flex-1 overflow-y-auto bg-gray-900">
+                        <div x-ref="editorElement"></div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="p-4 border-t border-gray-700 bg-gray-900 shrink-0">
+                        <button @click="saveResume(content)" :disabled="isSaving"
+                                class="w-full bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800 disabled:cursor-not-allowed text-white py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2">
+                            <template x-if="!isSaving">
+                                <span><i class="fas fa-save"></i> Simpan Resume</span>
+                            </template>
+                            <template x-if="isSaving">
+                                <span><i class="fas fa-spinner fa-spin"></i> Menyimpan...</span>
+                            </template>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer (only on list view) -->
+            <div x-show="!selectedMonth" class="p-4 border-t border-gray-700 bg-gray-900 shrink-0">
+                <button onclick="document.getElementById('resumeModal').classList.add('hidden')" 
                         class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2.5 rounded-lg font-medium transition">
                     Tutup
                 </button>
@@ -1076,7 +1234,86 @@
                 },
                 destroy() { if (this.editor) this.editor.destroy(); }
             }));
+
+            // --- RESUME MANAGER ---
+            Alpine.data('resumeManager', () => ({
+                selectedMonth: null,
+                editorContent: '',
+                isSaving: false,
+                isEditorAllowed: false,
+
+                // Parse "Februari 2026" -> check if now >= 25th of that month
+                isMonthAllowed(bulan) {
+                    const months = {'Januari':0,'Februari':1,'Maret':2,'April':3,'Mei':4,'Juni':5,'Juli':6,'Agustus':7,'September':8,'Oktober':9,'November':10,'Desember':11};
+                    const parts = bulan.split(' ');
+                    const monthIdx = months[parts[0]];
+                    const year = parseInt(parts[1]);
+                    if (monthIdx === undefined || isNaN(year)) return false;
+                    const threshold = new Date(year, monthIdx, 25, 0, 0, 0);
+                    return new Date() >= threshold;
+                },
+
+                openEditor(bulan) {
+                    this.selectedMonth = bulan;
+                    this.editorContent = (window.__RESUME_DATA && window.__RESUME_DATA[bulan]) || '';
+                    this.isEditorAllowed = this.isMonthAllowed(bulan);
+                },
+
+                closeEditor() {
+                    this.selectedMonth = null;
+                    this.editorContent = '';
+                    this.isEditorAllowed = false;
+                },
+
+                async saveResume(htmlContent) {
+                    if (!this.selectedMonth || this.isSaving) return;
+                    this.isSaving = true;
+
+                    try {
+                        const res = await fetch(`/logbook/{{ logbook.id }}/save-resume`, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ bulan: this.selectedMonth, content: htmlContent })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            if(typeof window.showAlert === 'function') window.showAlert('success', data.message || 'Resume berhasil disimpan!');
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            if(typeof window.showAlert === 'function') window.showAlert('error', data.error || 'Gagal menyimpan resume');
+                            this.isSaving = false;
+                        }
+                    } catch(e) {
+                        if(typeof window.showAlert === 'function') window.showAlert('error', 'Koneksi error: ' + e);
+                        this.isSaving = false;
+                    }
+                }
+            }));
         });
+
+        // Resume Badge Notification (per-month check)
+        (function() {
+            const months = {'Januari':0,'Februari':1,'Maret':2,'April':3,'Mei':4,'Juni':5,'Juli':6,'Agustus':7,'September':8,'Oktober':9,'November':10,'Desember':11};
+            const now = new Date();
+            const resumeData = [
+                {% if resumes %}{% for r in resumes %}{ bulan: {{ r.bulan | tojson }}, filled: {{ 'true' if r.is_filled else 'false' }} }{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+            ];
+            const unfilled = resumeData.filter(r => {
+                if (r.filled) return false;
+                const parts = r.bulan.split(' ');
+                const mi = months[parts[0]];
+                const yr = parseInt(parts[1]);
+                if (mi === undefined || isNaN(yr)) return false;
+                return now >= new Date(yr, mi, 25, 0, 0, 0);
+            }).length;
+            if (unfilled > 0) {
+                const badge = document.getElementById('resumeBadge');
+                if (badge) {
+                    badge.textContent = unfilled;
+                    badge.classList.remove('hidden');
+                }
+            }
+        })();
 
     async function confirmDelete(url) {
         const confirmed = await window.showConfirm(

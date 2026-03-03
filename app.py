@@ -41,7 +41,8 @@ from controller.LogbookController import (
     get_logbooks_by_user, get_logbook_by_id_and_user, create_logbook, update_logbook, 
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
     get_entry_by_id, update_entry, delete_single_image, update_image_metadata, get_image_by_id, replace_image_file,
-    save_signature_file, get_signatures_by_logbook, approve_signature, revoke_signature
+    save_signature_file, get_signatures_by_logbook, approve_signature, revoke_signature,
+    get_resumes_by_logbook, save_resume
 )
 from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password, update_user_password
 from models.auth_api import generate_access_token, generate_refresh_token
@@ -1747,7 +1748,9 @@ def logbook_detail(logbook_id):
     google_user = google_cal_service.get_token_by_user(current_user)
     # Signature data per bulan
     signatures = get_signatures_by_logbook(logbook_id)
-    return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user, signatures=signatures)
+    # Resume data per bulan
+    resumes = get_resumes_by_logbook(logbook_id)
+    return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user, signatures=signatures, resumes=resumes)
 
 # 6. Tambah Kegiatan Harian
 @app.route('/logbook/<int:logbook_id>/add_entry', methods=['POST'])
@@ -1842,6 +1845,22 @@ def logbook_revoke_signature(logbook_id):
     if revoke_signature(logbook_id, bulan, current_user):
         return jsonify({'success': True, 'message': f'TTD bulan {bulan} dicabut!'})
     return jsonify({'success': False, 'error': 'Gagal mencabut TTD'}), 400
+
+# 11. Save Resume Kegiatan (JSON API)
+@app.route('/logbook/<int:logbook_id>/save-resume', methods=['POST'])
+@login_required
+def logbook_save_resume(logbook_id):
+    current_user = g.user.get('sub')
+    data = request.get_json()
+    bulan = data.get('bulan')
+    content = data.get('content', '')
+    
+    if not bulan:
+        return jsonify({'success': False, 'error': 'Bulan tidak diberikan'}), 400
+    
+    if save_resume(logbook_id, bulan, content, current_user):
+        return jsonify({'success': True, 'message': f'Resume bulan {bulan} berhasil disimpan!'})
+    return jsonify({'success': False, 'error': 'Gagal menyimpan resume'}), 400
 
 # ==========================================
 # API KHUSUS GAMBAR LOGBOOK (JSON RESPONSES)

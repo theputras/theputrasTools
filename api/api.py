@@ -2006,24 +2006,129 @@ def sync_custom_activities(logbook_id):
                             }]}).execute()
                         except Exception as img_err:
                             logging.warning(f"[Google Doc Sync] Image insert failed for entry {entry_id}, url={img_url}: {img_err}")
+            # E3. Insert Resume Kegiatan after table (before signature block)
+            # Fetch resume content from DB
+            conn_res = get_connection()
+            cursor_res = conn_res.cursor(dictionary=True)
+            cursor_res.execute(
+                "SELECT content FROM logbook_resumes WHERE logbook_id = %s AND bulan = %s",
+                (logbook_id, month_key)
+            )
+            resume_row = cursor_res.fetchone()
+            cursor_res.close()
+            conn_res.close()
+            
+            resume_content_raw = resume_row['content'] if resume_row and resume_row.get('content') else None
+            
+            if resume_content_raw:
+                # Re-fetch doc for fresh indices
+                document = service.documents().get(documentId=file_id).execute()
+                doc_content = document.get('body').get('content')
+                
+                # Find the table for this month (same logic as step F)
+                resume_insert_index = doc_content[-1].get('endIndex', 1) - 1
+                found_header = False
+                for element in doc_content:
+                    if 'paragraph' in element and not found_header:
+                        txt = get_text_simple([element])
+                        if f"Aktivitas Bulan {month_key}" in txt:
+                            found_header = True
+                            continue
+                    if found_header and 'table' in element:
+                        resume_insert_index = element.get('endIndex', resume_insert_index)
+                        break
+                
+                # Build resume text: "Resume Kegiatan Bulan {month_only}:\n{content}\n"
+                month_only = month_key.split(' ')[0] if ' ' in month_key else month_key
+                resume_header = f"Resume Kegiatan Bulan {month_only}:"
+                resume_body = clean_html(resume_content_raw)
+                resume_full_text = f"{resume_header}\n{resume_body}\n\n"
+                
+                resume_requests = [
+                    {
+                        'insertText': {
+                            'location': {'index': resume_insert_index},
+                            'text': resume_full_text
+                        }
+                    },
+                    # Style as NORMAL_TEXT
+                    {
+                        'updateParagraphStyle': {
+                            'range': {
+                                'startIndex': resume_insert_index,
+                                'endIndex': resume_insert_index + len(resume_full_text)
+                            },
+                            'paragraphStyle': {'namedStyleType': 'NORMAL_TEXT'},
+                            'fields': 'namedStyleType'
+                        }
+                    },
+                    # Red + bold for resume header
+                    {
+                        'updateTextStyle': {
+                            'range': {
+                                'startIndex': resume_insert_index,
+                                'endIndex': resume_insert_index + len(resume_header)
+                            },
+                            'textStyle': {
+                                'foregroundColor': {
+                                    'color': {
+                                        'rgbColor': {'red': 0.8, 'green': 0.0, 'blue': 0.0}
+                                    }
+                                },
+                                'bold': True
+                            },
+                            'fields': 'foregroundColor,bold'
+                        }
+                    },
+                    # Black normal text for resume body
+                    {
+                        'updateTextStyle': {
+                            'range': {
+                                'startIndex': resume_insert_index + len(resume_header) + 1,
+                                'endIndex': resume_insert_index + len(resume_full_text)
+                            },
+                            'textStyle': {
+                                'foregroundColor': {
+                                    'color': {
+                                        'rgbColor': {'red': 0.0, 'green': 0.0, 'blue': 0.0}
+                                    }
+                                },
+                                'bold': False
+                            },
+                            'fields': 'foregroundColor,bold'
+                        }
+                    }
+                ]
+                
+                service.documents().batchUpdate(documentId=file_id, body={'requests': resume_requests}).execute()
             
             # F. Insert signature block after this month's table (not at doc end)
             document = service.documents().get(documentId=file_id).execute()
             doc_content = document.get('body').get('content')
             
-            # Find the table for this month by looking for table after our header
+            # Find the end of this month's content (after table + resume) 
             sig_insert_index = doc_content[-1].get('endIndex', 1) - 1  # fallback
             found_header = False
+            found_table = False
             for element in doc_content:
                 if 'paragraph' in element and not found_header:
                     txt = get_text_simple([element])
                     if f"Aktivitas Bulan {month_key}" in txt:
                         found_header = True
                         continue
-                if found_header and 'table' in element:
-                    # Signature goes right after this table
+                if found_header and 'table' in element and not found_table:
+                    found_table = True
                     sig_insert_index = element.get('endIndex', sig_insert_index)
-                    break
+                    continue
+                # After table, skip through any resume paragraphs until next section header or end
+                if found_table and 'paragraph' in element:
+                    txt = get_text_simple([element]).strip()
+                    # Stop if we hit another "Aktivitas Bulan" header (next month)
+                    if "Aktivitas Bulan" in txt:
+                        break
+                    sig_insert_index = element.get('endIndex', sig_insert_index)
+                elif found_table and 'table' in element:
+                    break  # Hit another table, stop
             
             # F0. Detect font dari paragraf sebelum insert point (inherit, bukan hardcode)  
             detected_font_size = 11  # fallback default

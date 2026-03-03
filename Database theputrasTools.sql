@@ -163,6 +163,17 @@ CREATE TABLE logbook_signatures (
     UNIQUE KEY unique_logbook_month (logbook_id, bulan)
 );
 
+-- E. Resume kegiatan per bulan (rich text dari TipTap editor)
+CREATE TABLE logbook_resumes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    logbook_id INT NOT NULL,
+    bulan VARCHAR(20) NOT NULL,        -- e.g. "Februari 2026"
+    content TEXT,                       -- HTML content dari TipTap editor
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_resume_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_logbook_resume_month (logbook_id, bulan)
+);
+
 
 CREATE TABLE webauthn_credentials (
     id INT AUTO_INCREMENT PRIMARY KEY,
