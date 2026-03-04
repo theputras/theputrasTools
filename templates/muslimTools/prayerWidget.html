@@ -14,9 +14,9 @@
     <!-- FLOATING TRIGGER BUTTON (Kiri atas) -->
     <!-- ========================================= -->
     <button @mousedown="_onDragStart($event)" @touchstart="_onDragStart($event)"
-            class="fixed z-40 group select-none"
+            class="fixed z-50 group select-none cursor-grab active:cursor-grabbing"
             :class="isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'"
-            :style="'left:' + _posX + 'px; top:' + _posY + 'px; transition: ' + (_isDragging ? 'none' : 'transform 0.3s, opacity 0.3s') + ';'"
+            :style="'left:' + _posX + 'px; top:' + _posY + 'px; transition: ' + (_isDragging ? 'none' : 'transform 0.3s, opacity 0.3s, left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)') + ';'"
             id="prayer-trigger-btn">
         
         <!-- Glow effect saat mendekati waktu sholat -->
@@ -51,18 +51,19 @@
     <!-- ========================================= -->
     <div x-show="isOpen" x-cloak
          x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-2 sm:translate-y-0 sm:-translate-x-4"
-         x-transition:enter-end="opacity-100 translate-y-0 sm:translate-x-0"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
          x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0 sm:translate-x-0"
-         x-transition:leave-end="opacity-0 translate-y-2 sm:translate-y-0 sm:-translate-x-4"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
          class="fixed z-50 
-                sm:left-4 sm:top-4 sm:w-80
-                inset-x-0 bottom-0 sm:bottom-auto sm:inset-x-auto
-                sm:rounded-2xl rounded-t-3xl
+                w-full sm:w-80
+                rounded-t-3xl sm:rounded-2xl
                 bg-gray-900/95 backdrop-blur-xl border border-white/10
                 shadow-2xl shadow-black/50
-                overflow-hidden max-h-[85vh] sm:max-h-[90vh]">
+                overflow-hidden max-h-[85vh] sm:max-h-[90vh]
+                transition-all duration-300 transform-gpu"
+         :style="getPanelPositionStyle()">
         
         <!-- Header -->
         <div class="relative overflow-hidden">
@@ -283,18 +284,9 @@ function prayerWidget() {
         _dragOffsetX: 0,
         _dragOffsetY: 0,
         _dragMoved: false,
+        _dragPreventClick: false, // Flag to prevent click after drag
 
         async init() {
-            // Restore saved position
-            const saved = localStorage.getItem('prayerWidgetPos');
-            if (saved) {
-                try {
-                    const pos = JSON.parse(saved);
-                    this._posX = Math.min(pos.x, window.innerWidth - 60);
-                    this._posY = Math.min(pos.y, window.innerHeight - 40);
-                } catch(e) {}
-            }
-
             await this.fetchSchedule();
             this.startCountdown();
             this.startReminderCheck();
@@ -306,6 +298,10 @@ function prayerWidget() {
         },
 
         togglePopup() {
+            if (this._dragPreventClick) {
+                this._dragPreventClick = false;
+                return;
+            }
             this.isOpen = !this.isOpen;
             if (this.isOpen && this.timings.length === 0) {
                 this.fetchSchedule();
@@ -320,6 +316,7 @@ function prayerWidget() {
             const touch = e.touches ? e.touches[0] : e;
             this._isDragging = true;
             this._dragMoved = false;
+            this._dragPreventClick = false; // Reset flag at start of interaction
             this._dragStartX = touch.clientX;
             this._dragStartY = touch.clientY;
             this._dragOffsetX = touch.clientX - this._posX;
@@ -372,12 +369,74 @@ function prayerWidget() {
             this._isDragging = false;
             
             if (this._dragMoved) {
-                // Save position to localStorage
-                localStorage.setItem('prayerWidgetPos', JSON.stringify({ x: this._posX, y: this._posY }));
+                // Snap to nearest edge (left or right)
+                const vw = window.innerWidth;
+                const btn = document.getElementById('prayer-trigger-btn');
+                const btnW = btn ? btn.offsetWidth : 60;
+                
+                // If the center of the button is past the middle of the screen, snap right. Else snap left.
+                const centerX = this._posX + (btnW / 2);
+                if (centerX > vw / 2) {
+                    this._posX = vw - btnW - 16; // 16px padding on right
+                } else {
+                    this._posX = 16; // 16px padding on left
+                }
             } else {
                 // It was a tap/click, not a drag
                 this.togglePopup();
             }
+        },
+        
+        // Calculate the popup panel position based on trigger position
+        getPanelPositionStyle() {
+            if (window.innerWidth < 640) {
+                // Mobile: always fixed at the bottom
+                return 'bottom: 0px; left: 0px; right: 0px; transform-origin: bottom center;';
+            }
+            
+            // Desktop: relative to the trigger button
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const btnW = 60; // Approx trigger width
+            const btnH = 40; // Approx trigger height
+            
+            // Limit pos coordinates defensively
+            const safeX = Math.max(0, Math.min(this._posX, vw - btnW));
+            const safeY = Math.max(0, Math.min(this._posY, vh - btnH));
+
+            let originX = 'left';
+            let originY = 'top';
+            let styleX = '';
+            let styleY = '';
+            
+            // X positioning (left or right side of trigger)
+            if (safeX > vw / 2) {
+                // Widget is on the right half, drop panel to the left of it (anchor right edge)
+                // Right bound distance from right edge of screen: vw - safeX - btnW + some padding
+                const distFromRight = Math.max(16, vw - safeX);
+                styleX = `right: ${distFromRight}px;`;
+                originX = 'right';
+            } else {
+                // Widget is on the left half, drop panel to the right of it (anchor left edge)
+                const distFromLeft = Math.max(16, safeX);
+                styleX = `left: ${distFromLeft}px;`;
+                originX = 'left';
+            }
+            
+            // Y positioning
+            if (safeY > vh / 2) { 
+                // Widget is on the bottom half, pop it UP (anchor bottom edge)
+                const distFromBottom = Math.max(16, vh - safeY - btnH);
+                styleY = `bottom: ${distFromBottom}px;`;
+                originY = 'bottom';
+            } else {
+                // Widget is on the top half, pop it DOWN (anchor top edge)
+                const distFromTop = Math.max(16, safeY);
+                styleY = `top: ${distFromTop}px;`;
+                originY = 'top';
+            }
+            
+            return `${styleX} ${styleY} transform-origin: ${originY} ${originX}; max-width: calc(100vw - 32px);`;
         },
         // === END DRAG HANDLERS ===
 
