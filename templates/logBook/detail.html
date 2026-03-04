@@ -466,22 +466,30 @@
                             <td class="p-4 text-center text-gray-500 align-top">{{ loop.index }}</td>
                             <td class="p-4 font-medium align-top">{{ entry.tanggal_display }}</td>
                             <td class="p-4">
-                                <a href="{{ url_for('logbook_edit_entry', logbook_id=logbook.uuid, entry_id=entry.uuid) }}" class="inline-block mb-1">
-                                    <div class="font-bold text-blue-400 hover:text-blue-300 transition flex items-center gap-2">
-                                        {{ entry.aktivitas }}
-                                        <i class="fas fa-edit text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Edit Kegiatan"></i>
+                                <div x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true)">
+                                    <!-- Aktivitas Skeleton -->
+                                    <div x-show="!loaded" class="h-4 bg-gray-700/50 rounded animate-pulse w-3/4 mb-2"></div>
+                                    <!-- Aktivitas Content -->
+                                    <div x-show="loaded" x-cloak x-transition.opacity.duration.500ms>
+                                        <a href="{{ url_for('logbook_edit_entry', logbook_id=logbook.uuid, entry_id=entry.uuid) }}" class="inline-block mb-1">
+                                            <div class="font-bold text-blue-400 hover:text-blue-300 transition flex items-center gap-2">
+                                                {{ entry.aktivitas }}
+                                                <i class="fas fa-edit text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Edit Kegiatan"></i>
+                                            </div>
+                                        </a>
                                     </div>
-                                </a>
-                                <div x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 500)" class="relative mb-3">
-                                    <!-- Skeleton Loading -->
-                                    <div x-show="!loaded" class="absolute top-0 left-0 right-0 flex flex-col gap-2.5 pointer-events-none z-10 pt-1">
-                                        <div class="h-2.5 bg-gray-700/50 rounded animate-pulse w-full"></div>
-                                        <div class="h-2.5 bg-gray-700/50 rounded animate-pulse w-5/6"></div>
-                                        <div class="h-2.5 bg-gray-700/50 rounded animate-pulse w-4/6"></div>
-                                    </div>
-                                    <!-- Actual Content -->
-                                    <div :class="loaded ? 'opacity-100' : 'opacity-0'" class="transition-opacity duration-500 text-gray-400 text-sm editor-content" style="overflow-wrap: break-word; word-break: break-word;">
-                                        {{ entry.deskripsi | safe }}
+                                    
+                                    <div class="mb-3">
+                                        <!-- Deskripsi Skeleton -->
+                                        <div x-show="!loaded" class="flex flex-col gap-2.5 pointer-events-none z-10 pt-1">
+                                            <div class="h-2.5 bg-gray-700/50 rounded animate-pulse w-full"></div>
+                                            <div class="h-2.5 bg-gray-700/50 rounded animate-pulse w-5/6"></div>
+                                            <div class="h-2.5 bg-gray-700/50 rounded animate-pulse w-4/6"></div>
+                                        </div>
+                                        <!-- Deskripsi Content -->
+                                        <div x-show="loaded" x-cloak class="text-gray-400 text-sm editor-content" style="overflow-wrap: break-word; word-break: break-word;" x-transition.opacity.duration.500ms>
+                                            {{ entry.deskripsi | safe }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 lg:grid-cols-3 gap-2 mt-3 max-w-full">

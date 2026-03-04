@@ -107,21 +107,23 @@
                                     </div>
                                 </template>
                             </div>
-                            <div class="relative bg-gray-900 rounded-b-xl min-h-[150px]">
+                            <div class="bg-gray-900 rounded-b-xl min-h-[150px]">
                                 <!-- Loading State -->
-                                <div x-show="!editor" class="absolute inset-0 z-10 bg-gray-900 p-4 flex flex-col gap-3 rounded-b-xl">
+                                <div x-show="!editor" class="p-4 flex flex-col gap-3 rounded-b-xl">
                                     <div class="h-4 bg-gray-800 rounded animate-pulse w-3/4"></div>
                                     <div class="h-4 bg-gray-800 rounded animate-pulse w-full"></div>
                                     <div class="h-4 bg-gray-800 rounded animate-pulse w-5/6"></div>
                                     
-                                    <div class="mt-2 flex items-center gap-2 text-gray-500 justify-center h-full">
+                                    <div class="mt-2 flex items-center gap-2 text-gray-500 justify-center">
                                         <i class="fas fa-spinner fa-spin"></i>
                                         <span class="text-sm font-medium">Memuat Editor...</span>
                                     </div>
                                 </div>
 
                                 <!-- Editor Container -->
-                                <div x-ref="editorElement" :class="{ 'opacity-0': !editor, 'opacity-100': editor }" class="transition-opacity duration-300"></div>
+                                <div x-show="editor" x-cloak x-transition.opacity.duration.300ms>
+                                    <div x-ref="editorElement"></div>
+                                </div>
                             </div>
                             <input type="hidden" name="deskripsi" :value="content">
                         </div>
