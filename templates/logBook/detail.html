@@ -319,12 +319,12 @@
                         <!-- Modal Backdrop -->
                         <div x-show="showInfo" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                              x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                             class="fixed inset-0 bg-black/60 z-40" @click="showInfo = false" x-cloak></div>
+                             class="fixed inset-0 bg-black/60 z-40" @click.stop="showInfo = false" x-cloak></div>
                         <!-- Modal Content -->
                         <div x-show="showInfo" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                              x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                              class="fixed inset-0 z-50 flex items-center justify-center p-4" x-cloak pointer-events-none>
-                            <div class="w-full max-w-sm bg-gray-800 border border-gray-600 rounded-xl shadow-2xl p-5 text-sm pointer-events-auto" @click.outside="showInfo = false">
+                            <div class="w-full max-w-sm bg-gray-800 border border-gray-600 rounded-xl shadow-2xl p-5 text-sm pointer-events-auto">
                                 
                                 <h3 class="text-white font-bold text-base mb-4 flex items-center gap-2">
                                     <i class="fas fa-info-circle text-blue-400"></i> Informasi Logbook
@@ -497,7 +497,7 @@
         </div>
 
         <!-- Backdrop -->
-        <div x-show="gallery.isOpen" x-transition.opacity class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[150]" @click="gallery.isOpen = false" x-cloak></div>
+        <div x-show="gallery.isOpen" x-transition.opacity class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[150]" @click.stop="gallery.isOpen = false" x-cloak></div>
         
         <!-- Modal -->
         <div x-show="gallery.isOpen" class="fixed inset-0 z-[151] flex items-center justify-center p-0 sm:p-4 pointer-events-none" x-cloak>
@@ -508,7 +508,7 @@
                  x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150"
                  x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95" @click.outside="gallery.isOpen = false">
+                 x-transition:leave-end="opacity-0 scale-95">
                 
                 <div class="flex-1 bg-black relative flex items-center justify-center group" :class="gallery.isVisualEditing ? 'overflow-visible' : 'overflow-hidden'">
                     
@@ -666,7 +666,7 @@
     {% if logbook.ttd_mentor_path and signatures %}
     <div x-data="ttdManager()" @open-ttd-modal.window="isOpen = true">
         <!-- Backdrop -->
-        <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm" @click="isOpen = false" x-cloak></div>
+        <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm" @click.stop="isOpen = false" x-cloak></div>
         
         <!-- Modal Container -->
         <div x-show="isOpen" class="fixed inset-0 z-[201] flex items-center justify-center p-4 pointer-events-none" x-cloak>
@@ -771,7 +771,7 @@
     <script>window.__RESUME_DATA = { {% for r in resumes %}{{ r.bulan | tojson }}: {{ r.content | tojson }}{% if not loop.last %},{% endif %}{% endfor %} };</script>
     <div x-data="resumeManager()" @open-resume-modal.window="isOpen = true">
         <!-- Backdrop -->
-        <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm" @click="isOpen = false" x-cloak></div>
+        <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm" @click.stop="isOpen = false" x-cloak></div>
         
         <!-- Modal Container -->
         <div x-show="isOpen" class="fixed inset-0 z-[201] flex items-center justify-center p-4 pointer-events-none" x-cloak>
@@ -934,7 +934,223 @@
     </div>
     {% endif %}
 
-    <script>
+    
+    
+    <!-- Global Gallery Modal -->
+    <div x-data="globalGallery()" @open-global-gallery.window="openGallery()">
+        <!-- Backdrop -->
+        <div x-show="isOpen" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200]" @click.stop="isOpen = false" x-cloak></div>
+        
+        <!-- Modal Container -->
+        <div x-show="isOpen" class="fixed inset-0 z-[201] flex items-center justify-center p-2 sm:p-10 pointer-events-none" x-cloak>
+            <div class="pointer-events-auto w-full h-full flex flex-col bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden" 
+                 x-transition:enter="transition ease-out duration-200" 
+                 x-transition:enter-start="opacity-0 scale-95" 
+                 x-transition:enter-end="opacity-100 scale-100" 
+                 x-transition:leave="transition ease-in duration-150" 
+                 x-transition:leave-start="opacity-100 scale-100" 
+                 x-transition:leave-end="opacity-0 scale-95">
+            
+            <!-- Header -->
+            <div class="px-5 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-850 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-images text-blue-400 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold text-base">Galeri Dokumentasi</h3>
+                        <p class="text-xs text-gray-500" x-text="`${filteredPhotos.length} foto ditemukan`"></p>
+                    </div>
+                </div>
+                <button @click="isOpen = false" class="text-gray-400 hover:text-white transition w-8 h-8 flex justify-center items-center rounded-lg hover:bg-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Toolbar (Filter & Sort) -->
+            <div class="p-4 bg-gray-900 border-b border-gray-800 shrink-0 flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                    <input type="text" x-model="searchQuery" placeholder="Cari aktivitas, tanggal, atau deskripsi..." 
+                           class="w-full bg-gray-800 border border-gray-700 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white focus:border-blue-500 outline-none transition placeholder-gray-500">
+                </div>
+                <div class="relative shrink-0 sm:w-48">
+                    <i class="fas fa-sort-amount-down absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                    <select x-model="sortOrder" class="w-full bg-gray-800 border border-gray-700 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white focus:border-blue-500 outline-none cursor-pointer appearance-none">
+                        <option value="desc">Terbaru Dulu</option>
+                        <option value="asc">Terlama Dulu</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Photos Grid -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 bg-black/20">
+                <template x-if="filteredPhotos.length === 0">
+                    <div class="flex flex-col items-center justify-center h-full text-gray-500 py-12">
+                        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-gray-700">
+                            <i class="fas fa-image text-2xl text-gray-600"></i>
+                        </div>
+                        <p class="font-medium">Tidak ada foto ditemukan.</p>
+                        <p class="text-xs mt-1">Coba sesuaikan kata kunci pencarian Anda.</p>
+                    </div>
+                </template>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                    <template x-for="(photo, index) in filteredPhotos" :key="'gp-'+index">
+                        <div class="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-blue-500 transition shadow-lg flex flex-col">
+                            <button @click="openViewer(index)" class="block aspect-square relative overflow-hidden bg-gray-900 border-b border-gray-700 shrink-0 w-full text-left focus:outline-none">
+                                <img :src="photo.url" loading="lazy" :alt="photo.aktivitas" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                    <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 transform scale-75 group-hover:scale-100">
+                                        <i class="fas fa-search-plus text-white"></i>
+                                    </div>
+                                </div>
+                            </button>
+                            <div class="p-3 flex-1 flex flex-col justify-center">
+                                <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
+                                    <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide flex items-center gap-1">
+                                        <i class="fas fa-calendar-alt"></i> <span x-text="photo.tanggal"></span>
+                                    </span>
+                                </div>
+                                <h4 class="text-xs sm:text-sm font-semibold text-white line-clamp-2" x-text="photo.aktivitas" :title="photo.aktivitas"></h4>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Photo Viewer Overlay (Read-Only) -->
+        <!-- Backdrop -->
+        <div x-show="viewerOpen" x-transition.opacity class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[210]" @click.stop="viewerOpen = false" x-cloak></div>
+        
+        <!-- Modal Container -->
+        <div x-show="viewerOpen" class="fixed inset-0 z-[211] flex items-center justify-center p-0 sm:p-4 pointer-events-none" x-cloak>
+            <div class="pointer-events-auto bg-gray-900 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-6xl sm:rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl border border-gray-800"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95">
+                
+                <div class="flex-1 bg-black relative flex items-center justify-center group overflow-hidden">
+                    <img :src="currentPhoto?.url" class="max-w-full h-[40vh] sm:h-auto sm:max-h-[85vh] object-contain shadow-2xl">
+                    
+                    <button @click="prevPhoto()" x-show="currentIndex > 0" class="absolute left-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm">
+                        <i class="fas fa-chevron-left text-xl"></i>
+                    </button>
+                    <button @click="nextPhoto()" x-show="currentIndex < filteredPhotos.length - 1" class="absolute right-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm">
+                        <i class="fas fa-chevron-right text-xl"></i>
+                    </button>
+                    
+                    <button @click="viewerOpen = false" class="absolute top-4 right-4 md:hidden bg-red-600 hover:bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg z-20 transition">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="w-full md:w-[350px] bg-gray-900 border-l border-gray-800 flex flex-col h-[50vh] md:h-auto md:max-h-[85vh]">
+                    
+                    <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-850 shrink-0">
+                        <div>
+                            <h3 class="text-white font-bold text-sm">Detail Foto</h3>
+                            <p class="text-xs text-gray-500" x-text="`Foto ${currentIndex + 1} dari ${filteredPhotos.length}`"></p>
+                        </div>
+                        <button @click="viewerOpen = false" class="text-gray-400 hover:text-white hidden md:block transition"><i class="fas fa-times text-xl"></i></button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Aktivitas</label>
+                            <p class="text-sm text-white font-medium bg-gray-800 p-3 rounded border border-gray-700" x-text="currentPhoto?.aktivitas"></p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Keterangan Foto</label>
+                            <p class="text-sm text-gray-300 bg-gray-800 p-3 rounded border border-gray-700 min-h-[60px]" x-text="currentPhoto?.deskripsi || 'Tidak ada keterangan.'"></p>
+                        </div>
+
+                        <!-- INFO METADATA BERKAS -->
+                        <div class="pt-3 border-t border-gray-800 space-y-2">
+                            <h4 class="text-xs font-bold text-gray-500 uppercase">Info Berkas</h4>
+                            <div class="bg-gray-800/50 rounded-lg p-3 space-y-2 text-xs border border-gray-700/50">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500"><i class="fas fa-calendar-alt mr-1.5"></i>Tanggal Kegiatan</span>
+                                    <span class="text-gray-300 font-medium" x-text="currentPhoto?.tanggal"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500"><i class="fas fa-file-image mr-1.5"></i>Nama Berkas</span>
+                                    <span class="text-gray-300 text-right max-w-[170px] truncate" x-text="currentPhoto?.nama_berkas" :title="currentPhoto?.nama_berkas"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500"><i class="fas fa-tag mr-1.5"></i>Tipe Berkas</span>
+                                    <span class="text-gray-300" x-text="currentPhoto?.tipe_berkas"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500"><i class="fas fa-weight-hanging mr-1.5"></i>Ukuran</span>
+                                    <span class="text-gray-300 font-mono" x-text="currentPhoto?.ukuran_display"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500"><i class="fas fa-expand-arrows-alt mr-1.5"></i>Dimensi</span>
+                                    <span class="text-gray-300 font-mono" x-text="currentPhoto?.dimensi"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500"><i class="fas fa-clock mr-1.5"></i>Diunggah pada</span>
+                                    <span class="text-gray-300" x-text="currentPhoto?.created_at"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-3 border-t border-gray-800">
+                            <a :href="currentPhoto?.url" target="_blank" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white py-2.5 rounded text-sm font-medium flex items-center justify-center gap-2 border border-gray-700 transition">
+                                <i class="fas fa-external-link-alt text-blue-400"></i> Buka Ukuran Penuh
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if logbook.google_doc_id %}
+    <!-- Google Docs Pop Up Modal -->
+    <div x-data="{ showGdocs: false, gdocsSrc: '', gdocsLoaded: false }" 
+         @open-gdocs-popup.window="gdocsLoaded = false; gdocsSrc = 'https://docs.google.com/document/d/{{ logbook.google_doc_id }}/edit?embedded=true'; showGdocs = true">
+        <!-- Backdrop -->
+        <div x-show="showGdocs" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-black/70 z-[60]" @click="showGdocs = false; gdocsSrc = ''" x-cloak></div>
+        <!-- Modal -->
+        <div x-show="showGdocs" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+             class="fixed inset-3 sm:inset-6 z-[61] flex flex-col bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden" x-cloak>
+            <!-- Header -->
+            <div class="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700 shrink-0">
+                <div class="flex items-center gap-2 text-white font-semibold text-sm">
+                    <i class="fas fa-file-alt text-blue-400"></i>
+                    <span class="truncate max-w-[200px] sm:max-w-none">{{ logbook.google_doc_name or 'Google Docs' }}</span>
+                    <span x-show="!gdocsLoaded" class="flex items-center gap-1.5 text-xs text-gray-400 font-normal">
+                        <i class="fas fa-spinner fa-spin"></i> <span class="hidden sm:inline">Memuat...</span>
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="https://docs.google.com/document/d/{{ logbook.google_doc_id }}/edit" target="_blank"
+                       class="text-xs text-gray-400 hover:text-white transition px-2 py-1 rounded-lg hover:bg-gray-700 flex items-center gap-1">
+                        <i class="fas fa-external-link-alt"></i> <span class="hidden sm:inline">Buka Full</span>
+                    </a>
+                    <button @click="showGdocs = false; gdocsSrc = ''" class="text-gray-400 hover:text-white transition p-1.5 rounded-lg hover:bg-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Iframe (lazy-load: src diset saat buka, dikosongkan saat tutup) -->
+            <iframe :src="gdocsSrc" @load="if(gdocsSrc) gdocsLoaded = true"
+                    class="flex-1 w-full bg-white" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    {% endif %}
+<script>
         document.addEventListener('alpine:init', () => {
         Alpine.data('ttdManager', () => ({
                 isOpen: false,
@@ -1847,221 +2063,5 @@
             }));
         });
     </script>
-    
-    <!-- Global Gallery Modal -->
-    <div x-data="globalGallery()" @open-global-gallery.window="openGallery()">
-        <!-- Backdrop -->
-        <div x-show="isOpen" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200]" @click="isOpen = false" x-cloak></div>
-        
-        <!-- Modal Container -->
-        <div x-show="isOpen" class="fixed inset-0 z-[201] flex items-center justify-center p-2 sm:p-10 pointer-events-none" x-cloak>
-            <div class="pointer-events-auto w-full h-full flex flex-col bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden" 
-                 x-transition:enter="transition ease-out duration-200" 
-                 x-transition:enter-start="opacity-0 scale-95" 
-                 x-transition:enter-end="opacity-100 scale-100" 
-                 x-transition:leave="transition ease-in duration-150" 
-                 x-transition:leave-start="opacity-100 scale-100" 
-                 x-transition:leave-end="opacity-0 scale-95" @click.outside="isOpen = false">
-            
-            <!-- Header -->
-            <div class="px-5 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-850 shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-images text-blue-400 text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-bold text-base">Galeri Dokumentasi</h3>
-                        <p class="text-xs text-gray-500" x-text="`${filteredPhotos.length} foto ditemukan`"></p>
-                    </div>
-                </div>
-                <button @click="isOpen = false" class="text-gray-400 hover:text-white transition w-8 h-8 flex justify-center items-center rounded-lg hover:bg-gray-800">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-
-            <!-- Toolbar (Filter & Sort) -->
-            <div class="p-4 bg-gray-900 border-b border-gray-800 shrink-0 flex flex-col sm:flex-row gap-3">
-                <div class="relative flex-1">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                    <input type="text" x-model="searchQuery" placeholder="Cari aktivitas, tanggal, atau deskripsi..." 
-                           class="w-full bg-gray-800 border border-gray-700 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white focus:border-blue-500 outline-none transition placeholder-gray-500">
-                </div>
-                <div class="relative shrink-0 sm:w-48">
-                    <i class="fas fa-sort-amount-down absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                    <select x-model="sortOrder" class="w-full bg-gray-800 border border-gray-700 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white focus:border-blue-500 outline-none cursor-pointer appearance-none">
-                        <option value="desc">Terbaru Dulu</option>
-                        <option value="asc">Terlama Dulu</option>
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none"></i>
-                </div>
-            </div>
-
-            <!-- Photos Grid -->
-            <div class="flex-1 overflow-y-auto p-4 sm:p-6 bg-black/20">
-                <template x-if="filteredPhotos.length === 0">
-                    <div class="flex flex-col items-center justify-center h-full text-gray-500 py-12">
-                        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-gray-700">
-                            <i class="fas fa-image text-2xl text-gray-600"></i>
-                        </div>
-                        <p class="font-medium">Tidak ada foto ditemukan.</p>
-                        <p class="text-xs mt-1">Coba sesuaikan kata kunci pencarian Anda.</p>
-                    </div>
-                </template>
-
-                <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-                    <template x-for="(photo, index) in filteredPhotos" :key="'gp-'+index">
-                        <div class="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-blue-500 transition shadow-lg flex flex-col">
-                            <button @click="openViewer(index)" class="block aspect-square relative overflow-hidden bg-gray-900 border-b border-gray-700 shrink-0 w-full text-left focus:outline-none">
-                                <img :src="photo.url" loading="lazy" :alt="photo.aktivitas" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
-                                    <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 transform scale-75 group-hover:scale-100">
-                                        <i class="fas fa-search-plus text-white"></i>
-                                    </div>
-                                </div>
-                            </button>
-                            <div class="p-3 flex-1 flex flex-col justify-center">
-                                <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
-                                    <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide flex items-center gap-1">
-                                        <i class="fas fa-calendar-alt"></i> <span x-text="photo.tanggal"></span>
-                                    </span>
-                                </div>
-                                <h4 class="text-xs sm:text-sm font-semibold text-white line-clamp-2" x-text="photo.aktivitas" :title="photo.aktivitas"></h4>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-        </div>
-
-        <!-- Photo Viewer Overlay (Read-Only) -->
-        <!-- Backdrop -->
-        <div x-show="viewerOpen" x-transition.opacity class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[210]" @click="viewerOpen = false" x-cloak></div>
-        
-        <!-- Modal Container -->
-        <div x-show="viewerOpen" class="fixed inset-0 z-[211] flex items-center justify-center p-0 sm:p-4 pointer-events-none" x-cloak>
-            <div class="pointer-events-auto bg-gray-900 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-6xl sm:rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl border border-gray-800"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95" @click.outside="viewerOpen = false">
-                
-                <div class="flex-1 bg-black relative flex items-center justify-center group overflow-hidden">
-                    <img :src="currentPhoto?.url" class="max-w-full h-[40vh] sm:h-auto sm:max-h-[85vh] object-contain shadow-2xl">
-                    
-                    <button @click="prevPhoto()" x-show="currentIndex > 0" class="absolute left-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm">
-                        <i class="fas fa-chevron-left text-xl"></i>
-                    </button>
-                    <button @click="nextPhoto()" x-show="currentIndex < filteredPhotos.length - 1" class="absolute right-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm">
-                        <i class="fas fa-chevron-right text-xl"></i>
-                    </button>
-                    
-                    <button @click="viewerOpen = false" class="absolute top-4 right-4 md:hidden bg-red-600 hover:bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg z-20 transition">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="w-full md:w-[350px] bg-gray-900 border-l border-gray-800 flex flex-col h-[50vh] md:h-auto md:max-h-[85vh]">
-                    
-                    <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-850 shrink-0">
-                        <div>
-                            <h3 class="text-white font-bold text-sm">Detail Foto</h3>
-                            <p class="text-xs text-gray-500" x-text="`Foto ${currentIndex + 1} dari ${filteredPhotos.length}`"></p>
-                        </div>
-                        <button @click="viewerOpen = false" class="text-gray-400 hover:text-white hidden md:block transition"><i class="fas fa-times text-xl"></i></button>
-                    </div>
-
-                    <div class="flex-1 overflow-y-auto p-5 space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Aktivitas</label>
-                            <p class="text-sm text-white font-medium bg-gray-800 p-3 rounded border border-gray-700" x-text="currentPhoto?.aktivitas"></p>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Keterangan Foto</label>
-                            <p class="text-sm text-gray-300 bg-gray-800 p-3 rounded border border-gray-700 min-h-[60px]" x-text="currentPhoto?.deskripsi || 'Tidak ada keterangan.'"></p>
-                        </div>
-
-                        <!-- INFO METADATA BERKAS -->
-                        <div class="pt-3 border-t border-gray-800 space-y-2">
-                            <h4 class="text-xs font-bold text-gray-500 uppercase">Info Berkas</h4>
-                            <div class="bg-gray-800/50 rounded-lg p-3 space-y-2 text-xs border border-gray-700/50">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-500"><i class="fas fa-calendar-alt mr-1.5"></i>Tanggal Kegiatan</span>
-                                    <span class="text-gray-300 font-medium" x-text="currentPhoto?.tanggal"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-500"><i class="fas fa-file-image mr-1.5"></i>Nama Berkas</span>
-                                    <span class="text-gray-300 text-right max-w-[170px] truncate" x-text="currentPhoto?.nama_berkas" :title="currentPhoto?.nama_berkas"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-500"><i class="fas fa-tag mr-1.5"></i>Tipe Berkas</span>
-                                    <span class="text-gray-300" x-text="currentPhoto?.tipe_berkas"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-500"><i class="fas fa-weight-hanging mr-1.5"></i>Ukuran</span>
-                                    <span class="text-gray-300 font-mono" x-text="currentPhoto?.ukuran_display"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-500"><i class="fas fa-expand-arrows-alt mr-1.5"></i>Dimensi</span>
-                                    <span class="text-gray-300 font-mono" x-text="currentPhoto?.dimensi"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-500"><i class="fas fa-clock mr-1.5"></i>Diunggah pada</span>
-                                    <span class="text-gray-300" x-text="currentPhoto?.created_at"></span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="pt-3 border-t border-gray-800">
-                            <a :href="currentPhoto?.url" target="_blank" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white py-2.5 rounded text-sm font-medium flex items-center justify-center gap-2 border border-gray-700 transition">
-                                <i class="fas fa-external-link-alt text-blue-400"></i> Buka Ukuran Penuh
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% if logbook.google_doc_id %}
-    <!-- Google Docs Pop Up Modal -->
-    <div x-data="{ showGdocs: false, gdocsSrc: '', gdocsLoaded: false }" 
-         @open-gdocs-popup.window="gdocsLoaded = false; gdocsSrc = 'https://docs.google.com/document/d/{{ logbook.google_doc_id }}/edit?embedded=true'; showGdocs = true">
-        <!-- Backdrop -->
-        <div x-show="showGdocs" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-black/70 z-[60]" @click="showGdocs = false; gdocsSrc = ''" x-cloak></div>
-        <!-- Modal -->
-        <div x-show="showGdocs" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-             class="fixed inset-3 sm:inset-6 z-[61] flex flex-col bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden" x-cloak>
-            <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700 shrink-0">
-                <div class="flex items-center gap-2 text-white font-semibold text-sm">
-                    <i class="fas fa-file-alt text-blue-400"></i>
-                    <span class="truncate max-w-[200px] sm:max-w-none">{{ logbook.google_doc_name or 'Google Docs' }}</span>
-                    <span x-show="!gdocsLoaded" class="flex items-center gap-1.5 text-xs text-gray-400 font-normal">
-                        <i class="fas fa-spinner fa-spin"></i> <span class="hidden sm:inline">Memuat...</span>
-                    </span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <a href="https://docs.google.com/document/d/{{ logbook.google_doc_id }}/edit" target="_blank"
-                       class="text-xs text-gray-400 hover:text-white transition px-2 py-1 rounded-lg hover:bg-gray-700 flex items-center gap-1">
-                        <i class="fas fa-external-link-alt"></i> <span class="hidden sm:inline">Buka Full</span>
-                    </a>
-                    <button @click="showGdocs = false; gdocsSrc = ''" class="text-gray-400 hover:text-white transition p-1.5 rounded-lg hover:bg-gray-700">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <!-- Iframe (lazy-load: src diset saat buka, dikosongkan saat tutup) -->
-            <iframe :src="gdocsSrc" @load="if(gdocsSrc) gdocsLoaded = true"
-                    class="flex-1 w-full bg-white" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-    {% endif %}
-
 </body>
 </html>
