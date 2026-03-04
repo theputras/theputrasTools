@@ -42,7 +42,8 @@ from controller.LogbookController import (
     delete_logbook, get_entries_by_logbook, add_entry, delete_entry, generate_word,
     get_entry_by_id, update_entry, delete_single_image, update_image_metadata, get_image_by_id, replace_image_file,
     save_signature_file, get_signatures_by_logbook, approve_signature, revoke_signature,
-    get_resumes_by_logbook, save_resume, delete_resume, get_logbook_id_by_uuid, get_entry_id_by_uuid
+    get_resumes_by_logbook, save_resume, delete_resume, get_logbook_id_by_uuid, get_entry_id_by_uuid,
+    get_logbook_by_nim_and_uuid
 )
 from controller.UserController import get_all_users, get_all_roles, create_user, change_user_role, update_user_detail, delete_user, reset_user_password, update_user_password
 from models.auth_api import generate_access_token, generate_refresh_token
@@ -1764,7 +1765,8 @@ def logbook_detail(logbook_id):
     signatures = get_signatures_by_logbook(logbook['id'])
     # Resume data per bulan
     resumes = get_resumes_by_logbook(logbook['id'])
-    return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user, signatures=signatures, resumes=resumes)
+    now = datetime.now()
+    return render_template('logBook/detail.html', logbook=logbook, entries=entries, google_user=google_user, signatures=signatures, resumes=resumes, current_year=now.year, current_month=now.month, current_day=now.day)
 
 # 6. Tambah Kegiatan Harian
 @app.route('/logbook/<string:logbook_id>/add_entry', methods=['POST'])
@@ -2006,6 +2008,44 @@ def replace_logbook_image_route(image_id):
         return jsonify({'status': 'success', 'new_url': new_url, 'new_path': result}), 200
     else:
         return jsonify({'status': 'error', 'message': result}), 403
+
+# ======================================================
+# LOGBOOK VIEWS (PUBLIC — Auth via NIM + UUID)
+# ======================================================
+
+@app.route('/logbook-views', methods=['GET'])
+def logbook_views_login():
+    """Halaman login logbook viewer (public, tanpa login)"""
+    return render_template('logBook/views_login.html')
+
+@app.route('/logbook-views', methods=['POST'])
+def logbook_views_auth():
+    """Verifikasi NIM + UUID lalu tampilkan logbook read-only"""
+    nim = request.form.get('nim', '').strip()
+    password = request.form.get('password', '').strip()
+    
+    if not nim or not password:
+        return render_template('logBook/views_login.html', error='NIM dan Kode Akses wajib diisi.')
+    
+    logbook = get_logbook_by_nim_and_uuid(nim, password)
+    
+    if not logbook:
+        return render_template('logBook/views_login.html', error='NIM atau Kode Akses salah. Silakan coba lagi.')
+    
+    entries = get_entries_by_logbook(logbook['id'])
+    signatures = get_signatures_by_logbook(logbook['id'])
+    resumes = get_resumes_by_logbook(logbook['id'])
+    
+    now = datetime.now()
+    return render_template('logBook/logbook_view.html', 
+        logbook=logbook, 
+        entries=entries, 
+        signatures=signatures, 
+        resumes=resumes,
+        current_year=now.year,
+        current_month=now.month,
+        current_day=now.day
+    )
 
 # ======================================================
 # API GOOGLE DRIVE (pake unified DB token)

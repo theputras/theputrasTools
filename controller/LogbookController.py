@@ -167,6 +167,15 @@ def get_logbook_id_by_uuid(uuid_str):
     conn.close()
     return result[0] if result else None
 
+def get_logbook_by_nim_and_uuid(nim, uuid_str):
+    """Ambil logbook berdasarkan NIM dan UUID (untuk public viewer tanpa login)."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM logbooks WHERE nim = %s AND uuid = %s", (nim, uuid_str))
+    logbook = cursor.fetchone()
+    conn.close()
+    return logbook
+
 def get_entry_id_by_uuid(uuid_str):
     conn = get_connection()
     cursor = conn.cursor()
@@ -760,18 +769,24 @@ def generate_word(logbook_id, user_id):
                     run_ttd.add_picture(ttd_full_path, width=target_w, height=target_h)
                 except Exception as e:
                     print(f"Gagal insert TTD ke Word: {e}")
-                    r = sig_p.add_run("Tanda Tangan Mentor\n\n\n")
+                    r = sig_p.add_run("Belum Disetujui\n\n\n")
+                    r.bold = True
                     r.font.name = 'Times New Roman'
                     r.font.size = Pt(12)
+                    r.font.color.rgb = RGBColor(255, 0, 0)
                 sig_p.add_run("\n")
             else:
-                r = sig_p.add_run("Tanda Tangan Mentor\n\n\n")
+                r = sig_p.add_run("Belum Disetujui\n\n\n")
+                r.bold = True
                 r.font.name = 'Times New Roman'
                 r.font.size = Pt(12)
+                r.font.color.rgb = RGBColor(255, 0, 0)
         else:
-            r = sig_p.add_run("Tanda Tangan Mentor\n\n\n")
+            r = sig_p.add_run("Belum Disetujui\n\n\n")
+            r.bold = True
             r.font.name = 'Times New Roman'
             r.font.size = Pt(12)
+            r.font.color.rgb = RGBColor(255, 0, 0)
         
         mentor_run = sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}")
         mentor_run.bold = True

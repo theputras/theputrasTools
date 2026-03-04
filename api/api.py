@@ -1556,9 +1556,6 @@ def sync_custom_activities(logbook_id):
         # Build base URL for images
         base_url = request.host_url.rstrip('/')
 
-        if not entries:
-            return jsonify({'error': 'Belum ada data kegiatan di website untuk disinkronkan.'}), 400
-
         nama_mentor = logbook.get('nama_mentor', 'Nama Mentor') if logbook else 'Nama Mentor'
 
         # 3. Group entries by month
@@ -1582,6 +1579,21 @@ def sync_custom_activities(logbook_id):
         # 4. Fetch Doc Structure — find ALL "Aktivitas Bulan" headers and map their sections
         document = service.documents().get(documentId=file_id).execute()
         doc_content = document.get('body').get('content')
+        
+        # 4b. Sync nama file Google Docs ke DB (gratis, karena sudah fetch document)
+        current_doc_title = document.get('title', '')
+        stored_doc_name = logbook.get('google_doc_name', '')
+        if current_doc_title and current_doc_title != stored_doc_name:
+            try:
+                conn_name = get_connection()
+                cursor_name = conn_name.cursor()
+                cursor_name.execute("UPDATE logbooks SET google_doc_name = %s WHERE id = %s", (current_doc_title, real_logbook_id))
+                conn_name.commit()
+                cursor_name.close()
+                conn_name.close()
+                logging.info(f"[Google Doc Sync] Doc name updated: '{stored_doc_name}' -> '{current_doc_title}'")
+            except Exception as name_err:
+                logging.warning(f"[Google Doc Sync] Failed to update doc name: {name_err}")
         
         def get_text_simple(elements):
             text = ""
@@ -2232,15 +2244,15 @@ def sync_custom_activities(logbook_id):
                 
                 # Layout: right-aligned
                 # "Disetujui Oleh"
-                # [jika belum approve: "Tanda Tangan Mentor" + space kosong]
+                # [jika belum approve: "Belum Disetujui" + space kosong]
                 # [jika sudah approve: langsung gambar TTD]
                 # "{nama_mentor}"
                 if should_insert_ttd:
-                    # Approved: tanpa "Tanda Tangan Mentor", gap kecil untuk gambar
+                    # Approved: tanpa "Belum Disetujui", gap kecil untuk gambar
                     sig_text = f"Disetujui Oleh\n\n{nama_mentor}\n"
                 else:
                     # Belum approved: pakai placeholder text + space kosong
-                    sig_text = f"Disetujui Oleh\nTanda Tangan Mentor\n\n\n{nama_mentor}\n"
+                    sig_text = f"Disetujui Oleh\nBelum Disetujui\n\n\n{nama_mentor}\n"
                 
                 # Build text style dengan font yang di-detect
                 text_style = {
@@ -2302,9 +2314,9 @@ def sync_custom_activities(logbook_id):
                     },
                 ]
                 
-                # Bold "Tanda Tangan Mentor" (hanya jika belum approved)
+                # Bold + Red "Belum Disetujui" (hanya jika belum approved)
                 if not should_insert_ttd:
-                    ttm_text = 'Tanda Tangan Mentor'
+                    ttm_text = 'Belum Disetujui'
                     ttm_offset = sig_text.find(ttm_text)
                     if ttm_offset >= 0:
                         sig_requests.append({
@@ -2313,8 +2325,15 @@ def sync_custom_activities(logbook_id):
                                     'startIndex': sig_insert_index + ttm_offset,
                                     'endIndex': sig_insert_index + ttm_offset + len(ttm_text)
                                 },
-                                'textStyle': {'bold': True},
-                                'fields': 'bold'
+                                'textStyle': {
+                                    'bold': True,
+                                    'foregroundColor': {
+                                        'color': {
+                                            'rgbColor': {'red': 1.0, 'green': 0.0, 'blue': 0.0}
+                                        }
+                                    }
+                                },
+                                'fields': 'bold,foregroundColor'
                             }
                         })
                 
@@ -2376,7 +2395,73 @@ def sync_custom_activities(logbook_id):
                 except Exception as ttd_err:
                     logging.warning(f"[Google Doc Sync] TTD image insert failed for {month_key}: {ttd_err}")
 
-        return jsonify({'success': True, 'message': f'Berhasil mengekspor {len(entries)} kegiatan ({len(month_keys)} bulan) ke Google Doc.'})
+        # CLEANUP: Hapus section bulan yang ada di Google Docs tapi tidak ada lagi di DB
+        # Re-fetch doc untuk mendapat section map terbaru setelah sync
+        document = service.documents().get(documentId=file_id).execute()
+        doc_content = document.get('body').get('content')
+        
+        # Rebuild existing sections dari doc terbaru
+        cleanup_section_headers = []
+        for element in doc_content:
+            if 'paragraph' in element:
+                txt = get_text_simple([element])
+                if "Aktivitas Bulan" in txt:
+                    match = txt.strip().replace("Aktivitas Bulan ", "").strip()
+                    if match:
+                        cleanup_section_headers.append((match, element.get('startIndex')))
+        
+        cleanup_sections = {}
+        cleanup_doc_end = doc_content[-1].get('endIndex', 1)
+        for i, (month, start) in enumerate(cleanup_section_headers):
+            if i + 1 < len(cleanup_section_headers):
+                end = cleanup_section_headers[i + 1][1]
+            else:
+                end = cleanup_doc_end - 1
+            cleanup_sections[month] = {'startIndex': start, 'endIndex': end}
+        
+        # Cari bulan yang ada di Google Docs tapi TIDAK ada di grouped_entries (DB)
+        orphaned_months = [m for m in cleanup_sections if m not in grouped_entries]
+        orphaned_count = 0
+        
+        if orphaned_months:
+            logging.info(f"[Google Doc Sync] Cleaning up orphaned sections: {orphaned_months}")
+            # Proses dari index terbesar ke terkecil supaya tidak geser index
+            orphaned_sorted = sorted(orphaned_months, 
+                key=lambda m: cleanup_sections[m]['startIndex'], reverse=True)
+            
+            for orphan_month in orphaned_sorted:
+                section = cleanup_sections[orphan_month]
+                delete_start = section['startIndex']
+                delete_end = section['endIndex']
+                
+                if delete_end > delete_start:
+                    try:
+                        service.documents().batchUpdate(documentId=file_id, body={'requests': [{
+                            'deleteContentRange': {
+                                'range': {
+                                    'startIndex': delete_start,
+                                    'endIndex': delete_end
+                                }
+                            }
+                        }]}).execute()
+                        orphaned_count += 1
+                        logging.info(f"[Google Doc Sync] Deleted orphaned section '{orphan_month}'")
+                    except Exception as cleanup_err:
+                        logging.warning(f"[Google Doc Sync] Failed to delete orphaned section '{orphan_month}': {cleanup_err}")
+        
+        # Build response message
+        msg_parts = []
+        if entries:
+            msg_parts.append(f'Berhasil mengekspor {len(entries)} kegiatan ({len(month_keys)} bulan)')
+        if orphaned_count > 0:
+            msg_parts.append(f'{orphaned_count} bulan lama berhasil dihapus dari Google Doc')
+        
+        if msg_parts:
+            final_msg = ' dan '.join(msg_parts) + '.'
+        else:
+            final_msg = 'Tidak ada data kegiatan untuk disinkronkan.'
+        
+        return jsonify({'success': True, 'message': final_msg})
 
     except Exception as e:
         logging.error(f"[Google Doc Sync] Error: {e}")

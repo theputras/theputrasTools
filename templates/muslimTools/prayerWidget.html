@@ -13,10 +13,10 @@
     <!-- ========================================= -->
     <!-- FLOATING TRIGGER BUTTON (Kiri atas) -->
     <!-- ========================================= -->
-    <button @click="togglePopup()" 
-            class="fixed z-40 group transition-all duration-300"
+    <button @mousedown="_onDragStart($event)" @touchstart="_onDragStart($event)"
+            class="fixed z-40 group select-none"
             :class="isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'"
-            style="left: 1rem; top: 1rem;"
+            :style="'left:' + _posX + 'px; top:' + _posY + 'px; transition: ' + (_isDragging ? 'none' : 'transform 0.3s, opacity 0.3s') + ';'"
             id="prayer-trigger-btn">
         
         <!-- Glow effect saat mendekati waktu sholat -->
@@ -274,12 +274,35 @@ function prayerWidget() {
         _remindedPrayers: new Set(),
         _preRemindedPrayers: new Set(),
 
+        // Drag state
+        _posX: 16,
+        _posY: 16,
+        _isDragging: false,
+        _dragStartX: 0,
+        _dragStartY: 0,
+        _dragOffsetX: 0,
+        _dragOffsetY: 0,
+        _dragMoved: false,
+
         async init() {
+            // Restore saved position
+            const saved = localStorage.getItem('prayerWidgetPos');
+            if (saved) {
+                try {
+                    const pos = JSON.parse(saved);
+                    this._posX = Math.min(pos.x, window.innerWidth - 60);
+                    this._posY = Math.min(pos.y, window.innerHeight - 40);
+                } catch(e) {}
+            }
+
             await this.fetchSchedule();
             this.startCountdown();
             this.startReminderCheck();
-            // Check Ramadan status
             this.checkRamadan();
+
+            // Bind global move/end handlers
+            this._boundDragMove = (e) => this._onDragMove(e);
+            this._boundDragEnd = (e) => this._onDragEnd(e);
         },
 
         togglePopup() {
@@ -288,6 +311,76 @@ function prayerWidget() {
                 this.fetchSchedule();
             }
         },
+
+        // === DRAG HANDLERS ===
+        _onDragStart(e) {
+            // Ignore if right-click
+            if (e.button && e.button !== 0) return;
+            
+            const touch = e.touches ? e.touches[0] : e;
+            this._isDragging = true;
+            this._dragMoved = false;
+            this._dragStartX = touch.clientX;
+            this._dragStartY = touch.clientY;
+            this._dragOffsetX = touch.clientX - this._posX;
+            this._dragOffsetY = touch.clientY - this._posY;
+
+            document.addEventListener('mousemove', this._boundDragMove);
+            document.addEventListener('mouseup', this._boundDragEnd);
+            document.addEventListener('touchmove', this._boundDragMove, { passive: false });
+            document.addEventListener('touchend', this._boundDragEnd);
+        },
+
+        _onDragMove(e) {
+            if (!this._isDragging) return;
+            
+            const touch = e.touches ? e.touches[0] : e;
+            const dx = touch.clientX - this._dragStartX;
+            const dy = touch.clientY - this._dragStartY;
+            
+            // Only count as drag if moved > 5px (prevents accidental drag on tap)
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                this._dragMoved = true;
+            }
+            
+            if (this._dragMoved) {
+                // Prevent pull-to-refresh on mobile
+                if (e.cancelable) e.preventDefault();
+                
+                const btn = document.getElementById('prayer-trigger-btn');
+                const btnW = btn ? btn.offsetWidth : 60;
+                const btnH = btn ? btn.offsetHeight : 40;
+                
+                let newX = touch.clientX - this._dragOffsetX;
+                let newY = touch.clientY - this._dragOffsetY;
+                
+                // Keep within viewport
+                newX = Math.max(0, Math.min(newX, window.innerWidth - btnW));
+                newY = Math.max(0, Math.min(newY, window.innerHeight - btnH));
+                
+                this._posX = newX;
+                this._posY = newY;
+            }
+        },
+
+        _onDragEnd(e) {
+            document.removeEventListener('mousemove', this._boundDragMove);
+            document.removeEventListener('mouseup', this._boundDragEnd);
+            document.removeEventListener('touchmove', this._boundDragMove);
+            document.removeEventListener('touchend', this._boundDragEnd);
+            
+            this._isDragging = false;
+            
+            if (this._dragMoved) {
+                // Save position to localStorage
+                localStorage.setItem('prayerWidgetPos', JSON.stringify({ x: this._posX, y: this._posY }));
+            } else {
+                // It was a tap/click, not a drag
+                this.togglePopup();
+            }
+        },
+        // === END DRAG HANDLERS ===
+
 
         // Touch swipe-down to close (mobile)
         _touchStartY: 0,
@@ -478,11 +571,12 @@ function prayerWidget() {
 </script>
 
 <style>
-    /* Override posisi trigger di mobile */
-    @media (max-width: 639px) {
-        #prayer-trigger-btn {
-            left: 0.75rem !important;
-            top: 0.75rem !important;
-        }
+    /* Draggable button — no user-select, touch-action handled via JS */
+    #prayer-trigger-btn {
+        touch-action: none;
+        cursor: grab;
+    }
+    #prayer-trigger-btn:active {
+        cursor: grabbing;
     }
 </style>

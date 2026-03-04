@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lihat Logbook - The Putras Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md">
+        <!-- Logo / Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500/20 rounded-2xl mb-4 border border-blue-500/30">
+                <i class="fas fa-book-open text-3xl text-blue-400"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Logbook Viewer</h1>
+            <p class="text-gray-400 text-sm mt-1">Masukkan NIM dan kode akses untuk melihat logbook</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-gray-800/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 shadow-2xl">
+            {% if error %}
+            <div class="bg-red-500/20 border border-red-500/30 rounded-xl p-3 mb-4 flex items-center gap-2">
+                <i class="fas fa-exclamation-circle text-red-400"></i>
+                <span class="text-red-300 text-sm">{{ error }}</span>
+            </div>
+            {% endif %}
+            
+            {% if success %}
+            <div class="bg-green-500/20 border border-green-500/30 rounded-xl p-3 mb-4 flex items-center gap-2">
+                <i class="fas fa-check-circle text-green-400"></i>
+                <span class="text-green-300 text-sm">{{ success }}</span>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('logbook_views_auth') }}" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1.5">
+                        <i class="fas fa-id-card mr-1"></i> NIM
+                    </label>
+                    <input type="text" name="nim" required autocomplete="off"
+                           placeholder="Tulis NIM kamu disini"
+                           value="{{ request.form.get('nim', '') }}"
+                           class="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1.5">
+                        <i class="fas fa-key mr-1"></i> Kode Akses
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password" id="passwordInput" required autocomplete="off"
+                               placeholder="Masukkan kode akses logbook"
+                               class="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition">
+                        <button type="button" onclick="const inp=document.getElementById('passwordInput'); const ico=document.getElementById('toggleIcon'); if(inp.type==='password'){inp.type='text';ico.classList.replace('fa-eye','fa-eye-slash');}else{inp.type='password';ico.classList.replace('fa-eye-slash','fa-eye');}"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition p-1">
+                            <i id="toggleIcon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-in-alt" id="btnIcon"></i> <span id="btnText">Lihat Logbook</span>
+                </button>
+            </form>
+
+            <script>
+                document.querySelector('form').addEventListener('submit', function() {
+                    const btn = document.getElementById('btnSubmit');
+                    const icon = document.getElementById('btnIcon');
+                    const text = document.getElementById('btnText');
+                    btn.disabled = true;
+                    btn.classList.add('opacity-75', 'cursor-not-allowed');
+                    icon.className = 'fas fa-spinner fa-spin';
+                    text.textContent = 'Memproses...';
+                });
+            </script>
+        </div>
+
+        <p class="text-center text-gray-500 text-xs mt-6">
+            <i class="fas fa-shield-alt mr-1"></i> Akses hanya untuk pemilik logbook
+        </p>
+    </div>
+
+</body>
+</html>
