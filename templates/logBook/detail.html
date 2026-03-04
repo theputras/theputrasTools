@@ -472,15 +472,27 @@
                                         <i class="fas fa-edit text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Edit Kegiatan"></i>
                                     </div>
                                 </a>
-                                <div class="text-gray-400 text-sm editor-content mb-3" style="overflow-wrap: break-word; word-break: break-word;">
-                                    {{ entry.deskripsi | safe }}
+                                <div x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 500)" class="relative mb-3">
+                                    <!-- Skeleton Loading -->
+                                    <div x-show="!loaded" class="absolute inset-0 flex flex-col gap-2 pointer-events-none z-10 mt-1">
+                                        <div class="h-3 bg-gray-700/50 rounded animate-pulse w-full"></div>
+                                        <div class="h-3 bg-gray-700/50 rounded animate-pulse w-5/6"></div>
+                                        <div class="h-3 bg-gray-700/50 rounded animate-pulse w-4/6"></div>
+                                    </div>
+                                    <!-- Actual Content -->
+                                    <div :class="loaded ? 'opacity-100' : 'opacity-0'" class="transition-opacity duration-500 text-gray-400 text-sm editor-content" style="overflow-wrap: break-word; word-break: break-word;">
+                                        {{ entry.deskripsi | safe }}
+                                    </div>
                                 </div>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-3">
                                     {% for img in entry.images %}
-                                        <div class="relative">
-                                            <img src="{{ url_for('static', filename='uploads/logbook/' ~ img.path) }}" 
+                                        <div class="relative" x-data="{ imgLoaded: false }">
+                                            <!-- Image Skeleton -->
+                                            <div x-show="!imgLoaded" class="absolute inset-0 bg-gray-700/30 animate-pulse rounded-lg border border-gray-600"></div>
+                                            <img @load="imgLoaded = true" src="{{ url_for('static', filename='uploads/logbook/' ~ img.path) }}" 
                                                  alt="Bukti Kegiatan" 
-                                                 class="w-full h-32 object-cover rounded-lg border border-gray-600 shadow-sm">
+                                                 :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
+                                                 class="w-full h-32 object-cover rounded-lg border border-gray-600 shadow-sm transition-opacity duration-500 relative z-10">
                                         </div>
                                     {% endfor %}
                                 </div>
@@ -899,8 +911,22 @@
                             </div>
                         </template>
                     </div>
-                    <div class="flex-1 overflow-y-auto bg-gray-900">
-                        <div x-ref="editorElement"></div>
+                    <div class="flex-1 overflow-y-auto bg-gray-900 relative">
+                        <!-- Loading State -->
+                        <div x-show="!editor" class="absolute inset-0 z-10 bg-gray-900 p-4 flex flex-col gap-3">
+                            <div class="h-4 bg-gray-800 rounded animate-pulse w-3/4"></div>
+                            <div class="h-4 bg-gray-800 rounded animate-pulse w-full"></div>
+                            <div class="h-4 bg-gray-800 rounded animate-pulse w-5/6"></div>
+                            <div class="h-4 bg-gray-800 rounded animate-pulse w-1/2"></div>
+                            
+                            <div class="mt-4 flex items-center gap-2 text-gray-500 justify-center h-full">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span class="text-sm font-medium">Memuat Editor...</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Editor Container -->
+                        <div x-ref="editorElement" :class="{ 'opacity-0': !editor, 'opacity-100': editor }" class="transition-opacity duration-300"></div>
                     </div>
 
                     <!-- Save + Clear Buttons -->
