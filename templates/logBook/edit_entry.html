@@ -154,13 +154,13 @@
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
                             
                             <template x-for="(img, index) in existingImages" :key="'old-'+img.id">
-                                <div class="relative group aspect-video cursor-pointer" x-data="{ imgLoaded: false }">
-                                    <!-- Image Skeleton -->
-                                    <div x-show="!imgLoaded" class="absolute inset-0 bg-gray-700/50 animate-pulse rounded-lg border border-gray-600"></div>
+                                    <div class="relative group aspect-video cursor-pointer" x-data="{ imgLoaded: false }">
+                                        <!-- Image Skeleton -->
+                                        <div x-show="!imgLoaded" class="absolute inset-0 bg-gray-700/50 animate-pulse rounded-lg border border-gray-600"></div>
 
-                                    <img @load="imgLoaded = true" :src="img.url" @click="openGallery(index, 'existing')" 
-                                         :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
-                                         class="w-full h-full object-cover rounded-lg border border-gray-600 hover:border-blue-500 transition-all duration-300 shadow-sm relative z-10">
+                                        <img x-ref="img" x-init="if ($refs.img.complete) imgLoaded = true" @load="imgLoaded = true" :src="img.url" @click="openGallery(index, 'existing')" 
+                                             :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
+                                             class="w-full h-full object-cover rounded-lg border border-gray-600 hover:border-blue-500 transition-all duration-300 shadow-sm relative z-10">
                                     
                                     <button type="button" @click.stop="openGallery(index, 'existing'); deleteImage()" 
                                             class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition z-20">
@@ -176,7 +176,7 @@
                                     <!-- Image Skeleton -->
                                     <div x-show="!imgLoaded" class="absolute inset-0 bg-gray-700/50 animate-pulse rounded-lg border-2 border-green-500/50"></div>
 
-                                    <img @load="imgLoaded = true" :src="img.url" @click="openGallery(index, 'new')"
+                                    <img x-ref="img" x-init="if ($refs.img.complete) imgLoaded = true" @load="imgLoaded = true" :src="img.url" @click="openGallery(index, 'new')"
                                          :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
                                          class="w-full h-full object-cover rounded-lg border border-green-500 border-2 shadow-sm transition-all duration-300 relative z-10">
                                     
