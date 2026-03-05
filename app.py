@@ -24,7 +24,6 @@ from cachetools import TTLCache  # Install: pip install cachetools
 from api.api import api_bp, init_api, SSKM_LAST_DUPLICATE
 from models.auth_api import auth_bp
 from flask_cors import CORS
-from paymentGateway import payment_bp
 from controller.manajemenultahController import ultah_model, parse_tanggal_sicyca
 from models.googleOuth import google_cal_service
 from cryptography.fernet import Fernet
@@ -102,10 +101,9 @@ CORS(
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
+
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
-# Register Payment Gateway Blueprint
-app.register_blueprint(payment_bp)
 # Inisialisasi scheduler SEKALI saat modul di-import
 SCHEDULER_TZ = pytz.timezone(os.getenv("TIMEZONE"))
 

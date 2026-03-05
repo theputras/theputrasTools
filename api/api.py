@@ -15,6 +15,10 @@ api_bp = Blueprint('api', __name__)
 from controller.manajemenultahController import ultah_model # Import model ultah
 from models.googleOuth import google_cal_service # Import inside function to avoid circular import if necessary
 from connection import get_connection
+from controller.PaymentController import (
+    handle_generate_qr_merchant, handle_create_qris, handle_callback,
+    handle_check_status, handle_list_transactions
+)
 from controller.PrayerController import (
     get_prayer_schedule_for_user, get_islamic_calendar_for_user,
     get_ramadan_calendar_for_user, search_location, reverse_geocode,
@@ -2539,3 +2543,58 @@ def api_prayer_ramadan():
     user_id = g.user.get('sub')
     result = get_ramadan_calendar_for_user(user_id)
     return jsonify(result)
+
+# ============================
+# PEMBAYARAN ROUTES
+# ============================
+
+@api_bp.route('/payment/generate-qr', methods=['POST'])
+@login_required
+def api_payment_generate_qr():
+    """Generate QR Merchant (QRIS statis → dinamis) dari QRIS_STATIC_STRING."""
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'error': 'Request body required'}), 400
+    result, status_code = handle_generate_qr_merchant(data)
+    return jsonify(result), status_code
+
+@api_bp.route('/payment/create-qris', methods=['POST'])
+@login_required
+def api_payment_create_qris():
+    """Generate QRIS payment via iPaymu."""
+    user_id = g.user.get('sub')
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'error': 'Request body required'}), 400
+    result, status_code = handle_create_qris(user_id, data)
+    return jsonify(result), status_code
+
+@api_bp.route('/payment/callback', methods=['POST'])
+def api_payment_callback():
+    """Webhook callback dari iPaymu saat pembayaran masuk."""
+    # iPaymu kirim data via form-encoded atau JSON
+    if request.is_json:
+        data = request.get_json(force=True, silent=True) or {}
+    else:
+        data = request.form.to_dict()
+    result, status_code = handle_callback(data)
+    return jsonify(result), status_code
+
+@api_bp.route('/payment/check/<ref_id>', methods=['GET'])
+@login_required
+def api_payment_check(ref_id):
+    """Cek status transaksi (polling dari frontend)."""
+    user_id = g.user.get('sub')
+    result, status_code = handle_check_status(user_id, ref_id)
+    return jsonify(result), status_code
+
+@api_bp.route('/payment/transactions', methods=['GET'])
+@login_required
+def api_payment_transactions():
+    """List transaksi user (paginated)."""
+    user_id = g.user.get('sub')
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 15, type=int)
+    status_filter = request.args.get('status', None, type=int)
+    result, status_code = handle_list_transactions(user_id, page, per_page, status_filter)
+    return jsonify(result), status_code

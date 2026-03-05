@@ -228,7 +228,32 @@ CREATE TABLE ramadan_config (
     CONSTRAINT fk_ramadan_updater FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Seed: Ramadhan 1447 H (2026)
-INSERT INTO ramadan_config (hijri_year, start_ramadan_muhammadiyah, start_ramadan_pemerintah, total_days)
-VALUES (1447, '2026-02-17', '2026-02-18', 30)
-ON DUPLICATE KEY UPDATE hijri_year = VALUES(hijri_year);
+-- ==========================================================
+-- 8. TABEL FITUR: PEMBAYARAN (iPaymu QRIS)
+-- ==========================================================
+
+CREATE TABLE payment_transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    reference_id VARCHAR(100) NOT NULL UNIQUE,
+    ipaymu_transaction_id INT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    status TINYINT DEFAULT 0,               -- 0=pending, 1=success, -2=expired
+    payment_method VARCHAR(50) DEFAULT 'qris',
+    payment_channel VARCHAR(50) NULL,
+    qr_data TEXT NULL,                      -- QR string/URL dari iPaymu
+    buyer_name VARCHAR(150) NULL,
+    buyer_phone VARCHAR(20) NULL,
+    buyer_email VARCHAR(150) NULL,
+    comments TEXT NULL,
+    paid_at TIMESTAMP NULL,
+    expired_at TIMESTAMP NULL,
+    callback_data JSON NULL,                -- Raw callback data dari iPaymu
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_reference (reference_id),
+    INDEX idx_status (status),
+    INDEX idx_user_created (user_id, created_at)
+);
+

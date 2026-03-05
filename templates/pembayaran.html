@@ -6,10 +6,8 @@
     <title>Pembayaran QRIS - The Putras</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        .qr-container {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
-        }
         .glass-card {
             background: rgba(31, 41, 55, 0.5);
             backdrop-filter: blur(12px);
@@ -24,18 +22,36 @@
         .btn-gradient:hover {
             background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
         }
+        .btn-emerald {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+        .btn-emerald:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
         @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
             50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.5); }
         }
-        .qr-glow {
-            animation: pulse-glow 2s ease-in-out infinite;
+        .qr-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        @keyframes success-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
+        .success-bounce { animation: success-bounce 0.6s ease-in-out; }
+        @keyframes checkmark {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+        .animate-checkmark path {
+            stroke-dasharray: 100;
+            animation: checkmark 0.6s ease-out forwards;
+        }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
     
-    <div class="flex-1 flex flex-col items-center pt-6 pb-32 px-4 w-full" x-data="qrisApp()">
+    <div class="flex-1 flex flex-col items-center pt-6 pb-32 px-4 w-full" x-data="paymentApp()">
         
         <!-- Header -->
         <div class="text-center mb-6">
@@ -49,77 +65,74 @@
             <p class="text-gray-400 text-sm mt-2">Generate QR Code untuk pembayaran</p>
         </div>
         
-        <!-- Payment Method Menu -->
+        <!-- Tab Menu: 3 tabs -->
         <div class="w-full max-w-md mb-6">
-            <div class="glass-card p-1.5 rounded-xl flex gap-2">
-                <!-- QR Merchant (Active) -->
-                <button class="flex-1 py-2.5 px-4 rounded-lg bg-violet-600 shadow-lg shadow-violet-500/20 text-white font-medium text-sm transition-all">
-                    Payment QR Merchant
+            <div class="glass-card p-1.5 rounded-xl flex gap-1.5">
+                <button @click="activeTab = 'merchant'" 
+                    :class="activeTab === 'merchant' ? 'bg-emerald-600 shadow-lg shadow-emerald-500/20 text-white' : 'text-gray-400 hover:bg-white/5'"
+                    class="flex-1 py-2.5 px-3 rounded-lg font-medium text-xs transition-all">
+                    <i class="fas fa-store mr-1"></i>QR Merchant
                 </button>
-                
-                <!-- Midtrans (Coming Soon) -->
-                <div class="flex-1 relative group cursor-not-allowed">
-                    <button disabled class="w-full h-full py-2.5 px-4 rounded-lg hover:bg-white/5 text-gray-400 font-medium text-sm transition-all disabled:opacity-60 disabled:cursor-not-allowed">
-                        Payment with Midtrans
-                    </button>
-                    <span class="absolute -top-2 -right-2 px-2 py-0.5 bg-gray-700 border border-gray-600 text-[10px] text-gray-300 rounded-full shadow-lg transform rotate-3">
-                        Soon
-                    </span>
-                </div>
+                <button @click="activeTab = 'ipaymu'" 
+                    :class="activeTab === 'ipaymu' ? 'bg-violet-600 shadow-lg shadow-violet-500/20 text-white' : 'text-gray-400 hover:bg-white/5'"
+                    class="flex-1 py-2.5 px-3 rounded-lg font-medium text-xs transition-all">
+                    <i class="fas fa-qrcode mr-1"></i>iPaymu
+                </button>
+                <button @click="activeTab = 'history'; loadTransactions()" 
+                    :class="activeTab === 'history' ? 'bg-violet-600 shadow-lg shadow-violet-500/20 text-white' : 'text-gray-400 hover:bg-white/5'"
+                    class="flex-1 py-2.5 px-3 rounded-lg font-medium text-xs transition-all">
+                    <i class="fas fa-list mr-1"></i>Transaksi
+                </button>
             </div>
         </div>
 
-        <!-- Main Card -->
-        <div class="w-full max-w-md">
+        <!-- ==================== TAB: QR MERCHANT (Static QRIS) ==================== -->
+        <div x-show="activeTab === 'merchant'" class="w-full max-w-md" x-transition>
             
             <!-- Input Form -->
-            <div class="glass-card rounded-2xl p-6 mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">
-                    Nominal Pembayaran
-                </label>
+            <div x-show="!merchantQrData" class="glass-card rounded-2xl p-6 mb-4">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                        <i class="fas fa-store text-emerald-400 text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-sm">Payment QR Merchant</h3>
+                        <p class="text-gray-400 text-xs">QRIS dinamis dari string statis</p>
+                    </div>
+                </div>
+                
+                <label class="block text-sm font-medium text-gray-300 mb-2">Nominal Pembayaran</label>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">Rp</span>
-                    <input 
-                        type="text" 
-                        x-model="amountInput"
-                        @input="formatAmount($event)"
-                        @keyup.enter="generateQris()"
+                    <input type="text" x-model="amountInput" @input="formatAmount($event)"
+                        @keyup.enter="generateMerchantQr()"
                         placeholder="0"
                         class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-4 pl-12 pr-4 
                                text-white text-xl font-semibold placeholder-gray-500
-                               focus:outline-none focus:border-violet-500 input-glow transition-all"
-                    >
+                               focus:outline-none focus:border-emerald-500 input-glow transition-all">
                 </div>
                 
                 <!-- Quick Amount Buttons -->
                 <div class="grid grid-cols-3 gap-2 mt-4">
                     <template x-for="preset in [5000, 10000, 15000, 20000, 50000, 100000]" :key="preset">
-                        <button 
-                            @click="setAmount(preset)"
+                        <button @click="setAmount(preset)"
                             class="py-2 px-3 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300
-                                   hover:bg-violet-500/20 hover:border-violet-500/50 transition-all"
-                            x-text="formatRupiah(preset)"
-                        ></button>
+                                   hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all"
+                            x-text="formatRupiah(preset)">
+                        </button>
                     </template>
                 </div>
                 
                 <!-- Generate Button -->
-                <button 
-                    @click="generateQris()"
-                    :disabled="loading || !rawAmount || qrData"
-                    class="w-full mt-6 py-4 rounded-xl font-semibold text-white btn-gradient
+                <button @click="generateMerchantQr()"
+                    :disabled="merchantLoading || !rawAmount"
+                    class="w-full mt-6 py-4 rounded-xl font-semibold text-white btn-emerald
                            disabled:opacity-50 disabled:cursor-not-allowed
-                           transform active:scale-95 transition-all duration-200"
-                >
-                    <span x-show="!loading" class="flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
-                            </path>
-                        </svg>
-                        Generate QRIS
+                           transform active:scale-95 transition-all duration-200">
+                    <span x-show="!merchantLoading" class="flex items-center justify-center">
+                        <i class="fas fa-qrcode mr-2"></i>Generate QR Merchant
                     </span>
-                    <span x-show="loading" class="flex items-center justify-center">
+                    <span x-show="merchantLoading" class="flex items-center justify-center">
                         <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
@@ -129,32 +142,134 @@
                 </button>
             </div>
             
-            <!-- Error Message -->
-            <div x-show="error" x-cloak 
-                 class="glass-card rounded-2xl p-4 mb-4 border-red-500/30 bg-red-500/10">
-                <div class="flex items-center text-red-400">
-                    <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span x-text="error" class="text-sm"></span>
+            <!-- QR Code Display (Merchant) -->
+            <div x-show="merchantQrData" x-cloak class="glass-card rounded-2xl p-6">
+                <div class="text-center mb-4">
+                    <p class="text-gray-400 text-sm">Total Pembayaran</p>
+                    <p class="text-2xl font-bold text-white" x-text="merchantQrData?.amount_formatted"></p>
                 </div>
+                
+                <div class="rounded-2xl p-6 flex justify-center qr-glow"
+                     style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);">
+                    <div class="bg-white rounded-xl p-4" x-html="merchantQrData?.qr_svg"></div>
+                </div>
+                
+                <p class="text-center text-gray-400 text-xs mt-4">
+                    Scan QR Code dengan aplikasi e-wallet atau mobile banking
+                </p>
+
+                <!-- Countdown Timer (5 menit) -->
+                <div x-show="merchantCountdown" class="flex items-center justify-center gap-2 mt-3 py-2 px-4 bg-gray-800/50 rounded-lg">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm text-gray-300">
+                        Berlaku <span class="font-mono font-semibold" x-text="merchantCountdown"></span>
+                    </span>
+                </div>
+                
+                <button @click="resetMerchant()"
+                    class="w-full mt-4 py-3 rounded-xl font-medium text-gray-300
+                           bg-gray-800/50 border border-gray-700
+                           hover:bg-gray-700 transition-all">
+                    Generate Ulang
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: iPaymu QRIS ==================== -->
+        <div x-show="activeTab === 'ipaymu'" class="w-full max-w-md" x-transition>
+            
+            <!-- Input Form -->
+            <div x-show="!qrData && !paymentSuccess" class="glass-card rounded-2xl p-6 mb-4">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center">
+                        <i class="fas fa-qrcode text-violet-400 text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-sm">Payment iPaymu</h3>
+                        <p class="text-gray-400 text-xs">QRIS via iPaymu + notifikasi realtime</p>
+                    </div>
+                </div>
+
+                <label class="block text-sm font-medium text-gray-300 mb-2">Nominal Pembayaran</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">Rp</span>
+                    <input type="text" x-model="ipaymuAmountInput" @input="formatIpaymuAmount($event)"
+                        @keyup.enter="generateIpaymuQris()"
+                        placeholder="0"
+                        class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-4 pl-12 pr-4 
+                               text-white text-xl font-semibold placeholder-gray-500
+                               focus:outline-none focus:border-violet-500 input-glow transition-all">
+                </div>
+                
+                <!-- Quick Amount Buttons -->
+                <div class="grid grid-cols-3 gap-2 mt-4">
+                    <template x-for="preset in [5000, 10000, 15000, 20000, 50000, 100000]" :key="preset">
+                        <button @click="setIpaymuAmount(preset)"
+                            class="py-2 px-3 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300
+                                   hover:bg-violet-500/20 hover:border-violet-500/50 transition-all"
+                            x-text="formatRupiah(preset)">
+                        </button>
+                    </template>
+                </div>
+
+                <!-- Optional fields -->
+                <div class="mt-4 space-y-3">
+                    <input type="text" x-model="buyerName" placeholder="Nama (opsional)" 
+                        class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 input-glow transition-all text-sm">
+                    <input type="text" x-model="comments" placeholder="Catatan (opsional)" 
+                        class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 input-glow transition-all text-sm">
+                </div>
+                
+                <!-- Generate Button -->
+                <button @click="generateIpaymuQris()"
+                    :disabled="ipaymuLoading || !ipaymuRawAmount"
+                    class="w-full mt-6 py-4 rounded-xl font-semibold text-white btn-gradient
+                           disabled:opacity-50 disabled:cursor-not-allowed
+                           transform active:scale-95 transition-all duration-200">
+                    <span x-show="!ipaymuLoading" class="flex items-center justify-center">
+                        <i class="fas fa-qrcode mr-2"></i>Generate iPaymu QRIS
+                    </span>
+                    <span x-show="ipaymuLoading" class="flex items-center justify-center">
+                        <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        Generating...
+                    </span>
+                </button>
             </div>
             
-            <!-- QR Code Result -->
-            <div x-show="qrData" x-cloak class="glass-card rounded-2xl p-6">
+            <!-- QR Code Display (Pending Payment) -->
+            <div x-show="qrData && !paymentSuccess" x-cloak class="glass-card rounded-2xl p-6">
                 <div class="text-center mb-4">
                     <p class="text-gray-400 text-sm">Total Pembayaran</p>
                     <p class="text-2xl font-bold text-white" x-text="qrData?.amount_formatted"></p>
                 </div>
                 
-                <!-- QR Code Display -->
-                <div class="qr-container rounded-2xl p-6 flex justify-center qr-glow">
-                    <div class="bg-white rounded-xl p-4" x-html="qrData?.qr_svg"></div>
+                <!-- QR Code Image -->
+                <div class="rounded-2xl p-6 flex justify-center qr-glow" 
+                     style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);">
+                    <div class="bg-white rounded-xl p-4">
+                        <img :src="qrData?.qr_image" alt="QRIS QR Code" class="w-56 h-56 object-contain"
+                             x-show="qrData?.qr_image">
+                    </div>
                 </div>
                 
+                <!-- Polling Status -->
+                <div class="flex items-center justify-center gap-2 mt-4 py-3 px-4 bg-gray-800/50 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <svg class="animate-spin h-4 w-4 text-violet-400" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        <span class="text-sm text-gray-300">Menunggu pembayaran...</span>
+                    </div>
+                </div>
+
                 <!-- Countdown Timer -->
-                <div x-show="countdown" class="flex items-center justify-center gap-2 mt-4 py-2 px-4 bg-gray-800/50 rounded-lg">
+                <div x-show="countdown" class="flex items-center justify-center gap-2 mt-2 py-2 px-4 bg-gray-800/50 rounded-lg">
                     <svg class="w-4 h-4" :class="countdown && countdown.startsWith('0') ? 'text-orange-400' : 'text-violet-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -163,23 +278,167 @@
                     </span>
                 </div>
                 
-                <p class="text-center text-gray-400 text-xs mt-4">
+                <p class="text-center text-gray-400 text-xs mt-3">
                     Scan QR Code dengan aplikasi e-wallet atau mobile banking
                 </p>
                 
-                <!-- Action Buttons -->
-                <div class="flex gap-3 mt-4">
-                    <button 
-                        @click="resetQris()"
-                        class="flex-1 py-3 rounded-xl font-medium text-gray-300
-                               bg-gray-800/50 border border-gray-700
-                               hover:bg-gray-700 transition-all"
-                    >
-                        Generate Baru
+                <button @click="resetIpaymu()"
+                    class="w-full mt-4 py-3 rounded-xl font-medium text-gray-300
+                           bg-gray-800/50 border border-gray-700
+                           hover:bg-gray-700 transition-all">
+                    Batal
+                </button>
+            </div>
+
+            <!-- Payment Success -->
+            <div x-show="paymentSuccess" x-cloak class="glass-card rounded-2xl p-6 success-bounce">
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-green-500/20 rounded-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-green-400 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-green-400 mb-1">Pembayaran Berhasil!</h3>
+                    <p class="text-3xl font-bold text-white mb-2" x-text="qrData?.amount_formatted"></p>
+                    <p class="text-gray-400 text-sm" x-text="successTime"></p>
+
+                    <div class="mt-4 bg-gray-800/50 rounded-xl p-4 text-left space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Reference ID</span>
+                            <span class="text-white font-mono text-xs" x-text="qrData?.reference_id"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Metode</span>
+                            <span class="text-white">iPaymu QRIS</span>
+                        </div>
+                    </div>
+                    
+                    <button @click="resetIpaymu()" 
+                        class="w-full mt-6 py-3 rounded-xl font-medium text-white btn-gradient transform active:scale-95 transition-all">
+                        Transaksi Baru
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- ==================== TAB: LIST TRANSAKSI ==================== -->
+        <div x-show="activeTab === 'history'" x-cloak class="w-full max-w-md" x-transition>
             
+            <!-- Filter -->
+            <div class="glass-card rounded-2xl p-4 mb-4">
+                <div class="flex gap-2 overflow-x-auto">
+                    <button @click="filterStatus = null; loadTransactions()"
+                        :class="filterStatus === null ? 'bg-violet-600 text-white' : 'bg-gray-800/50 text-gray-400'"
+                        class="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all">
+                        Semua
+                    </button>
+                    <button @click="filterStatus = 0; loadTransactions()"
+                        :class="filterStatus === 0 ? 'bg-yellow-600 text-white' : 'bg-gray-800/50 text-gray-400'"
+                        class="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all">
+                        Pending
+                    </button>
+                    <button @click="filterStatus = 1; loadTransactions()"
+                        :class="filterStatus === 1 ? 'bg-green-600 text-white' : 'bg-gray-800/50 text-gray-400'"
+                        class="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all">
+                        Berhasil
+                    </button>
+                    <button @click="filterStatus = -2; loadTransactions()"
+                        :class="filterStatus === -2 ? 'bg-red-600 text-white' : 'bg-gray-800/50 text-gray-400'"
+                        class="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all">
+                        Expired
+                    </button>
+                </div>
+            </div>
+
+            <!-- Transaction List -->
+            <div x-show="!historyLoading && transactions.length > 0" class="space-y-3">
+                <template x-for="txn in transactions" :key="txn.id">
+                    <div class="glass-card rounded-2xl p-4 cursor-pointer hover:border-violet-500/30 transition-all"
+                         @click="txn._open = !txn._open">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-white font-semibold text-sm" x-text="txn.amount_formatted"></span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold"
+                                        :class="{
+                                            'bg-yellow-500/20 text-yellow-400': txn.status === 0,
+                                            'bg-green-500/20 text-green-400': txn.status === 1,
+                                            'bg-red-500/20 text-red-400': txn.status === -2
+                                        }"
+                                        x-text="txn.status_label">
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-xs truncate" x-text="txn.reference_id"></p>
+                            </div>
+                            <div class="text-right ml-3 flex-shrink-0">
+                                <p class="text-gray-400 text-xs" x-text="formatDate(txn.created_at)"></p>
+                                <svg class="w-4 h-4 text-gray-500 ml-auto mt-1 transition-transform" 
+                                     :class="{'rotate-180': txn._open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Detail Expanded -->
+                        <div x-show="txn._open" x-transition x-cloak class="mt-3 pt-3 border-t border-gray-700 space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Transaction ID</span>
+                                <span class="text-white" x-text="txn.ipaymu_transaction_id || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Metode</span>
+                                <span class="text-white" x-text="(txn.payment_method || 'qris').toUpperCase()"></span>
+                            </div>
+                            <div class="flex justify-between" x-show="txn.buyer_name">
+                                <span class="text-gray-400">Nama</span>
+                                <span class="text-white" x-text="txn.buyer_name"></span>
+                            </div>
+                            <div class="flex justify-between" x-show="txn.comments">
+                                <span class="text-gray-400">Catatan</span>
+                                <span class="text-white text-right max-w-[60%]" x-text="txn.comments"></span>
+                            </div>
+                            <div class="flex justify-between" x-show="txn.paid_at">
+                                <span class="text-gray-400">Dibayar</span>
+                                <span class="text-green-400" x-text="txn.paid_at"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty State -->
+            <div x-show="!historyLoading && transactions.length === 0" class="glass-card rounded-2xl p-8 text-center">
+                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                <p class="text-gray-400 text-sm">Belum ada transaksi</p>
+            </div>
+
+            <!-- Loading -->
+            <div x-show="historyLoading" class="glass-card rounded-2xl p-8 text-center">
+                <svg class="animate-spin h-8 w-8 mx-auto text-violet-400 mb-3" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                <p class="text-gray-400 text-sm">Memuat transaksi...</p>
+            </div>
+
+            <!-- Pagination -->
+            <div x-show="totalPages > 1" class="flex justify-center gap-2 mt-4">
+                <button @click="if(currentPage > 1) { currentPage--; loadTransactions(); }"
+                    :disabled="currentPage <= 1"
+                    class="px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-sm text-gray-300 disabled:opacity-30 hover:bg-gray-700 transition-all">
+                    ←
+                </button>
+                <span class="px-4 py-2 text-sm text-gray-400" x-text="`${currentPage} / ${totalPages}`"></span>
+                <button @click="if(currentPage < totalPages) { currentPage++; loadTransactions(); }"
+                    :disabled="currentPage >= totalPages"
+                    class="px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-sm text-gray-300 disabled:opacity-30 hover:bg-gray-700 transition-all">
+                    →
+                </button>
+            </div>
         </div>
     </div>
 
@@ -187,124 +446,55 @@
     {% include 'nativeNav.html' %}
 
     <script>
-        const STORAGE_KEY = 'qris_payment_data';
-        const EXPIRY_DURATION = 10 * 60 * 1000; // 10 menit dalam ms
-
-        function qrisApp() {
+        function paymentApp() {
             return {
+                activeTab: 'merchant',
+
+                // ===== QR Merchant (Static QRIS) =====
                 amountInput: '',
                 rawAmount: 0,
-                loading: false,
-                error: null,
+                merchantLoading: false,
+                merchantQrData: null,
+                merchantCountdown: '',
+                merchantCountdownInterval: null,
+                merchantExpiryTime: null,
+
+                // ===== iPaymu QRIS =====
+                ipaymuAmountInput: '',
+                ipaymuRawAmount: 0,
+                buyerName: '',
+                comments: '',
+                ipaymuLoading: false,
                 qrData: null,
-                expiryTime: null,
+                paymentSuccess: false,
+                successTime: '',
                 countdown: '',
                 countdownInterval: null,
+                pollingInterval: null,
+                expiryTime: null,
+
+                // ===== History tab =====
+                transactions: [],
+                historyLoading: false,
+                currentPage: 1,
+                totalPages: 0,
+                filterStatus: null,
 
                 init() {
-                    // Load dari localStorage saat init
                     this.loadFromStorage();
                 },
 
-                loadFromStorage() {
-                    try {
-                        const stored = localStorage.getItem(STORAGE_KEY);
-                        if (stored) {
-                            const parsed = JSON.parse(stored);
-                            const now = Date.now();
-                            
-                            // Cek apakah masih valid (belum expired)
-                            if (parsed.expiryTime && parsed.expiryTime > now) {
-                                this.qrData = parsed.qrData;
-                                this.expiryTime = parsed.expiryTime;
-                                this.rawAmount = parsed.qrData?.amount || 0;
-                                this.amountInput = this.rawAmount ? new Intl.NumberFormat('id-ID').format(this.rawAmount) : '';
-                                this.startCountdown();
-                            } else {
-                                // Sudah expired, hapus dari storage
-                                this.clearStorage();
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error loading from storage:', e);
-                        this.clearStorage();
-                    }
+                destroy() {
+                    this.stopPolling();
+                    this.stopCountdown();
+                    this.stopMerchantCountdown();
                 },
 
-                saveToStorage() {
-                    try {
-                        const data = {
-                            qrData: this.qrData,
-                            expiryTime: this.expiryTime
-                        };
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                    } catch (e) {
-                        console.error('Error saving to storage:', e);
-                    }
-                },
-
-                clearStorage() {
-                    localStorage.removeItem(STORAGE_KEY);
-                },
-
-                startCountdown() {
-                    // Clear interval sebelumnya jika ada
-                    if (this.countdownInterval) {
-                        clearInterval(this.countdownInterval);
-                    }
-
-                    this.updateCountdown();
-                    this.countdownInterval = setInterval(() => {
-                        this.updateCountdown();
-                    }, 1000);
-                },
-
-                updateCountdown() {
-                    if (!this.expiryTime) {
-                        this.countdown = '';
-                        return;
-                    }
-
-                    const now = Date.now();
-                    const remaining = this.expiryTime - now;
-
-                    if (remaining <= 0) {
-                        // Expired!
-                        this.handleExpiry();
-                        return;
-                    }
-
-                    const minutes = Math.floor(remaining / 60000);
-                    const seconds = Math.floor((remaining % 60000) / 1000);
-                    this.countdown = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                },
-
-                handleExpiry() {
-                    // Stop countdown
-                    if (this.countdownInterval) {
-                        clearInterval(this.countdownInterval);
-                        this.countdownInterval = null;
-                    }
-                    
-                    // Clear data
-                    this.qrData = null;
-                    this.expiryTime = null;
-                    this.countdown = '';
-                    this.clearStorage();
-                    
-                    // Show notification
-                    this.error = 'QR Code telah kadaluarsa. Silakan generate ulang.';
-                },
-
+                // ===== FORMAT HELPERS =====
                 formatAmount(e) {
                     let value = e.target.value.replace(/\D/g, '');
                     this.rawAmount = parseInt(value) || 0;
-                    
-                    if (value) {
-                        this.amountInput = new Intl.NumberFormat('id-ID').format(value);
-                    } else {
-                        this.amountInput = '';
-                    }
+                    this.amountInput = value ? new Intl.NumberFormat('id-ID').format(value) : '';
                 },
 
                 setAmount(amount) {
@@ -312,76 +502,264 @@
                     this.amountInput = new Intl.NumberFormat('id-ID').format(amount);
                 },
 
-                formatRupiah(amount) {
-                    if (amount >= 1000) {
-                        return (amount / 1000) + 'rb';
-                    }
-                    return amount;
+                formatIpaymuAmount(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    this.ipaymuRawAmount = parseInt(value) || 0;
+                    this.ipaymuAmountInput = value ? new Intl.NumberFormat('id-ID').format(value) : '';
                 },
 
-                async generateQris() {
+                setIpaymuAmount(amount) {
+                    this.ipaymuRawAmount = amount;
+                    this.ipaymuAmountInput = new Intl.NumberFormat('id-ID').format(amount);
+                },
+
+                formatRupiah(amount) {
+                    return amount >= 1000 ? (amount / 1000) + 'rb' : amount;
+                },
+
+                formatDate(dateStr) {
+                    if (!dateStr) return '-';
+                    const d = new Date(dateStr);
+                    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                },
+
+                // ===== QR MERCHANT =====
+                async generateMerchantQr() {
                     if (!this.rawAmount || this.rawAmount <= 0) {
-                        this.error = 'Masukkan nominal pembayaran';
+                        showAlert('error', 'Masukkan nominal pembayaran');
                         return;
                     }
-
-                    this.loading = true;
-                    this.error = null;
-                    this.qrData = null;
-                    this.expiryTime = null;
-
-                    // Stop countdown sebelumnya
-                    if (this.countdownInterval) {
-                        clearInterval(this.countdownInterval);
-                    }
-
+                    this.merchantLoading = true;
                     try {
-                        const response = await fetch('/api/pembayaran/generate', {
+                        const response = await fetch('/api/payment/generate-qr', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ amount: this.rawAmount })
                         });
-
                         const result = await response.json();
-
                         if (result.success) {
-                            this.qrData = result.data;
-                            this.expiryTime = Date.now() + EXPIRY_DURATION;
-                            
-                            // Simpan ke localStorage
-                            this.saveToStorage();
-                            
-                            // Mulai countdown
-                            this.startCountdown();
+                            this.merchantQrData = result.data;
+                            this.merchantExpiryTime = Date.now() + 300000; // 5 menit
+                            this.startMerchantCountdown();
+                            showAlert('success', 'QR Code berhasil dibuat!');
                         } else {
-                            this.error = result.error || 'Gagal generate QRIS';
+                            showAlert('error', result.error || 'Gagal generate QR Code');
                         }
                     } catch (err) {
-                        this.error = 'Terjadi kesalahan. Coba lagi.';
+                        showAlert('error', 'Terjadi kesalahan. Coba lagi.');
                         console.error(err);
                     } finally {
-                        this.loading = false;
+                        this.merchantLoading = false;
                     }
                 },
 
-                resetQris() {
-                    // Stop countdown
+                startMerchantCountdown() {
+                    this.stopMerchantCountdown();
+                    this.updateMerchantCountdown();
+                    this.merchantCountdownInterval = setInterval(() => this.updateMerchantCountdown(), 1000);
+                },
+
+                stopMerchantCountdown() {
+                    if (this.merchantCountdownInterval) {
+                        clearInterval(this.merchantCountdownInterval);
+                        this.merchantCountdownInterval = null;
+                    }
+                },
+
+                updateMerchantCountdown() {
+                    if (!this.merchantExpiryTime) { this.merchantCountdown = ''; return; }
+                    const remaining = this.merchantExpiryTime - Date.now();
+                    if (remaining <= 0) { this.resetMerchant(); showAlert('info', 'QR Code telah kadaluarsa'); return; }
+                    const m = Math.floor(remaining / 60000);
+                    const s = Math.floor((remaining % 60000) / 1000);
+                    this.merchantCountdown = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                },
+
+                resetMerchant() {
+                    this.stopMerchantCountdown();
+                    this.merchantQrData = null;
+                    this.merchantExpiryTime = null;
+                    this.merchantCountdown = '';
+                    this.amountInput = '';
+                    this.rawAmount = 0;
+                },
+
+                // ===== iPaymu QRIS =====
+                loadFromStorage() {
+                    try {
+                        const stored = localStorage.getItem('ipaymu_payment');
+                        if (stored) {
+                            const parsed = JSON.parse(stored);
+                            const now = Date.now();
+                            if (parsed.expiryTime && parsed.expiryTime > now) {
+                                this.qrData = parsed.qrData;
+                                this.expiryTime = parsed.expiryTime;
+                                this.ipaymuRawAmount = parsed.qrData?.amount || 0;
+                                this.ipaymuAmountInput = this.ipaymuRawAmount ? new Intl.NumberFormat('id-ID').format(this.ipaymuRawAmount) : '';
+                                this.activeTab = 'ipaymu';
+                                this.startCountdown();
+                                this.startPolling();
+                            } else {
+                                this.clearStorage();
+                            }
+                        }
+                    } catch (e) {
+                        this.clearStorage();
+                    }
+                },
+
+                saveToStorage() {
+                    try {
+                        localStorage.setItem('ipaymu_payment', JSON.stringify({
+                            qrData: this.qrData,
+                            expiryTime: this.expiryTime
+                        }));
+                    } catch (e) {}
+                },
+
+                clearStorage() {
+                    localStorage.removeItem('ipaymu_payment');
+                },
+
+                async generateIpaymuQris() {
+                    if (!this.ipaymuRawAmount || this.ipaymuRawAmount <= 0) {
+                        showAlert('error', 'Masukkan nominal pembayaran');
+                        return;
+                    }
+                    this.ipaymuLoading = true;
+                    try {
+                        const response = await fetch('/api/payment/create-qris', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                amount: this.ipaymuRawAmount,
+                                name: this.buyerName || undefined,
+                                comments: this.comments || undefined
+                            })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            this.qrData = result.data;
+                            this.expiryTime = Date.now() + (result.data.expired_in || 300) * 1000;
+                            this.saveToStorage();
+                            this.startCountdown();
+                            this.startPolling();
+                            showAlert('success', 'QR Code iPaymu berhasil dibuat!');
+                        } else {
+                            showAlert('error', result.error || 'Gagal generate QRIS');
+                        }
+                    } catch (err) {
+                        showAlert('error', 'Terjadi kesalahan. Coba lagi.');
+                        console.error(err);
+                    } finally {
+                        this.ipaymuLoading = false;
+                    }
+                },
+
+                // ===== POLLING (iPaymu only) =====
+                startPolling() {
+                    this.stopPolling();
+                    if (!this.qrData?.reference_id) return;
+                    this.pollingInterval = setInterval(async () => {
+                        try {
+                            const res = await fetch(`/api/payment/check/${this.qrData.reference_id}`);
+                            const result = await res.json();
+                            if (result.success && result.data) {
+                                if (result.data.status === 1) {
+                                    this.paymentSuccess = true;
+                                    this.successTime = new Date().toLocaleString('id-ID');
+                                    this.stopPolling();
+                                    this.stopCountdown();
+                                    this.clearStorage();
+                                    showAlert('success', 'Pembayaran berhasil diterima! 🎉');
+                                } else if (result.data.status === -2) {
+                                    this.handleExpiry();
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Polling error:', e);
+                        }
+                    }, 3000);
+                },
+
+                stopPolling() {
+                    if (this.pollingInterval) {
+                        clearInterval(this.pollingInterval);
+                        this.pollingInterval = null;
+                    }
+                },
+
+                // ===== COUNTDOWN (iPaymu) =====
+                startCountdown() {
+                    this.stopCountdown();
+                    this.updateCountdown();
+                    this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+                },
+
+                stopCountdown() {
                     if (this.countdownInterval) {
                         clearInterval(this.countdownInterval);
                         this.countdownInterval = null;
                     }
-                    
+                },
+
+                updateCountdown() {
+                    if (!this.expiryTime) { this.countdown = ''; return; }
+                    const remaining = this.expiryTime - Date.now();
+                    if (remaining <= 0) { this.handleExpiry(); return; }
+                    const m = Math.floor(remaining / 60000);
+                    const s = Math.floor((remaining % 60000) / 1000);
+                    this.countdown = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                },
+
+                handleExpiry() {
+                    this.stopPolling();
+                    this.stopCountdown();
                     this.qrData = null;
                     this.expiryTime = null;
                     this.countdown = '';
-                    this.amountInput = '';
-                    this.rawAmount = 0;
-                    this.error = null;
-                    
-                    // Hapus dari localStorage
                     this.clearStorage();
+                    showAlert('error', 'QR Code telah kadaluarsa. Silakan generate ulang.');
+                },
+
+                resetIpaymu() {
+                    this.stopPolling();
+                    this.stopCountdown();
+                    this.qrData = null;
+                    this.expiryTime = null;
+                    this.countdown = '';
+                    this.ipaymuAmountInput = '';
+                    this.ipaymuRawAmount = 0;
+                    this.buyerName = '';
+                    this.comments = '';
+                    this.paymentSuccess = false;
+                    this.successTime = '';
+                    this.clearStorage();
+                },
+
+                // ===== TRANSACTION LIST =====
+                async loadTransactions() {
+                    this.historyLoading = true;
+                    try {
+                        let url = `/api/payment/transactions?page=${this.currentPage}&per_page=15`;
+                        if (this.filterStatus !== null) {
+                            url += `&status=${this.filterStatus}`;
+                        }
+                        const res = await fetch(url);
+                        const result = await res.json();
+                        if (result.success) {
+                            this.transactions = (result.data || []).map(t => ({ ...t, _open: false }));
+                            this.totalPages = result.total_pages || 0;
+                        } else {
+                            this.transactions = [];
+                        }
+                    } catch (e) {
+                        console.error('Load transactions error:', e);
+                        showAlert('error', 'Gagal memuat transaksi');
+                        this.transactions = [];
+                    } finally {
+                        this.historyLoading = false;
+                    }
                 }
             }
         }
