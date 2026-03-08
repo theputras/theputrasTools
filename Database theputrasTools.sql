@@ -278,6 +278,8 @@ CREATE TABLE user_schedules (
     ruang VARCHAR(50),
     mata_kuliah VARCHAR(255),
     dosen VARCHAR(255),
+    status_kuliah VARCHAR(100),
+    keterangan VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_schedules_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

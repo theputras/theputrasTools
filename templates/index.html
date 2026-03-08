@@ -30,17 +30,24 @@
                     fetch('/api/jadwal-status')
                         .then(res => res.json())
                         .then(data => { 
+                            let oldStatus = jadwalStatus;
                             jadwalStatus = data.status; 
                             jadwalMsg = data.message; 
                             lastUpdate = data.last_scraped || lastUpdate; 
                             
-                            // Auto-reload data kalo jadwal.json backend berubah (last_scraped beda)
-                            const cached = JSON.parse(localStorage.getItem('dataJadwal') || '{}');
-                            if(cached && cached.data && cached.data.metadata) {
-                                let localLast = cached.data.metadata.last_scraped;
-                                if (data.last_scraped && data.last_scraped !== localLast && data.last_scraped !== 'Belum pernah di-scrape') {
-                                    localStorage.removeItem('dataJadwal');
-                                    if(typeof loadJadwal === 'function') loadJadwal();
+                            // Auto-reload data kalo scraping baru saja selesai
+                            if (oldStatus === 'loading' && jadwalStatus === 'ready') {
+                                localStorage.removeItem('dataJadwal');
+                                if(typeof loadJadwal === 'function') loadJadwal();
+                            } else {
+                                // Default fallback check
+                                const cached = JSON.parse(localStorage.getItem('dataJadwal') || '{}');
+                                if(cached && cached.data && cached.data.metadata) {
+                                    let localLast = cached.data.metadata.last_scraped;
+                                    if (data.last_scraped && data.last_scraped !== localLast && data.last_scraped !== 'Belum pernah di-scrape' && jadwalStatus === 'ready') {
+                                        localStorage.removeItem('dataJadwal');
+                                        if(typeof loadJadwal === 'function') loadJadwal();
+                                    }
                                 }
                             }
                         });
@@ -580,17 +587,14 @@ function ultahApp() {
                     if (cached) {
                         const parsed = JSON.parse(cached);
                         
-                        // Cek Timestamp (Validitas Hari Ini)
+                        // Cek Timestamp (Validitas 5 Menit)
                         const savedDate = new Date(parsed.timestamp);
-                        const today = new Date();
-                        
-                        const isSameDay = savedDate.getDate() === today.getDate() &&
-                                          savedDate.getMonth() === today.getMonth() &&
-                                          savedDate.getFullYear() === today.getFullYear();
+                        const now = new Date();
+                        const diffMins = (now.getTime() - savedDate.getTime()) / 60000;
 
-                        // Jika data valid dan masih hari yang sama -> PAKAI CACHE
-                        if (isSameDay && parsed.data && !parsed.data.error) {
-                            console.log("Menggunakan Cache Ultah (Data hari ini masih valid)");
+                        // Pake Cache Kalo blm expired (5 menit berlalu)
+                        if (diffMins < 5 && parsed.data && !parsed.data.error) {
+                            console.log("Menggunakan Cache Ultah (Belum Expired - di bawah 5 menit)");
                             this.rows = parsed.data.rows;
                             this.tanggal_hari_ini = parsed.data.tanggal_hari_ini;
                             return; 

@@ -32,8 +32,8 @@ class UserSchedule:
             # Insert new schedules
             if schedules_list:
                 query_insert = """
-                    INSERT INTO user_schedules (user_id, hari_tanggal, jam, ruang, mata_kuliah, dosen)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO user_schedules (user_id, hari_tanggal, jam, ruang, mata_kuliah, dosen, status_kuliah, keterangan)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 # Mapping the keys from the scraped data
                 data_to_insert = []
@@ -42,9 +42,11 @@ class UserSchedule:
                         user_id,
                         s.get('Hari, Tanggal', '-'),
                         s.get('Jam', '-'),
-                        s.get('Ruang', '-'),
+                        s.get('Ruangan', '-'), # Updated to match Sicyca's actual header
                         s.get('Nama Matakuliah', '-'),
-                        s.get('Dosen', '-')
+                        s.get('Dosen', '-'), # No longer in Sicyca, defaults to -
+                        s.get('Status Kuliah', '-'),
+                        s.get('Keterangan', '-')
                     ))
                 
                 cursor.executemany(query_insert, data_to_insert)
@@ -82,9 +84,11 @@ class UserSchedule:
                 schedules.append({
                     "Hari, Tanggal": r['hari_tanggal'],
                     "Jam": r['jam'],
-                    "Ruang": r['ruang'],
+                    "Ruangan": r['ruang'],
                     "Nama Matakuliah": r['mata_kuliah'],
-                    "Dosen": r['dosen']
+                    "Dosen": r['dosen'],
+                    "Status Kuliah": r['status_kuliah'],
+                    "Keterangan": r['keterangan']
                 })
                 
             return last_scraped, schedules
@@ -153,9 +157,11 @@ class UserSchedule:
                 schedules.append({
                     "Hari, Tanggal": r['hari_tanggal'],
                     "Jam": r['jam'],
-                    "Ruang": r['ruang'],
+                    "Ruangan": r['ruang'],
                     "Nama Matakuliah": r['mata_kuliah'],
-                    "Dosen": r['dosen']
+                    "Dosen": r['dosen'],
+                    "Status Kuliah": r['status_kuliah'],
+                    "Keterangan": r['keterangan']
                 })
                 
             return last_scraped, schedules, user_id
