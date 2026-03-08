@@ -32,7 +32,17 @@
                         .then(data => { 
                             jadwalStatus = data.status; 
                             jadwalMsg = data.message; 
-                            lastUpdate = data.message; 
+                            lastUpdate = data.last_scraped || lastUpdate; 
+                            
+                            // Auto-reload data kalo jadwal.json backend berubah (last_scraped beda)
+                            const cached = JSON.parse(localStorage.getItem('dataJadwal') || '{}');
+                            if(cached && cached.data && cached.data.metadata) {
+                                let localLast = cached.data.metadata.last_scraped;
+                                if (data.last_scraped && data.last_scraped !== localLast && data.last_scraped !== 'Belum pernah di-scrape') {
+                                    localStorage.removeItem('dataJadwal');
+                                    if(typeof loadJadwal === 'function') loadJadwal();
+                                }
+                            }
                         });
                 }, 5000);
              ">
@@ -46,9 +56,17 @@
 <button id="login-face-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
     Login with Face
 </button> -->
-            <a href="{{ url_for('refresh_jadwal_route') }}" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md text-sm">
-                &#x21bb; Refresh Jadwal
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ url_for('refresh_jadwal_route') }}" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md text-sm whitespace-nowrap flex items-center gap-2">
+                    <i class="fas fa-sync-alt"></i> Refresh Jadwal
+                </a>
+
+                {% if calendar_uuid %}
+                <button @click="navigator.clipboard.writeText('{{ url_for('kalendar_ics_uuid', uuid=calendar_uuid, _external=True, _scheme='https') }}'); let btn = $el; let oldText = btn.innerHTML; btn.innerHTML = '<i class=\'fas fa-check\'></i> Tersalin!'; setTimeout(()=> btn.innerHTML = oldText, 2000)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md text-sm whitespace-nowrap flex items-center gap-2 transition-all">
+                    <i class="fas fa-link"></i> Konek ke Kalendar
+                </button>
+                {% endif %}
+            </div>
 
             <!-- STATUS JADWAL -->
             <template x-if="jadwalStatus === 'loading'">

@@ -11,8 +11,5 @@ cookies.json
 credentials.json
 app.log
 *.log
-htmlgateAsli/view-source_https___afiliasi.dinamika.ac.id.html
-htmlgateAsli/view-source_https___gate.dinamika.ac.id_login.html
-htmlgateAsli/view-source_https___mybrilian.dinamika.ac.id_\#.html
-htmlgateAsli/view-source_https___support.dinamika.ac.id.html
+htmlgateAsli/
 app.log

@@ -257,3 +257,27 @@ CREATE TABLE payment_transactions (
     INDEX idx_user_created (user_id, created_at)
 );
 
+-- ==========================================================
+-- 9. TABEL FITUR: JADWAL KULIAH USER
+-- ==========================================================
+
+CREATE TABLE user_schedules_metadata (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL UNIQUE,
+    last_scraped VARCHAR(100),
+    kalendar_uuid VARCHAR(100) UNIQUE NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_schedules_meta_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_schedules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    hari_tanggal VARCHAR(100),
+    jam VARCHAR(50),
+    ruang VARCHAR(50),
+    mata_kuliah VARCHAR(255),
+    dosen VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_schedules_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

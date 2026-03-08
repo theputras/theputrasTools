@@ -119,8 +119,49 @@ def run_schema_migration(cursor, existing_tables):
                 continue
 
             if table_name in existing_tables:
-                print(f"  ⏭️  Tabel '{table_name}' sudah ada → skip")
-                skipped += 1
+                print(f"  ⏭️  Tabel '{table_name}' sudah ada → Pengecekan kolom yang kurang...")
+                
+                # Parsing definis kolom dari create_table_statement
+                # Ambil isi dalam kurung CREATE TABLE ... ( ... )
+                match_content = re.search(r'\((.*)\)', stmt, flags=re.IGNORECASE | re.DOTALL)
+                if match_content:
+                    columns_content = match_content.group(1)
+                    
+                    # Split berdasarkan koma. Tapi hati-hati bila ada function yg punya koma 
+                    # Pendekatan sederhana: split per newline karena di SQL dump ini biasanya per newline 
+                    # Atau split koma dengan state machine sederhana
+                    col_defs = [c.strip() for c in columns_content.split('\n') if c.strip()]
+                    
+                    existing_cols = get_existing_columns(cursor, table_name)
+                    
+                    for col_def in col_defs:
+                        if col_def.endswith(','):
+                            col_def = col_def[:-1].strip()
+                            
+                        # Abaikan constraint/index/primary key dll yang lazim di MySQL
+                        if col_def.upper().startswith(('CONSTRAINT', 'PRIMARY', 'FOREIGN', 'UNIQUE', 'INDEX', 'KEY', 'FULLTEXT')):
+                            continue
+                            
+                        # Ambil nama kolom (word pertama)
+                        parts = col_def.split(maxsplit=1)
+                        if not parts:
+                            continue
+                            
+                        col_name = parts[0].strip('`"')
+                        
+                        if col_name and col_name not in existing_cols:
+                            try:
+                                alter_stmt = f"ALTER TABLE `{table_name}` ADD COLUMN {col_def}"
+                                cursor.execute(alter_stmt)
+                                print(f"  ✅ [AUTO-ALTER] Menambahkan kolom '{col_name}' ke tabel '{table_name}'")
+                                created += 1
+                            except Exception as e:
+                                err_str = str(e)
+                                if 'Duplicate column' in err_str:
+                                    pass
+                                else:
+                                    print(f"  ❌ [AUTO-ALTER] Gagal menambah kolom '{col_name}': {e}")
+                
             else:
                 try:
                     cursor.execute(stmt)
@@ -248,4 +289,7 @@ def fix_db():
 
 
 if __name__ == "__main__":
+    if sys.stdout.encoding.lower() != 'utf-8':
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     fix_db()

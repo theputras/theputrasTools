@@ -70,6 +70,8 @@ class QrisHelper:
         """Build QRIS string dari dictionary TLV."""
         qris = ''
         for key in sorted(data.keys()):
+            if key == '63':  # <--- TAMBAHKAN INI UNTUK MENCEGAH DUPLIKASI CRC
+                continue
             value = data[key]
             length = str(len(value)).zfill(2)
             qris += key + length + value

@@ -1,4 +1,4 @@
-from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g, redirect
+from flask import request, Response, jsonify, Blueprint, current_app, send_from_directory, url_for, stream_with_context, session, g, redirect, has_request_context
 import json, yt_dlp, base64 , logging, os, uuid, urllib.parse, time, subprocess, re, random, string, html, re
 
 from middleware.auth_quard import login_required
@@ -570,12 +570,13 @@ def api_log():
     return Response("Log file tidak ditemukan.", mimetype='text/plain', status=404)
 
 
-# Mengecek apakah jadwal ready atau error
 @api_bp.route('/jadwal-status')
 def api_jadwal_status():
+    user_id = g.user.get('sub') if has_request_context() and hasattr(g, 'user') else None
+    
     # Panggil fungsinya untuk dapat data terbaru realtime
     if get_jadwal_status_func:
-        return jsonify(get_jadwal_status_func())
+        return jsonify(get_jadwal_status_func(user_id))
     return jsonify({"status": "unknown", "message": "Status belum diinisialisasi"})
 
 # Mendapatkan foto mahasiswa atau staff dalam base64
@@ -729,24 +730,22 @@ def api_krs_detail():
 
 
 @api_bp.route('/jadwal-list', methods=['GET'])
+@login_required
 def api_jadwal_list():
     """
-    Endpoint baru untuk mengambil data jadwal.json mentah.
+    Endpoint baru untuk mengambil data jadwal mentah dari DB per user.
     """
     try:
-        with open('jadwal.json', 'r', encoding='utf-8') as f:
-            data_json = json.load(f)
+        user_id = g.user.get('sub')
+        from models.schedule import user_schedule_model
+        last_scraped, jadwal_data = user_schedule_model.get_schedules_by_user(user_id)
         
         # Kirim datanya (metadata + list jadwal)
-        return jsonify(data_json)
-        
-    except FileNotFoundError:
-        logging.warning("API: jadwal.json tidak ditemukan.")
         return jsonify({
-            "error": True, 
-            "message": "File jadwal belum dibuat.",
-            "data": []
-        }), 404
+            "metadata": {"last_scraped": last_scraped, "total_jadwal": len(jadwal_data)},
+            "data": jadwal_data
+        })
+        
     except Exception as e:
         logging.error(f"Error di /api/jadwal-list: {e}")
         return jsonify({
@@ -2572,11 +2571,10 @@ def api_payment_create_qris():
 @api_bp.route('/payment/callback', methods=['POST'])
 def api_payment_callback():
     """Webhook callback dari iPaymu saat pembayaran masuk."""
-    # iPaymu kirim data via form-encoded atau JSON
-    if request.is_json:
-        data = request.get_json(force=True, silent=True) or {}
-    else:
-        data = request.form.to_dict()
+    # Ambil data: Coba baca sebagai JSON dulu (silent=True agar tidak error jika gagal),
+    # Jika kosong/bukan JSON, otomatis fallback mengambil dari form-data (to_dict).
+    # Jika keduanya kosong, jadikan dictionary kosong {}.
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
     result, status_code = handle_callback(data)
     return jsonify(result), status_code
 

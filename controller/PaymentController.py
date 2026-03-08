@@ -103,7 +103,14 @@ def handle_create_qris(user_id: int, data: dict) -> tuple:
         ipaymu_data = result['Data']
 
         # Simpan ke DB
-        qr_data = ipaymu_data.get('QrImage') or ipaymu_data.get('Url') or ''
+        # controller/PaymentController.py (line 72)
+        qr_data = (
+            ipaymu_data.get('QrImage') or 
+            ipaymu_data.get('QrString') or 
+            ipaymu_data.get('QrTemplate') or 
+            ipaymu_data.get('Url') or 
+            ''
+        )
         trx_id = ipaymu_data.get('TransactionId')
 
         PaymentTransaction.create(

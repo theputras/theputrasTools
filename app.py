@@ -160,7 +160,7 @@ ORIGIN = os.getenv("WEBAUTHN_ORIGIN", "http://localhost:5000")
 executor = ThreadPoolExecutor(max_workers=3)
 JSON_FILE = 'jadwal.json'
 ICS_FILE = 'jadwal_kegiatan.ics'
-JADWAL_STATUS = {"status": "ready", "message": "Siap."}
+JADWAL_STATUS = {}
 
 # ===== SSKM IN-MEMORY STORAGE =====
 # Store SSKM attendance data in memory for real-time streaming (Dictionary: room_code -> list)
@@ -218,33 +218,52 @@ def get_prodi_from_nim(nim):
         return majorID.get(kode_prodi, None)
     return None
 
-def get_current_status():
-    return JADWAL_STATUS
+def get_current_status(user_id=None):
+    status_data = {"status": "ready", "message": "Siap."}
+    if user_id and user_id in JADWAL_STATUS:
+        # Pake .copy() biar gak ngerubah original dict di memori secara nggak sengaja
+        status_data = JADWAL_STATUS[user_id].copy()
+    
+    # Inject last_scraped check
+    if user_id:
+        try:
+            from models.schedule import user_schedule_model
+            last_scraped, _ = user_schedule_model.get_schedules_by_user(user_id)
+            status_data["last_scraped"] = last_scraped
+        except Exception as e:
+            status_data["last_scraped"] = "Belum pernah di-scrape"
+            logging.error(f"[get_current_status] Error fetch last_scraped: {e}")
+            
+    return status_data
 
 
 
 init_api(photo_cache, majorID, executor, get_current_status, log_file, _valid_role, SSKM_ROOMS)
 app.register_blueprint(api_bp, url_prefix='/api')
 
-# Jalankan scraper dan simpan hasilnya ke file JSON
-def run_scraper_and_save():
+# Jalankan scraper dan simpan hasilnya ke database per user
+def run_scraper_and_save(user_id=None):
+    from scrapper_requests import _get_current_user_id
+    from models.schedule import user_schedule_model
+    target_user = _get_current_user_id(user_id)
+    
     global JADWAL_STATUS
     
     # Format waktu saat ini
     now = datetime.now()
     waktu_str = now.strftime("%A, %d %B %Y %H:%M:%S")
     
-    JADWAL_STATUS = {
+    JADWAL_STATUS[target_user] = {
         "status": "loading", 
         "message": f"Proses scraping dimulai: {waktu_str}"
     }
+
     
-    logging.info("=== MENJALANKAN SCRAPING JADWAL ===")
+    logging.info(f"=== MENJALANKAN SCRAPING JADWAL UNTUK USER_ID {target_user} ===")
     
     try:
         # 1. Jalankan Scraper
-        # scrape_data biasanya return DataFrame pandas
-        data_raw = scrape_data()
+        data_raw = scrape_data(target_user)
         
         data_records = []
         
@@ -255,30 +274,22 @@ def run_scraper_and_save():
         elif isinstance(data_raw, list):
             data_records = data_raw
             
-        # 3. Logic: SELALU SIMPAN (Entah ada data atau kosong)
-        # Tujuannya agar metadata 'last_scraped' selalu terupdate di file JSON.
-        
-        json_output = {
-            "metadata": {
-                "last_scraped": waktu_str,
-                "total_jadwal": len(data_records)
-            },
-            "data": data_records
-        }
-
-        # Simpan ke file
-        with open(JSON_FILE, 'w', encoding='utf-8') as f:
-            json.dump(json_output, f, indent=4, ensure_ascii=False)
+        # 3. Logic: Simpan ke DB menggunakan model schedule
+        success = user_schedule_model.save_schedules(target_user, waktu_str, data_records)
 
         # 4. Update Status Akhir
-        if data_records:
-            msg = f"Data diperbarui: {len(data_records)} jadwal pada {waktu_str}"
-            logging.info(f"--> Sukses. {len(data_records)} jadwal disimpan.")
+        if success:
+            if data_records:
+                msg = f"Data diperbarui: {len(data_records)} jadwal pada {waktu_str}"
+                logging.info(f"--> Sukses. {len(data_records)} jadwal disimpan ke DB.")
+            else:
+                msg = f"Update selesai (0 Jadwal/Libur) pada {waktu_str}"
+                logging.info("--> Sukses. Tidak ada jadwal/libur.")
         else:
-            msg = f"Update selesai (0 Jadwal/Libur) pada {waktu_str}"
-            logging.info("--> Sukses. Tidak ada jadwal (file JSON tetap diupdate metadatanya).")
+            msg = f"Gagal menyimpan jadwal ke database pada {waktu_str}"
+            logging.error(f"--> {msg}")
 
-        JADWAL_STATUS = {
+        JADWAL_STATUS[target_user] = {
             "status": "ready", 
             "message": msg
         }
@@ -287,7 +298,7 @@ def run_scraper_and_save():
         waktu_error = datetime.now().strftime("%A, %d %B %Y %H:%M:%S")
         err_msg = f"Scraping gagal: {str(e)}"
         
-        JADWAL_STATUS = {
+        JADWAL_STATUS[target_user] = {
             "status": "error", 
             "message": f"{err_msg} pada {waktu_error}"
         }
@@ -296,18 +307,10 @@ def run_scraper_and_save():
     logging.info("=== SCRAPING JADWAL SELESAI ===")
 
 
-def create_ics_from_json(json_path, ics_path):
+def create_ics_for_user(user_id, ics_path):
     try:
-        # Baca file JSON yang bisa punya struktur baru (metadata + data)
-        with open(json_path, 'r', encoding='utf-8') as f:
-            data_json = json.load(f)
-
-        # Cek apakah ini struktur baru atau lama
-        if isinstance(data_json, dict) and "data" in data_json:
-            events = data_json["data"]
-        else:
-            # fallback: struktur lama (langsung list)
-            events = data_json
+        from models.schedule import user_schedule_model
+        waktu, events = user_schedule_model.get_schedules_by_user(user_id)
 
         if not events:
             raise ValueError("Data jadwal kosong atau tidak valid.")
@@ -495,32 +498,26 @@ def index():
     # logging.info(f"[INDEX DEBUG] Session keys:", list(session.keys()))
     print("[INDEX DEBUG] Session keys:", list(session.keys()))
     try:
-        # Baca JSON dengan struktur baru
-        with open(JSON_FILE, encoding='utf-8') as f:
-            df_json = json.load(f)
+        from models.schedule import user_schedule_model
+        last_scraped, jadwal_data = user_schedule_model.get_schedules_by_user(user_id)
+        calendar_uuid = user_schedule_model.get_or_create_calendar_uuid(user_id)
 
-        metadata = df_json.get("metadata", {})
-        # Ambil datanya sebagai list of dict, BUKAN DataFrame
-        jadwal_data = df_json.get("data", [])
-
-        # Ambil waktu terakhir scraping dari metadata
-        last_scraped = metadata.get("last_scraped", "Belum pernah di-scrape")
+        if not jadwal_data and last_scraped == "Belum pernah di-scrape":
+            msg = "JADWAL BELUM TERSEDIA. Jalankan scraper terlebih dahulu atau tunggu jadwal otomatis berikutnya."
+            return render_template(
+                'index.html', 
+                jadwal_list=[], 
+                last_scraped=None,
+                error_message=msg,
+                calendar_uuid=calendar_uuid
+            )
 
         # Kirim data mentah ke template
         return render_template(
             'index.html', 
-            jadwal_list=jadwal_data,    # <-- Kirim list-nya
-            last_scraped=last_scraped  # <-- Kirim tanggal scrape-nya
-        )
-
-    except (FileNotFoundError, ValueError, json.JSONDecodeError): 
-        msg = "JADWAL BELUM TERSEDIA. Jalankan scraper terlebih dahulu atau tunggu jadwal otomatis berikutnya."
-        # Kirim list kosong dan pesan error
-        return render_template(
-            'index.html', 
-            jadwal_list=[], 
-            last_scraped=None,
-            error_message=msg  # <-- Kirim pesan error
+            jadwal_list=jadwal_data,
+            last_scraped=last_scraped,
+            calendar_uuid=calendar_uuid
         )
 
     except Exception as e:
@@ -792,46 +789,36 @@ def reset_scraper_session():
 @login_required
 def refresh_jadwal_route():
     # Jalankan scraper di background agar tidak memblokir
-    executor.submit(run_scraper_and_save)
+    user_id = g.user.get('sub')
+    executor.submit(run_scraper_and_save, user_id)
     # Langsung redirect, JavaScript akan menangani update UI
     return redirect(url_for('index'))
 
-@app.route('/kalendar')
-def kalendar_ics():
+@app.route('/kalendar/<uuid>')
+def kalendar_ics_uuid(uuid):
     try:
-        # Pastikan file jadwal.json ada dan valid
-        if not os.path.exists(JSON_FILE):
-            return "<h3>File jadwal.json belum dibuat. Jalankan scraper dulu.</h3>", 404
+        from models.schedule import user_schedule_model
+        waktu, events, user_id = user_schedule_model.get_schedules_by_uuid(uuid)
+        
+        if not user_id:
+             return "<h3>Kalender tidak valid atau tidak ditemukan.</h3>", 404
 
-        # Baca file dan ambil bagian data
-        with open(JSON_FILE, 'r', encoding='utf-8') as f:
-            df_json = json.load(f)
-            data_records = df_json.get("data", [])
-            metadata = df_json.get("metadata", {})
-
-        if not data_records:
-            return "<h3>Data jadwal belum tersedia atau kosong.</h3>", 404
-
-        # Buat DataFrame dari data yang valid
-        df = pd.DataFrame(data_records)
-
+        user_ics_file = f"jadwal_kegiatan_{user_id}.ics"
+        
         # Simpan jadi file ICS
-        create_ics_from_json(JSON_FILE, ICS_FILE)
+        create_ics_for_user(user_id, user_ics_file)
 
-        # Ambil waktu update dari metadata (opsional)
-        waktu = metadata.get("last_scraped", "Tidak diketahui")
-
-        logging.info(f"File ICS dibuat berdasarkan data terakhir: {waktu}")
+        logging.info(f"File ICS UUID {uuid} dibuat berdasarkan data terakhir: {waktu}")
 
         return send_from_directory(
             os.path.abspath('.'),
-            path=ICS_FILE,
+            path=user_ics_file,
             as_attachment=True,
             download_name=f'jadwal_kuliah_{datetime.now().strftime("%Y%m%d_%H%M")}.ics'
         )
 
-    except (FileNotFoundError, ValueError):
-        return "<h3>File jadwal.json tidak ditemukan atau rusak.</h3>", 404
+    except (FileNotFoundError, ValueError) as ve:
+        return f"<h3>{str(ve)}</h3>", 404
     except Exception as e:
         return f"<pre>Error saat membuat ICS: {str(e)}</pre>", 500
 
@@ -973,20 +960,19 @@ def sicyca_undika():
         now = datetime.now(SCHEDULER_TZ) # Pastikan SCHEDULER_TZ diimport
         hari_ini_str = f"{days_id[now.weekday()]}, {now.day} {months_id[now.month]} {now.year}"
         
-        if os.path.exists(JSON_FILE): # Pastikan JSON_FILE path benar
-             with open(JSON_FILE, 'r', encoding='utf-8') as f:
-                data_json = json.load(f)
-                all_jadwal = data_json.get("data", [])
-                for j in all_jadwal:
-                    # Filter sederhana berdasarkan string hari
-                    hari_tgl = j.get("Hari, Tanggal", "")
-                    if days_id[now.weekday()].lower() in hari_tgl.lower(): 
-                         jadwal_hari_ini.append({
-                             "nama_mk": j.get("Nama Matakuliah", "-"),
-                             "jam": j.get("Jam", "-"),
-                             "ruang": j.get("Ruang", "-"),
-                             "dosen": j.get("Dosen", "-")
-                         })
+        from models.schedule import user_schedule_model
+        _, all_jadwal = user_schedule_model.get_schedules_by_user(user_id)
+        
+        for j in all_jadwal:
+            # Filter sederhana berdasarkan string hari
+            hari_tgl = j.get("Hari, Tanggal", "")
+            if days_id[now.weekday()].lower() in hari_tgl.lower(): 
+                 jadwal_hari_ini.append({
+                     "nama_mk": j.get("Nama Matakuliah", "-"),
+                     "jam": j.get("Jam", "-"),
+                     "ruang": j.get("Ruang", "-"),
+                     "dosen": j.get("Dosen", "-")
+                 })
     except Exception as e:
         logging.error(f"[Sicyca Undika] Error fetch jadwal: {e}")
 
