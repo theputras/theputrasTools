@@ -315,7 +315,14 @@ def create_ics_for_user(user_id, ics_path):
         if not events:
             raise ValueError("Data jadwal kosong atau tidak valid.")
 
-        ics_content = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n"
+        ics_content = (
+            "BEGIN:VCALENDAR\n"
+            "VERSION:2.0\n"
+            "PRODID:-//ThePutrasTools//NONSGML v1.0//EN\n"
+            "CALSCALE:GREGORIAN\n"
+            "X-WR-CALNAME:Jadwal Kuliah\n"
+            "X-WR-TIMEZONE:Asia/Jakarta\n"
+        )
 
         for event in events:
             try:
@@ -342,17 +349,24 @@ def create_ics_for_user(user_id, ics_path):
                 start_date_time_str = normalize_year(start_date_time_str)
                 end_date_time_str = normalize_year(end_date_time_str)
                 
-                start_time = datetime.strptime(start_date_time_str, "%d %B %Y %H:%M")
-                end_time = datetime.strptime(end_date_time_str, "%d %B %Y %H:%M")
+                start_time_naive = datetime.strptime(start_date_time_str, "%d %B %Y %H:%M")
+                end_time_naive = datetime.strptime(end_date_time_str, "%d %B %Y %H:%M")
 
+                # Set Timezone WIB (Asia/Jakarta) lalu convert ke UTC
+                tz_wib = pytz.timezone('Asia/Jakarta')
+                start_time_wib = tz_wib.localize(start_time_naive)
+                end_time_wib = tz_wib.localize(end_time_naive)
+                
+                start_time_utc = start_time_wib.astimezone(pytz.utc)
+                end_time_utc = end_time_wib.astimezone(pytz.utc)
 
                 ics_content += (
                     "BEGIN:VEVENT\n"
                     f"SUMMARY:{event.get('Nama Matakuliah', 'Tanpa Nama')}\n"
-                    f"DTSTART:{start_time.strftime('%Y%m%dT%H%M%S')}\n"
-                    f"DTEND:{end_time.strftime('%Y%m%dT%H%M%S')}\n"
+                    f"DTSTART:{start_time_utc.strftime('%Y%m%dT%H%M%SZ')}\n"
+                    f"DTEND:{end_time_utc.strftime('%Y%m%dT%H%M%SZ')}\n"
                     f"LOCATION:{event.get('Ruangan', 'Tidak Diketahui')}\n"
-                    f"DESCRIPTION:Keterangan: {event.get('Keterangan', '-')}\n"
+                    f"DESCRIPTION:Keterangan: {event.get('Keterangan', '-')}\\nPengajar: {event.get('Dosen', '-')}\n"
                     f"STATUS:{event.get('Status Kuliah', '-')}\n"
                     "END:VEVENT\n"
                 )
