@@ -322,6 +322,15 @@ def create_ics_for_user(user_id, ics_path):
             "CALSCALE:GREGORIAN\n"
             "X-WR-CALNAME:Jadwal Kuliah\n"
             "X-WR-TIMEZONE:Asia/Jakarta\n"
+            "BEGIN:VTIMEZONE\n"
+            "TZID:Asia/Jakarta\n"
+            "BEGIN:STANDARD\n"
+            "DTSTART:19700101T000000\n"
+            "TZNAME:WIB\n"
+            "TZOFFSETFROM:+0700\n"
+            "TZOFFSETTO:+0700\n"
+            "END:STANDARD\n"
+            "END:VTIMEZONE\n"
         )
 
         for event in events:
@@ -352,19 +361,11 @@ def create_ics_for_user(user_id, ics_path):
                 start_time_naive = datetime.strptime(start_date_time_str, "%d %B %Y %H:%M")
                 end_time_naive = datetime.strptime(end_date_time_str, "%d %B %Y %H:%M")
 
-                # Set Timezone WIB (Asia/Jakarta) lalu convert ke UTC
-                tz_wib = pytz.timezone('Asia/Jakarta')
-                start_time_wib = tz_wib.localize(start_time_naive)
-                end_time_wib = tz_wib.localize(end_time_naive)
-                
-                start_time_utc = start_time_wib.astimezone(pytz.utc)
-                end_time_utc = end_time_wib.astimezone(pytz.utc)
-
                 ics_content += (
                     "BEGIN:VEVENT\n"
                     f"SUMMARY:{event.get('Nama Matakuliah', 'Tanpa Nama')}\n"
-                    f"DTSTART:{start_time_utc.strftime('%Y%m%dT%H%M%SZ')}\n"
-                    f"DTEND:{end_time_utc.strftime('%Y%m%dT%H%M%SZ')}\n"
+                    f"DTSTART;TZID=Asia/Jakarta:{start_time_naive.strftime('%Y%m%dT%H%M%S')}\n"
+                    f"DTEND;TZID=Asia/Jakarta:{end_time_naive.strftime('%Y%m%dT%H%M%S')}\n"
                     f"LOCATION:{event.get('Ruangan', 'Tidak Diketahui')}\n"
                     f"DESCRIPTION:Keterangan: {event.get('Keterangan', '-')}\\nPengajar: {event.get('Dosen', '-')}\n"
                     f"STATUS:{event.get('Status Kuliah', '-')}\n"
