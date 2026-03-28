@@ -1,50 +1,120 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Kegiatan {{ entry.aktivitas }} - {{ logbook.nim }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <style>
-        ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-        [x-cloak] { display: none !important; }
-        .editor-content ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 0.5em; }
-        .editor-content ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 0.5em; }
-        .editor-content p { margin-bottom: 0.5em; }
-        .editor-content p:last-child { margin-bottom: 0; }
-        .editor-content strong { font-weight: bold; color: white; }
-        .editor-content em { font-style: italic; }
-        .editor-content blockquote { border-left: 4px solid #3b82f6; padding-left: 1em; color: #9ca3af; font-style: italic; margin-bottom: 0.5em; }
-        /* Cropper.js visibility on dark bg */
-        .cropper-view-box { outline: 2px solid #3b82f6; outline-color: rgba(59,130,246,0.85); }
-        .cropper-line { background-color: #3b82f6 !important; opacity: 0.6 !important; }
-        .cropper-dashed { border-color: rgba(255,255,255,0.5) !important; }
-        .cropper-point { background-color: #3b82f6 !important; width: 8px !important; height: 8px !important; opacity: 1 !important; }
-        .cropper-point.point-se { width: 12px !important; height: 12px !important; }
-        .cropper-modal { background-color: rgba(0,0,0,0.6) !important; }
-        .cropper-face { background-color: transparent !important; }
-    </style>
-</head>
-<body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Edit Kegiatan {{ entry.aktivitas }} - {{ logbook.nim }}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <style>
+            ::-webkit-calendar-picker-indicator {
+                filter: invert(1);
+                cursor: pointer;
+            }
+            [x-cloak] {
+                display: none !important;
+            }
+            .editor-content ul {
+                list-style-type: disc !important;
+                padding-left: 1.5em !important;
+                margin-bottom: 0.5em;
+            }
+            .editor-content ol {
+                list-style-type: decimal !important;
+                padding-left: 1.5em !important;
+                margin-bottom: 0.5em;
+            }
+            .editor-content p {
+                margin-bottom: 0.5em;
+            }
+            .editor-content p:last-child {
+                margin-bottom: 0;
+            }
+            .editor-content strong {
+                font-weight: bold;
+                color: white;
+            }
+            .editor-content em {
+                font-style: italic;
+            }
+            .editor-content blockquote {
+                border-left: 4px solid #3b82f6;
+                padding-left: 1em;
+                color: #9ca3af;
+                font-style: italic;
+                margin-bottom: 0.5em;
+            }
+            /* Cropper.js visibility on dark bg */
+            .cropper-view-box {
+                outline: 2px solid #3b82f6;
+                outline-color: rgba(59, 130, 246, 0.85);
+            }
+            .cropper-line {
+                background-color: #3b82f6 !important;
+                opacity: 0.6 !important;
+            }
+            .cropper-dashed {
+                border-color: rgba(255, 255, 255, 0.5) !important;
+            }
+            .cropper-point {
+                background-color: #3b82f6 !important;
+                width: 8px !important;
+                height: 8px !important;
+                opacity: 1 !important;
+            }
+            .cropper-point.point-se {
+                width: 12px !important;
+                height: 12px !important;
+            }
+            .cropper-modal {
+                background-color: rgba(0, 0, 0, 0.6) !important;
+            }
+            .cropper-face {
+                background-color: transparent !important;
+            }
+        </style>
+    </head>
+    <body
+        class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col"
+    >
+        <div class="flex-1 container mx-auto p-4 sm:p-6 pb-32 max-w-3xl">
+            <div class="mb-6 flex items-center gap-3">
+                <a
+                    href="{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 text-white transition"
+                >
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-2xl font-bold text-white">
+                    Edit Kegiatan Harian
+                </h1>
+            </div>
 
-    <div class="flex-1 container mx-auto p-4 sm:p-6 pb-32 max-w-3xl">
-        
-        <div class="mb-6 flex items-center gap-3">
-            <a href="{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 text-white transition">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            <h1 class="text-2xl font-bold text-white">Edit Kegiatan Harian</h1>
-        </div>
-
-        <div class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-6 sm:p-8">
-            <form method="POST" enctype="multipart/form-data" x-data="{ isSubmitting: false, isDeleting: false }"
-                  @submit.prevent="
+            <div
+                class="bg-gray-800 rounded-2xl shadow-xl border border-white/5 p-6 sm:p-8"
+            >
+                <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                    x-data="{ isSubmitting: false, isDeleting: false }"
+                    @submit.prevent="
                       if (isSubmitting) return;
                       isSubmitting = true;
                       const form = $el;
@@ -53,8 +123,7 @@
                           .then(async (res) => {
                               if (res.ok) {
                                   {% if logbook.google_doc_id %}
-                                  if(typeof window.showAlert === 'function') window.showAlert('info', 'Tersimpan! Menyinkronkan ke Google Docs...');
-                                  await autoSyncActivities('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
+                                  localStorage.setItem('pendingSync_{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
                                   {% endif %}
                                   window.location.href = '{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}';
                               } else {
@@ -69,72 +138,229 @@
                               if(typeof window.showAlert === 'function') window.showAlert('error', 'Error koneksi: ' + e);
                               else alert('Error koneksi: ' + e);
                           });
-                  ">
-                <div class="grid grid-cols-1 gap-4 mb-4">
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-400">Tanggal</label>
-                        <input type="text" name="tanggal" value="{{ entry.tanggal }}" required class="datepicker w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-400">Aktivitas / Judul</label>
-                        <input type="text" name="aktivitas" value="{{ entry.aktivitas }}" required class="w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    
-                    <textarea id="hidden-desc" style="display:none;">{{ entry.deskripsi }}</textarea>
-                    <div class="mb-4" x-data="tiptapEditor(document.getElementById('hidden-desc').value)">
-                        <label class="block text-sm mb-1 text-gray-400">Deskripsi Pekerjaan</label>
-                        <div class="bg-gray-900 border border-gray-600 rounded-xl flex flex-col focus-within:border-blue-500 transition-colors">
-                            <div class="bg-gray-800 border-b border-gray-600 p-2 rounded-t-xl min-h-[48px] flex items-center">
-                                <template x-if="editor">
-                                    <div class="flex flex-wrap gap-1">
-                                        <button type="button" title="Tebal" @click="Alpine.raw(editor).chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs font-bold w-8 h-8 flex items-center justify-center">B</button>
-                                        <button type="button" title="Miring" @click="Alpine.raw(editor).chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all italic text-xs w-8 h-8 flex items-center justify-center">I</button>
-                                        <button type="button" title="Coret" @click="Alpine.raw(editor).chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all line-through text-xs w-8 h-8 flex items-center justify-center">S</button>
-                                        <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
-                                        <button type="button" title="Daftar Poin" @click="Alpine.raw(editor).chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
-                                        <button type="button" title="Daftar Nomor" @click="Alpine.raw(editor).chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-list-ol"></i></button>
-                                        <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
-                                        <button type="button" title="Kode Inline" @click="Alpine.raw(editor).chain().focus().toggleCode().run()" :class="editor.isActive('code') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center font-mono">&lt;&gt;</button>
-                                        <button type="button" title="Blok Kode" @click="Alpine.raw(editor).chain().focus().toggleCodeBlock().run()" :class="editor.isActive('codeBlock') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-file-code"></i></button>
-                                        <button type="button" title="Kutipan" @click="Alpine.raw(editor).chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-quote-right"></i></button>
-                                        <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
-                                        <button type="button" title="Tautan" @click="toggleLink()" :class="editor.isActive('link') ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"><i class="fas fa-link"></i></button>
-                                        <button type="button" title="Garis Pemisah" @click="Alpine.raw(editor).chain().focus().setHorizontalRule().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-minus"></i></button>
-                                        <div class="w-px h-5 bg-gray-600 mx-1 my-auto"></div>
-                                        <button type="button" title="Undo" @click="Alpine.raw(editor).chain().focus().undo().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-undo"></i></button>
-                                        <button type="button" title="Redo" @click="Alpine.raw(editor).chain().focus().redo().run()" class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"><i class="fas fa-redo"></i></button>
-                                    </div>
-                                </template>
-                            </div>
-                            <div class="bg-gray-900 rounded-b-xl min-h-[150px]">
-                                <!-- Loading State -->
-                                <div x-show="!editor" class="p-4 flex flex-col gap-3 rounded-b-xl">
-                                    <div class="h-4 bg-gray-800 rounded animate-pulse w-3/4"></div>
-                                    <div class="h-4 bg-gray-800 rounded animate-pulse w-full"></div>
-                                    <div class="h-4 bg-gray-800 rounded animate-pulse w-5/6"></div>
-                                    
-                                    <div class="mt-2 flex items-center gap-2 text-gray-500 justify-center">
-                                        <i class="fas fa-spinner fa-spin"></i>
-                                        <span class="text-sm font-medium">Memuat Editor...</span>
-                                    </div>
-                                </div>
-
-                                <!-- Editor Container -->
-                                <div x-show="editor" x-cloak x-transition.opacity.duration.300ms>
-                                    <div x-ref="editorElement"></div>
-                                </div>
-                            </div>
-                            <input type="hidden" name="deskripsi" :value="content">
+                  "
+                >
+                    <div class="grid grid-cols-1 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm mb-1 text-gray-400"
+                                >Tanggal</label
+                            >
+                            <input
+                                type="text"
+                                name="tanggal"
+                                value="{{ entry.tanggal }}"
+                                required
+                                class="datepicker w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none"
+                            />
                         </div>
-                    </div>
-                    
-                    <div x-data='editEntryApp([
+
+                        <div>
+                            <label class="block text-sm mb-1 text-gray-400"
+                                >Aktivitas / Judul</label
+                            >
+                            <input
+                                type="text"
+                                name="aktivitas"
+                                value="{{ entry.aktivitas | safe }}"
+                                required
+                                class="w-full bg-gray-900 border border-gray-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none"
+                            />
+                        </div>
+
+                        <textarea id="hidden-desc" style="display: none">
+{{ entry.deskripsi | safe }}</textarea
+                        >
+                        <div
+                            class="mb-4"
+                            x-data="tiptapEditor(document.getElementById('hidden-desc').value)"
+                        >
+                            <label class="block text-sm mb-1 text-gray-400"
+                                >Deskripsi Pekerjaan</label
+                            >
+                            <div
+                                class="bg-gray-900 border border-gray-600 rounded-xl flex flex-col focus-within:border-blue-500 transition-colors"
+                            >
+                                <div
+                                    class="bg-gray-800 border-b border-gray-600 p-2 rounded-t-xl min-h-[48px] flex items-center"
+                                >
+                                    <template x-if="editor">
+                                        <div class="flex flex-wrap gap-1">
+                                            <button
+                                                type="button"
+                                                title="Tebal"
+                                                @click="Alpine.raw(editor).chain().focus().toggleBold().run()"
+                                                :class="activeFormats.bold ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all text-xs font-bold w-8 h-8 flex items-center justify-center"
+                                            >
+                                                B
+                                            </button>
+                                            <button
+                                                type="button"
+                                                title="Miring"
+                                                @click="Alpine.raw(editor).chain().focus().toggleItalic().run()"
+                                                :class="activeFormats.italic ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all italic text-xs w-8 h-8 flex items-center justify-center"
+                                            >
+                                                I
+                                            </button>
+                                            <button
+                                                type="button"
+                                                title="Coret"
+                                                @click="Alpine.raw(editor).chain().focus().toggleStrike().run()"
+                                                :class="activeFormats.strike ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all line-through text-xs w-8 h-8 flex items-center justify-center"
+                                            >
+                                                S
+                                            </button>
+                                            <div
+                                                class="w-px h-5 bg-gray-600 mx-1 my-auto"
+                                            ></div>
+                                            <button
+                                                type="button"
+                                                title="Daftar Poin"
+                                                @click="Alpine.raw(editor).chain().focus().toggleBulletList().run()"
+                                                :class="activeFormats.bulletList ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"
+                                            >
+                                                <i class="fas fa-list-ul"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                title="Daftar Nomor"
+                                                @click="Alpine.raw(editor).chain().focus().toggleOrderedList().run()"
+                                                :class="activeFormats.orderedList ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"
+                                            >
+                                                <i class="fas fa-list-ol"></i>
+                                            </button>
+                                            <div
+                                                class="w-px h-5 bg-gray-600 mx-1 my-auto"
+                                            ></div>
+                                            <button
+                                                type="button"
+                                                title="Kode Inline"
+                                                @click="Alpine.raw(editor).chain().focus().toggleCode().run()"
+                                                :class="activeFormats.code ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center font-mono"
+                                            >
+                                                &lt;&gt;
+                                            </button>
+                                            <button
+                                                type="button"
+                                                title="Blok Kode"
+                                                @click="Alpine.raw(editor).chain().focus().toggleCodeBlock().run()"
+                                                :class="activeFormats.codeBlock ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"
+                                            >
+                                                <i class="fas fa-file-code"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                title="Kutipan"
+                                                @click="Alpine.raw(editor).chain().focus().toggleBlockquote().run()"
+                                                :class="activeFormats.blockquote ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"
+                                            >
+                                                <i
+                                                    class="fas fa-quote-right"
+                                                ></i>
+                                            </button>
+                                            <div
+                                                class="w-px h-5 bg-gray-600 mx-1 my-auto"
+                                            ></div>
+                                            <button
+                                                type="button"
+                                                title="Tautan"
+                                                @click="toggleLink()"
+                                                :class="activeFormats.link ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center"
+                                            >
+                                                <i class="fas fa-link"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                title="Garis Pemisah"
+                                                @click="Alpine.raw(editor).chain().focus().setHorizontalRule().run()"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"
+                                            >
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <div
+                                                class="w-px h-5 bg-gray-600 mx-1 my-auto"
+                                            ></div>
+                                            <button
+                                                type="button"
+                                                title="Undo"
+                                                @click="Alpine.raw(editor).chain().focus().undo().run()"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"
+                                            >
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                title="Redo"
+                                                @click="Alpine.raw(editor).chain().focus().redo().run()"
+                                                class="p-2 rounded-lg transition-all text-xs w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-700"
+                                            >
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div
+                                    class="bg-gray-900 rounded-b-xl min-h-[150px]"
+                                >
+                                    <!-- Loading State -->
+                                    <div
+                                        x-show="!editor"
+                                        class="p-4 flex flex-col gap-3 rounded-b-xl"
+                                    >
+                                        <div
+                                            class="h-4 bg-gray-800 rounded animate-pulse w-3/4"
+                                        ></div>
+                                        <div
+                                            class="h-4 bg-gray-800 rounded animate-pulse w-full"
+                                        ></div>
+                                        <div
+                                            class="h-4 bg-gray-800 rounded animate-pulse w-5/6"
+                                        ></div>
+
+                                        <div
+                                            class="mt-2 flex items-center gap-2 text-gray-500 justify-center"
+                                        >
+                                            <i
+                                                class="fas fa-spinner fa-spin"
+                                            ></i>
+                                            <span class="text-sm font-medium"
+                                                >Memuat Editor...</span
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <!-- Editor Container -->
+                                    <div
+                                        x-show="editor"
+                                        x-cloak
+                                        x-transition.opacity.duration.300ms
+                                    >
+                                        <div x-ref="editorElement"></div>
+                                    </div>
+                                </div>
+                                <input
+                                    type="hidden"
+                                    name="deskripsi"
+                                    :value="content"
+                                />
+                            </div>
+                        </div>
+
+                        <div
+                            x-data='editEntryApp([
                         {% if entry.images %}
                             {% for img in entry.images %}
-                                { 
-                                    id: {{ img.id|default(0, true) | tojson }}, 
-                                    path: {{ img.path|default("", true) | tojson }}, 
+                                {
+                                    id: {{ img.id|default(0, true) | tojson }},
+                                    path: {{ img.path|default("", true) | tojson }},
                                     url: {{ url_for("static", filename="uploads/logbook/" ~ img.path) | tojson }},
                                     nama_asli: {{ img.nama_asli|default("", true) | tojson }},
                                     deskripsi: {{ img.deskripsi|default("", true) | tojson }},
@@ -146,778 +372,1208 @@
                                 }{% if not loop.last %},{% endif %}
                             {% endfor %}
                         {% endif %}
-                    ])'>
-                        <label class="block text-sm mb-2 text-gray-400">Bukti Gambar Pekerjaan</label>
-                        
-                        <template x-for="img in existingImages" :key="img.id">
-                            <input type="hidden" name="existing_images" :value="img.path">
-                        </template>
-
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                            
-                            <template x-for="(img, index) in existingImages" :key="'old-'+img.id">
-                                    <div class="relative group aspect-video cursor-pointer" x-data="{ imgLoaded: false }">
-                                        <!-- Image Skeleton -->
-                                        <div x-show="!imgLoaded" class="absolute inset-0 bg-gray-700/50 animate-pulse rounded-lg border border-gray-600"></div>
-
-                                        <img x-ref="img" x-init="if ($refs.img.complete) imgLoaded = true" @load="imgLoaded = true" :src="img.url" @click="openGallery(index, 'existing')" 
-                                             :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
-                                             class="w-full h-full object-cover rounded-lg border border-gray-600 hover:border-blue-500 transition-all duration-300 shadow-sm relative z-10">
-                                    
-                                    <button type="button" @click.stop="openGallery(index, 'existing'); deleteImage()" 
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition z-20">
-                                        <i class="fas fa-times text-xs"></i>
-                                    </button>
-                                    
-                                    <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-[10px] text-white p-1 truncate rounded-b-lg text-center z-20" x-text="img.nama_asli"></div>
-                                </div>
-                            </template>
-
-                            <template x-for="(img, index) in newImages" :key="'new-'+index">
-                                <div class="relative group aspect-video cursor-pointer" x-data="{ imgLoaded: false }">
-                                    <!-- Image Skeleton -->
-                                    <div x-show="!imgLoaded" class="absolute inset-0 bg-gray-700/50 animate-pulse rounded-lg border-2 border-green-500/50"></div>
-
-                                    <img x-ref="img" x-init="if ($refs.img.complete) imgLoaded = true" @load="imgLoaded = true" :src="img.url" @click="openGallery(index, 'new')"
-                                         :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
-                                         class="w-full h-full object-cover rounded-lg border border-green-500 border-2 shadow-sm transition-all duration-300 relative z-10">
-                                    
-                                    <button type="button" @click.stop="removeNewImage(index)" 
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition z-20">
-                                        <i class="fas fa-times text-xs"></i>
-                                    </button>
-
-                                    <div class="absolute bottom-0 left-0 right-0 bg-green-900/80 text-[10px] text-white p-1 truncate rounded-b-lg text-center z-20" x-text="img.nama_asli || 'Gambar Baru'"></div>
-                                </div>
-                            </template>
-                        </div>
-
-                        <div 
-                            @dragover.prevent="isDragging = true" 
-                            @dragleave.prevent="isDragging = false" 
-                            @drop.prevent="handleDrop($event)"
-                            :class="isDragging ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600 bg-gray-900 hover:bg-gray-800'"
-                            class="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors mt-2"
-                            @click="$refs.fileInput.click()"
+                    ])'
                         >
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6 pointer-events-none">
-                                <i class="fas fa-cloud-upload-alt text-4xl mb-3 transition-colors duration-200" 
-                                   :class="isDragging ? 'text-blue-500' : 'text-gray-400'"></i>
-                                <p class="mb-2 text-sm text-gray-400"><span class="font-bold text-white">Klik untuk upload</span> atau drag and drop ke sini</p>
-                                <p class="text-xs text-gray-500">PNG, JPG, JPEG (Bisa pilih banyak)</p>
+                            <label class="block text-sm mb-2 text-gray-400"
+                                >Bukti Gambar Pekerjaan</label
+                            >
+
+                            <template
+                                x-for="img in existingImages"
+                                :key="img.id"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="existing_images"
+                                    :value="img.path"
+                                />
+                            </template>
+
+                            <div
+                                class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4"
+                            >
+                                <template
+                                    x-for="(img, index) in existingImages"
+                                    :key="'old-'+img.id"
+                                >
+                                    <div
+                                        class="relative group aspect-video cursor-pointer"
+                                        x-data="{ imgLoaded: false }"
+                                    >
+                                        <!-- Image Skeleton -->
+                                        <div
+                                            x-show="!imgLoaded"
+                                            class="absolute inset-0 bg-gray-700/50 animate-pulse rounded-lg border border-gray-600"
+                                        ></div>
+
+                                        <img
+                                            x-ref="img"
+                                            x-init="if ($refs.img.complete) imgLoaded = true"
+                                            @load="imgLoaded = true"
+                                            :src="img.url"
+                                            @click="openGallery(index, 'existing')"
+                                            :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
+                                            class="w-full h-full object-cover rounded-lg border border-gray-600 hover:border-blue-500 transition-all duration-300 shadow-sm relative z-10"
+                                        />
+
+                                        <button
+                                            type="button"
+                                            @click.stop="openGallery(index, 'existing'); deleteImage()"
+                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition z-20"
+                                        >
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+
+                                        <div
+                                            class="absolute bottom-0 left-0 right-0 bg-black/50 text-[10px] text-white p-1 truncate rounded-b-lg text-center z-20"
+                                            x-text="img.nama_asli"
+                                        ></div>
+                                    </div>
+                                </template>
+
+                                <template
+                                    x-for="(img, index) in newImages"
+                                    :key="'new-'+index"
+                                >
+                                    <div
+                                        class="relative group aspect-video cursor-pointer"
+                                        x-data="{ imgLoaded: false }"
+                                    >
+                                        <!-- Image Skeleton -->
+                                        <div
+                                            x-show="!imgLoaded"
+                                            class="absolute inset-0 bg-gray-700/50 animate-pulse rounded-lg border-2 border-green-500/50"
+                                        ></div>
+
+                                        <img
+                                            x-ref="img"
+                                            x-init="if ($refs.img.complete) imgLoaded = true"
+                                            @load="imgLoaded = true"
+                                            :src="img.url"
+                                            @click="openGallery(index, 'new')"
+                                            :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
+                                            class="w-full h-full object-cover rounded-lg border border-green-500 border-2 shadow-sm transition-all duration-300 relative z-10"
+                                        />
+
+                                        <button
+                                            type="button"
+                                            @click.stop="removeNewImage(index)"
+                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition z-20"
+                                        >
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+
+                                        <div
+                                            class="absolute bottom-0 left-0 right-0 bg-green-900/80 text-[10px] text-white p-1 truncate rounded-b-lg text-center z-20"
+                                            x-text="img.nama_asli || 'Gambar Baru'"
+                                        ></div>
+                                    </div>
+                                </template>
                             </div>
-                            
-                            <input type="file" x-ref="fileInput" name="gambar" accept="image/*" multiple @change="handleFiles" class="hidden">
-                        </div>
 
-                        <div x-show="gallery.isOpen" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/95 p-0 sm:p-4" x-cloak 
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0 scale-95"
-                             x-transition:enter-end="opacity-100 scale-100">
-                            
-                            <div class="bg-gray-900 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-6xl sm:rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl border border-gray-800">
-                                
-                                <div class="flex-1 bg-black relative flex items-center justify-center group" :class="gallery.isVisualEditing ? 'overflow-visible' : 'overflow-hidden'">
-                                    
-                                    <img x-show="!gallery.isVisualEditing" :src="currentImage?.url" class="max-w-full max-h-[50vh] sm:max-h-[85vh] object-contain shadow-2xl">
-                                    
-                                    <div x-show="gallery.isVisualEditing" class="w-full h-full p-6 flex items-center justify-center">
-                                        <img id="editor-image" class="max-w-full max-h-full block">
-                                    </div>
-
-                                    <div x-show="!gallery.isVisualEditing">
-                                        <button type="button" @click="prevImage()" class="absolute left-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm">
-                                            <i class="fas fa-chevron-left text-xl"></i>
-                                        </button>
-                                        <button type="button" @click="nextImage()" class="absolute right-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm">
-                                            <i class="fas fa-chevron-right text-xl"></i>
-                                        </button>
-                                    </div>
-                                    
-                                    <button type="button" @click="gallery.isOpen = false" class="absolute top-4 right-4 md:hidden bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg z-20">
-                                        <i class="fas fa-times"></i>
-                                    </button>
+                            <div
+                                @dragover.prevent="isDragging = true"
+                                @dragleave.prevent="isDragging = false"
+                                @drop.prevent="handleDrop($event)"
+                                :class="isDragging ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600 bg-gray-900 hover:bg-gray-800'"
+                                class="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors mt-2"
+                                @click="$refs.fileInput.click()"
+                            >
+                                <div
+                                    class="flex flex-col items-center justify-center pt-5 pb-6 pointer-events-none"
+                                >
+                                    <i
+                                        class="fas fa-cloud-upload-alt text-4xl mb-3 transition-colors duration-200"
+                                        :class="isDragging ? 'text-blue-500' : 'text-gray-400'"
+                                    ></i>
+                                    <p class="mb-2 text-sm text-gray-400">
+                                        <span class="font-bold text-white"
+                                            >Klik untuk upload</span
+                                        >
+                                        atau drag and drop ke sini
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        PNG, JPG, JPEG (Bisa pilih banyak)
+                                    </p>
                                 </div>
 
-                                <div class="w-full md:w-[350px] bg-gray-900 border-l border-gray-800 flex flex-col h-[50vh] md:h-auto md:max-h-[90vh]">
-                                    
-                                    <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-850">
-                                        <div>
-                                            <h3 class="text-white font-bold text-sm" x-text="gallery.isVisualEditing ? 'Mode Edit Visual' : (gallery.mode === 'new' ? 'Edit Gambar Baru' : 'Detail Gambar Lama')"></h3>
-                                            <p class="text-xs text-gray-500" x-text="getCounterText()"></p>
-                                        </div>
-                                        <button type="button" @click="gallery.isOpen = false" class="text-gray-400 hover:text-white hidden md:block"><i class="fas fa-times text-xl"></i></button>
-                                    </div>
+                                <input
+                                    type="file"
+                                    x-ref="fileInput"
+                                    name="gambar"
+                                    accept="image/*"
+                                    multiple
+                                    @change="handleFiles"
+                                    class="hidden"
+                                />
+                            </div>
 
-                                    <div x-show="!gallery.isVisualEditing" class="flex-1 overflow-y-auto p-5 space-y-4">
-                                        <div>
-                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Judul Foto</label>
-                                            <input type="text" x-model="gallery.tempName" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Keterangan</label>
-                                            <textarea x-model="gallery.tempDesc" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white focus:border-blue-500 outline-none resize-none"></textarea>
+                            <div
+                                x-show="gallery.isOpen"
+                                class="fixed inset-0 z-[150] flex items-center justify-center bg-black/95 p-0 sm:p-4"
+                                x-cloak
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-100 scale-100"
+                            >
+                                <div
+                                    class="bg-gray-900 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-6xl sm:rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl border border-gray-800"
+                                >
+                                    <div
+                                        class="flex-1 bg-black relative flex items-center justify-center group"
+                                        :class="gallery.isVisualEditing ? 'overflow-visible' : 'overflow-hidden'"
+                                    >
+                                        <img
+                                            x-show="!gallery.isVisualEditing"
+                                            :src="currentImage?.url"
+                                            class="max-w-full max-h-[50vh] sm:max-h-[85vh] object-contain shadow-2xl"
+                                        />
+
+                                        <div
+                                            x-show="gallery.isVisualEditing"
+                                            class="w-full h-full p-6 flex items-center justify-center"
+                                        >
+                                            <img
+                                                id="editor-image"
+                                                class="max-w-full max-h-full block"
+                                            />
                                         </div>
 
-                                        <!-- INFO METADATA BERKAS -->
-                                        <div class="pt-3 border-t border-gray-800 space-y-2">
-                                            <h4 class="text-xs font-bold text-gray-500 uppercase">Info Berkas</h4>
-                                            <div class="bg-gray-800/50 rounded-lg p-3 space-y-2 text-xs">
-                                                <div class="flex justify-between">
-                                                    <span class="text-gray-500"><i class="fas fa-file-image mr-1.5"></i>Nama Berkas</span>
-                                                    <span class="text-gray-300 text-right max-w-[180px] truncate" x-text="getFileMetadata('nama_berkas')" :title="getFileMetadata('nama_berkas')"></span>
-                                                </div>
-                                                <div class="flex justify-between">
-                                                    <span class="text-gray-500"><i class="fas fa-tag mr-1.5"></i>Tipe Berkas</span>
-                                                    <span class="text-gray-300" x-text="getFileMetadata('tipe_berkas')"></span>
-                                                </div>
-                                                <div class="flex justify-between">
-                                                    <span class="text-gray-500"><i class="fas fa-weight-hanging mr-1.5"></i>Ukuran</span>
-                                                    <span class="text-gray-300" x-text="getFileMetadata('ukuran_display')"></span>
-                                                </div>
-                                                <div class="flex justify-between">
-                                                    <span class="text-gray-500"><i class="fas fa-expand-arrows-alt mr-1.5"></i>Dimensi</span>
-                                                    <span class="text-gray-300" x-text="getFileMetadata('dimensi')"></span>
-                                                </div>
-                                                <div class="flex justify-between">
-                                                    <span class="text-gray-500"><i class="fas fa-clock mr-1.5"></i>Diunggah pada</span>
-                                                    <span class="text-gray-300" x-text="getFileMetadata('created_at')"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="pt-3 border-t border-gray-800">
-                                            <button type="button" @click="startVisualEdit()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 rounded text-sm flex items-center justify-center gap-2 border border-gray-700">
-                                                <i class="fas fa-crop-alt"></i> Potong / Rotasi / Skala
+                                        <div x-show="!gallery.isVisualEditing">
+                                            <button
+                                                type="button"
+                                                @click="prevImage()"
+                                                class="absolute left-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm"
+                                            >
+                                                <i
+                                                    class="fas fa-chevron-left text-xl"
+                                                ></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                @click="nextImage()"
+                                                class="absolute right-4 p-4 bg-black/50 hover:bg-white/20 text-white rounded-full transition backdrop-blur-sm"
+                                            >
+                                                <i
+                                                    class="fas fa-chevron-right text-xl"
+                                                ></i>
                                             </button>
                                         </div>
+
+                                        <button
+                                            type="button"
+                                            @click="gallery.isOpen = false"
+                                            class="absolute top-4 right-4 md:hidden bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg z-20"
+                                        >
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
 
-                                    <div x-show="gallery.isVisualEditing" class="flex-1 overflow-y-auto p-5 space-y-4">
-                                        <div class="space-y-2">
-                                            <p class="text-[10px] font-bold text-gray-500 uppercase">Rotasi & Flip</p>
-                                            <div class="grid grid-cols-4 gap-2">
-                                                <button type="button" @click="rotate(-90)" class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white" title="Putar Kiri"><i class="fas fa-undo"></i></button>
-                                                <button type="button" @click="rotate(90)" class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white" title="Putar Kanan"><i class="fas fa-redo"></i></button>
-                                                <button type="button" @click="scaleX()" class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white" title="Flip Horizontal"><i class="fas fa-arrows-alt-h"></i></button>
-                                                <button type="button" @click="resetCrop()" class="bg-gray-800 p-3 rounded hover:bg-red-900/50 text-red-400" title="Reset"><i class="fas fa-sync-alt"></i></button>
+                                    <div
+                                        class="w-full md:w-[350px] bg-gray-900 border-l border-gray-800 flex flex-col h-[50vh] md:h-auto md:max-h-[90vh]"
+                                    >
+                                        <div
+                                            class="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-850"
+                                        >
+                                            <div>
+                                                <h3
+                                                    class="text-white font-bold text-sm"
+                                                    x-text="gallery.isVisualEditing ? 'Mode Edit Visual' : (gallery.mode === 'new' ? 'Edit Gambar Baru' : 'Detail Gambar Lama')"
+                                                ></h3>
+                                                <p
+                                                    class="text-xs text-gray-500"
+                                                    x-text="getCounterText()"
+                                                ></p>
                                             </div>
+                                            <button
+                                                type="button"
+                                                @click="gallery.isOpen = false"
+                                                class="text-gray-400 hover:text-white hidden md:block"
+                                            >
+                                                <i
+                                                    class="fas fa-times text-xl"
+                                                ></i>
+                                            </button>
                                         </div>
 
-                                        <!-- RESIZE / UBAH UKURAN -->
-                                        <div class="space-y-2">
-                                            <div class="flex items-center justify-between">
-                                                <p class="text-[10px] font-bold text-gray-500 uppercase">Ubah Ukuran</p>
-                                                <span class="text-[10px] text-gray-600" x-text="`Asli: ${gallery.resizeOrigW} × ${gallery.resizeOrigH}`"></span>
+                                        <div
+                                            x-show="!gallery.isVisualEditing"
+                                            class="flex-1 overflow-y-auto p-5 space-y-4"
+                                        >
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-500 uppercase mb-1"
+                                                    >Judul Foto</label
+                                                >
+                                                <input
+                                                    type="text"
+                                                    x-model="gallery.tempName"
+                                                    class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white focus:border-blue-500 outline-none"
+                                                />
                                             </div>
-                                            <div class="flex gap-1">
-                                                <template x-for="u in ['px','%','cm','in']">
-                                                    <button type="button" @click="switchResizeUnit(u)" :class="gallery.resizeUnit === u ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'" class="flex-1 text-[11px] py-1.5 rounded font-medium transition" x-text="u"></button>
-                                                </template>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-500 uppercase mb-1"
+                                                    >Keterangan</label
+                                                >
+                                                <textarea
+                                                    x-model="gallery.tempDesc"
+                                                    rows="3"
+                                                    class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white focus:border-blue-500 outline-none resize-none"
+                                                ></textarea>
                                             </div>
-                                            <div class="flex items-center gap-2">
-                                                <div class="flex-1">
-                                                    <label class="text-[10px] text-gray-500 block mb-0.5">W</label>
-                                                    <input type="number" x-model.number="gallery.resizeW" @input="onResizeW()" step="any" class="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:border-blue-500 outline-none text-center">
+
+                                            <!-- INFO METADATA BERKAS -->
+                                            <div
+                                                class="pt-3 border-t border-gray-800 space-y-2"
+                                            >
+                                                <h4
+                                                    class="text-xs font-bold text-gray-500 uppercase"
+                                                >
+                                                    Info Berkas
+                                                </h4>
+                                                <div
+                                                    class="bg-gray-800/50 rounded-lg p-3 space-y-2 text-xs"
+                                                >
+                                                    <div
+                                                        class="flex justify-between"
+                                                    >
+                                                        <span
+                                                            class="text-gray-500"
+                                                            ><i
+                                                                class="fas fa-file-image mr-1.5"
+                                                            ></i
+                                                            >Nama Berkas</span
+                                                        >
+                                                        <span
+                                                            class="text-gray-300 text-right max-w-[180px] truncate"
+                                                            x-text="getFileMetadata('nama_berkas')"
+                                                            :title="getFileMetadata('nama_berkas')"
+                                                        ></span>
+                                                    </div>
+                                                    <div
+                                                        class="flex justify-between"
+                                                    >
+                                                        <span
+                                                            class="text-gray-500"
+                                                            ><i
+                                                                class="fas fa-tag mr-1.5"
+                                                            ></i
+                                                            >Tipe Berkas</span
+                                                        >
+                                                        <span
+                                                            class="text-gray-300"
+                                                            x-text="getFileMetadata('tipe_berkas')"
+                                                        ></span>
+                                                    </div>
+                                                    <div
+                                                        class="flex justify-between"
+                                                    >
+                                                        <span
+                                                            class="text-gray-500"
+                                                            ><i
+                                                                class="fas fa-weight-hanging mr-1.5"
+                                                            ></i
+                                                            >Ukuran</span
+                                                        >
+                                                        <span
+                                                            class="text-gray-300"
+                                                            x-text="getFileMetadata('ukuran_display')"
+                                                        ></span>
+                                                    </div>
+                                                    <div
+                                                        class="flex justify-between"
+                                                    >
+                                                        <span
+                                                            class="text-gray-500"
+                                                            ><i
+                                                                class="fas fa-expand-arrows-alt mr-1.5"
+                                                            ></i
+                                                            >Dimensi</span
+                                                        >
+                                                        <span
+                                                            class="text-gray-300"
+                                                            x-text="getFileMetadata('dimensi')"
+                                                        ></span>
+                                                    </div>
+                                                    <div
+                                                        class="flex justify-between"
+                                                    >
+                                                        <span
+                                                            class="text-gray-500"
+                                                            ><i
+                                                                class="fas fa-clock mr-1.5"
+                                                            ></i
+                                                            >Diunggah pada</span
+                                                        >
+                                                        <span
+                                                            class="text-gray-300"
+                                                            x-text="getFileMetadata('created_at')"
+                                                        ></span>
+                                                    </div>
                                                 </div>
-                                                <button type="button" @click="gallery.resizeLock = !gallery.resizeLock" class="mt-4 p-1.5 rounded transition" :class="gallery.resizeLock ? 'text-blue-400' : 'text-gray-600'" title="Kunci Rasio">
-                                                    <i class="fas" :class="gallery.resizeLock ? 'fa-link' : 'fa-unlink'"></i>
+                                            </div>
+
+                                            <div
+                                                class="pt-3 border-t border-gray-800"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    @click="startVisualEdit()"
+                                                    class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 rounded text-sm flex items-center justify-center gap-2 border border-gray-700"
+                                                >
+                                                    <i
+                                                        class="fas fa-crop-alt"
+                                                    ></i>
+                                                    Potong / Rotasi / Skala
                                                 </button>
-                                                <div class="flex-1">
-                                                    <label class="text-[10px] text-gray-500 block mb-0.5">H</label>
-                                                    <input type="number" x-model.number="gallery.resizeH" @input="onResizeH()" step="any" class="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:border-blue-500 outline-none text-center">
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            x-show="gallery.isVisualEditing"
+                                            class="flex-1 overflow-y-auto p-5 space-y-4"
+                                        >
+                                            <div class="space-y-2">
+                                                <p
+                                                    class="text-[10px] font-bold text-gray-500 uppercase"
+                                                >
+                                                    Rotasi & Flip
+                                                </p>
+                                                <div
+                                                    class="grid grid-cols-4 gap-2"
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        @click="rotate(-90)"
+                                                        class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white"
+                                                        title="Putar Kiri"
+                                                    >
+                                                        <i
+                                                            class="fas fa-undo"
+                                                        ></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="rotate(90)"
+                                                        class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white"
+                                                        title="Putar Kanan"
+                                                    >
+                                                        <i
+                                                            class="fas fa-redo"
+                                                        ></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="scaleX()"
+                                                        class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white"
+                                                        title="Flip Horizontal"
+                                                    >
+                                                        <i
+                                                            class="fas fa-arrows-alt-h"
+                                                        ></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="resetCrop()"
+                                                        class="bg-gray-800 p-3 rounded hover:bg-red-900/50 text-red-400"
+                                                        title="Reset"
+                                                    >
+                                                        <i
+                                                            class="fas fa-sync-alt"
+                                                        ></i>
+                                                    </button>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="space-y-2">
-                                            <p class="text-[10px] font-bold text-gray-500 uppercase">Zoom & Geser</p>
-                                            <div class="grid grid-cols-4 gap-2">
-                                                <button type="button" @click="zoom(0.1)" class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white" title="Zoom In"><i class="fas fa-search-plus"></i></button>
-                                                <button type="button" @click="zoom(-0.1)" class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
-                                                <button type="button" @click="toggleDragMode()" :class="gallery.dragMode === 'move' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-white hover:bg-gray-700'" class="p-3 rounded transition" title="Geser Gambar"><i class="fas fa-hand-paper"></i></button>
-                                                <button type="button" @click="toggleDragMode('crop')" :class="gallery.dragMode === 'crop' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-white hover:bg-gray-700'" class="p-3 rounded transition" title="Mode Crop"><i class="fas fa-crop-alt"></i></button>
+                                            <!-- RESIZE / UBAH UKURAN -->
+                                            <div class="space-y-2">
+                                                <div
+                                                    class="flex items-center justify-between"
+                                                >
+                                                    <p
+                                                        class="text-[10px] font-bold text-gray-500 uppercase"
+                                                    >
+                                                        Ubah Ukuran
+                                                    </p>
+                                                    <span
+                                                        class="text-[10px] text-gray-600"
+                                                        x-text="`Asli: ${gallery.resizeOrigW} × ${gallery.resizeOrigH}`"
+                                                    ></span>
+                                                </div>
+                                                <div class="flex gap-1">
+                                                    <template
+                                                        x-for="u in ['px','%','cm','in']"
+                                                    >
+                                                        <button
+                                                            type="button"
+                                                            @click="switchResizeUnit(u)"
+                                                            :class="gallery.resizeUnit === u ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'"
+                                                            class="flex-1 text-[11px] py-1.5 rounded font-medium transition"
+                                                            x-text="u"
+                                                        ></button>
+                                                    </template>
+                                                </div>
+                                                <div
+                                                    class="flex items-center gap-2"
+                                                >
+                                                    <div class="flex-1">
+                                                        <label
+                                                            class="text-[10px] text-gray-500 block mb-0.5"
+                                                            >W</label
+                                                        >
+                                                        <input
+                                                            type="number"
+                                                            x-model.number="gallery.resizeW"
+                                                            @input="onResizeW()"
+                                                            step="any"
+                                                            class="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:border-blue-500 outline-none text-center"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        @click="gallery.resizeLock = !gallery.resizeLock"
+                                                        class="mt-4 p-1.5 rounded transition"
+                                                        :class="gallery.resizeLock ? 'text-blue-400' : 'text-gray-600'"
+                                                        title="Kunci Rasio"
+                                                    >
+                                                        <i
+                                                            class="fas"
+                                                            :class="gallery.resizeLock ? 'fa-link' : 'fa-unlink'"
+                                                        ></i>
+                                                    </button>
+                                                    <div class="flex-1">
+                                                        <label
+                                                            class="text-[10px] text-gray-500 block mb-0.5"
+                                                            >H</label
+                                                        >
+                                                        <input
+                                                            type="number"
+                                                            x-model.number="gallery.resizeH"
+                                                            @input="onResizeH()"
+                                                            step="any"
+                                                            class="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:border-blue-500 outline-none text-center"
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <p class="text-xs text-center text-gray-500">Scroll untuk zoom. Drag untuk geser/crop.</p>
-                                    </div>
 
-                                    <div class="p-4 border-t border-gray-800 flex flex-col gap-2">
-                                        <div x-show="!gallery.isVisualEditing" class="grid grid-cols-2 gap-3">
-                                            <button type="button" @click="saveMetadata()" class="col-span-2 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded font-bold transition flex items-center justify-center gap-2">
-                                                <i class="fas fa-save"></i> <span x-text="gallery.mode === 'new' ? 'Simpan' : 'Simpan Info'"></span>
-                                            </button>
-                                            <button type="button" @click="deleteImage()" class="col-span-2 bg-gray-800 hover:bg-red-900/80 text-red-400 hover:text-white py-2 rounded font-medium transition border border-gray-700 hover:border-red-500 flex items-center justify-center gap-2">
-                                                <i class="fas fa-trash-alt"></i> Hapus Foto ini
-                                            </button>
+                                            <div class="space-y-2">
+                                                <p
+                                                    class="text-[10px] font-bold text-gray-500 uppercase"
+                                                >
+                                                    Zoom & Geser
+                                                </p>
+                                                <div
+                                                    class="grid grid-cols-4 gap-2"
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        @click="zoom(0.1)"
+                                                        class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white"
+                                                        title="Zoom In"
+                                                    >
+                                                        <i
+                                                            class="fas fa-search-plus"
+                                                        ></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="zoom(-0.1)"
+                                                        class="bg-gray-800 p-3 rounded hover:bg-gray-700 text-white"
+                                                        title="Zoom Out"
+                                                    >
+                                                        <i
+                                                            class="fas fa-search-minus"
+                                                        ></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="toggleDragMode()"
+                                                        :class="gallery.dragMode === 'move' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-white hover:bg-gray-700'"
+                                                        class="p-3 rounded transition"
+                                                        title="Geser Gambar"
+                                                    >
+                                                        <i
+                                                            class="fas fa-hand-paper"
+                                                        ></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        @click="toggleDragMode('crop')"
+                                                        :class="gallery.dragMode === 'crop' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-white hover:bg-gray-700'"
+                                                        class="p-3 rounded transition"
+                                                        title="Mode Crop"
+                                                    >
+                                                        <i
+                                                            class="fas fa-crop-alt"
+                                                        ></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <p
+                                                class="text-xs text-center text-gray-500"
+                                            >
+                                                Scroll untuk zoom. Drag untuk
+                                                geser/crop.
+                                            </p>
                                         </div>
 
-                                        <div x-show="gallery.isVisualEditing" class="flex flex-col gap-2">
-                                            <button type="button" @click="applyCrop()" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded font-bold transition">
-                                                <i class="fas fa-check"></i> Terapkan Perubahan
-                                            </button>
-                                            <button type="button" @click="cancelVisualEdit()" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 rounded transition">
-                                                Batal
-                                            </button>
+                                        <div
+                                            class="p-4 border-t border-gray-800 flex flex-col gap-2"
+                                        >
+                                            <div
+                                                x-show="!gallery.isVisualEditing"
+                                                class="grid grid-cols-2 gap-3"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    @click="saveMetadata()"
+                                                    class="col-span-2 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded font-bold transition flex items-center justify-center gap-2"
+                                                >
+                                                    <i class="fas fa-save"></i>
+                                                    <span
+                                                        x-text="gallery.mode === 'new' ? 'Simpan' : 'Simpan Info'"
+                                                    ></span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    @click="deleteImage()"
+                                                    class="col-span-2 bg-gray-800 hover:bg-red-900/80 text-red-400 hover:text-white py-2 rounded font-medium transition border border-gray-700 hover:border-red-500 flex items-center justify-center gap-2"
+                                                >
+                                                    <i
+                                                        class="fas fa-trash-alt"
+                                                    ></i>
+                                                    Hapus Foto ini
+                                                </button>
+                                            </div>
+
+                                            <div
+                                                x-show="gallery.isVisualEditing"
+                                                class="flex flex-col gap-2"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    @click="applyCrop()"
+                                                    class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded font-bold transition"
+                                                >
+                                                    <i class="fas fa-check"></i>
+                                                    Terapkan Perubahan
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    @click="cancelVisualEdit()"
+                                                    class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 rounded transition"
+                                                >
+                                                    Batal
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div> </div> </div> <div class="flex flex-col sm:flex-row gap-3 mt-6">
-                    <button type="submit" :disabled="isSubmitting" class="flex-1 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-800 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition shadow-lg shadow-yellow-500/30 flex items-center justify-center">
-                        <template x-if="!isSubmitting">
-                            <span><i class="fas fa-save mr-2"></i> Perbarui Kegiatan</span>
-                        </template>
-                        <template x-if="isSubmitting">
-                            <span><i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan & Sinkronisasi...</span>
-                        </template>
-                    </button>
-                    
-                    <button type="button" 
-                       href="{{ url_for('logbook_delete_entry', logbook_id=logbook.uuid, entry_id=entry.uuid) }}" 
-                       @click="handleCustomDelete($event, 'Hapus Kegiatan?', 'Yakin ingin menghapus kegiatan ini? Data tidak bisa dikembalikan!', () => isDeleting = true, () => isDeleting = false)" 
-                       :disabled="isDeleting"
-                       class="sm:flex-none w-full sm:w-auto bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition shadow-lg shadow-red-500/30 text-center flex justify-center items-center">
-                        
-                        <template x-if="!isDeleting">
-                            <span><i class="fas fa-trash-alt mr-2"></i> Hapus</span>
-                        </template>
-                        <template x-if="isDeleting">
-                            <span><i class="fas fa-spinner fa-spin mr-2"></i> Menghapus & Sync...</span>
-                        </template>
-                    </button>
-                </div>
-            </form>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                        <button
+                            type="submit"
+                            :disabled="isSubmitting"
+                            class="flex-1 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-800 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition shadow-lg shadow-yellow-500/30 flex items-center justify-center"
+                        >
+                            <template x-if="!isSubmitting">
+                                <span
+                                    ><i class="fas fa-save mr-2"></i> Perbarui
+                                    Kegiatan</span
+                                >
+                            </template>
+                            <template x-if="isSubmitting">
+                                <span
+                                    ><i class="fas fa-spinner fa-spin mr-2"></i>
+                                    Menyimpan...</span
+                                >
+                            </template>
+                        </button>
+
+                        <button
+                            type="button"
+                            href="{{ url_for('logbook_delete_entry', logbook_id=logbook.uuid, entry_id=entry.uuid) }}"
+                            @click="handleCustomDelete($event, 'Hapus Kegiatan?', 'Yakin ingin menghapus kegiatan ini? Data tidak bisa dikembalikan!', () => isDeleting = true, () => isDeleting = false)"
+                            :disabled="isDeleting"
+                            class="sm:flex-none w-full sm:w-auto bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition shadow-lg shadow-red-500/30 text-center flex justify-center items-center"
+                        >
+                            <template x-if="!isDeleting">
+                                <span
+                                    ><i class="fas fa-trash-alt mr-2"></i>
+                                    Hapus</span
+                                >
+                            </template>
+                            <template x-if="isDeleting">
+                                <span
+                                    ><i class="fas fa-spinner fa-spin mr-2"></i>
+                                    Menghapus & Sync...</span
+                                >
+                            </template>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <script>
-        document.addEventListener('alpine:init', () => {
-            
-            // --- MAIN LOGIC UNTUK EDIT ENTRY ---
-            Alpine.data('editEntryApp', (initialExistingImages) => ({
-                existingImages: initialExistingImages, // Gambar dari DB
-                newImages: [], // Gambar Upload
-                isDragging: false,
+        <script>
+                document.addEventListener('alpine:init', () => {
 
-                // State Modal
-                gallery: {
-                    isOpen: false,
-                    mode: 'existing', // 'existing' atau 'new'
-                    index: 0,
-                    tempName: '',
-                    tempDesc: '',
-                    dragMode: 'crop', // 'crop' atau 'move'
-                    isVisualEditing: false,
-                    cropper: null,
-                    scaleX: 1,
-                    currentRotation: 0,
-                    // Resize state
-                    resizeW: 0,
-                    resizeH: 0,
-                    resizeOrigW: 0,
-                    resizeOrigH: 0,
-                    resizeLock: true,
-                    resizeUnit: 'px'
-                },
+                    // --- MAIN LOGIC UNTUK EDIT ENTRY ---
+                    Alpine.data('editEntryApp', (initialExistingImages) => ({
+                        existingImages: initialExistingImages, // Gambar dari DB
+                        newImages: [], // Gambar Upload
+                        isDragging: false,
 
-                // Helper: Ambil gambar aktif berdasarkan mode & index
-                get currentImage() {
-                    if (this.gallery.mode === 'new') {
-                        return this.newImages[this.gallery.index];
-                    } else {
-                        return this.existingImages[this.gallery.index];
-                    }
-                },
+                        // State Modal
+                        gallery: {
+                            isOpen: false,
+                            mode: 'existing', // 'existing' atau 'new'
+                            index: 0,
+                            tempName: '',
+                            tempDesc: '',
+                            dragMode: 'crop', // 'crop' atau 'move'
+                            isVisualEditing: false,
+                            cropper: null,
+                            scaleX: 1,
+                            currentRotation: 0,
+                            // Resize state
+                            resizeW: 0,
+                            resizeH: 0,
+                            resizeOrigW: 0,
+                            resizeOrigH: 0,
+                            resizeLock: true,
+                            resizeUnit: 'px'
+                        },
 
-                // Helper untuk ambil metadata berkas
-                getFileMetadata(field) {
-                    const img = this.currentImage;
-                    if (!img) return '-';
-                    
-                    if (field === 'nama_berkas') {
-                        if (img.nama_berkas) {
-                            const parts = img.nama_berkas.split('/');
-                            return parts[parts.length - 1];
-                        }
-                        return img.nama_asli || '-';
-                    }
-                    if (field === 'created_at') {
-                        if (!img.created_at) return this.gallery.mode === 'new' ? 'Belum diunggah' : '-';
-                        try {
-                            const d = new Date(img.created_at);
-                            return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                        } catch { return String(img.created_at); }
-                    }
-                    if (field === 'tipe_berkas' && this.gallery.mode === 'new') {
-                        return img.blob?.type || '-';
-                    }
-                    if (field === 'ukuran_display' && this.gallery.mode === 'new') {
-                        if (img.blob?.size) {
-                            const kb = img.blob.size / 1024;
-                            return kb < 1024 ? `${kb.toFixed(2)} KB` : `${(kb / 1024).toFixed(2)} MB`;
-                        }
-                        return '-';
-                    }
-                    if (field === 'dimensi' && this.gallery.mode === 'new') {
-                        return img._dimensi || 'Memuat...';
-                    }
-                    return img[field] || '-';
-                },
-
-                getCounterText() {
-                    const current = this.gallery.index + 1;
-                    const total = (this.gallery.mode === 'new') ? this.newImages.length : this.existingImages.length;
-                    return `Foto ${current} dari ${total}`;
-                },
-
-                // --- BUKA MODAL ---
-                openGallery(idx, mode) {
-                    this.gallery.mode = mode;
-                    this.gallery.index = idx;
-                    const img = (mode === 'new') ? this.newImages[idx] : this.existingImages[idx];
-                    
-                    this.gallery.tempName = img.nama_asli || '';
-                    this.gallery.tempDesc = img.deskripsi || '';
-                    this.gallery.isVisualEditing = false;
-                    this.gallery.isOpen = true;
-                },
-
-                // --- NAVIGASI MODAL ---
-                nextImage() {
-                    const total = (this.gallery.mode === 'new') ? this.newImages.length : this.existingImages.length;
-                    if (this.gallery.index < total - 1) {
-                        this.openGallery(this.gallery.index + 1, this.gallery.mode);
-                    }
-                },
-                prevImage() {
-                    if (this.gallery.index > 0) {
-                        this.openGallery(this.gallery.index - 1, this.gallery.mode);
-                    }
-                },
-
-                // --- METADATA & DELETE ---
-                async saveMetadata() {
-                    const img = this.currentImage;
-                    if (!img) return;
-
-                    // Update UI Lokal
-                    img.nama_asli = this.gallery.tempName;
-                    img.deskripsi = this.gallery.tempDesc;
-
-                    if (this.gallery.mode === 'new') {
-                        // Draft mode: Cuma simpan di array lokal
-                        this.gallery.isOpen = false;
-                    } else {
-                        // DB mode: Kirim AJAX ke server
-                        try {
-                            const res = await fetch(`/logbook/image/update/${img.id}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ nama: this.gallery.tempName, deskripsi: this.gallery.tempDesc })
-                            });
-                            if (res.ok) {
-                                if(typeof window.showAlert === 'function') window.showAlert('success', 'Info berhasil disimpan!');
-                                else alert('Info berhasil disimpan!');
-                                this.gallery.isOpen = false;
-                            }
-                        } catch (e) { console.error(e); alert('Gagal menyimpan ke server'); }
-                    }
-                },
-
-                async deleteImage() {
-                    const confirmed = await window.showConfirm('Hapus Foto?', 'Yakin ingin menghapus foto ini?', 'danger');
-                    if (!confirmed) return;
-
-                    if (this.gallery.mode === 'new') {
-                        // Hapus dari draft upload
-                        this.newImages.splice(this.gallery.index, 1);
-                        this.updateInputFile();
-                        this.gallery.isOpen = false;
-                    } else {
-                        // Hapus dari database (Permanen)
-                        const img = this.currentImage;
-                        try {
-                            const res = await fetch(`/logbook/image/delete/${img.id}`, { method: 'DELETE' });
-                            if (res.ok) {
-                                this.existingImages.splice(this.gallery.index, 1); // Remove from list
-                                this.gallery.isOpen = false;
-                                if(typeof window.showAlert === 'function') window.showAlert('success', 'Foto dihapus!');
+                        // Helper: Ambil gambar aktif berdasarkan mode & index
+                        get currentImage() {
+                            if (this.gallery.mode === 'new') {
+                                return this.newImages[this.gallery.index];
                             } else {
-                                alert('Gagal menghapus.');
+                                return this.existingImages[this.gallery.index];
                             }
-                        } catch (e) { console.error(e); alert('Error koneksi.'); }
-                    }
-                },
+                        },
 
-                // --- UPLOAD FLOW: AUTO OPEN MODAL ---
-                handleFiles(e) {
-                    const files = Array.from(e.target.files);
-                    this.processFiles(files);
-                    // Reset input agar bisa select file yg sama
-                    e.target.value = '';
-                },
-                handleDrop(e) {
-                    this.isDragging = false; 
-                    const files = Array.from(e.dataTransfer.files);
-                    this.processFiles(files);
-                },
-                processFiles(files) {
-                    const imageFiles = files.filter(file => file.type.startsWith('image/'));
-                    if (imageFiles.length === 0) return alert('Hanya file gambar!');
+                        // Helper untuk ambil metadata berkas
+                        getFileMetadata(field) {
+                            const img = this.currentImage;
+                            if (!img) return '-';
 
-                    // Proses SEMUA file, bukan cuma yang pertama
-                    imageFiles.forEach((file, i) => {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                            const imgData = {
-                                url: ev.target.result,
-                                blob: file,
-                                nama_asli: file.name,
-                                deskripsi: '',
-                                _dimensi: 'Memuat...'
-                            };
-                            this.newImages.push(imgData);
-                            
-                            // Hitung dimensi gambar
-                            const tempImg = new window.Image();
-                            tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
-                            tempImg.src = ev.target.result;
+                            if (field === 'nama_berkas') {
+                                if (img.nama_berkas) {
+                                    const parts = img.nama_berkas.split('/');
+                                    return parts[parts.length - 1];
+                                }
+                                return img.nama_asli || '-';
+                            }
+                            if (field === 'created_at') {
+                                if (!img.created_at) return this.gallery.mode === 'new' ? 'Belum diunggah' : '-';
+                                try {
+                                    const d = new Date(img.created_at);
+                                    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                                } catch { return String(img.created_at); }
+                            }
+                            if (field === 'tipe_berkas' && this.gallery.mode === 'new') {
+                                return img.blob?.type || '-';
+                            }
+                            if (field === 'ukuran_display' && this.gallery.mode === 'new') {
+                                if (img.blob?.size) {
+                                    const kb = img.blob.size / 1024;
+                                    return kb < 1024 ? `${kb.toFixed(2)} KB` : `${(kb / 1024).toFixed(2)} MB`;
+                                }
+                                return '-';
+                            }
+                            if (field === 'dimensi' && this.gallery.mode === 'new') {
+                                return img._dimensi || 'Memuat...';
+                            }
+                            return img[field] || '-';
+                        },
 
+                        getCounterText() {
+                            const current = this.gallery.index + 1;
+                            const total = (this.gallery.mode === 'new') ? this.newImages.length : this.existingImages.length;
+                            return `Foto ${current} dari ${total}`;
+                        },
+
+                        // --- BUKA MODAL ---
+                        openGallery(idx, mode) {
+                            this.gallery.mode = mode;
+                            this.gallery.index = idx;
+                            const img = (mode === 'new') ? this.newImages[idx] : this.existingImages[idx];
+
+                            this.gallery.tempName = img.nama_asli || '';
+                            this.gallery.tempDesc = img.deskripsi || '';
+                            this.gallery.isVisualEditing = false;
+                            this.gallery.isOpen = true;
+                        },
+
+                        // --- NAVIGASI MODAL ---
+                        nextImage() {
+                            const total = (this.gallery.mode === 'new') ? this.newImages.length : this.existingImages.length;
+                            if (this.gallery.index < total - 1) {
+                                this.openGallery(this.gallery.index + 1, this.gallery.mode);
+                            }
+                        },
+                        prevImage() {
+                            if (this.gallery.index > 0) {
+                                this.openGallery(this.gallery.index - 1, this.gallery.mode);
+                            }
+                        },
+
+                        // --- METADATA & DELETE ---
+                        async saveMetadata() {
+                            const img = this.currentImage;
+                            if (!img) return;
+
+                            // Update UI Lokal
+                            img.nama_asli = this.gallery.tempName;
+                            img.deskripsi = this.gallery.tempDesc;
+
+                            if (this.gallery.mode === 'new') {
+                                // Draft mode: Cuma simpan di array lokal
+                                this.gallery.isOpen = false;
+                            } else {
+                                // DB mode: Kirim AJAX ke server
+                                try {
+                                    const res = await fetch(`/logbook/image/update/${img.id}`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ nama: this.gallery.tempName, deskripsi: this.gallery.tempDesc })
+                                    });
+                                    if (res.ok) {
+                                        if(typeof window.showAlert === 'function') window.showAlert('success', 'Info berhasil disimpan!');
+                                        else alert('Info berhasil disimpan!');
+                                        this.gallery.isOpen = false;
+                                    }
+                                } catch (e) { console.error(e); alert('Gagal menyimpan ke server'); }
+                            }
+                        },
+
+                        async deleteImage() {
+                            const confirmed = await window.showConfirm('Hapus Foto?', 'Yakin ingin menghapus foto ini?', 'danger');
+                            if (!confirmed) return;
+
+                            if (this.gallery.mode === 'new') {
+                                // Hapus dari draft upload
+                                this.newImages.splice(this.gallery.index, 1);
+                                this.updateInputFile();
+                                this.gallery.isOpen = false;
+                            } else {
+                                // Hapus dari database (Permanen)
+                                const img = this.currentImage;
+                                try {
+                                    const res = await fetch(`/logbook/image/delete/${img.id}`, { method: 'DELETE' });
+                                    if (res.ok) {
+                                        this.existingImages.splice(this.gallery.index, 1); // Remove from list
+                                        this.gallery.isOpen = false;
+                                        if(typeof window.showAlert === 'function') window.showAlert('success', 'Foto dihapus!');
+                                    } else {
+                                        alert('Gagal menghapus.');
+                                    }
+                                } catch (e) { console.error(e); alert('Error koneksi.'); }
+                            }
+                        },
+
+                        // --- UPLOAD FLOW: AUTO OPEN MODAL ---
+                        handleFiles(e) {
+                            const files = Array.from(e.target.files);
+                            this.processFiles(files);
+                            // Reset input agar bisa select file yg sama
+                            e.target.value = '';
+                        },
+                        handleDrop(e) {
+                            this.isDragging = false;
+                            const files = Array.from(e.dataTransfer.files);
+                            this.processFiles(files);
+                        },
+                        processFiles(files) {
+                            const imageFiles = files.filter(file => file.type.startsWith('image/'));
+                            if (imageFiles.length === 0) return alert('Hanya file gambar!');
+
+                            // Proses SEMUA file, bukan cuma yang pertama
+                            imageFiles.forEach((file, i) => {
+                                const reader = new FileReader();
+                                reader.onload = (ev) => {
+                                    const imgData = {
+                                        url: ev.target.result,
+                                        blob: file,
+                                        nama_asli: file.name,
+                                        deskripsi: '',
+                                        _dimensi: 'Memuat...'
+                                    };
+                                    this.newImages.push(imgData);
+
+                                    // Hitung dimensi gambar
+                                    const tempImg = new window.Image();
+                                    tempImg.onload = () => { imgData._dimensi = `${tempImg.naturalWidth}x${tempImg.naturalHeight}`; };
+                                    tempImg.src = ev.target.result;
+
+                                    this.updateInputFile();
+                                };
+                                reader.readAsDataURL(file);
+                            });
+                        },
+
+                        // --- UTILS: Update Input File Hidden ---
+                        removeNewImage(index) {
+                            this.newImages.splice(index, 1);
                             this.updateInputFile();
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                },
+                        },
+                        updateInputFile() {
+                            const dataTransfer = new DataTransfer();
+                            this.newImages.forEach((img, i) => {
+                                // Gunakan blob yang sudah dicrop/asli
+                                const file = new File([img.blob], `image_${i}.jpg`, { type: "image/jpeg" });
+                                dataTransfer.items.add(file);
+                            });
+                            this.$refs.fileInput.files = dataTransfer.files;
+                        },
 
-                // --- UTILS: Update Input File Hidden ---
-                removeNewImage(index) {
-                    this.newImages.splice(index, 1);
-                    this.updateInputFile();
-                },
-                updateInputFile() {
-                    const dataTransfer = new DataTransfer();
-                    this.newImages.forEach((img, i) => {
-                        // Gunakan blob yang sudah dicrop/asli
-                        const file = new File([img.blob], `image_${i}.jpg`, { type: "image/jpeg" });
-                        dataTransfer.items.add(file);
-                    });
-                    this.$refs.fileInput.files = dataTransfer.files;
-                },
+                        // --- VISUAL EDITOR (CROPPER) ---
+                        startVisualEdit() {
+                            this.gallery.isVisualEditing = true;
+                            this.gallery.scaleX = 1;
+                            this.gallery.currentRotation = 0;
+                            this.$nextTick(() => {
+                                const imageElement = document.getElementById('editor-image');
+                                imageElement.src = this.currentImage.url;
 
-                // --- VISUAL EDITOR (CROPPER) ---
-                startVisualEdit() {
-                    this.gallery.isVisualEditing = true;
-                    this.gallery.scaleX = 1;
-                    this.gallery.currentRotation = 0;
-                    this.$nextTick(() => {
-                        const imageElement = document.getElementById('editor-image');
-                        imageElement.src = this.currentImage.url;
-                        
-                        if (this.gallery.cropper) this.gallery.cropper.destroy();
-                        
-                        this.gallery.dragMode = 'crop';
-                        this.gallery.cropper = new Cropper(imageElement, {
-                            viewMode: 0,
-                            autoCropArea: 1,
-                            responsive: true,
-                            background: false,
-                            movable: true,
-                            zoomable: true,
-                            zoomOnWheel: true,
-                            zoomOnTouch: true,
-                            minContainerWidth: 200,
-                            minContainerHeight: 200,
-                            ready: () => {
-                                const imgData = this.gallery.cropper.getImageData();
-                                this.gallery.resizeOrigW = Math.round(imgData.naturalWidth);
-                                this.gallery.resizeOrigH = Math.round(imgData.naturalHeight);
+                                if (this.gallery.cropper) this.gallery.cropper.destroy();
+
+                                this.gallery.dragMode = 'crop';
+                                this.gallery.cropper = new Cropper(imageElement, {
+                                    viewMode: 0,
+                                    autoCropArea: 1,
+                                    responsive: true,
+                                    background: false,
+                                    movable: true,
+                                    zoomable: true,
+                                    zoomOnWheel: true,
+                                    zoomOnTouch: true,
+                                    minContainerWidth: 200,
+                                    minContainerHeight: 200,
+                                    ready: () => {
+                                        const imgData = this.gallery.cropper.getImageData();
+                                        this.gallery.resizeOrigW = Math.round(imgData.naturalWidth);
+                                        this.gallery.resizeOrigH = Math.round(imgData.naturalHeight);
+                                        this.gallery.resizeW = this.gallery.resizeOrigW;
+                                        this.gallery.resizeH = this.gallery.resizeOrigH;
+                                        this.gallery.resizeUnit = 'px';
+                                    }
+                                });
+                            });
+                        },
+                        rotate(deg) {
+                            if (!this.gallery.cropper) return;
+                            this.gallery.currentRotation = (this.gallery.currentRotation + deg) % 360;
+                            this.gallery.cropper.rotateTo(this.gallery.currentRotation);
+                            this.$nextTick(() => {
+                                const absRot = Math.abs(this.gallery.currentRotation % 360);
+                                const isSwapped = (absRot === 90 || absRot === 270);
+                                if (isSwapped) {
+                                    this.gallery.resizeW = this.gallery.resizeOrigH;
+                                    this.gallery.resizeH = this.gallery.resizeOrigW;
+                                } else {
+                                    this.gallery.resizeW = this.gallery.resizeOrigW;
+                                    this.gallery.resizeH = this.gallery.resizeOrigH;
+                                }
+                                if (this.gallery.resizeUnit !== 'px') this._convertFromPx(this.gallery.resizeUnit);
+                            });
+                        },
+                        scaleX() {
+                            if(this.gallery.cropper) {
+                                this.gallery.scaleX = -this.gallery.scaleX;
+                                this.gallery.cropper.scaleX(this.gallery.scaleX);
+                            }
+                        },
+                        resetCrop() {
+                            if(this.gallery.cropper) {
+                                this.gallery.cropper.reset();
+                                this.gallery.currentRotation = 0;
                                 this.gallery.resizeW = this.gallery.resizeOrigW;
                                 this.gallery.resizeH = this.gallery.resizeOrigH;
                                 this.gallery.resizeUnit = 'px';
                             }
-                        });
-                    });
-                },
-                rotate(deg) {
-                    if (!this.gallery.cropper) return;
-                    this.gallery.currentRotation = (this.gallery.currentRotation + deg) % 360;
-                    this.gallery.cropper.rotateTo(this.gallery.currentRotation);
-                    this.$nextTick(() => {
-                        const absRot = Math.abs(this.gallery.currentRotation % 360);
-                        const isSwapped = (absRot === 90 || absRot === 270);
-                        if (isSwapped) {
-                            this.gallery.resizeW = this.gallery.resizeOrigH;
-                            this.gallery.resizeH = this.gallery.resizeOrigW;
-                        } else {
-                            this.gallery.resizeW = this.gallery.resizeOrigW;
-                            this.gallery.resizeH = this.gallery.resizeOrigH;
-                        }
-                        if (this.gallery.resizeUnit !== 'px') this._convertFromPx(this.gallery.resizeUnit);
-                    });
-                },
-                scaleX() { 
-                    if(this.gallery.cropper) {
-                        this.gallery.scaleX = -this.gallery.scaleX;
-                        this.gallery.cropper.scaleX(this.gallery.scaleX);
-                    }
-                },
-                resetCrop() {
-                    if(this.gallery.cropper) {
-                        this.gallery.cropper.reset();
-                        this.gallery.currentRotation = 0;
-                        this.gallery.resizeW = this.gallery.resizeOrigW;
-                        this.gallery.resizeH = this.gallery.resizeOrigH;
-                        this.gallery.resizeUnit = 'px';
-                    }
-                },
-                zoom(ratio) { if(this.gallery.cropper) this.gallery.cropper.zoom(ratio); },
-                toggleDragMode(mode) {
-                    if (!this.gallery.cropper) return;
-                    const newMode = mode || (this.gallery.dragMode === 'move' ? 'crop' : 'move');
-                    this.gallery.dragMode = newMode;
-                    this.gallery.cropper.setDragMode(newMode);
-                    if (newMode === 'move') {
-                        this.gallery.cropper.clear();
-                    } else {
-                        this.gallery.cropper.crop();
-                    }
-                },
-
-                // --- RESIZE HELPERS ---
-                _getDpi() { return 96; },
-                _toPx(val, unit) {
-                    if (unit === 'px') return val;
-                    if (unit === '%') return Math.round(val / 100 * this.gallery.resizeOrigW);
-                    if (unit === 'cm') return Math.round(val * this._getDpi() / 2.54);
-                    if (unit === 'in') return Math.round(val * this._getDpi());
-                    return val;
-                },
-                _fromPx(px, unit) {
-                    if (unit === 'px') return Math.round(px);
-                    if (unit === '%') return parseFloat((px / this.gallery.resizeOrigW * 100).toFixed(1));
-                    if (unit === 'cm') return parseFloat((px / this._getDpi() * 2.54).toFixed(2));
-                    if (unit === 'in') return parseFloat((px / this._getDpi()).toFixed(2));
-                    return px;
-                },
-                _convertFromPx(newUnit) {
-                    const wPx = this.gallery.resizeUnit === 'px' ? this.gallery.resizeW : this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
-                    const hPx = this.gallery.resizeUnit === 'px' ? this.gallery.resizeH : this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
-                    this.gallery.resizeW = this._fromPx(wPx, newUnit);
-                    this.gallery.resizeH = this._fromPx(hPx, newUnit);
-                },
-                switchResizeUnit(newUnit) {
-                    if (newUnit === this.gallery.resizeUnit) return;
-                    const wPx = this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
-                    const hPx = this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
-                    this.gallery.resizeUnit = newUnit;
-                    this.gallery.resizeW = this._fromPx(wPx, newUnit);
-                    this.gallery.resizeH = this._fromPx(hPx, newUnit);
-                },
-                onResizeW() {
-                    if (this.gallery.resizeLock && this.gallery.resizeW > 0) {
-                        const wPx = this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
-                        const ratio = this.gallery.resizeOrigH / this.gallery.resizeOrigW;
-                        const hPx = Math.round(wPx * ratio);
-                        this.gallery.resizeH = this._fromPx(hPx, this.gallery.resizeUnit);
-                    }
-                },
-                onResizeH() {
-                    if (this.gallery.resizeLock && this.gallery.resizeH > 0) {
-                        const hPx = this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
-                        const ratio = this.gallery.resizeOrigW / this.gallery.resizeOrigH;
-                        const wPx = Math.round(hPx * ratio);
-                        this.gallery.resizeW = this._fromPx(wPx, this.gallery.resizeUnit);
-                    }
-                },
-
-                cancelVisualEdit() {
-                    if(this.gallery.cropper) {
-                        this.gallery.cropper.destroy();
-                        this.gallery.cropper = null;
-                    }
-                    this.gallery.isVisualEditing = false;
-                },
-                applyCrop() {
-                    if (!this.gallery.cropper) return;
-                    const targetW = this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
-                    const targetH = this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
-
-                    this.gallery.cropper.getCroppedCanvas({ 
-                        width: targetW || undefined,
-                        height: targetH || undefined,
-                        maxWidth: 4096, 
-                        maxHeight: 4096 
-                    }).toBlob(async (blob) => {
-                        const newUrl = URL.createObjectURL(blob);
-                        
-                        if (this.gallery.mode === 'new') {
-                            this.newImages[this.gallery.index].url = newUrl;
-                            this.newImages[this.gallery.index].blob = blob;
-                            this.newImages[this.gallery.index]._dimensi = `${targetW}x${targetH}`;
-                            this.updateInputFile();
-                        } else {
-                            // Replace existing image via backend
-                            const img = this.currentImage;
-                            const formData = new FormData();
-                            formData.append('file', blob, 'edited.jpg');
-                            
-                            try {
-                                const res = await fetch(`/logbook/image/replace/${img.id}`, {
-                                    method: 'POST',
-                                    body: formData
-                                });
-                                const data = await res.json();
-                                if (res.ok && data.new_url) {
-                                    this.existingImages[this.gallery.index].url = data.new_url;
-                                    // Update path agar saat submit form data tidak hilang (karena path berubah di DB)
-                                    if (data.new_path) {
-                                        this.existingImages[this.gallery.index].path = data.new_path;
-                                    }
-                                    if(typeof window.showAlert === 'function') window.showAlert('success', 'Gambar berhasil diperbarui!');
-                                } else {
-                                    alert(data.message || 'Gagal menyimpan perubahan.');
-                                }
-                            } catch (e) {
-                                console.error(e);
-                                alert('Error koneksi saat menyimpan.');
+                        },
+                        zoom(ratio) { if(this.gallery.cropper) this.gallery.cropper.zoom(ratio); },
+                        toggleDragMode(mode) {
+                            if (!this.gallery.cropper) return;
+                            const newMode = mode || (this.gallery.dragMode === 'move' ? 'crop' : 'move');
+                            this.gallery.dragMode = newMode;
+                            this.gallery.cropper.setDragMode(newMode);
+                            if (newMode === 'move') {
+                                this.gallery.cropper.clear();
+                            } else {
+                                this.gallery.cropper.crop();
                             }
+                        },
+
+                        // --- RESIZE HELPERS ---
+                        _getDpi() { return 96; },
+                        _toPx(val, unit) {
+                            if (unit === 'px') return val;
+                            if (unit === '%') return Math.round(val / 100 * this.gallery.resizeOrigW);
+                            if (unit === 'cm') return Math.round(val * this._getDpi() / 2.54);
+                            if (unit === 'in') return Math.round(val * this._getDpi());
+                            return val;
+                        },
+                        _fromPx(px, unit) {
+                            if (unit === 'px') return Math.round(px);
+                            if (unit === '%') return parseFloat((px / this.gallery.resizeOrigW * 100).toFixed(1));
+                            if (unit === 'cm') return parseFloat((px / this._getDpi() * 2.54).toFixed(2));
+                            if (unit === 'in') return parseFloat((px / this._getDpi()).toFixed(2));
+                            return px;
+                        },
+                        _convertFromPx(newUnit) {
+                            const wPx = this.gallery.resizeUnit === 'px' ? this.gallery.resizeW : this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
+                            const hPx = this.gallery.resizeUnit === 'px' ? this.gallery.resizeH : this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
+                            this.gallery.resizeW = this._fromPx(wPx, newUnit);
+                            this.gallery.resizeH = this._fromPx(hPx, newUnit);
+                        },
+                        switchResizeUnit(newUnit) {
+                            if (newUnit === this.gallery.resizeUnit) return;
+                            const wPx = this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
+                            const hPx = this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
+                            this.gallery.resizeUnit = newUnit;
+                            this.gallery.resizeW = this._fromPx(wPx, newUnit);
+                            this.gallery.resizeH = this._fromPx(hPx, newUnit);
+                        },
+                        onResizeW() {
+                            if (this.gallery.resizeLock && this.gallery.resizeW > 0) {
+                                const wPx = this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
+                                const ratio = this.gallery.resizeOrigH / this.gallery.resizeOrigW;
+                                const hPx = Math.round(wPx * ratio);
+                                this.gallery.resizeH = this._fromPx(hPx, this.gallery.resizeUnit);
+                            }
+                        },
+                        onResizeH() {
+                            if (this.gallery.resizeLock && this.gallery.resizeH > 0) {
+                                const hPx = this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
+                                const ratio = this.gallery.resizeOrigW / this.gallery.resizeOrigH;
+                                const wPx = Math.round(hPx * ratio);
+                                this.gallery.resizeW = this._fromPx(wPx, this.gallery.resizeUnit);
+                            }
+                        },
+
+                        cancelVisualEdit() {
+                            if(this.gallery.cropper) {
+                                this.gallery.cropper.destroy();
+                                this.gallery.cropper = null;
+                            }
+                            this.gallery.isVisualEditing = false;
+                        },
+                        applyCrop() {
+                            if (!this.gallery.cropper) return;
+                            const targetW = this._toPx(this.gallery.resizeW, this.gallery.resizeUnit);
+                            const targetH = this._toPx(this.gallery.resizeH, this.gallery.resizeUnit);
+
+                            this.gallery.cropper.getCroppedCanvas({
+                                width: targetW || undefined,
+                                height: targetH || undefined,
+                                maxWidth: 4096,
+                                maxHeight: 4096
+                            }).toBlob(async (blob) => {
+                                const newUrl = URL.createObjectURL(blob);
+
+                                if (this.gallery.mode === 'new') {
+                                    this.newImages[this.gallery.index].url = newUrl;
+                                    this.newImages[this.gallery.index].blob = blob;
+                                    this.newImages[this.gallery.index]._dimensi = `${targetW}x${targetH}`;
+                                    this.updateInputFile();
+                                } else {
+                                    // Replace existing image via backend
+                                    const img = this.currentImage;
+                                    const formData = new FormData();
+                                    formData.append('file', blob, 'edited.jpg');
+
+                                    try {
+                                        const res = await fetch(`/logbook/image/replace/${img.id}`, {
+                                            method: 'POST',
+                                            body: formData
+                                        });
+                                        const data = await res.json();
+                                        if (res.ok && data.new_url) {
+                                            this.existingImages[this.gallery.index].url = data.new_url;
+                                            // Update path agar saat submit form data tidak hilang (karena path berubah di DB)
+                                            if (data.new_path) {
+                                                this.existingImages[this.gallery.index].path = data.new_path;
+                                            }
+                                            if(typeof window.showAlert === 'function') window.showAlert('success', 'Gambar berhasil diperbarui!');
+                                        } else {
+                                            alert(data.message || 'Gagal menyimpan perubahan.');
+                                        }
+                                    } catch (e) {
+                                        console.error(e);
+                                        alert('Error koneksi saat menyimpan.');
+                                    }
+                                }
+                                this.cancelVisualEdit();
+                            }, 'image/jpeg', 0.85);
                         }
-                        this.cancelVisualEdit();
-                    }, 'image/jpeg', 0.85);
-                }
-            }));
+                    }));
 
-            // --- TIPTAP EDITOR ---
-            Alpine.data('tiptapEditor', (initialContent = '') => ({
-                editor: null,
-                content: initialContent,
-                async init() {
-                    try {
-                        const { Editor } = await import('https://esm.sh/@tiptap/core@2.2.4');
-                        const { default: StarterKit } = await import('https://esm.sh/@tiptap/starter-kit@2.2.4');
-                        const { default: Link } = await import('https://esm.sh/@tiptap/extension-link@2.2.4');
-                        const _this = this;
-                        this.editor = new Editor({
-                            element: this.$refs.editorElement,
-                            extensions: [
-                                StarterKit,
-                                Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-blue-400 underline cursor-pointer' } })
-                            ],
-                            content: this.content,
-                            editorProps: { attributes: { class: 'focus:outline-none min-h-[150px] p-4 text-gray-300 editor-content' } },
-                            onUpdate: ({ editor }) => { _this.content = editor.getHTML(); }
-                        });
-                    } catch (error) { console.error("Gagal load Tiptap:", error); }
-                },
-                toggleLink() {
-                    const raw = Alpine.raw(this.editor);
-                    if (raw.isActive('link')) {
-                        raw.chain().focus().unsetLink().run();
-                        return;
+                    // --- TIPTAP EDITOR ---
+                    Alpine.data('tiptapEditor', (initialContent = '') => ({
+                        editor: null,
+                        content: initialContent,
+                        activeFormats: { bold: false, italic: false, strike: false, bulletList: false, orderedList: false, code: false, codeBlock: false, blockquote: false, link: false },
+                        updateActiveFormats() {
+                            if (!this.editor) return;
+                            const raw = Alpine.raw(this.editor);
+                            ['bold', 'italic', 'strike', 'bulletList', 'orderedList', 'code', 'codeBlock', 'blockquote', 'link'].forEach(fmt => {
+                                this.activeFormats[fmt] = raw.isActive(fmt);
+                            });
+                        },
+                        async init() {
+                            try {
+                                const { Editor } = await import('https://esm.sh/@tiptap/core@2.2.4');
+                                const { default: StarterKit } = await import('https://esm.sh/@tiptap/starter-kit@2.2.4');
+                                const { default: Link } = await import('https://esm.sh/@tiptap/extension-link@2.2.4');
+                                const _this = this;
+                                this.editor = new Editor({
+                                    element: this.$refs.editorElement,
+                                    extensions: [
+                                        StarterKit,
+                                        Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-blue-400 underline cursor-pointer' } })
+                                    ],
+                                    content: this.content,
+                                    editorProps: { attributes: { class: 'focus:outline-none min-h-[150px] p-4 text-gray-300 editor-content' } },
+                                    onUpdate: ({ editor }) => { _this.content = editor.getHTML(); _this.updateActiveFormats(); },
+                                    onSelectionUpdate: () => { _this.updateActiveFormats(); },
+                                    onTransaction: () => { _this.updateActiveFormats(); }
+                                });
+                            } catch (error) { console.error("Gagal load Tiptap:", error); }
+                        },
+                        async toggleLink() {
+                            const raw = Alpine.raw(this.editor);
+                            if (raw.isActive('link')) {
+                                raw.chain().focus().unsetLink().run();
+                                return;
+                            }
+                            const url = await window.showPrompt('Masukkan URL Tautan:', 'https://...');
+                            if (!url) return;
+                            raw.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+                        },
+                        destroy() { if (this.editor) this.editor.destroy(); }
+                    }));
+                });
+
+                // Helper delete confirm
+                async function handleCustomDelete(event, title, message, onStartLoading, onFinishLoading) {
+                    event.preventDefault();
+                    const deleteUrl = event.currentTarget.getAttribute('href');
+                    if (typeof window.showConfirm === 'function') {
+                     // Jika user klik "Ya"
+                    const isConfirmed = await window.showConfirm(title, message, 'danger');
+                    if (isConfirmed) {
+                        if (onStartLoading) onStartLoading();
+                        try {
+                            const response = await fetch(deleteUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-Token': '{{ csrf_token() if csrf_token else "" }}'
+                                }
+                            });
+
+                            if (response.ok) {
+                            // --- TAMBAHAN SINKRONISASI OTOMATIS SAAT DIHAPUS ---
+                                    {% if logbook.google_doc_id %}
+                                    if(typeof window.showAlert === 'function') window.showAlert('info', 'Terhapus! Menyinkronkan ke Google Docs...');
+                                    await autoSyncActivities('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
+                                    {% endif %}
+                                // Redirect logic depending on where we are
+                                // If deleting entry, reload or go back to logbook detail?
+                                // Usually deleting entry -> reload current page (which might be detail?)
+                                // But wait, this is edit_entry page. If we delete, we should go back to logbook detail.
+                                // Let's check response url or just go to logbook detail.
+                                // Backend delete_entry usually redirects.
+                                if (response.redirected) {
+                                    window.location.href = response.url;
+                                } else {
+                                     // Fallback: go to logbook detail
+                                     window.location.href = "{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}";
+                                }
+                            } else {
+                                if (onStopLoading) onStopLoading();
+                                alert('Gagal menghapus kegiatan. Silakan coba lagi.');
+                            }
+                        } catch (e) {
+                            if (onStopLoading) onStopLoading();
+                            console.error('Delete error:', e);
+                            alert('Terjadi kesalahan koneksi.');
+                        }
                     }
-                    const url = prompt('Masukkan URL:');
-                    if (!url) return;
-                    raw.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-                },
-                destroy() { if (this.editor) this.editor.destroy(); }
-            }));
-        });
+                } else {
+                     // Fallback
+                    if (confirm(message)) {
+                        if (onStartLoading) onStartLoading();
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = deleteUrl;
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                }
+            }
 
-        // Helper delete confirm
-        async function handleCustomDelete(event, title, message, onStartLoading, onFinishLoading) {
-            event.preventDefault();
-            const deleteUrl = event.currentTarget.getAttribute('href');
-            if (typeof window.showConfirm === 'function') {
-             // Jika user klik "Ya"
-            const isConfirmed = await window.showConfirm(title, message, 'danger');
-            if (isConfirmed) {
-                if (onStartLoading) onStartLoading();
+            // Auto sync tanpa konfirmasi (dipanggil setelah simpan/edit)
+            async function autoSyncActivities(logbookId, fileId) {
                 try {
-                    const response = await fetch(deleteUrl, {
+                    const res = await fetch(`/api/google/drive/sync-activities/${logbookId}`, {
                         method: 'POST',
-                        headers: {
-                            'X-CSRF-Token': '{{ csrf_token() if csrf_token else "" }}'
-                        }
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({file_id: fileId})
                     });
-                    
-                    if (response.ok) {
-                    // --- TAMBAHAN SINKRONISASI OTOMATIS SAAT DIHAPUS ---
-                            {% if logbook.google_doc_id %}
-                            if(typeof window.showAlert === 'function') window.showAlert('info', 'Terhapus! Menyinkronkan ke Google Docs...');
-                            await autoSyncActivities('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
-                            {% endif %}
-                        // Redirect logic depending on where we are
-                        // If deleting entry, reload or go back to logbook detail?
-                        // Usually deleting entry -> reload current page (which might be detail?)
-                        // But wait, this is edit_entry page. If we delete, we should go back to logbook detail.
-                        // Let's check response url or just go to logbook detail.
-                        // Backend delete_entry usually redirects.
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                             // Fallback: go to logbook detail
-                             window.location.href = "{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}";
-                        }
+                    const data = await res.json();
+
+                    if(data.success) {
+                        if(typeof window.showAlert === 'function') window.showAlert('success', 'Sinkronisasi Google Docs berhasil!');
                     } else {
-                        if (onStopLoading) onStopLoading();
-                        alert('Gagal menghapus kegiatan. Silakan coba lagi.');
+                        console.warn('Sync warning:', data.error);
+                        if(typeof window.showAlert === 'function') window.showAlert('error', 'Sync gagal: ' + (data.error || 'Unknown error'));
                     }
-                } catch (e) {
-                    if (onStopLoading) onStopLoading();
-                    console.error('Delete error:', e);
-                    alert('Terjadi kesalahan koneksi.');
+                } catch(e) {
+                    console.warn('Auto sync failed:', e);
                 }
             }
-        } else {
-             // Fallback
-            if (confirm(message)) {
-                if (onStartLoading) onStartLoading();
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = deleteUrl;
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    }
 
-    // Auto sync tanpa konfirmasi (dipanggil setelah simpan/edit)
-    async function autoSyncActivities(logbookId, fileId) {
-        try {
-            const res = await fetch(`/api/google/drive/sync-activities/${logbookId}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({file_id: fileId})
-            });
-            const data = await res.json();
-            
-            if(data.success) {
-                if(typeof window.showAlert === 'function') window.showAlert('success', 'Sinkronisasi Google Docs berhasil!');
-            } else {
-                console.warn('Sync warning:', data.error);
-                if(typeof window.showAlert === 'function') window.showAlert('error', 'Sync gagal: ' + (data.error || 'Unknown error'));
-            }
-        } catch(e) {
-            console.warn('Auto sync failed:', e);
-        }
-    }
+                // Init Flatpickr
+                document.addEventListener('DOMContentLoaded', function() {
+                    flatpickr(".datepicker", { altInput: true, altFormat: "d-m-Y", dateFormat: "Y-m-d", disableMobile: "true" });
 
-        // Init Flatpickr
-        document.addEventListener('DOMContentLoaded', function() {
-            flatpickr(".datepicker", { altInput: true, altFormat: "d-m-Y", dateFormat: "Y-m-d", disableMobile: "true" });
+                    // ── Background sync check ──────────────────────────────────────
+                    // Jika user navigasi ke halaman ini sementara ada pending sync
+                    // (misal: save entry → redirect ke detail → langsung klik edit
+                    // entry lain), sync tetap jalan di background dari sini.
+                    {% if logbook.google_doc_id %}
+                    const _pendingSyncKey = 'pendingSync_{{ logbook.uuid }}';
+                    const _pendingFileId  = localStorage.getItem(_pendingSyncKey);
+                    if (_pendingFileId) {
+                        setTimeout(async () => {
+                            if (typeof window.showAlert === 'function')
+                                window.showAlert('info', 'Sinkronisasi Google Docs berjalan di background...');
+                            await autoSyncActivities('{{ logbook.uuid }}', _pendingFileId);
+                            // Hapus flag SETELAH sync selesai — kalau refresh sebelum
+                            // ini tercapai, halaman berikutnya akan otomatis retry.
+                            localStorage.removeItem(_pendingSyncKey);
+                        }, 600);
+                    }
+                    {% endif %}
 
-            // Running text pada tab browser
-            const baseTitle = document.title + ' ';
-            let pos = 0;
-            setInterval(() => {
-                document.title = baseTitle.substring(pos) + baseTitle.substring(0, pos);
-                pos = (pos + 1) % baseTitle.length;
-            }, 300);
-        });
-    </script>
-    
-    {% include 'alert.html' %}
-    
-</body>
+                    // Running text pada tab browser
+                    const baseTitle = document.title + ' ';
+                    let pos = 0;
+                    setInterval(() => {
+                        document.title = baseTitle.substring(pos) + baseTitle.substring(0, pos);
+                        pos = (pos + 1) % baseTitle.length;
+                    }, 300);
+                });
+        </script>
+
+        {% include 'alert.html' %}
+    </body>
 </html>

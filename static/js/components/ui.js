@@ -45,7 +45,45 @@ document.addEventListener('alpine:init', () => {
         }
     });
 
+    // --- 3. STORE UNTUK PROMPT (INPUT TEXT) ---
+    Alpine.store('prompt', {
+        isOpen: false,
+        title: '',
+        value: '',
+        placeholder: '',
+        resolve: null,
+
+        ask(title, placeholder = '') {
+            this.title = title;
+            this.placeholder = placeholder;
+            this.value = '';
+            this.isOpen = true;
+
+            return new Promise((resolve) => {
+                this.resolve = resolve;
+                // Focus on input optionally later in HTML using Alpine x-init or x-effect
+            });
+        },
+
+        submit() {
+            this.isOpen = false;
+            if (this.resolve) {
+                this.resolve(this.value); // Return string input
+                this.resolve = null;
+            }
+        },
+
+        cancel() {
+            this.isOpen = false;
+            if (this.resolve) {
+                this.resolve(null); // Return null on cancel
+                this.resolve = null;
+            }
+        }
+    });
+
     // --- GLOBAL HELPERS ---
     window.showAlert = (type, message) => Alpine.store('toast').show(type, message);
     window.showConfirm = (title, message, type) => Alpine.store('confirm').ask(title, message, type);
+    window.showPrompt = (title, placeholder) => Alpine.store('prompt').ask(title, placeholder);
 });

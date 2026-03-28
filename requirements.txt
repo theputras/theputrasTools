@@ -22,7 +22,8 @@ qrcode[pil]
 google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2
-python-docx 
+python-docx
 Pillow
 bleach
 Flask-Limiter
+reportlab

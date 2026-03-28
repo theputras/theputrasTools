@@ -1,74 +1,98 @@
-import os
-import io
-from werkzeug.utils import secure_filename
-from PIL import Image
-from docx import Document
-import time
-import re
 import html
-from docx.shared import Inches, Pt, RGBColor
-from flask import send_file, current_app
-from connection import get_connection
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE # Tambahkan ini di bagian atas file import lu
-import bleach
-from PIL import Image
-from datetime import datetime
+from html.parser import HTMLParser
+
+import io
+import os
+import re
+import time
 import uuid
+from datetime import datetime
+
+import bleach
+from docx import Document
+from docx.enum.text import (  # Tambahkan ini di bagian atas file import lu
+    WD_ALIGN_PARAGRAPH,
+    WD_UNDERLINE,
+)
+from docx.shared import Inches, Pt, RGBColor
+from flask import current_app, send_file
+from PIL import Image
+from werkzeug.utils import secure_filename
+
+from connection import get_connection
 
 # UPLOAD_FOLDER = os.path.join('static', 'uploads', 'logbook')
 # os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ALLOWED_TAGS = [
-    'p', 'ul', 'ol', 'li', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'br'
+    "p", "ul", "ol", "li", "strong", "em", "u", "s",
+    "h1", "h2", "h3", "br", "blockquote", "code", "pre",
+    "a", "hr",
 ]
-ALLOWED_IMAGE_EXT = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.ico', '.avif', '.heic', '.heif'}
-ALLOWED_TTD_EXT = {'.png', '.jpg', '.jpeg'}
+ALLOWED_ATTRS = {"a": ["href"]}
+
+ALLOWED_IMAGE_EXT = {
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".webp",
+    ".svg",
+    ".ico",
+    ".avif",
+    ".heic",
+    ".heif",
+}
+ALLOWED_TTD_EXT = {".png", ".jpg", ".jpeg"}
+
 
 # --- HELPER: SAVE/DELETE FILE TANDA TANGAN ---
 def save_signature_file(file, nim):
     """Simpan file tanda tangan mentor ke disk dengan auto-compress. Return relative path atau None jika gagal."""
-    if not file or file.filename == '':
+    if not file or file.filename == "":
         return None
-    
+
     filename = secure_filename(file.filename)
     _, ext = os.path.splitext(filename)
     ext = ext.lower()
-    
+
     # Validasi ekstensi (hanya PNG)
     if ext not in ALLOWED_TTD_EXT:
         return None
-    
+
     # Validasi MIME type (terima PNG dan JPEG, nanti dikonversi ke PNG)
-    if file.content_type not in ('image/png', 'image/jpeg', 'image/jpg'):
+    if file.content_type not in ("image/png", "image/jpeg", "image/jpg"):
         return None
-    
+
     # Folder: static/uploads/logbook/{nim}/ttd/
-    ttd_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', str(nim), 'ttd')
+    ttd_folder = os.path.join(
+        current_app.root_path, "static", "uploads", "logbook", str(nim), "ttd"
+    )
     os.makedirs(ttd_folder, exist_ok=True)
-    
+
     # Nama file: signature-{nim}.png (overwrite jika sudah ada)
-    save_path = os.path.join(ttd_folder, f'signature-{nim}.png')
-    
+    save_path = os.path.join(ttd_folder, f"signature-{nim}.png")
+
     # Auto-compress: resize + optimize PNG otomatis
     try:
         img = Image.open(file)
         # Convert ke RGBA wajib untuk manipulasi transparansi (Alpha channel)
         img = img.convert("RGBA")
-        
+
         # --- PROSES HILANGKAN BACKGROUND ---
         datas = img.getdata()
         newData = []
-        
+
         # Threshold: Warna RGB di atas 200 (mendekati putih) akan dianggap background.
         # Lu bisa atur nilainya (0-255). Makin kecil makin agresif hapus warnanya.
-        threshold = 200 
-        
+        threshold = 200
+
         for item in datas:
             # item is (R, G, B, A)
             if item[0] > threshold and item[1] > threshold and item[2] > threshold:
-                newData.append((255, 255, 255, 0)) # Jadikan transparan
+                newData.append((255, 255, 255, 0))  # Jadikan transparan
             else:
                 newData.append(item)
-                
+
         img.putdata(newData)
         # Resize jika terlalu besar (max width 500px, proporsional)
         max_w = 500
@@ -76,88 +100,421 @@ def save_signature_file(file, nim):
             ratio = max_w / img.width
             new_h = int(img.height * ratio)
             img = img.resize((max_w, new_h), Image.LANCZOS)
-        
+
         # Simpan dengan optimize
-        img.save(save_path, format='PNG', optimize=True)
+        img.save(save_path, format="PNG", optimize=True)
         img.close()
     except Exception as e:
         print(f"Gagal compress TTD, simpan apa adanya: {e}")
         file.seek(0)
         file.save(save_path)
-    
+
     return f"{nim}/ttd/signature-{nim}.png"
+
 
 def delete_signature_file(ttd_path):
     """Hapus file tanda tangan dari disk."""
     if not ttd_path:
         return
-    full_path = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', ttd_path)
+    full_path = os.path.join(
+        current_app.root_path, "static", "uploads", "logbook", ttd_path
+    )
     if os.path.exists(full_path):
         try:
             os.remove(full_path)
         except OSError:
             pass
 
+
 def compress_and_save_image(image_file, nim, entry_id):
-    if not image_file or image_file.filename == '':
+    if not image_file or image_file.filename == "":
         return None
-        
+
     original_filename = secure_filename(image_file.filename)
-    
+
     # Kita cuma butuh ekstensinya aja (misal: ".jpg" atau ".png")
     _, ext = os.path.splitext(original_filename)
-    
+
     # Format baru sesuai request lu: {nim}Image_{entry_id}_{timestamp}{ext}
     # Contoh hasil: 23410100003Image_45_1708150000.jpg
     timestamp = int(time.time() * 1000)
     filename = f"{nim}img_{entry_id}_{timestamp}{ext}"
-    
+
     # Bikin struktur folder dinamis
-    nim_folder = os.path.join('static', 'uploads', 'logbook', str(nim), 'imgs')
+    nim_folder = os.path.join("static", "uploads", "logbook", str(nim), "imgs")
     os.makedirs(nim_folder, exist_ok=True)
-    
+
     filepath = os.path.join(nim_folder, filename)
-    
+
     img = Image.open(image_file)
-    if img.mode in ("RGBA", "P"): 
+    if img.mode in ("RGBA", "P"):
         img = img.convert("RGB")
     img.thumbnail((800, 800))
     img.save(filepath, optimize=True, quality=60)
-    
+
     # Return path relatif untuk disimpan ke DB
     return f"{nim}/imgs/{filename}"
+
+
 def clean_html_for_word(html_text):
     """Fungsi sakti merubah HTML Tiptap jadi teks rapi buat Word"""
-    if not html_text: return ""
-    
+    if not html_text:
+        return ""
+
     # Ubah list item <li> jadi format bullet
-    text = re.sub(r'<li>', r'- ', html_text)
+    text = re.sub(r"<li>", r"- ", html_text)
     # Ganti tag akhir paragraf/list jadi baris baru (enter)
-    text = re.sub(r'</p>|<br>|</li>|</ul>|</ol>', r'\n', text)
+    text = re.sub(r"</p>|<br\s*/?>|</li>|</ul>|</ol>", r"\n", text)
     # Hapus semua tag HTML yang tersisa
-    text = re.sub(r'<[^>]+>', '', text)
-    # Decode simbol (kayak &amp; jadi &)
-    text = html.unescape(text)
-    
+    text = re.sub(r"<[^>]+>", "", text)
+    # Decode semua HTML entities — dua kali untuk handle bleach double-encoding.
+    # Contoh alur: &amp;amp; → (unescape 1) → &amp; → (unescape 2) → &
+    # Kalau sudah single-encoded (&amp;), unescape kedua tidak mengubah apapun.
+    # Mencakup: &amp; &lt; &gt; &quot; &#39; dan semua named/numeric entities lain.
+    text = html.unescape(html.unescape(text))
+    # Ganti non-breaking space (&nbsp;) jadi spasi biasa
+    text = text.replace("\xa0", " ")
+
     # Hapus enter berlebih
-    return re.sub(r'\n{3,}', '\n\n', text).strip()
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+# ── TIPTAP HTML PARSER ──────────────────────────────────────────────
+# Converts tiptap HTML into structured blocks for rich-text export.
+
+class _TiptapParser(HTMLParser):
+    """Parse tiptap HTML into structured blocks."""
+
+    def __init__(self):
+        super().__init__()
+        self.blocks = []
+        self.current_block = None
+        self.fmt_stack = []
+        self.list_stack = []
+        self.list_counters = []
+        self.in_blockquote = False
+        self.in_code_block = False
+
+    def _fmt(self):
+        f = {"bold": False, "italic": False, "strike": False,
+             "underline": False, "code": False, "link": None}
+        for s in self.fmt_stack:
+            f.update(s)
+        return f
+
+    def _ensure(self, btype="paragraph"):
+        if self.current_block is None:
+            self.current_block = {
+                "type": btype, "segments": [],
+                "list_type": None, "list_number": None,
+                "indent": 1 if self.in_blockquote else 0,
+            }
+
+    def _flush(self):
+        if self.current_block is not None:
+            self.blocks.append(self.current_block)
+        self.current_block = None
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag == "p":
+            self._flush(); self._ensure("paragraph")
+        elif tag == "blockquote":
+            self._flush(); self.in_blockquote = True
+        elif tag in ("ul", "ol"):
+            self._flush()
+            self.list_stack.append("bullet" if tag == "ul" else "ordered")
+            self.list_counters.append(0)
+        elif tag == "li":
+            self._flush()
+            lt = self.list_stack[-1] if self.list_stack else "bullet"
+            ln = None
+            if lt == "ordered" and self.list_counters:
+                self.list_counters[-1] += 1
+                ln = self.list_counters[-1]
+            self._ensure("list_item")
+            self.current_block["list_type"] = lt
+            self.current_block["list_number"] = ln
+        elif tag == "pre":
+            self._flush(); self.in_code_block = True; self._ensure("code_block")
+        elif tag == "code":
+            if not self.in_code_block:
+                self.fmt_stack.append({"code": True})
+        elif tag == "strong":
+            self.fmt_stack.append({"bold": True})
+        elif tag == "em":
+            self.fmt_stack.append({"italic": True})
+        elif tag == "s":
+            self.fmt_stack.append({"strike": True})
+        elif tag == "u":
+            self.fmt_stack.append({"underline": True})
+        elif tag == "a":
+            self.fmt_stack.append({"link": a.get("href", "")})
+        elif tag == "hr":
+            self._flush()
+            self.blocks.append({"type": "horizontal_rule", "segments": [],
+                                "list_type": None, "list_number": None, "indent": 0})
+        elif tag == "br":
+            self._ensure()
+            self.current_block["segments"].append({"text": "\n", **self._fmt()})
+
+    def handle_endtag(self, tag):
+        if tag == "p":
+            self._flush()
+        elif tag == "blockquote":
+            self._flush(); self.in_blockquote = False
+        elif tag in ("ul", "ol"):
+            self._flush()
+            if self.list_stack: self.list_stack.pop()
+            if self.list_counters: self.list_counters.pop()
+        elif tag == "li":
+            self._flush()
+        elif tag == "pre":
+            self._flush(); self.in_code_block = False
+        elif tag in ("code", "strong", "em", "s", "u", "a"):
+            if tag == "code" and self.in_code_block:
+                pass
+            elif self.fmt_stack:
+                self.fmt_stack.pop()
+
+    def handle_data(self, data):
+        if not data:
+            return
+        self._ensure("code_block" if self.in_code_block else "paragraph")
+        f = self._fmt()
+        if self.in_code_block:
+            f["code"] = True
+        self.current_block["segments"].append({"text": data, **f})
+
+    def result(self):
+        self._flush()
+        return self.blocks
+
+
+def parse_tiptap_html(html_text):
+    """Parse tiptap HTML into structured blocks for export."""
+    if not html_text:
+        return []
+    text = html.unescape(html.unescape(str(html_text)))
+    text = text.replace("\xa0", " ")
+    p = _TiptapParser()
+    p.feed(text)
+    return p.result()
+
+
+# ── WORD RENDERER ───────────────────────────────────────────────────
+
+def _render_word_blocks(blocks, first_para, add_para_fn):
+    """Shared: render parsed blocks into python-docx paragraphs."""
+    p = first_para
+    first = True
+    for block in blocks:
+        if block["type"] == "horizontal_rule":
+            if not first:
+                p = add_para_fn()
+            r = p.add_run("─" * 40)
+            r.font.color.rgb = RGBColor(180, 180, 180)
+            r.font.size = Pt(8)
+            first = False
+            continue
+        if not first:
+            p = add_para_fn()
+        first = False
+        if not block.get("segments"):
+            continue
+        if block["type"] == "list_item":
+            prefix = ""
+            if block.get("list_type") == "bullet":
+                prefix = "• "
+            elif block.get("list_type") == "ordered" and block.get("list_number"):
+                prefix = f"{block['list_number']}. "
+            if prefix:
+                r = p.add_run(prefix)
+                r.font.name = "Times New Roman"
+                r.font.size = Pt(12)
+            p.paragraph_format.left_indent = Inches(0.25)
+        if block.get("indent", 0) > 0:
+            p.paragraph_format.left_indent = Inches(0.3)
+        if block["type"] == "code_block":
+            p.paragraph_format.left_indent = Inches(0.2)
+        for seg in block.get("segments", []):
+            txt = seg.get("text", "")
+            if not txt:
+                continue
+            r = p.add_run(txt)
+            is_code = seg.get("code") or block["type"] == "code_block"
+            r.font.name = "Courier New" if is_code else "Times New Roman"
+            r.font.size = Pt(10) if is_code else Pt(12)
+            r.bold = bool(seg.get("bold"))
+            if seg.get("italic"):
+                r.italic = True
+            if seg.get("strike"):
+                r.font.strike = True
+            if seg.get("underline"):
+                r.underline = True
+            if seg.get("link"):
+                r.underline = True
+                r.font.color.rgb = RGBColor(0, 102, 204)
+
+
+def render_html_to_word_cell(cell, html_text):
+    """Render tiptap HTML into a Word table cell with rich formatting."""
+    blocks = parse_tiptap_html(html_text)
+    if not blocks:
+        return
+    p = cell.paragraphs[0]
+    _render_word_blocks(blocks, p, lambda: cell.add_paragraph())
+
+
+def render_html_to_word_doc(doc, html_text):
+    """Render tiptap HTML as formatted paragraphs in a Word document."""
+    blocks = parse_tiptap_html(html_text)
+    if not blocks:
+        return
+    first_p = doc.add_paragraph()
+    _render_word_blocks(blocks, first_p, lambda: doc.add_paragraph())
+
+
+# ── PDF RENDERER (ReportLab) ────────────────────────────────────────
+
+def html_to_reportlab_flowables(html_text, base_style):
+    """Convert tiptap HTML to a list of ReportLab Paragraph flowables."""
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.platypus import Paragraph
+
+    blocks = parse_tiptap_html(html_text)
+    if not blocks:
+        return [Paragraph("", base_style)]
+
+    def esc(t):
+        return str(t).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    flowables = []
+    for block in blocks:
+        if block["type"] == "horizontal_rule":
+            flowables.append(Paragraph(
+                '<font color="gray">' + "─" * 30 + "</font>", base_style))
+            continue
+        segs = block.get("segments", [])
+        if not segs:
+            flowables.append(Paragraph("<br/>", base_style))
+            continue
+        markup = ""
+        if block["type"] == "list_item":
+            if block.get("list_type") == "bullet":
+                markup += "• "
+            elif block.get("list_type") == "ordered" and block.get("list_number"):
+                markup += f"{block['list_number']}. "
+        for seg in segs:
+            t = esc(seg.get("text", "")).replace("\n", "<br/>")
+            if not t:
+                continue
+            is_code = seg.get("code") or block["type"] == "code_block"
+            if is_code:
+                t = f'<font face="Courier" size="10">{t}</font>'
+            if seg.get("bold"):
+                t = f"<b>{t}</b>"
+            if seg.get("italic"):
+                t = f"<i>{t}</i>"
+            if seg.get("strike"):
+                t = f"<strike>{t}</strike>"
+            if seg.get("underline"):
+                t = f"<u>{t}</u>"
+            if seg.get("link"):
+                h = esc(seg["link"])
+                t = f'<a href="{h}" color="blue"><u>{t}</u></a>'
+            markup += t
+        if not markup.strip():
+            markup = "<br/>"
+        style = base_style
+        if block.get("indent", 0) > 0 or block["type"] == "list_item":
+            style = ParagraphStyle(f"ind_{id(block)}", parent=base_style, leftIndent=20)
+        elif block["type"] == "code_block":
+            style = ParagraphStyle(
+                f"code_{id(block)}", parent=base_style,
+                fontName="Courier", fontSize=10, leftIndent=15)
+        flowables.append(Paragraph(markup, style))
+    return flowables if flowables else [Paragraph("", base_style)]
+
+
+# ── GOOGLE DOCS RENDERER ────────────────────────────────────────────
+
+def html_to_plain_and_formatting(html_text):
+    """Convert tiptap HTML to plain text + formatting annotations.
+
+    Returns (plain_text, [(rel_start, rel_end, style_dict), ...]).
+    style_dict keys: bold, italic, strikethrough, underline, code, link, indent.
+    """
+    blocks = parse_tiptap_html(html_text)
+    if not blocks:
+        return ("-", [])
+    plain = ""
+    formatting = []
+    for block in blocks:
+        if block["type"] == "horizontal_rule":
+            plain += "───────────────────\n"
+            continue
+        block_start = len(plain)
+        if block["type"] == "list_item":
+            if block.get("list_type") == "bullet":
+                plain += "• "
+            elif block.get("list_type") == "ordered" and block.get("list_number"):
+                plain += f"{block['list_number']}. "
+        for seg in block.get("segments", []):
+            s = len(plain)
+            plain += seg.get("text", "")
+            e = len(plain)
+            if e > s:
+                st = {}
+                if seg.get("bold"):
+                    st["bold"] = True
+                if seg.get("italic"):
+                    st["italic"] = True
+                if seg.get("strike"):
+                    st["strikethrough"] = True
+                if seg.get("underline"):
+                    st["underline"] = True
+                if seg.get("code") or block["type"] == "code_block":
+                    st["code"] = True
+                if seg.get("link"):
+                    st["link"] = seg["link"]
+                if st:
+                    formatting.append((s, e, st))
+        if block.get("indent", 0) > 0:
+            be = len(plain)
+            if be > block_start:
+                formatting.append((block_start, be, {"indent": True}))
+        plain += "\n"
+    while plain.endswith("\n\n"):
+        plain = plain[:-1]
+    if not plain.strip():
+        return ("-", [])
+    return (plain, formatting)
+
+
 # --- CRUD SETUP LOGBOOK ---
 def get_logbooks_by_user(user_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     # Filter berdasarkan user_id
-    cursor.execute("SELECT * FROM logbooks WHERE user_id = %s ORDER BY id DESC", (user_id,))
+    cursor.execute(
+        "SELECT * FROM logbooks WHERE user_id = %s ORDER BY id DESC", (user_id,)
+    )
     logbooks = cursor.fetchall()
     conn.close()
     return logbooks
 
+
 def get_logbook_by_id_and_user(id, user_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
+    cursor.execute(
+        "SELECT * FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id)
+    )
     logbook = cursor.fetchone()
     conn.close()
     return logbook
+
 
 def get_logbook_id_by_uuid(uuid_str):
     conn = get_connection()
@@ -167,14 +524,18 @@ def get_logbook_id_by_uuid(uuid_str):
     conn.close()
     return result[0] if result else None
 
+
 def get_logbook_by_nim_and_uuid(nim, uuid_str):
     """Ambil logbook berdasarkan NIM dan UUID (untuk public viewer tanpa login)."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM logbooks WHERE nim = %s AND uuid = %s", (nim, uuid_str))
+    cursor.execute(
+        "SELECT * FROM logbooks WHERE nim = %s AND uuid = %s", (nim, uuid_str)
+    )
     logbook = cursor.fetchone()
     conn.close()
     return logbook
+
 
 def get_entry_id_by_uuid(uuid_str):
     conn = get_connection()
@@ -184,111 +545,143 @@ def get_entry_id_by_uuid(uuid_str):
     conn.close()
     return result[0] if result else None
 
+
 def create_logbook(user_id, data, ttd_path=None):
     conn = get_connection()
     cursor = conn.cursor()
-    
+
     new_uuid = str(uuid.uuid4())[:8]
-    
+
     query = """
     INSERT INTO logbooks (uuid, user_id, fakultas, prodi, nama, nim, nama_mitra, waktu_mulai, waktu_selesai, posisi_magang, nama_mentor, wa_mentor, email_mentor, google_doc_id, google_doc_name, ttd_mentor_path)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     val = (
-        new_uuid, user_id, data['fakultas'], data['prodi'], data['nama'], data['nim'], 
-        data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], 
-        data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'],
-        data.get('google_doc_id'), data.get('google_doc_name'),
-        ttd_path
+        new_uuid,
+        user_id,
+        data["fakultas"],
+        data["prodi"],
+        data["nama"],
+        data["nim"],
+        data["nama_mitra"],
+        data["waktu_mulai"],
+        data["waktu_selesai"],
+        data["posisi_magang"],
+        data["nama_mentor"],
+        data["wa_mentor"],
+        data["email_mentor"],
+        data.get("google_doc_id"),
+        data.get("google_doc_name"),
+        ttd_path,
     )
     cursor.execute(query, val)
-    
+
     conn.commit()
     conn.close()
     return new_uuid
 
+
 def update_logbook(id, data, user_id, ttd_path=None, remove_ttd=False):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # Jika ada file TTD baru atau remove, hapus file lama dulu
     if ttd_path or remove_ttd:
-        cursor.execute("SELECT ttd_mentor_path FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
+        cursor.execute(
+            "SELECT ttd_mentor_path FROM logbooks WHERE id = %s AND user_id = %s",
+            (id, user_id),
+        )
         old = cursor.fetchone()
-        if old and old.get('ttd_mentor_path'):
-            delete_signature_file(old['ttd_mentor_path'])
-        
+        if old and old.get("ttd_mentor_path"):
+            delete_signature_file(old["ttd_mentor_path"])
+
         # Reset signature approvals
         cursor.execute("DELETE FROM logbook_signatures WHERE logbook_id = %s", (id,))
-    
+
     # Build query dynamically
-    fields = """fakultas=%s, prodi=%s, nama=%s, nim=%s, nama_mitra=%s, 
-    waktu_mulai=%s, waktu_selesai=%s, posisi_magang=%s, 
+    fields = """fakultas=%s, prodi=%s, nama=%s, nim=%s, nama_mitra=%s,
+    waktu_mulai=%s, waktu_selesai=%s, posisi_magang=%s,
     nama_mentor=%s, wa_mentor=%s, email_mentor=%s,
     google_doc_id=%s, google_doc_name=%s"""
-    
+
     val = [
-        data['fakultas'], data['prodi'], data['nama'], data['nim'], 
-        data['nama_mitra'], data['waktu_mulai'], data['waktu_selesai'], 
-        data['posisi_magang'], data['nama_mentor'], data['wa_mentor'], data['email_mentor'],
-        data.get('google_doc_id'), data.get('google_doc_name'),
+        data["fakultas"],
+        data["prodi"],
+        data["nama"],
+        data["nim"],
+        data["nama_mitra"],
+        data["waktu_mulai"],
+        data["waktu_selesai"],
+        data["posisi_magang"],
+        data["nama_mentor"],
+        data["wa_mentor"],
+        data["email_mentor"],
+        data.get("google_doc_id"),
+        data.get("google_doc_name"),
     ]
-    
+
     if ttd_path:
         fields += ", ttd_mentor_path=%s"
         val.append(ttd_path)
     elif remove_ttd:
         fields += ", ttd_mentor_path=NULL"
-    
+
     val.extend([id, user_id])
-    
+
     query = f"UPDATE logbooks SET {fields} WHERE id = %s AND user_id = %s"
     cursor.execute(query, tuple(val))
     conn.commit()
     conn.close()
 
+
 def delete_logbook(id, user_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # 1. Pastikan logbooknya ada dan milik user tersebut, sekaligus ambil nim-nya
-    cursor.execute("SELECT nim FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
+    cursor.execute(
+        "SELECT nim FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id)
+    )
     logbook = cursor.fetchone()
-    
+
     if logbook:
-        nim = logbook['nim']
-        
+        nim = logbook["nim"]
+
         # 2. Ambil semua path gambar dari tabel logbook_images
         # Join dengan logbook_entries untuk filter by logbook_id
         query_get_images = """
-            SELECT i.path 
+            SELECT i.path
             FROM logbook_images i
             JOIN logbook_entries e ON i.entry_id = e.id
             WHERE e.logbook_id = %s
         """
         cursor.execute(query_get_images, (id,))
         images = cursor.fetchall()
-        
+
         # 3. Hapus file gambarnya satu per satu secara fisik
         for img in images:
-            if img['path']:
-                file_path = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', img['path'])
+            if img["path"]:
+                file_path = os.path.join(
+                    current_app.root_path, "static", "uploads", "logbook", img["path"]
+                )
                 if os.path.exists(file_path):
                     try:
                         os.remove(file_path)
                     except Exception as e:
                         print(f"Gagal hapus file {file_path}: {e}")
-                    
-        # 4. Hapus logbook dari database 
+
+        # 4. Hapus logbook dari database
         # (Cascade delete akan otomatis hapus entries & images di DB)
-        cursor.execute("DELETE FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id))
+        cursor.execute(
+            "DELETE FROM logbooks WHERE id = %s AND user_id = %s", (id, user_id)
+        )
         conn.commit()
-        
+
         # 5. BERSIH-BERSIH FOLDER (Hanya dihapus JIKA KOSONG)
         try:
-            img_dir = os.path.join('static', 'uploads', 'logbook', str(nim), 'imgs')
-            base_dir = os.path.join('static', 'uploads', 'logbook', str(nim))
-            
+            img_dir = os.path.join("static", "uploads", "logbook", str(nim), "imgs")
+            base_dir = os.path.join("static", "uploads", "logbook", str(nim))
+
             # os.rmdir hanya akan menghapus folder jika isinya benar-benar kosong
             if os.path.exists(img_dir) and not os.listdir(img_dir):
                 os.rmdir(img_dir)
@@ -300,72 +693,80 @@ def delete_logbook(id, user_id):
 
     conn.close()
 
+
 # --- CRUD ENTRIES (KEGIATAN HARIAN) ---
 def get_entries_by_logbook(logbook_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # Ambil entri
-    cursor.execute("SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC", (logbook_id,))
+    cursor.execute(
+        "SELECT * FROM logbook_entries WHERE logbook_id = %s ORDER BY tanggal ASC",
+        (logbook_id,),
+    )
     entries = cursor.fetchall()
-    
+
     for entry in entries:
-        if entry['tanggal']:
-            entry['tanggal_display'] = entry['tanggal'].strftime('%d-%m-%Y')
+        if entry["tanggal"]:
+            entry["tanggal_display"] = entry["tanggal"].strftime("%d-%m-%Y")
         else:
-            entry['tanggal_display'] = '-'
-            
+            entry["tanggal_display"] = "-"
+
         # UPDATE QUERY: Ambil metadata lengkap
-        cursor.execute("""
-            SELECT id, path, nama_asli, deskripsi, 
-                   tipe_berkas, ukuran_berkas, dimensi, created_at 
-            FROM logbook_images 
+        cursor.execute(
+            """
+            SELECT id, path, nama_asli, deskripsi,
+                   tipe_berkas, ukuran_berkas, dimensi, created_at
+            FROM logbook_images
             WHERE entry_id = %s
-        """, (entry['id'],))
-        
+        """,
+            (entry["id"],),
+        )
+
         images = cursor.fetchall()
-        
+
         # Format ukuran berkas biar enak dibaca (optional logic for backend rendering)
         for img in images:
-            if img['ukuran_berkas']:
+            if img["ukuran_berkas"]:
                 # Konversi bytes ke KB/MB simpel
-                size_bytes = img['ukuran_berkas']
+                size_bytes = img["ukuran_berkas"]
                 if size_bytes < 1024 * 1024:
-                    img['ukuran_display'] = f"{round(size_bytes / 1024, 2)} KB"
+                    img["ukuran_display"] = f"{round(size_bytes / 1024, 2)} KB"
                 else:
-                    img['ukuran_display'] = f"{round(size_bytes / (1024 * 1024), 2)} MB"
+                    img["ukuran_display"] = f"{round(size_bytes / (1024 * 1024), 2)} MB"
             else:
-                img['ukuran_display'] = "0 KB"
+                img["ukuran_display"] = "0 KB"
 
-        entry['images'] = images
-        
+        entry["images"] = images
+
     conn.close()
     return entries
+
 
 def add_entry(logbook_id, tanggal, aktivitas, deskripsi, files):
     conn = get_connection()
     cursor = conn.cursor()
-    
+
     try:
         # Ambil NIM dari logbook owner untuk struktur folder
         cursor.execute("SELECT nim FROM logbooks WHERE id = %s", (logbook_id,))
         row = cursor.fetchone()
         if not row:
             return False
-        nim_user = str(row[0]) # Menggunakan NIM asli
+        nim_user = str(row[0])  # Menggunakan NIM asli
 
         # 1. Insert Entry
         new_uuid = str(uuid.uuid4())[:8]
         cursor.execute(
             "INSERT INTO logbook_entries (uuid, logbook_id, tanggal, aktivitas, deskripsi) VALUES (%s, %s, %s, %s, %s)",
-            (new_uuid, logbook_id, tanggal, aktivitas, deskripsi)
+            (new_uuid, logbook_id, tanggal, aktivitas, deskripsi),
         )
         entry_id = cursor.lastrowid
-        
+
         # 2. Process Files
         for file in files:
             process_and_save_image(file, entry_id, nim_user, cursor)
-            
+
         conn.commit()
         return True
     except Exception as e:
@@ -374,111 +775,126 @@ def add_entry(logbook_id, tanggal, aktivitas, deskripsi, files):
         return False
     finally:
         conn.close()
-        
+
+
 def delete_entry(entry_id, logbook_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # Cek apakah entry valid dan milik logbook yang sesuai
-    cursor.execute("SELECT id FROM logbook_entries WHERE id = %s AND logbook_id = %s", (entry_id, logbook_id))
+    cursor.execute(
+        "SELECT id FROM logbook_entries WHERE id = %s AND logbook_id = %s",
+        (entry_id, logbook_id),
+    )
     if not cursor.fetchone():
         conn.close()
-        return False # Tolak jika hacker mencoba manipulasi URL
+        return False  # Tolak jika hacker mencoba manipulasi URL
 
     # Ambil semua path gambar dari tabel logbook_images
     cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
     images = cursor.fetchall()
-    
+
     # Hapus file fisik
     for img in images:
-        if img['path']:
-            file_path = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', img['path'])
+        if img["path"]:
+            file_path = os.path.join(
+                current_app.root_path, "static", "uploads", "logbook", img["path"]
+            )
             if os.path.exists(file_path):
                 try:
                     os.remove(file_path)
                 except Exception as e:
                     print(f"Gagal hapus file {file_path}: {e}")
-            
+
     # Hapus data dari DB (Cascade LogbookImages)
     cursor.execute("DELETE FROM logbook_entries WHERE id = %s", (entry_id,))
     conn.commit()
     conn.close()
-    
+
+
 def get_entry_by_id(entry_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     cursor.execute("SELECT * FROM logbook_entries WHERE id = %s", (entry_id,))
     entry = cursor.fetchone()
-    
+
     if entry:
-        if entry['tanggal']:
-            entry['tanggal_display'] = entry['tanggal'].strftime('%d-%m-%Y')
-            
+        if entry["tanggal"]:
+            entry["tanggal_display"] = entry["tanggal"].strftime("%d-%m-%Y")
+
         # UPDATE QUERY: Ambil metadata lengkap
-        cursor.execute("""
-            SELECT id, path, nama_asli, deskripsi, 
-                   tipe_berkas, ukuran_berkas, dimensi, created_at 
-            FROM logbook_images 
+        cursor.execute(
+            """
+            SELECT id, path, nama_asli, deskripsi,
+                   tipe_berkas, ukuran_berkas, dimensi, created_at
+            FROM logbook_images
             WHERE entry_id = %s
-        """, (entry_id,))
+        """,
+            (entry_id,),
+        )
         images = cursor.fetchall()
-        
+
         # Format ukuran berkas biar enak dibaca
         for img in images:
-            if img['ukuran_berkas']:
-                size_bytes = img['ukuran_berkas']
+            if img["ukuran_berkas"]:
+                size_bytes = img["ukuran_berkas"]
                 if size_bytes < 1024 * 1024:
-                    img['ukuran_display'] = f"{round(size_bytes / 1024, 2)} KB"
+                    img["ukuran_display"] = f"{round(size_bytes / 1024, 2)} KB"
                 else:
-                    img['ukuran_display'] = f"{round(size_bytes / (1024 * 1024), 2)} MB"
+                    img["ukuran_display"] = f"{round(size_bytes / (1024 * 1024), 2)} MB"
             else:
-                img['ukuran_display'] = "0 KB"
-        
-        entry['images'] = images
-        
+                img["ukuran_display"] = "0 KB"
+
+        entry["images"] = images
+
     conn.close()
     return entry
 
+
 # Tambahkan parameter logbook_id di sini
 def update_entry(entry_id, logbook_id, form_data, files):
-    aktivitas = form_data.get('aktivitas')
-    deskripsi_raw = form_data.get('deskripsi')
+    aktivitas = form_data.get("aktivitas")
+    deskripsi_raw = form_data.get("deskripsi")
 
     # SANITASI: Bersihkan HTML dari karakter berbahaya sebelum masuk DB
-    deskripsi_clean = bleach.clean(deskripsi_raw, tags=ALLOWED_TAGS, strip=True)
+    deskripsi_clean = bleach.clean(deskripsi_raw, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True)
+
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
     # ========================================================
     # FIX CRITICAL (IDOR): Validasi kepemilikan entry_id
     # ========================================================
-    cursor.execute("""
-        SELECT l.nim, e.id as entry_id 
-        FROM logbook_entries e 
-        JOIN logbooks l ON e.logbook_id = l.id 
-        WHERE e.id = %s AND e.logbook_id = %s 
-    """, (entry_id, logbook_id))
-    
+    cursor.execute(
+        """
+        SELECT l.nim, e.id as entry_id
+        FROM logbook_entries e
+        JOIN logbooks l ON e.logbook_id = l.id
+        WHERE e.id = %s AND e.logbook_id = %s
+    """,
+        (entry_id, logbook_id),
+    )
+
     row = cursor.fetchone()
-    
+
     # Kalau data ga ketemu (berarti hacker nyoba masukin entry_id orang lain), langsung tolak!
     if not row:
         conn.close()
-        return False 
-        
-    nim = row['nim']
+        return False
+
+    nim = row["nim"]
 
     # 1. Update data teks terlebih dahulu
     cursor.execute(
         "UPDATE logbook_entries SET tanggal=%s, aktivitas=%s, deskripsi=%s WHERE id=%s AND logbook_id=%s",
-        (form_data.get('tanggal'), aktivitas, deskripsi_clean, entry_id, logbook_id)
+        (form_data.get("tanggal"), aktivitas, deskripsi_clean, entry_id, logbook_id),
     )
 
     # --- LOGIKA MULTIPLE GAMBAR YANG BENAR ---
     # Ambil array path gambar yang TIDAK DIHAPUS oleh user di form HTML
-    retained_paths = form_data.getlist('existing_images') 
-    new_images = files.getlist('gambar')
+    retained_paths = form_data.getlist("existing_images")
+    new_images = files.getlist("gambar")
 
     # Ambil semua gambar lama dari database
     cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry_id,))
@@ -486,30 +902,34 @@ def update_entry(entry_id, logbook_id, form_data, files):
 
     # A. Bandingkan dan hapus gambar yang disilang (X) oleh user
     for old_img in old_images:
-        if old_img['path'] not in retained_paths:
+        if old_img["path"] not in retained_paths:
             # Hapus file fisik dari HDD
-            old_path = os.path.join('static', 'uploads', 'logbook', old_img['path'])
+            old_path = os.path.join("static", "uploads", "logbook", old_img["path"])
             if os.path.exists(old_path):
                 try:
                     os.remove(old_path)
                 except OSError:
                     pass
             # Hapus dari tabel
-            cursor.execute("DELETE FROM logbook_images WHERE entry_id = %s AND path = %s", (entry_id, old_img['path']))
+            cursor.execute(
+                "DELETE FROM logbook_images WHERE entry_id = %s AND path = %s",
+                (entry_id, old_img["path"]),
+            )
 
     # B. Tambahkan gambar baru (jika ada)
     for img in new_images:
-            if img and img.filename != '':
-                new_path = compress_and_save_image(img, nim, entry_id)
-                # UPDATE: Simpan nama asli file dan deskripsi default kosong
-                cursor.execute(
-                    "INSERT INTO logbook_images (entry_id, path, nama_asli, deskripsi) VALUES (%s, %s, %s, %s)",
-                    (entry_id, new_path, img.filename, "")
-                )
+        if img and img.filename != "":
+            new_path = compress_and_save_image(img, nim, entry_id)
+            # UPDATE: Simpan nama asli file dan deskripsi default kosong
+            cursor.execute(
+                "INSERT INTO logbook_images (entry_id, path, nama_asli, deskripsi) VALUES (%s, %s, %s, %s)",
+                (entry_id, new_path, img.filename, ""),
+            )
 
     conn.commit()
     conn.close()
     return True
+
 
 # --- HELPER FUNCTION UNTUK SAVE IMAGE & METADATA ---
 
@@ -519,38 +939,40 @@ def process_and_save_image(file, entry_id, nim_user, cursor):
         return
 
     filename = secure_filename(file.filename)
-    if filename == '':
+    if filename == "":
         return
 
     # 1. Generate Nama File Sesuai Request
     # Format: {nim}img_{entry_id}_{timestamp}{ext}
-    ext = os.path.splitext(filename)[1].lower() # .jpg, .png
-    
+    ext = os.path.splitext(filename)[1].lower()  # .jpg, .png
+
     # Validasi ekstensi file
     if ext not in ALLOWED_IMAGE_EXT:
         print(f"File ditolak: ekstensi '{ext}' tidak diizinkan.")
         return
-    
-    timestamp = int(datetime.now().timestamp() * 1000) # timestamp ms
+
+    timestamp = int(datetime.now().timestamp() * 1000)  # timestamp ms
     new_filename = f"{nim_user}img_{entry_id}_{timestamp}{ext}"
-    
+
     # Path Folder: static/uploads/logbook/{nim}/imgs/
-    upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'logbook', str(nim_user), 'imgs')
+    upload_folder = os.path.join(
+        current_app.root_path, "static", "uploads", "logbook", str(nim_user), "imgs"
+    )
     os.makedirs(upload_folder, exist_ok=True)
-    
+
     file_path = os.path.join(upload_folder, new_filename)
-    db_path = f"{nim_user}/imgs/{new_filename}" # Path relative untuk DB
+    db_path = f"{nim_user}/imgs/{new_filename}"  # Path relative untuk DB
 
     # 2. Simpan File Fisik
     file.save(file_path)
 
     # 3. Ambil Metadata Tambahan
     # Ukuran Berkas
-    file_size = os.path.getsize(file_path) # Bytes
-    
+    file_size = os.path.getsize(file_path)  # Bytes
+
     # Tipe Berkas
-    file_type = file.content_type # image/jpeg
-    
+    file_type = file.content_type  # image/jpeg
+
     # Dimensi (Butuh Pillow)
     dimensi_str = "Unknown"
     try:
@@ -561,50 +983,57 @@ def process_and_save_image(file, entry_id, nim_user, cursor):
         print(f"Gagal baca dimensi gambar: {e}")
 
     # 4. Insert ke Database dengan Metadata Lengkap
-    cursor.execute("""
-        INSERT INTO logbook_images 
-        (entry_id, path, nama_asli, deskripsi, tipe_berkas, ukuran_berkas, dimensi) 
+    cursor.execute(
+        """
+        INSERT INTO logbook_images
+        (entry_id, path, nama_asli, deskripsi, tipe_berkas, ukuran_berkas, dimensi)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """, (entry_id, db_path, filename, "", file_type, file_size, dimensi_str))
+    """,
+        (entry_id, db_path, filename, "", file_type, file_size, dimensi_str),
+    )
+
+
 # --- GENERATE WORD ---
 # Tambahin parameter user_id biar pas diconvert dicek dulu ownershipnya
-def generate_word(logbook_id, user_id): 
-    logbook = get_logbook_by_id_and_user(logbook_id, user_id) 
+def generate_word(logbook_id, user_id):
+    logbook = get_logbook_by_id_and_user(logbook_id, user_id)
     entries = get_entries_by_logbook(logbook_id)
 
     if not logbook:
-        return None 
+        return None
 
     doc = Document()
-    
+
     # Global font: Times New Roman, 12pt
-    style = doc.styles['Normal']
+    style = doc.styles["Normal"]
     font = style.font
-    font.name = 'Times New Roman'
+    font.name = "Times New Roman"
     font.size = Pt(12)
-    
+
     # 1. Judul Utama
-    doc.add_heading('Log Book Bulanan Dinamika Industrial Internship', 0)
+    doc.add_heading("Log Book Bulanan Dinamika Industrial Internship", 0)
 
     # 2. Tabel Identitas (Tanpa Border)
     if logbook:
         # ... (Kode identitas tetap sama seperti sebelumnya) ...
         # [Bagian ini dilewati untuk mempersingkat jawaban]
-        start = logbook['waktu_mulai']
-        end = logbook['waktu_selesai']
-        start_str = start.strftime('%d-%m-%Y') if hasattr(start, 'strftime') else str(start)
-        end_str = end.strftime('%d-%m-%Y') if hasattr(end, 'strftime') else str(end)
+        start = logbook["waktu_mulai"]
+        end = logbook["waktu_selesai"]
+        start_str = (
+            start.strftime("%d-%m-%Y") if hasattr(start, "strftime") else str(start)
+        )
+        end_str = end.strftime("%d-%m-%Y") if hasattr(end, "strftime") else str(end)
         identitas = [
-            ("Fakultas", ":", logbook.get('fakultas', '-')),
-            ("Prodi", ":", logbook.get('prodi', '-')),
-            ("Nama", ":", logbook.get('nama', '-')),
-            ("Nim", ":", logbook.get('nim', '-')),
-            ("Nama Mitra", ":", logbook.get('nama_mitra', '-')),
+            ("Fakultas", ":", logbook.get("fakultas", "-")),
+            ("Prodi", ":", logbook.get("prodi", "-")),
+            ("Nama", ":", logbook.get("nama", "-")),
+            ("Nim", ":", logbook.get("nim", "-")),
+            ("Nama Mitra", ":", logbook.get("nama_mitra", "-")),
             ("Waktu Pelaksanaan", ":", f"{start_str} sampai {end_str}"),
-            ("Posisi Magang", ":", logbook.get('posisi_magang', '-')),
-            ("Nama Mentor", ":", logbook.get('nama_mentor', '-')),
-            ("Whatsapp Mentor", ":", logbook.get('wa_mentor', '-')),
-            ("Email Mentor", ":", logbook.get('email_mentor', '-'))
+            ("Posisi Magang", ":", logbook.get("posisi_magang", "-")),
+            ("Nama Mentor", ":", logbook.get("nama_mentor", "-")),
+            ("Whatsapp Mentor", ":", logbook.get("wa_mentor", "-")),
+            ("Email Mentor", ":", logbook.get("email_mentor", "-")),
         ]
         id_table = doc.add_table(rows=0, cols=3)
         for label, sep, val in identitas:
@@ -617,15 +1046,29 @@ def generate_word(logbook_id, user_id):
             row_cells[2].width = Inches(4.3)
 
     # 3. Pengelompokan Kegiatan Berdasarkan Bulan
-    months_id = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+    months_id = [
+        "",
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+    ]
     grouped_entries = {}
     for entry in entries:
-        tgl = entry['tanggal']
+        tgl = entry["tanggal"]
         month_key = f"{months_id[tgl.month]} {tgl.year}" if tgl else "Belum Diketahui"
         month_only = months_id[tgl.month] if tgl else ""
         if month_key not in grouped_entries:
-            grouped_entries[month_key] = {'month_only': month_only, 'data': []}
-        grouped_entries[month_key]['data'].append(entry)
+            grouped_entries[month_key] = {"month_only": month_only, "data": []}
+        grouped_entries[month_key]["data"].append(entry)
 
     # --- TAMBAHAN: Buka koneksi database untuk ambil gambar ---
     conn = get_connection()
@@ -633,131 +1076,139 @@ def generate_word(logbook_id, user_id):
 
     # 4. Render Logbook Per Bulan
     for month_key, group in grouped_entries.items():
-        heading = doc.add_heading('', level=2)
-        run_h = heading.add_run(f'Aktivitas Bulan {month_key}')
+        heading = doc.add_heading("", level=2)
+        run_h = heading.add_run(f"Aktivitas Bulan {month_key}")
         run_h.font.color.rgb = RGBColor(255, 0, 0)
-        run_h.font.name = 'Times New Roman'
+        run_h.font.name = "Times New Roman"
         heading.paragraph_format.space_after = Pt(4)
-        
+
         table = doc.add_table(rows=1, cols=3)
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
         table.autofit = False
         table.allow_autofit = False
-        
+
         # Set explicitly column widths
         table.columns[0].width = Inches(0.5)
         table.columns[1].width = Inches(1.5)
         table.columns[2].width = Inches(4.5)
-        
+
         hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = 'No'
-        hdr_cells[1].text = 'Aktivitas'
-        hdr_cells[2].text = 'Deskripsi Kegiatan'
-        
+        hdr_cells[0].text = "No"
+        hdr_cells[1].text = "Aktivitas"
+        hdr_cells[2].text = "Deskripsi Kegiatan"
+
         # Also set the cell widths for the header just in case
         hdr_cells[0].width = Inches(0.5)
         hdr_cells[1].width = Inches(1.5)
         hdr_cells[2].width = Inches(4.5)
 
         # Isi Tabel
-        for idx, entry in enumerate(group['data'], start=1):
+        for idx, entry in enumerate(group["data"], start=1):
             row_cells = table.add_row().cells
             row_cells[0].text = str(idx)
             row_cells[0].width = Inches(0.5)
             for paragraph in row_cells[0].paragraphs:
                 for run in paragraph.runs:
                     run.bold = False
-            
-            tgl_str = entry['tanggal'].strftime('%d-%m-%Y') if entry['tanggal'] else '-'
+
+            tgl_str = entry["tanggal"].strftime("%d-%m-%Y") if entry["tanggal"] else "-"
             row_cells[1].text = f"{tgl_str}\n{entry['aktivitas']}"
             row_cells[1].width = Inches(1.5)
             for paragraph in row_cells[1].paragraphs:
                 for run in paragraph.runs:
                     run.bold = False
-            
+
             row_cells[2].width = Inches(4.5)
-            p = row_cells[2].paragraphs[0]
-            clean_deskripsi = clean_html_for_word(entry['deskripsi'])
-            desc_run = p.add_run(clean_deskripsi + "\n")
-            desc_run.bold = False
-            
+            # Terapkan rich text ke cell deskripsi
+            render_html_to_word_cell(row_cells[2], entry.get("deskripsi", ""))
+
             # --- MODIFIKASI: AMBIL MULTIPLE GAMBAR DARI DATABASE ---
-            cursor.execute("SELECT path FROM logbook_images WHERE entry_id = %s", (entry['id'],))
+            cursor.execute(
+                "SELECT path FROM logbook_images WHERE entry_id = %s", (entry["id"],)
+            )
             db_images = cursor.fetchall()
 
-# --- MODIFIKASI: AMBIL MULTIPLE GAMBAR + METADATA ---
+            # --- MODIFIKASI: AMBIL MULTIPLE GAMBAR + METADATA ---
             # Pastikan select deskripsi dan nama_asli juga
-            cursor.execute("SELECT path, nama_asli, deskripsi FROM logbook_images WHERE entry_id = %s", (entry['id'],))
+            cursor.execute(
+                "SELECT path, nama_asli, deskripsi FROM logbook_images WHERE entry_id = %s",
+                (entry["id"],),
+            )
             db_images = cursor.fetchall()
 
             if db_images:
                 # Bikin paragraf container untuk gambar
                 p_images = row_cells[2].add_paragraph()
-                
+
                 for img in db_images:
-                    img_path = os.path.join('static', 'uploads', 'logbook', img['path'])
+                    img_path = os.path.join("static", "uploads", "logbook", img["path"])
                     if os.path.exists(img_path):
                         run = p_images.add_run()
-                        run.add_picture(img_path, width=Inches(1.8)) # Kecilin dikit biar muat banyak
-                        run.add_text(" ") # Enter setelah gambar
-                        
+                        run.add_picture(
+                            img_path, width=Inches(1.8)
+                        )  # Kecilin dikit biar muat banyak
+                        run.add_text(" ")  # Enter setelah gambar
+
                         # Tampilkan Keterangan Gambar jika ada
-                        nama = img.get('nama_asli')
-                        desc = img.get('deskripsi')
-                        
+                        nama = img.get("nama_asli")
+                        desc = img.get("deskripsi")
+
                         if nama or desc:
                             caption_run = p_images.add_run()
-                            caption_run.font.size = 90000 # (Ukuran font kecil, approx 7pt)
+                            caption_run.font.size = (
+                                90000  # (Ukuran font kecil, approx 7pt)
+                            )
                             caption_run.italic = True
-                            
+
                             info_text = []
-                            if nama: info_text.append(f"[{nama}]")
-                            if desc: info_text.append(desc)
-                            
+                            if nama:
+                                info_text.append(f"[{nama}]")
+                            if desc:
+                                info_text.append(desc)
+
                             caption_run.add_text(" ".join(info_text) + "   ")
                         else:
                             run.add_text("\n")
-            
-        doc.add_paragraph() 
-        
+
+        doc.add_paragraph()
+
         # 5. Tambahkan Format Resume & Tanda Tangan
-        month_name = group['month_only']
+        month_name = group["month_only"]
         if month_name:
             # Resume header sebagai paragraf bold biasa (bukan heading berwarna)
             resume_p = doc.add_paragraph()
-            resume_run = resume_p.add_run(f'Resume Kegiatan Bulan {month_name}:')
+            resume_run = resume_p.add_run(f"Resume Kegiatan Bulan {month_name}:")
             resume_run.bold = True
-            resume_run.font.name = 'Times New Roman'
+            resume_run.font.name = "Times New Roman"
             resume_run.font.size = Pt(12)
-            
+
             # Ambil resume dari database
             resume_content = get_resume_content(logbook_id, month_key)
             if resume_content:
-                clean_resume = clean_html_for_word(resume_content)
-                doc.add_paragraph(clean_resume)
+                render_html_to_word_doc(doc, resume_content)
             else:
-                doc.add_paragraph("...") 
-        
+                doc.add_paragraph("...")
+
         # Cek apakah bulan ini sudah di-approve TTD
         cursor.execute(
             "SELECT is_approved FROM logbook_signatures WHERE logbook_id = %s AND bulan = %s",
-            (logbook_id, month_key)
+            (logbook_id, month_key),
         )
         sig_row = cursor.fetchone()
-        month_approved = sig_row and sig_row.get('is_approved', 0) == 1
-        
+        month_approved = sig_row and sig_row.get("is_approved", 0) == 1
+
         sig_p = doc.add_paragraph()
         sig_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         run_label = sig_p.add_run("Disetujui Oleh\n")
         run_label.bold = True
-        run_label.font.name = 'Times New Roman'
+        run_label.font.name = "Times New Roman"
         run_label.font.size = Pt(12)
-        
+
         # Insert gambar TTD jika bulan sudah approved DAN file TTD ada
-        ttd_path = logbook.get('ttd_mentor_path')
+        ttd_path = logbook.get("ttd_mentor_path")
         if month_approved and ttd_path:
             # Kalau sudah approved, langsung gambar
-            ttd_full_path = os.path.join('static', 'uploads', 'logbook', ttd_path)
+            ttd_full_path = os.path.join("static", "uploads", "logbook", ttd_path)
             if os.path.exists(ttd_full_path):
                 run_ttd = sig_p.add_run()
                 try:
@@ -771,27 +1222,27 @@ def generate_word(logbook_id, user_id):
                     print(f"Gagal insert TTD ke Word: {e}")
                     r = sig_p.add_run("Belum Disetujui\n\n\n")
                     r.bold = True
-                    r.font.name = 'Times New Roman'
+                    r.font.name = "Times New Roman"
                     r.font.size = Pt(12)
                     r.font.color.rgb = RGBColor(255, 0, 0)
                 sig_p.add_run("\n")
             else:
                 r = sig_p.add_run("Belum Disetujui\n\n\n")
                 r.bold = True
-                r.font.name = 'Times New Roman'
+                r.font.name = "Times New Roman"
                 r.font.size = Pt(12)
                 r.font.color.rgb = RGBColor(255, 0, 0)
         else:
             r = sig_p.add_run("Belum Disetujui\n\n\n")
             r.bold = True
-            r.font.name = 'Times New Roman'
+            r.font.name = "Times New Roman"
             r.font.size = Pt(12)
             r.font.color.rgb = RGBColor(255, 0, 0)
-        
+
         mentor_run = sig_p.add_run(f"{logbook.get('nama_mentor', 'Nama Mentor')}")
         mentor_run.bold = True
         mentor_run.underline = WD_UNDERLINE.SINGLE
-        mentor_run.font.name = 'Times New Roman'
+        mentor_run.font.name = "Times New Roman"
         mentor_run.font.size = Pt(12)
 
     # Tutup koneksi setelah selesai looping
@@ -803,15 +1254,375 @@ def generate_word(logbook_id, user_id):
     doc.save(file_stream)
     file_stream.seek(0)
     current_time = int(time.time())
-    
+
     return send_file(
-        file_stream, 
-        as_attachment=True, 
+        file_stream,
+        as_attachment=True,
         download_name=f"Logbook_{logbook['nim']}_{current_time}.docx",
-        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
 
+
+def generate_pdf_monthly(logbook_id, user_id, bulan):
+    """Generate PDF untuk satu bulan spesifik. Format sama dengan Word."""
+    try:
+        from reportlab.lib import colors
+        from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.styles import ParagraphStyle
+        from reportlab.lib.units import cm
+        from reportlab.platypus import (
+            Image as RLImage,
+        )
+        from reportlab.platypus import (
+            Paragraph,
+            SimpleDocTemplate,
+            Spacer,
+            Table,
+            TableStyle,
+        )
+    except ImportError:
+        print("[PDF] reportlab belum terinstall. Jalankan: pip install reportlab")
+        return None
+
+    logbook = get_logbook_by_id_and_user(logbook_id, user_id)
+    if not logbook:
+        return None
+
+    entries = get_entries_by_logbook(logbook_id)
+
+    months_id = [
+        "",
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+    ]
+
+    # Filter entries untuk bulan yang dipilih
+    month_entries = []
+    for entry in entries:
+        tgl = entry["tanggal"]
+        if tgl:
+            month_key = f"{months_id[tgl.month]} {tgl.year}"
+            if month_key == bulan:
+                month_entries.append(entry)
+
+    # Tetap generate meskipun tidak ada entry (cover page + identitas)
+
+    file_stream = io.BytesIO()
+
+    LEFT = 2.54 * cm
+    RIGHT = 2.54 * cm
+    TOP = 2.54 * cm
+    BOTTOM = 2.54 * cm
+
+    doc = SimpleDocTemplate(
+        file_stream,
+        pagesize=A4,
+        leftMargin=LEFT,
+        rightMargin=RIGHT,
+        topMargin=TOP,
+        bottomMargin=BOTTOM,
+    )
+
+    PAGE_W = A4[0] - LEFT - RIGHT  # ~15.92 cm
+
+    # ── Helper style builder ──────────────────────────────────────
+    def S(name, **kw):
+        base = dict(fontName="Times-Roman", fontSize=12, leading=16)
+        base.update(kw)
+        return ParagraphStyle(name, **base)
+
+    title_s = S(
+        "T", fontName="Times-Bold", alignment=TA_CENTER, spaceAfter=4, leading=16
+    )
+    label_s = S("Lb", alignment=TA_RIGHT, leading=14)
+    sep_s = S("Sp", alignment=TA_CENTER, leading=14)
+    val_s = S("Vl", alignment=TA_LEFT, leading=14)
+    hdr_s = S("Hd", fontName="Times-Bold", leading=14)
+    cell_s = S("Cl", leading=13)
+    aktiv_s = S("Ak", leading=13)
+    month_s = S("Mo", fontName="Times-Bold", textColor=colors.red, spaceAfter=4)
+    res_lbl_s = S("RL", fontName="Times-Bold", spaceAfter=4)
+    res_body_s = S("RB", leading=14)
+    sig_right_s = S("SR", fontName="Times-Bold", alignment=TA_RIGHT)
+    sig_name_s = S("SN", fontName="Times-Bold", alignment=TA_RIGHT)
+
+    # ── Helper: escape plain text buat ReportLab XML parser ──────
+    def xml_esc(text):
+        return (
+            str(text or "")
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace('"', "&quot;")
+        )
+
+    def para_nl(text, style):
+        """Buat Paragraph dari plain text, newline → <br/>."""
+        return Paragraph(xml_esc(text).replace("\n", "<br/>"), style)
+
+    story = []
+
+    # ── 1. Judul ─────────────────────────────────────────────────
+    story.append(Paragraph("Log Book Bulanan Dinamika Industrial Internship", title_s))
+    story.append(Spacer(1, 0.4 * cm))
+
+    # ── 2. Tabel Identitas ────────────────────────────────────────
+    start = logbook["waktu_mulai"]
+    end = logbook["waktu_selesai"]
+    start_str = start.strftime("%d-%m-%Y") if hasattr(start, "strftime") else str(start)
+    end_str = end.strftime("%d-%m-%Y") if hasattr(end, "strftime") else str(end)
+
+    identitas = [
+        ("Fakultas", logbook.get("fakultas", "-")),
+        ("Prodi", logbook.get("prodi", "-")),
+        ("Nama", logbook.get("nama", "-")),
+        ("Nim", logbook.get("nim", "-")),
+        ("Nama Mitra", logbook.get("nama_mitra", "-")),
+        ("Waktu Pelaksanaan", f"{start_str}        sampai        {end_str}"),
+        ("Posisi Magang", logbook.get("posisi_magang", "-")),
+        ("Nama Mentor", logbook.get("nama_mentor", "-")),
+        ("Whatsapp Mentor", logbook.get("wa_mentor", "-")),
+        ("Email Mentor", logbook.get("email_mentor", "-")),
+    ]
+
+    LABEL_W = 4.8 * cm
+    SEP_W = 0.5 * cm
+    VAL_W = PAGE_W - LABEL_W - SEP_W
+
+    id_data = [
+        [
+            Paragraph(xml_esc(lbl), label_s),
+            Paragraph(":", sep_s),
+            Paragraph(xml_esc(str(val) if val else "-"), val_s),
+        ]
+        for lbl, val in identitas
+    ]
+
+    id_tbl = Table(id_data, colWidths=[LABEL_W, SEP_W, VAL_W])
+    id_tbl.setStyle(
+        TableStyle(
+            [
+                ("FONTNAME", (0, 0), (-1, -1), "Times-Roman"),
+                ("FONTSIZE", (0, 0), (-1, -1), 12),
+                ("TOPPADDING", (0, 0), (-1, -1), 1),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
+                ("LEFTPADDING", (0, 0), (-1, -1), 2),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 2),
+                ("ALIGN", (0, 0), (0, -1), "RIGHT"),
+                ("ALIGN", (1, 0), (1, -1), "CENTER"),
+                ("ALIGN", (2, 0), (2, -1), "LEFT"),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+    )
+    story.append(id_tbl)
+    story.append(Spacer(1, 0.5 * cm))
+
+    # ── 3. Heading Bulan ─────────────────────────────────────────
+    story.append(
+        Paragraph(
+            f'<b><font color="red">Aktivitas Bulan {xml_esc(bulan)}</font></b>',
+            S("MH", fontName="Times-Bold", textColor=colors.red, spaceAfter=4),
+        )
+    )
+    story.append(Spacer(1, 0.2 * cm))
+
+    # ── 4. Tabel Kegiatan ─────────────────────────────────────────
+    NO_W = 0.9 * cm
+    AKTIV_W = 3.8 * cm
+    DESC_W = PAGE_W - NO_W - AKTIV_W
+
+    act_data = [
+        [
+            Paragraph("<b>No</b>", hdr_s),
+            Paragraph("<b>Aktivitas</b>", hdr_s),
+            Paragraph("<b>Deskripsi Kegiatan</b>", hdr_s),
+        ]
+    ]
+
+    for i, entry in enumerate(month_entries):
+        tgl = entry["tanggal"]
+        try:
+            tgl_str = tgl.strftime("%d/%m") if tgl else "-"
+        except Exception:
+            tgl_str = str(tgl)[:5] if tgl else "-"
+
+        aktiv_text = f"[{tgl_str}] {entry['aktivitas']}"
+        # Desc cell: teks (rich text) + gambar (nested table)
+        # Gunakan list flowables dari parser HTML
+        desc_flowables = html_to_reportlab_flowables(entry.get("deskripsi", ""), cell_s)
+        desc_inner_rows = [[f] for f in desc_flowables]
+
+        for img in entry.get("images", []):
+            img_path = os.path.join("static", "uploads", "logbook", img.get("path", ""))
+            if os.path.exists(img_path):
+                try:
+                    img_w = min(DESC_W - 0.4 * cm, 6.5 * cm)
+                    img_h = img_w * 0.65
+                    rl_img = RLImage(img_path, width=img_w, height=img_h)
+                    desc_inner_rows.append([Spacer(1, 0.2 * cm)])
+                    desc_inner_rows.append([rl_img])
+                except Exception as img_err:
+                    print(f"[PDF] Gagal load gambar: {img_err}")
+
+        if len(desc_inner_rows) > len(desc_flowables):
+            inner = Table(desc_inner_rows, colWidths=[DESC_W - 0.3 * cm])
+            inner.setStyle(
+                TableStyle(
+                    [
+                        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                        ("TOPPADDING", (0, 0), (-1, -1), 2),
+                        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+                        ("GRID", (0, 0), (-1, -1), 0, colors.white),
+                    ]
+                )
+            )
+            desc_cell = inner
+        else:
+            desc_cell = desc_flowables
+
+        act_data.append(
+            [
+                Paragraph(str(i + 1), cell_s),
+                para_nl(aktiv_text, aktiv_s),
+                desc_cell,
+            ]
+        )
+
+    if not month_entries:
+        act_data.append(
+            [
+                Paragraph("", cell_s),
+                Paragraph("", cell_s),
+                Paragraph(
+                    "<i>Belum ada kegiatan untuk bulan ini.</i>",
+                    S("NE", fontName="Times-Roman", fontSize=11),
+                ),
+            ]
+        )
+
+    act_tbl = Table(act_data, colWidths=[NO_W, AKTIV_W, DESC_W])
+    act_tbl.setStyle(
+        TableStyle(
+            [
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+                ("FONTNAME", (0, 0), (-1, -1), "Times-Roman"),
+                ("FONTSIZE", (0, 0), (-1, -1), 12),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("LEFTPADDING", (0, 0), (-1, -1), 4),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("FONTNAME", (0, 0), (-1, 0), "Times-Bold"),
+            ]
+        )
+    )
+    story.append(act_tbl)
+    story.append(Spacer(1, 0.4 * cm))
+
+    # ── 5. Resume ─────────────────────────────────────────────────
+    resume_content = get_resume_content(logbook_id, bulan)
+    if resume_content:
+        month_only = bulan.split(" ")[0] if " " in bulan else bulan
+        story.append(
+            Paragraph(f"<b>Resume Kegiatan Bulan {xml_esc(month_only)}:</b>", res_lbl_s)
+        )
+        # Gunakan rich text parser
+        for flowable in html_to_reportlab_flowables(resume_content, res_body_s):
+            story.append(flowable)
+        story.append(Spacer(1, 0.4 * cm))
+
+    # ── 6. Blok Tanda Tangan ─────────────────────────────────────
+    conn3 = get_connection()
+    cur3 = conn3.cursor(dictionary=True)
+    cur3.execute(
+        "SELECT is_approved FROM logbook_signatures WHERE logbook_id = %s AND bulan = %s",
+        (logbook_id, bulan),
+    )
+    sig_row = cur3.fetchone()
+    month_approved = sig_row and sig_row.get("is_approved", 0) == 1
+    cur3.close()
+    conn3.close()
+
+    ttd_path = logbook.get("ttd_mentor_path")
+
+    # Container kanan via tabel lebar penuh
+    sig_rows = []
+    sig_rows.append([Paragraph("<b>Disetujui Oleh</b>", sig_right_s)])
+
+    if month_approved and ttd_path:
+        full_ttd = os.path.join("static", "uploads", "logbook", ttd_path)
+        if os.path.exists(full_ttd):
+            try:
+                ttd_img = RLImage(full_ttd, width=3 * cm, height=1.5 * cm)
+                sig_rows.append([ttd_img])
+            except Exception as ttd_err:
+                print(f"[PDF] Gagal load TTD: {ttd_err}")
+                sig_rows.append([Spacer(1, 1.5 * cm)])
+        else:
+            sig_rows.append([Spacer(1, 1.5 * cm)])
+    else:
+        sig_rows.append(
+            [
+                Paragraph(
+                    '<b><font color="red">Belum Disetujui</font></b>',
+                    S(
+                        "BD",
+                        fontName="Times-Bold",
+                        textColor=colors.red,
+                        alignment=TA_RIGHT,
+                    ),
+                )
+            ]
+        )
+        sig_rows.append([Spacer(1, 1.0 * cm)])
+
+    mentor = logbook.get("nama_mentor", "Nama Mentor")
+    sig_rows.append([Paragraph(f"<b><u>{xml_esc(mentor)}</u></b>", sig_name_s)])
+
+    sig_tbl = Table(sig_rows, colWidths=[PAGE_W])
+    sig_tbl.setStyle(
+        TableStyle(
+            [
+                ("ALIGN", (0, 0), (-1, -1), "RIGHT"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 3),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                ("GRID", (0, 0), (-1, -1), 0, colors.white),
+            ]
+        )
+    )
+    story.append(sig_tbl)
+
+    # ── Build PDF ─────────────────────────────────────────────────
+    doc.build(story)
+    file_stream.seek(0)
+
+    nim = logbook.get("nim", "logbook")
+    bulan_fn = bulan.replace(" ", "_")
+    return send_file(
+        file_stream,
+        as_attachment=True,
+        download_name=f"Logbook_{nim}_{bulan_fn}.pdf",
+        mimetype="application/pdf",
+    )
+
+
 # --- CRUD KHUSUS IMAGE (SINGLE) ---
+
 
 def get_image_by_id(image_id):
     conn = get_connection()
@@ -821,14 +1632,15 @@ def get_image_by_id(image_id):
     conn.close()
     return image
 
+
 def delete_single_image(image_id, user_id):
     """Menghapus satu file gambar spesifik dengan validasi User"""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # 1. Cek Kepemilikan & Ambil Path
     query = """
-        SELECT i.id, i.path 
+        SELECT i.id, i.path
         FROM logbook_images i
         JOIN logbook_entries e ON i.entry_id = e.id
         JOIN logbooks l ON e.logbook_id = l.id
@@ -836,34 +1648,35 @@ def delete_single_image(image_id, user_id):
     """
     cursor.execute(query, (image_id, user_id))
     image = cursor.fetchone()
-    
+
     if image:
         # Hapus file fisik
-        file_path = os.path.join('static', 'uploads', 'logbook', image['path'])
+        file_path = os.path.join("static", "uploads", "logbook", image["path"])
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
             except OSError:
-                pass 
-        
+                pass
+
         # Hapus record dari DB
         cursor.execute("DELETE FROM logbook_images WHERE id = %s", (image_id,))
         conn.commit()
         conn.close()
         return True
-        
+
     conn.close()
     return False
+
 
 def update_image_metadata(image_id, user_id, nama_baru, deskripsi_baru):
     """Update nama dan deskripsi gambar dengan keamanan User ID"""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True) # Pakai dictionary cursor biar enak
+    cursor = conn.cursor(dictionary=True)  # Pakai dictionary cursor biar enak
     try:
         # 1. Cek Validasi Kepemilikan (PENTING!)
         # Kita join dari images -> entries -> logbooks untuk cek user_id
         check_query = """
-            SELECT i.id 
+            SELECT i.id
             FROM logbook_images i
             JOIN logbook_entries e ON i.entry_id = e.id
             JOIN logbooks l ON e.logbook_id = l.id
@@ -871,12 +1684,12 @@ def update_image_metadata(image_id, user_id, nama_baru, deskripsi_baru):
         """
         cursor.execute(check_query, (image_id, user_id))
         if not cursor.fetchone():
-            return False # User mencoba edit gambar orang lain!
+            return False  # User mencoba edit gambar orang lain!
 
         # 2. Eksekusi Update
         cursor.execute(
             "UPDATE logbook_images SET nama_asli = %s, deskripsi = %s WHERE id = %s",
-            (nama_baru, deskripsi_baru, image_id)
+            (nama_baru, deskripsi_baru, image_id),
         )
         conn.commit()
         return True
@@ -885,6 +1698,7 @@ def update_image_metadata(image_id, user_id, nama_baru, deskripsi_baru):
         return False
     finally:
         conn.close()
+
 
 def replace_image_file(image_id, user_id, new_file):
     """Replace file fisik gambar yang sudah ada di DB (untuk crop/rotate/resize)"""
@@ -905,12 +1719,12 @@ def replace_image_file(image_id, user_id, new_file):
         if not image:
             return False, "Unauthorized"
 
-        old_path = image['path']
-        nim = image['nim']
-        entry_id = image['entry_id']
+        old_path = image["path"]
+        nim = image["nim"]
+        entry_id = image["entry_id"]
 
         # 2. Hapus file fisik lama
-        old_file_path = os.path.join('static', 'uploads', 'logbook', old_path)
+        old_file_path = os.path.join("static", "uploads", "logbook", old_path)
         if os.path.exists(old_file_path):
             try:
                 os.remove(old_file_path)
@@ -920,7 +1734,7 @@ def replace_image_file(image_id, user_id, new_file):
         # 3. Simpan file baru (reuse folder structure)
         timestamp = int(time.time() * 1000)
         new_filename = f"{nim}img_{entry_id}_{timestamp}.jpg"
-        nim_folder = os.path.join('static', 'uploads', 'logbook', str(nim), 'imgs')
+        nim_folder = os.path.join("static", "uploads", "logbook", str(nim), "imgs")
         os.makedirs(nim_folder, exist_ok=True)
 
         filepath = os.path.join(nim_folder, new_filename)
@@ -936,7 +1750,7 @@ def replace_image_file(image_id, user_id, new_file):
         new_relative_path = f"{nim}/imgs/{new_filename}"
         cursor.execute(
             "UPDATE logbook_images SET path = %s WHERE id = %s",
-            (new_relative_path, image_id)
+            (new_relative_path, image_id),
         )
         conn.commit()
         return True, new_relative_path
@@ -948,78 +1762,104 @@ def replace_image_file(image_id, user_id, new_file):
     finally:
         conn.close()
 
+
 # --- CRUD TANDA TANGAN / SIGNATURES ---
+
 
 def get_available_months(logbook_id):
     """Ambil daftar bulan unik dari logbook_entries untuk logbook tertentu."""
-    months_id = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-                 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+    months_id = [
+        "",
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+    ]
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
         "SELECT DISTINCT MONTH(tanggal) as bulan, YEAR(tanggal) as tahun FROM logbook_entries WHERE logbook_id = %s ORDER BY tahun ASC, bulan ASC",
-        (logbook_id,)
+        (logbook_id,),
     )
     rows = cursor.fetchall()
     conn.close()
-    
+
     result = []
     for row in rows:
-        if row['bulan'] and row['tahun']:
-            month_name = months_id[row['bulan']]
+        if row["bulan"] and row["tahun"]:
+            month_name = months_id[row["bulan"]]
             result.append(f"{month_name} {row['tahun']}")
     return result
+
 
 def get_signatures_by_logbook(logbook_id):
     """Ambil semua data signature approval untuk logbook tertentu, di-merge dengan bulan dari entries."""
     available_months = get_available_months(logbook_id)
-    
+
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
         "SELECT bulan, is_approved, approved_at FROM logbook_signatures WHERE logbook_id = %s",
-        (logbook_id,)
+        (logbook_id,),
     )
     sig_rows = cursor.fetchall()
     conn.close()
-    
+
     # Map bulan -> approval data
     sig_map = {}
     for row in sig_rows:
-        sig_map[row['bulan']] = {
-            'is_approved': row['is_approved'],
-            'approved_at': row['approved_at'].strftime('%d-%m-%Y %H:%M') if row['approved_at'] else None
+        sig_map[row["bulan"]] = {
+            "is_approved": row["is_approved"],
+            "approved_at": row["approved_at"].strftime("%d-%m-%Y %H:%M")
+            if row["approved_at"]
+            else None,
         }
-    
+
     # Merge: setiap bulan yang ada entry-nya punya status approval
     result = []
     for month in available_months:
-        data = sig_map.get(month, {'is_approved': 0, 'approved_at': None})
-        result.append({
-            'bulan': month,
-            'is_approved': data['is_approved'],
-            'approved_at': data['approved_at']
-        })
-    
+        data = sig_map.get(month, {"is_approved": 0, "approved_at": None})
+        result.append(
+            {
+                "bulan": month,
+                "is_approved": data["is_approved"],
+                "approved_at": data["approved_at"],
+            }
+        )
+
     return result
+
 
 def approve_signature(logbook_id, bulan, user_id):
     """Approve tanda tangan untuk bulan tertentu. Validasi ownership."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # Validasi ownership
-    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    cursor.execute(
+        "SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id)
+    )
     if not cursor.fetchone():
         conn.close()
         return False
-    
+
     try:
-        cursor.execute("""
-            INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at) 
+        cursor.execute(
+            """
+            INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at)
             VALUES (%s, %s, 1, NOW())
             ON DUPLICATE KEY UPDATE is_approved = 1, approved_at = NOW()
-        """, (logbook_id, bulan))
+        """,
+            (logbook_id, bulan),
+        )
         conn.commit()
         return True
     except Exception as e:
@@ -1028,23 +1868,29 @@ def approve_signature(logbook_id, bulan, user_id):
     finally:
         conn.close()
 
+
 def revoke_signature(logbook_id, bulan, user_id):
     """Revoke/cabut tanda tangan untuk bulan tertentu."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # Validasi ownership
-    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    cursor.execute(
+        "SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id)
+    )
     if not cursor.fetchone():
         conn.close()
         return False
-    
+
     try:
-        cursor.execute("""
-            INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at) 
+        cursor.execute(
+            """
+            INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at)
             VALUES (%s, %s, 0, NULL)
             ON DUPLICATE KEY UPDATE is_approved = 0, approved_at = NULL
-        """, (logbook_id, bulan))
+        """,
+            (logbook_id, bulan),
+        )
         conn.commit()
         return True
     except Exception as e:
@@ -1053,59 +1899,71 @@ def revoke_signature(logbook_id, bulan, user_id):
     finally:
         conn.close()
 
+
 # --- CRUD RESUME KEGIATAN BULANAN ---
+
 
 def get_resumes_by_logbook(logbook_id):
     """Ambil semua resume per bulan untuk logbook tertentu, di-merge dengan bulan dari entries."""
     available_months = get_available_months(logbook_id)
-    
+
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
         "SELECT bulan, content, updated_at FROM logbook_resumes WHERE logbook_id = %s",
-        (logbook_id,)
+        (logbook_id,),
     )
     resume_rows = cursor.fetchall()
     conn.close()
-    
+
     # Map bulan -> resume data
     resume_map = {}
     for row in resume_rows:
-        resume_map[row['bulan']] = {
-            'content': row['content'] or '',
-            'updated_at': row['updated_at'].strftime('%d-%m-%Y %H:%M') if row['updated_at'] else None
+        resume_map[row["bulan"]] = {
+            "content": row["content"] or "",
+            "updated_at": row["updated_at"].strftime("%d-%m-%Y %H:%M")
+            if row["updated_at"]
+            else None,
         }
-    
+
     # Merge: setiap bulan yang ada entry-nya punya status resume
     result = []
     for month in available_months:
-        data = resume_map.get(month, {'content': '', 'updated_at': None})
-        result.append({
-            'bulan': month,
-            'content': data['content'],
-            'updated_at': data['updated_at'],
-            'is_filled': bool(data['content'] and data['content'].strip())
-        })
-    
+        data = resume_map.get(month, {"content": "", "updated_at": None})
+        result.append(
+            {
+                "bulan": month,
+                "content": data["content"],
+                "updated_at": data["updated_at"],
+                "is_filled": bool(data["content"] and data["content"].strip()),
+            }
+        )
+
     return result
+
 
 def save_resume(logbook_id, bulan, content, user_id):
     """Simpan/update resume untuk bulan tertentu. Validasi ownership."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # Validasi ownership
-    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    cursor.execute(
+        "SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id)
+    )
     if not cursor.fetchone():
         conn.close()
         return False
-    
+
     try:
-        cursor.execute("""
-            INSERT INTO logbook_resumes (logbook_id, bulan, content) 
+        cursor.execute(
+            """
+            INSERT INTO logbook_resumes (logbook_id, bulan, content)
             VALUES (%s, %s, %s)
             ON DUPLICATE KEY UPDATE content = VALUES(content)
-        """, (logbook_id, bulan, content))
+        """,
+            (logbook_id, bulan, content),
+        )
         conn.commit()
         return True
     except Exception as e:
@@ -1114,19 +1972,25 @@ def save_resume(logbook_id, bulan, content, user_id):
     finally:
         conn.close()
 
+
 def delete_resume(logbook_id, bulan, user_id):
     """Hapus resume untuk bulan tertentu. Validasi ownership."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     # Validasi ownership
-    cursor.execute("SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id))
+    cursor.execute(
+        "SELECT id FROM logbooks WHERE id = %s AND user_id = %s", (logbook_id, user_id)
+    )
     if not cursor.fetchone():
         conn.close()
         return False
-    
+
     try:
-        cursor.execute("DELETE FROM logbook_resumes WHERE logbook_id = %s AND bulan = %s", (logbook_id, bulan))
+        cursor.execute(
+            "DELETE FROM logbook_resumes WHERE logbook_id = %s AND bulan = %s",
+            (logbook_id, bulan),
+        )
         conn.commit()
         return True
     except Exception as e:
@@ -1135,14 +1999,15 @@ def delete_resume(logbook_id, bulan, user_id):
     finally:
         conn.close()
 
+
 def get_resume_content(logbook_id, bulan):
     """Ambil konten resume untuk bulan tertentu (dipakai di generate_word & Google Docs sync)."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
         "SELECT content FROM logbook_resumes WHERE logbook_id = %s AND bulan = %s",
-        (logbook_id, bulan)
+        (logbook_id, bulan),
     )
     row = cursor.fetchone()
     conn.close()
-    return row['content'] if row and row['content'] else None
+    return row["content"] if row and row["content"] else None
