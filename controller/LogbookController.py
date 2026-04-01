@@ -1279,6 +1279,7 @@ def generate_pdf_monthly(logbook_id, user_id, bulan):
             SimpleDocTemplate,
             Spacer,
             Table,
+            LongTable,
             TableStyle,
         )
     except ImportError:
@@ -1477,7 +1478,7 @@ def generate_pdf_monthly(logbook_id, user_id, bulan):
                     print(f"[PDF] Gagal load gambar: {img_err}")
 
         if len(desc_inner_rows) > len(desc_flowables):
-            inner = Table(desc_inner_rows, colWidths=[DESC_W - 0.3 * cm])
+            inner = Table(desc_inner_rows, colWidths=[DESC_W - 0.5 * cm])
             inner.setStyle(
                 TableStyle(
                     [
@@ -1513,7 +1514,7 @@ def generate_pdf_monthly(logbook_id, user_id, bulan):
             ]
         )
 
-    act_tbl = Table(act_data, colWidths=[NO_W, AKTIV_W, DESC_W])
+    act_tbl = LongTable(act_data, colWidths=[NO_W, AKTIV_W, DESC_W], splitInRow=1)
     act_tbl.setStyle(
         TableStyle(
             [

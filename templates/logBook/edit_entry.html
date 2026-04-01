@@ -1462,63 +1462,47 @@
                     }));
                 });
 
-                // Helper delete confirm
+                // Helper delete confirm — pola sama dengan tombol Simpan
                 async function handleCustomDelete(event, title, message, onStartLoading, onFinishLoading) {
                     event.preventDefault();
                     const deleteUrl = event.currentTarget.getAttribute('href');
-                    if (typeof window.showConfirm === 'function') {
-                     // Jika user klik "Ya"
-                    const isConfirmed = await window.showConfirm(title, message, 'danger');
-                    if (isConfirmed) {
-                        if (onStartLoading) onStartLoading();
-                        try {
-                            const response = await fetch(deleteUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-Token': '{{ csrf_token() if csrf_token else "" }}'
-                                }
-                            });
 
-                            if (response.ok) {
-                            // --- TAMBAHAN SINKRONISASI OTOMATIS SAAT DIHAPUS ---
-                                    {% if logbook.google_doc_id %}
-                                    if(typeof window.showAlert === 'function') window.showAlert('info', 'Terhapus! Menyinkronkan ke Google Docs...');
-                                    await autoSyncActivities('{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
-                                    {% endif %}
-                                // Redirect logic depending on where we are
-                                // If deleting entry, reload or go back to logbook detail?
-                                // Usually deleting entry -> reload current page (which might be detail?)
-                                // But wait, this is edit_entry page. If we delete, we should go back to logbook detail.
-                                // Let's check response url or just go to logbook detail.
-                                // Backend delete_entry usually redirects.
-                                if (response.redirected) {
-                                    window.location.href = response.url;
-                                } else {
-                                     // Fallback: go to logbook detail
-                                     window.location.href = "{{ url_for('logbook_detail', logbook_id=logbook.uuid) }}";
-                                }
-                            } else {
-                                if (onStopLoading) onStopLoading();
-                                alert('Gagal menghapus kegiatan. Silakan coba lagi.');
-                            }
-                        } catch (e) {
-                            if (onStopLoading) onStopLoading();
-                            console.error('Delete error:', e);
-                            alert('Terjadi kesalahan koneksi.');
+                    // Konfirmasi dulu
+                    let confirmed = false;
+                    if (typeof window.showConfirm === 'function') {
+                        confirmed = await window.showConfirm(title, message, 'danger');
+                    } else {
+                        confirmed = confirm(message);
+                    }
+                    if (!confirmed) return;
+
+                    if (onStartLoading) onStartLoading();
+
+                    fetch(deleteUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() if csrf_token else "" }}'
                         }
-                    }
-                } else {
-                     // Fallback
-                    if (confirm(message)) {
-                        if (onStartLoading) onStartLoading();
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = deleteUrl;
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
+                    })
+                        .then(async (res) => {
+                            if (res.ok) {
+                                {% if logbook.google_doc_id %}
+                                localStorage.setItem('pendingSync_{{ logbook.uuid }}', '{{ logbook.google_doc_id }}');
+                                {% endif %}
+                                window.location.href = '{{ url_for("logbook_detail", logbook_id=logbook.uuid) }}';
+                            } else {
+                                if (onFinishLoading) onFinishLoading();
+                                if (typeof window.showAlert === 'function') window.showAlert('error', 'Gagal menghapus kegiatan.');
+                                else alert('Gagal menghapus kegiatan.');
+                            }
+                        })
+                        .catch((e) => {
+                            if (onFinishLoading) onFinishLoading();
+                            console.error('Delete error:', e);
+                            if (typeof window.showAlert === 'function') window.showAlert('error', 'Error koneksi: ' + e);
+                            else alert('Error koneksi: ' + e);
+                        });
                 }
-            }
 
             // Auto sync tanpa konfirmasi (dipanggil setelah simpan/edit)
             async function autoSyncActivities(logbookId, fileId) {
