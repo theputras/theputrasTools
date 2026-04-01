@@ -1469,8 +1469,12 @@ def generate_pdf_monthly(logbook_id, user_id, bulan):
             img_path = os.path.join("static", "uploads", "logbook", img.get("path", ""))
             if os.path.exists(img_path):
                 try:
+                    # Baca dimensi asli gambar untuk menjaga rasio
+                    with Image.open(img_path) as pil_img:
+                        orig_w, orig_h = pil_img.size
+                    aspect_ratio = orig_h / orig_w if orig_w > 0 else 0.65
                     img_w = min(DESC_W - 0.4 * cm, 6.5 * cm)
-                    img_h = img_w * 0.65
+                    img_h = img_w * aspect_ratio
                     rl_img = RLImage(img_path, width=img_w, height=img_h)
                     desc_inner_rows.append([Spacer(1, 0.2 * cm)])
                     desc_inner_rows.append([rl_img])
