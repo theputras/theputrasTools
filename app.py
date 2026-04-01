@@ -2117,6 +2117,7 @@ def logbook_delete_entry(logbook_id, entry_id):
 @app.route("/logbook/<string:logbook_id>/download", methods=["GET"])
 @login_required
 @check_permission("logbook_magang")
+@limiter.limit("30 per minute")  # Limit khusus download, override global limit
 def logbook_download(logbook_id):
     current_user = g.user.get("sub")
 
@@ -2133,6 +2134,7 @@ def logbook_download(logbook_id):
 # 8b. Download PDF Per Bulan
 @app.route("/logbook/<string:logbook_id>/download-pdf/<path:bulan>", methods=["GET"])
 @login_required
+@limiter.limit("30 per minute")  # Limit khusus download, override global limit
 def logbook_download_pdf(logbook_id, bulan):
     current_user = g.user.get("sub")
 
