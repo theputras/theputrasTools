@@ -12,13 +12,21 @@ from models.konselor import (
 
 
 import os
+import base64
+import hashlib
 from cryptography.fernet import Fernet
 
 def get_fernet():
     key = os.getenv("SECRET_KEY")
     if not key:
         raise ValueError("SECRET_KEY missing in environment for Fernet encryption")
-    return Fernet(key.encode('utf-8'))
+    
+    # Derive a guaranteed 32-byte url-safe base64 key using SHA-256
+    # Supaya tidak error kalau SECRET_KEY di .env production cuma string biasa
+    derived_key = hashlib.sha256(key.encode('utf-8')).digest()
+    fernet_key = base64.urlsafe_b64encode(derived_key)
+    
+    return Fernet(fernet_key)
 
 def hash_nim(nim_raw):
     """
