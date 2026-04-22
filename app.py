@@ -296,7 +296,7 @@ month_translation = {
 majorID = {
     "39010": "D3 Sistem Informasi",
     "41010": "S1 Sistem Informasi",
-    "41011": "S1 Sistem Informasi",
+    "41011": "S1 Sistem Informasi (RPL)",
     "41020": "S1 Teknik Komputer",
     "42010": "S1 Desain Komunikasi Visual",
     "42020": "S1 Desain Produk",
