@@ -4,12 +4,18 @@
                 rounded-[2.5rem] shadow-2xl shadow-black/50
                 border border-white/10 border-t-white/20">
 
-        {% set home_url = url_for('index') %}
         {% set tools_url = url_for('tools_page') %}
         {% set gate_undika = url_for('gate_undika') %}
         {% set account_url = url_for('account_page') %}
 
-        {% if g.user and g.user.role_id in [1, 2, 3] %}
+        {# Home URL: Konselor (role 5) masuk ke dashboard konselor, lainnya ke index biasa #}
+        {% if g.user and g.user.role_id == 5 %}
+            {% set home_url = url_for('konselor_dashboard') %}
+        {% else %}
+            {% set home_url = url_for('index') %}
+        {% endif %}
+
+        {% if g.user and g.user.role_id in [1, 2, 3, 5] %}
         <a href="{{ home_url }}" 
            class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group
                   {% if request.path == home_url %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">

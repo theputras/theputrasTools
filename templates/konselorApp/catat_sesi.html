@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catat Sesi Konseling - Konselor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-300 min-h-screen">
+
+    <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl"
+         x-data="catatSesiApp()"
+         x-init="init()">
+
+        <!-- HEADER -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <a href="{{ url_for('konselor_dashboard') }}"
+                   class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900/60 border border-white/5 text-white transition hover:bg-gray-800 active:scale-95">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                        <i class="fas fa-plus-circle text-violet-400 mr-1"></i> Catat <span class="gradient-text">Sesi Baru</span>
+                    </h1>
+                    <p class="text-xs text-gray-500">Isi form di bawah untuk mencatat sesi konseling</p>
+                </div>
+            </div>
+
+            <!-- Privacy notice -->
+            <div class="flex items-start gap-3 p-4 bg-violet-500/5 border border-violet-500/10 rounded-2xl">
+                <i class="fas fa-shield-halved text-violet-400 mt-0.5"></i>
+                <div>
+                    <p class="text-xs text-violet-300 font-semibold">Privasi Terjamin</p>
+                    <p class="text-[11px] text-gray-500 mt-0.5">NIM mahasiswa akan di-enkripsi (hash SHA-256) satu arah. Data asli NIM <strong class="text-gray-400">tidak pernah disimpan</strong> di database.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <form @submit.prevent="submitForm()" class="space-y-5">
+
+            <!-- NIM -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-id-card text-violet-400 mr-1"></i> NIM Mahasiswa <span class="text-red-400">*</span>
+                </label>
+                <input type="text" x-model="form.nim" required placeholder="Contoh: 23410100001"
+                       class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
+            </div>
+
+            <!-- Prodi (dropdown dari majorID) -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-graduation-cap text-blue-400 mr-1"></i> Program Studi
+                </label>
+                <select x-model="form.prodi"
+                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
+                    <option value="" class="bg-gray-900">— Pilih Prodi —</option>
+                    {% for kode, nama in prodi_list.items() %}
+                    <option value="{{ nama }}" class="bg-gray-900">{{ nama }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Jenis Layanan (dropdown dinamis) -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-hand-holding-heart text-emerald-400 mr-1"></i> Jenis Layanan <span class="text-red-400">*</span>
+                </label>
+                <select x-model="form.jenis_layanan_id" required
+                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
+                    <option value="" class="bg-gray-900">— Pilih Jenis Layanan —</option>
+                    {% for item in jenis_layanan_list %}
+                    <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Kategori Masalah (dropdown dinamis) -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-tags text-amber-400 mr-1"></i> Kategori Masalah <span class="text-red-400">*</span>
+                </label>
+                <select x-model="form.kategori_masalah_id" required
+                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
+                    <option value="" class="bg-gray-900">— Pilih Kategori —</option>
+                    {% for item in kategori_list %}
+                    <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Topik Permasalahan -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-comment-dots text-rose-400 mr-1"></i> Topik Permasalahan <span class="text-red-400">*</span>
+                </label>
+                <textarea x-model="form.topik" required rows="3" placeholder="Jelaskan detail spesifik permasalahan..."
+                          class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
+            </div>
+
+            <!-- Tanggal Sesi -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-calendar-alt text-cyan-400 mr-1"></i> Tanggal Sesi <span class="text-red-400">*</span>
+                </label>
+                <input type="date" x-model="form.tanggal_sesi" required
+                       class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm"
+                       style="color-scheme: dark;">
+            </div>
+
+            <!-- Tindak Lanjut -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-clipboard-check text-teal-400 mr-1"></i> Tindak Lanjut
+                </label>
+                <textarea x-model="form.tindak_lanjut" rows="3" placeholder="Catatan rencana tindak lanjut (opsional)..."
+                          class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" :disabled="isSubmitting"
+                    class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500
+                           text-white font-bold py-4 rounded-2xl shadow-lg shadow-violet-600/20
+                           transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed
+                           flex items-center justify-center gap-2 text-sm">
+                <template x-if="isSubmitting">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </template>
+                <template x-if="!isSubmitting">
+                    <i class="fas fa-save"></i>
+                </template>
+                <span x-text="isSubmitting ? 'Menyimpan...' : 'Simpan Sesi Konseling'"></span>
+            </button>
+        </form>
+    </div>
+
+    {% include 'muslimTools/prayerWidget.html' %}
+    {% include 'nativeNav.html' %}
+
+<script>
+function catatSesiApp() {
+    return {
+        isSubmitting: false,
+        form: {
+            nim: '',
+            prodi: '',
+            jenis_layanan_id: '',
+            kategori_masalah_id: '',
+            topik: '',
+            tanggal_sesi: '',
+            tindak_lanjut: ''
+        },
+
+        init() {
+            // Default tanggal = hari ini
+            const today = new Date();
+            this.form.tanggal_sesi = today.toISOString().split('T')[0];
+        },
+
+        async submitForm() {
+            this.isSubmitting = true;
+            try {
+                const formData = new FormData();
+                for (const [key, value] of Object.entries(this.form)) {
+                    formData.append(key, value);
+                }
+
+                const res = await fetch('{{ url_for("konselor_catat_sesi") }}', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    if (window.showAlert) {
+                        window.showAlert('success', data.message || 'Sesi berhasil disimpan!');
+                    }
+                    // Reset form
+                    this.form = {
+                        nim: '',
+                        prodi: '',
+                        jenis_layanan_id: '',
+                        kategori_masalah_id: '',
+                        topik: '',
+                        tanggal_sesi: new Date().toISOString().split('T')[0],
+                        tindak_lanjut: ''
+                    };
+                } else {
+                    if (window.showAlert) {
+                        window.showAlert('error', data.message || 'Gagal menyimpan sesi.');
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                if (window.showAlert) {
+                    window.showAlert('error', 'Terjadi kesalahan koneksi.');
+                }
+            } finally {
+                this.isSubmitting = false;
+            }
+        }
+    }
+}
+</script>
+</body>
+</html>

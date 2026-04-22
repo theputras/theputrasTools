@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konselor Dashboard - The Putras Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Inter', sans-serif; }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Card hover glow */
+        .card-glow {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-glow:hover {
+            box-shadow: 0 0 30px -5px rgba(139, 92, 246, 0.15),
+                         0 0 60px -10px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Smooth counter animation */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-count { animation: countUp 0.6s ease-out forwards; }
+
+        /* Pulse ring for active status */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-300 min-h-screen">
+
+    <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-5xl"
+         x-data="konselorDashboard()"
+         x-init="init()">
+
+        <!-- HEADER -->
+        <div class="relative mb-8">
+            <!-- Background decoration -->
+            <div class="absolute -top-10 -left-10 w-72 h-72 bg-violet-600/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -top-5 right-0 w-48 h-48 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <p class="text-sm text-violet-400/80 font-medium tracking-wide mb-1">
+                        <i class="fas fa-hand-holding-heart mr-1"></i> Selamat datang,
+                    </p>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                        Dashboard <span class="gradient-text">Konselor</span>
+                    </h1>
+                    <p class="text-sm text-gray-500 mt-1" x-text="currentDate"></p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <!-- Quick status -->
+                    <div class="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-xs font-semibold text-emerald-400">Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+            <!-- Total Mahasiswa Binaan -->
+            <div class="card-glow bg-gray-900/60 backdrop-blur-sm border border-white/5 rounded-2xl p-4 sm:p-5 group hover:border-violet-500/20">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-violet-500/10 rounded-xl group-hover:bg-violet-500/20 transition-colors">
+                        <i class="fas fa-users text-violet-400 text-lg"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-violet-400/60 uppercase tracking-widest">Binaan</span>
+                </div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white animate-count" x-text="stats.totalMahasiswa">--</p>
+                <p class="text-xs text-gray-500 mt-1">Mahasiswa aktif</p>
+            </div>
+
+            <!-- Sesi Konseling Bulan Ini -->
+            <div class="card-glow bg-gray-900/60 backdrop-blur-sm border border-white/5 rounded-2xl p-4 sm:p-5 group hover:border-blue-500/20">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-blue-500/10 rounded-xl group-hover:bg-blue-500/20 transition-colors">
+                        <i class="fas fa-comments text-blue-400 text-lg"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest">Sesi</span>
+                </div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white animate-count" x-text="stats.sesibulanIni">--</p>
+                <p class="text-xs text-gray-500 mt-1">Bulan ini</p>
+            </div>
+
+            <!-- Menunggu Tindak Lanjut -->
+            <div class="card-glow bg-gray-900/60 backdrop-blur-sm border border-white/5 rounded-2xl p-4 sm:p-5 group hover:border-amber-500/20">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-amber-500/10 rounded-xl group-hover:bg-amber-500/20 transition-colors">
+                        <i class="fas fa-clock text-amber-400 text-lg"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-amber-400/60 uppercase tracking-widest">Pending</span>
+                </div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white animate-count" x-text="stats.pending">--</p>
+                <p class="text-xs text-gray-500 mt-1">Perlu tindakan</p>
+            </div>
+
+            <!-- Selesai -->
+            <div class="card-glow bg-gray-900/60 backdrop-blur-sm border border-white/5 rounded-2xl p-4 sm:p-5 group hover:border-emerald-500/20">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-emerald-500/10 rounded-xl group-hover:bg-emerald-500/20 transition-colors">
+                        <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest">Selesai</span>
+                </div>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white animate-count" x-text="stats.selesai">--</p>
+                <p class="text-xs text-gray-500 mt-1">Kasus ditutup</p>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="mb-8">
+            <h2 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <i class="fas fa-bolt text-violet-400"></i> Aksi Cepat
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <a href="{{ url_for('konselor_catat_sesi') }}"
+                   class="group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-violet-600/10 to-indigo-600/10 
+                               border border-violet-500/10 rounded-2xl hover:border-violet-500/30 transition-all duration-300 active:scale-95">
+                    <div class="p-3 bg-violet-500/15 rounded-xl mb-3 group-hover:bg-violet-500/25 transition-colors group-hover:scale-110 duration-300">
+                        <i class="fas fa-plus text-violet-400 text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold text-white">Sesi Baru</span>
+                    <span class="text-[10px] text-gray-500 mt-0.5">Catat konseling</span>
+                </a>
+
+                <a href="{{ url_for('konselor_rekap') }}"
+                   class="group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 
+                               border border-blue-500/10 rounded-2xl hover:border-blue-500/30 transition-all duration-300 active:scale-95">
+                    <div class="p-3 bg-blue-500/15 rounded-xl mb-3 group-hover:bg-blue-500/25 transition-colors group-hover:scale-110 duration-300">
+                        <i class="fas fa-chart-pie text-blue-400 text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold text-white">Rekap</span>
+                    <span class="text-[10px] text-gray-500 mt-0.5">Dashboard data</span>
+                </a>
+
+                <a href="{{ url_for('konselor_kelola_master') }}"
+                   class="group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-emerald-600/10 to-teal-600/10 
+                               border border-emerald-500/10 rounded-2xl hover:border-emerald-500/30 transition-all duration-300 active:scale-95">
+                    <div class="p-3 bg-emerald-500/15 rounded-xl mb-3 group-hover:bg-emerald-500/25 transition-colors group-hover:scale-110 duration-300">
+                        <i class="fas fa-cogs text-emerald-400 text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold text-white">Kelola Data</span>
+                    <span class="text-[10px] text-gray-500 mt-0.5">Master data</span>
+                </a>
+
+                <button @click="showComingSoon('Jadwal')"
+                        class="group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-amber-600/10 to-orange-600/10 
+                               border border-amber-500/10 rounded-2xl hover:border-amber-500/30 transition-all duration-300 active:scale-95">
+                    <div class="p-3 bg-amber-500/15 rounded-xl mb-3 group-hover:bg-amber-500/25 transition-colors group-hover:scale-110 duration-300">
+                        <i class="fas fa-calendar-alt text-amber-400 text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold text-white">Jadwal</span>
+                    <span class="text-[10px] text-gray-500 mt-0.5">Segera hadir</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- JADWAL HARI INI & AKTIVITAS TERBARU -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+            
+            <!-- Jadwal Hari Ini -->
+            <div class="card-glow bg-gray-900/60 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between p-5 border-b border-white/5">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-calendar-day text-violet-400"></i> Jadwal Hari Ini
+                    </h3>
+                    <span class="text-[10px] font-bold text-violet-400/70 bg-violet-500/10 px-3 py-1 rounded-full"
+                          x-text="jadwalHariIni.length + ' sesi'"></span>
+                </div>
+
+                <div class="divide-y divide-white/5">
+                    <!-- Empty State -->
+                    <template x-if="jadwalHariIni.length === 0">
+                        <div class="p-8 text-center">
+                            <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-calendar-check text-gray-600 text-xl"></i>
+                            </div>
+                            <p class="text-sm text-gray-500 font-medium">Tidak ada sesi terjadwal</p>
+                            <p class="text-xs text-gray-600 mt-1">Jadwal konseling hari ini kosong</p>
+                        </div>
+                    </template>
+
+                    <!-- Schedule Items -->
+                    <template x-for="(jadwal, idx) in jadwalHariIni" :key="idx">
+                        <div class="flex items-center gap-4 p-4 hover:bg-white/[0.02] transition-colors">
+                            <div class="flex-shrink-0 text-center min-w-[50px]">
+                                <p class="text-xs font-bold text-violet-400" x-text="jadwal.waktu"></p>
+                                <p class="text-[10px] text-gray-600" x-text="jadwal.durasi"></p>
+                            </div>
+                            <div class="w-px h-10 bg-gradient-to-b from-violet-500/50 to-transparent"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-white truncate" x-text="jadwal.nama"></p>
+                                <p class="text-xs text-gray-500" x-text="jadwal.topik"></p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                                      :class="jadwal.status === 'Terjadwal' 
+                                        ? 'bg-blue-500/15 text-blue-400' 
+                                        : jadwal.status === 'Berlangsung' 
+                                        ? 'bg-emerald-500/15 text-emerald-400' 
+                                        : 'bg-gray-500/15 text-gray-400'"
+                                      x-text="jadwal.status"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Aktivitas Terbaru -->
+            <div class="card-glow bg-gray-900/60 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between p-5 border-b border-white/5">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-history text-blue-400"></i> Aktivitas Terbaru
+                    </h3>
+                    <span class="text-[10px] font-bold text-blue-400/70 bg-blue-500/10 px-3 py-1 rounded-full">Terkini</span>
+                </div>
+
+                <div class="divide-y divide-white/5">
+                    <template x-if="aktivitas.length === 0">
+                        <div class="p-8 text-center">
+                            <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-inbox text-gray-600 text-xl"></i>
+                            </div>
+                            <p class="text-sm text-gray-500 font-medium">Belum ada aktivitas</p>
+                            <p class="text-xs text-gray-600 mt-1">Aktivitas konseling akan muncul di sini</p>
+                        </div>
+                    </template>
+
+                    <template x-for="(act, idx) in aktivitas" :key="idx">
+                        <div class="flex items-start gap-3 p-4 hover:bg-white/[0.02] transition-colors">
+                            <div class="flex-shrink-0 mt-0.5 p-2 rounded-xl"
+                                 :class="act.type === 'sesi' ? 'bg-violet-500/10' : act.type === 'catatan' ? 'bg-blue-500/10' : 'bg-emerald-500/10'">
+                                <i class="text-xs"
+                                   :class="act.type === 'sesi' ? 'fas fa-comments text-violet-400' : act.type === 'catatan' ? 'fas fa-sticky-note text-blue-400' : 'fas fa-check text-emerald-400'"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-white font-medium truncate" x-text="act.judul"></p>
+                                <p class="text-xs text-gray-500 mt-0.5" x-text="act.deskripsi"></p>
+                            </div>
+                            <span class="text-[10px] text-gray-600 whitespace-nowrap flex-shrink-0" x-text="act.waktu"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAFTAR MAHASISWA BINAAN -->
+        <div class="card-glow bg-gray-900/60 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden mb-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-5 border-b border-white/5">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-user-graduate text-emerald-400"></i> Mahasiswa Binaan
+                </h3>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <div class="relative flex-1 sm:flex-none">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-xs"></i>
+                        <input type="text" x-model="searchQuery" placeholder="Cari nama..." 
+                               class="w-full sm:w-56 bg-gray-800/60 border border-white/5 rounded-xl pl-9 pr-4 py-2 text-xs text-white 
+                                      placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition">
+                    </div>
+                </div>
+            </div>
+
+            <div class="divide-y divide-white/5">
+                <template x-if="filteredMahasiswa.length === 0">
+                    <div class="p-8 text-center">
+                        <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-user-slash text-gray-600 text-xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-500 font-medium">Tidak ada data</p>
+                        <p class="text-xs text-gray-600 mt-1">Belum ada mahasiswa binaan yang terdaftar</p>
+                    </div>
+                </template>
+
+                <template x-for="(mhs, idx) in filteredMahasiswa" :key="idx">
+                    <div class="flex items-center gap-4 p-4 hover:bg-white/[0.02] transition-colors group">
+                        <!-- Avatar -->
+                        <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold"
+                             :class="['bg-violet-500/15 text-violet-400', 'bg-blue-500/15 text-blue-400', 'bg-emerald-500/15 text-emerald-400', 'bg-amber-500/15 text-amber-400', 'bg-rose-500/15 text-rose-400'][idx % 5]"
+                             x-text="mhs.nama.charAt(0).toUpperCase()">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-white truncate" x-text="mhs.nama"></p>
+                            <p class="text-xs text-gray-500" x-text="mhs.nim + ' • ' + mhs.prodi"></p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full hidden sm:inline-block"
+                                  :class="mhs.statusKonseling === 'Aktif' 
+                                    ? 'bg-emerald-500/15 text-emerald-400' 
+                                    : mhs.statusKonseling === 'Follow-up' 
+                                    ? 'bg-amber-500/15 text-amber-400' 
+                                    : 'bg-gray-500/15 text-gray-400'"
+                                  x-text="mhs.statusKonseling"></span>
+                            <button class="text-gray-600 hover:text-violet-400 transition p-1.5 rounded-lg hover:bg-violet-500/10 opacity-0 group-hover:opacity-100">
+                                <i class="fas fa-ellipsis-v text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+    </div>
+
+    {% include 'muslimTools/prayerWidget.html' %}
+    {% include 'nativeNav.html' %}
+
+<script>
+function konselorDashboard() {
+    return {
+        currentDate: '',
+        searchQuery: '',
+        
+        stats: {
+            totalMahasiswa: 0,
+            sesibulanIni: 0,
+            pending: 0,
+            selesai: 0
+        },
+
+        jadwalHariIni: [],
+        aktivitas: [],
+        mahasiswaBinaan: [],
+
+        get filteredMahasiswa() {
+            if (!this.searchQuery) return this.mahasiswaBinaan;
+            const q = this.searchQuery.toLowerCase();
+            return this.mahasiswaBinaan.filter(m => 
+                m.nama.toLowerCase().includes(q) || 
+                m.nim.toLowerCase().includes(q) ||
+                m.prodi.toLowerCase().includes(q)
+            );
+        },
+
+        init() {
+            // Format tanggal hari ini
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            this.currentDate = now.toLocaleDateString('id-ID', options);
+
+            // Load data (placeholder — nanti bisa diganti fetch ke API)
+            this.loadDashboardData();
+        },
+
+        async loadDashboardData() {
+            try {
+                // Fetch dynamic data from the recap endpoint
+                const res = await fetch('{{ url_for("konselor_rekap_data") }}');
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Count pending (empty tindak_lanjut) vs selesai
+                    const sessions = data.sessions || [];
+                    const pendingCount = sessions.filter(s => !s.tindak_lanjut || s.tindak_lanjut.trim() === '').length;
+                    const selesaiCount = sessions.filter(s => s.tindak_lanjut && s.tindak_lanjut.trim() !== '').length;
+
+                    this.stats = {
+                        totalMahasiswa: data.stats.klien_unik || 0,
+                        sesibulanIni: data.stats.sesi_bulan_ini || 0,
+                        pending: pendingCount,
+                        selesai: selesaiCount
+                    };
+
+                    // Map 5 most recent sessions to recent activity feed
+                    this.aktivitas = sessions.slice(0, 5).map(s => {
+                        return {
+                            type: s.tindak_lanjut ? 'selesai' : 'sesi', // Icon type
+                            judul: `${s.jenis_layanan} - ${s.kategori_masalah}`,
+                            deskripsi: s.topik,
+                            waktu: new Date(s.tanggal_sesi).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'})
+                        };
+                    });
+                }
+            } catch (err) {
+                console.error("Gagal load data dashboard:", err);
+            }
+
+            this.mahasiswaBinaan = [
+                { nama: 'Ahmad Rizki', nim: '23410100001', prodi: 'S1 Sistem Informasi', statusKonseling: 'Aktif' },
+                { nama: 'Siti Nurhaliza', nim: '23410100015', prodi: 'S1 Sistem Informasi', statusKonseling: 'Follow-up' },
+                { nama: 'Budi Santoso', nim: '23420100003', prodi: 'S1 DKV', statusKonseling: 'Aktif' },
+                { nama: 'Dewi Lestari', nim: '23430100007', prodi: 'S1 Manajemen', statusKonseling: 'Selesai' },
+                { nama: 'Fauzan Hakim', nim: '23410100022', prodi: 'S1 Sistem Informasi', statusKonseling: 'Aktif' },
+                { nama: 'Anisa Putri', nim: '23420100009', prodi: 'S1 DKV', statusKonseling: 'Follow-up' },
+            ];
+        },
+
+        showComingSoon(feature) {
+            if (window.showAlert) {
+                window.showAlert('info', `Fitur "${feature}" akan segera hadir!`);
+            } else {
+                alert(`Fitur "${feature}" akan segera hadir!`);
+            }
+        }
+    }
+}
+</script>
+</body>
+</html>

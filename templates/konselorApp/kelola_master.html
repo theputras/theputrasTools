@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Master Data - Konselor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-300 min-h-screen">
+
+    <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl"
+         x-data="kelolaMasterApp()">
+
+        <!-- HEADER -->
+        <div class="mb-8 flex items-center gap-3">
+            <a href="{{ url_for('konselor_dashboard') }}"
+               class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900/60 border border-white/5 text-white transition hover:bg-gray-800 active:scale-95">
+                <i class="fas fa-arrow-left text-sm"></i>
+            </a>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                    <i class="fas fa-cogs text-violet-400 mr-1"></i> Kelola <span class="gradient-text">Master Data</span>
+                </h1>
+                <p class="text-xs text-gray-500">Atur kategori masalah dan jenis layanan konseling</p>
+            </div>
+        </div>
+
+        <!-- TAB SELECTOR -->
+        <div class="flex p-1.5 bg-gray-900/60 backdrop-blur-md rounded-2xl border border-white/5 mb-6 w-fit">
+            <button @click="activeTab = 'kategori'"
+                    :class="activeTab === 'kategori' ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    class="px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-tags"></i> Kategori Masalah
+            </button>
+            <button @click="activeTab = 'layanan'"
+                    :class="activeTab === 'layanan' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    class="px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-hand-holding-heart"></i> Jenis Layanan
+            </button>
+        </div>
+
+        <!-- ======================= -->
+        <!-- TAB: KATEGORI MASALAH   -->
+        <!-- ======================= -->
+        <div x-show="activeTab === 'kategori'" x-transition>
+            <!-- Add form -->
+            <div class="flex gap-2 mb-4">
+                <input type="text" x-model="newKategori" placeholder="Nama kategori baru..."
+                       @keydown.enter="addKategori()"
+                       class="flex-1 bg-gray-900/60 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition">
+                <button @click="addKategori()" :disabled="!newKategori.trim()"
+                        class="bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
+                    <i class="fas fa-plus text-xs"></i> Tambah
+                </button>
+            </div>
+
+            <!-- List -->
+            <div class="bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
+                <template x-if="kategoriList.length === 0">
+                    <div class="p-8 text-center text-gray-600 text-sm">
+                        <i class="fas fa-tags text-2xl mb-2 block"></i>
+                        Belum ada kategori masalah
+                    </div>
+                </template>
+
+                <template x-for="item in kategoriList" :key="item.id">
+                    <div class="flex items-center gap-3 p-4 hover:bg-white/[0.02] transition-colors group">
+                        <div class="p-2 bg-amber-500/10 rounded-lg">
+                            <i class="fas fa-tag text-amber-400 text-xs"></i>
+                        </div>
+
+                        <!-- View mode -->
+                        <template x-if="editKategoriId !== item.id">
+                            <div class="flex-1 flex items-center justify-between">
+                                <span class="text-sm text-white font-medium" x-text="item.nama"></span>
+                                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                                    <button @click="startEditKategori(item)" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-500/10 transition" title="Edit">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </button>
+                                    <button @click="deleteKategori(item.id, item.nama)" class="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/10 transition" title="Hapus">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Edit mode -->
+                        <template x-if="editKategoriId === item.id">
+                            <div class="flex-1 flex items-center gap-2">
+                                <input type="text" x-model="editKategoriNama"
+                                       @keydown.enter="saveEditKategori()"
+                                       @keydown.escape="editKategoriId = null"
+                                       class="flex-1 bg-gray-800 border border-violet-500/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
+                                <button @click="saveEditKategori()" class="text-emerald-400 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-500/10 transition" title="Simpan">
+                                    <i class="fas fa-check text-xs"></i>
+                                </button>
+                                <button @click="editKategoriId = null" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition" title="Batal">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ======================= -->
+        <!-- TAB: JENIS LAYANAN      -->
+        <!-- ======================= -->
+        <div x-show="activeTab === 'layanan'" x-transition x-cloak>
+            <!-- Add form -->
+            <div class="flex gap-2 mb-4">
+                <input type="text" x-model="newLayanan" placeholder="Nama jenis layanan baru..."
+                       @keydown.enter="addLayanan()"
+                       class="flex-1 bg-gray-900/60 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-blue-500/30 focus:outline-none transition">
+                <button @click="addLayanan()" :disabled="!newLayanan.trim()"
+                        class="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
+                    <i class="fas fa-plus text-xs"></i> Tambah
+                </button>
+            </div>
+
+            <!-- List -->
+            <div class="bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
+                <template x-if="layananList.length === 0">
+                    <div class="p-8 text-center text-gray-600 text-sm">
+                        <i class="fas fa-hand-holding-heart text-2xl mb-2 block"></i>
+                        Belum ada jenis layanan
+                    </div>
+                </template>
+
+                <template x-for="item in layananList" :key="item.id">
+                    <div class="flex items-center gap-3 p-4 hover:bg-white/[0.02] transition-colors group">
+                        <div class="p-2 bg-blue-500/10 rounded-lg">
+                            <i class="fas fa-hand-holding-heart text-blue-400 text-xs"></i>
+                        </div>
+
+                        <!-- View mode -->
+                        <template x-if="editLayananId !== item.id">
+                            <div class="flex-1 flex items-center justify-between">
+                                <span class="text-sm text-white font-medium" x-text="item.nama"></span>
+                                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                                    <button @click="startEditLayanan(item)" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-500/10 transition" title="Edit">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </button>
+                                    <button @click="deleteLayanan(item.id, item.nama)" class="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/10 transition" title="Hapus">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Edit mode -->
+                        <template x-if="editLayananId === item.id">
+                            <div class="flex-1 flex items-center gap-2">
+                                <input type="text" x-model="editLayananNama"
+                                       @keydown.enter="saveEditLayanan()"
+                                       @keydown.escape="editLayananId = null"
+                                       class="flex-1 bg-gray-800 border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
+                                <button @click="saveEditLayanan()" class="text-emerald-400 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-500/10 transition" title="Simpan">
+                                    <i class="fas fa-check text-xs"></i>
+                                </button>
+                                <button @click="editLayananId = null" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition" title="Batal">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+    </div>
+
+    {% include 'muslimTools/prayerWidget.html' %}
+    {% include 'nativeNav.html' %}
+
+<script>
+function kelolaMasterApp() {
+    return {
+        activeTab: 'kategori',
+
+        // Kategori
+        kategoriList: JSON.parse('{{ kategori_list | tojson }}'),
+        newKategori: '',
+        editKategoriId: null,
+        editKategoriNama: '',
+
+        // Layanan
+        layananList: JSON.parse('{{ layanan_list | tojson }}'),
+        newLayanan: '',
+        editLayananId: null,
+        editLayananNama: '',
+
+        // === KATEGORI CRUD ===
+        async addKategori() {
+            if (!this.newKategori.trim()) return;
+            const fd = new FormData();
+            fd.append('nama', this.newKategori.trim());
+            fd.append('action', 'create');
+            const res = await fetch('{{ url_for("konselor_kategori") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                this.kategoriList.push({ id: data.id, nama: this.newKategori.trim() });
+                this.newKategori = '';
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        startEditKategori(item) {
+            this.editKategoriId = item.id;
+            this.editKategoriNama = item.nama;
+        },
+
+        async saveEditKategori() {
+            if (!this.editKategoriNama.trim()) return;
+            const fd = new FormData();
+            fd.append('id', this.editKategoriId);
+            fd.append('nama', this.editKategoriNama.trim());
+            fd.append('action', 'update');
+            const res = await fetch('{{ url_for("konselor_kategori") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                const item = this.kategoriList.find(k => k.id === this.editKategoriId);
+                if (item) item.nama = this.editKategoriNama.trim();
+                this.editKategoriId = null;
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        async deleteKategori(id, nama) {
+            const yakin = window.showConfirm
+                ? await window.showConfirm('Hapus Kategori?', `"${nama}" akan dihapus. Gagal jika masih digunakan.`, 'danger')
+                : confirm(`Hapus kategori "${nama}"?`);
+            if (!yakin) return;
+
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('action', 'delete');
+            const res = await fetch('{{ url_for("konselor_kategori") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                this.kategoriList = this.kategoriList.filter(k => k.id !== id);
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        // === LAYANAN CRUD ===
+        async addLayanan() {
+            if (!this.newLayanan.trim()) return;
+            const fd = new FormData();
+            fd.append('nama', this.newLayanan.trim());
+            fd.append('action', 'create');
+            const res = await fetch('{{ url_for("konselor_layanan") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                this.layananList.push({ id: data.id, nama: this.newLayanan.trim() });
+                this.newLayanan = '';
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        startEditLayanan(item) {
+            this.editLayananId = item.id;
+            this.editLayananNama = item.nama;
+        },
+
+        async saveEditLayanan() {
+            if (!this.editLayananNama.trim()) return;
+            const fd = new FormData();
+            fd.append('id', this.editLayananId);
+            fd.append('nama', this.editLayananNama.trim());
+            fd.append('action', 'update');
+            const res = await fetch('{{ url_for("konselor_layanan") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                const item = this.layananList.find(l => l.id === this.editLayananId);
+                if (item) item.nama = this.editLayananNama.trim();
+                this.editLayananId = null;
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        async deleteLayanan(id, nama) {
+            const yakin = window.showConfirm
+                ? await window.showConfirm('Hapus Layanan?', `"${nama}" akan dihapus. Gagal jika masih digunakan.`, 'danger')
+                : confirm(`Hapus jenis layanan "${nama}"?`);
+            if (!yakin) return;
+
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('action', 'delete');
+            const res = await fetch('{{ url_for("konselor_layanan") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                this.layananList = this.layananList.filter(l => l.id !== id);
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        }
+    }
+}
+</script>
+</body>
+</html>

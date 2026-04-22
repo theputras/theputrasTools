@@ -629,6 +629,11 @@ def index():
     # Jika dia role Mahasiswa Non-Sicyca (4), langsung lempar ke tools
     if role_id == 4:
         return redirect(url_for("tools_page"))
+
+    # Jika dia role Konselor (5), arahkan ke dashboard konselor
+    if role_id == 5:
+        return redirect(url_for("konselor_dashboard"))
+
     # Cek apakah user punya kredensial Gate
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -673,6 +678,240 @@ def index():
             last_scraped=None,
             error_message=f"Terjadi error: {str(e)}",
         )
+
+
+@app.route("/konselor")
+@login_required
+def konselor_dashboard():
+    """Dashboard khusus untuk user dengan role Konselor."""
+    role_id = g.user.get("role_id")
+
+    # Hanya role Konselor (5) dan Super Admin (1) yang boleh akses
+    if role_id not in [1, 5]:
+        return redirect(url_for("index"))
+
+    return render_template("konselorApp/indexKonselor.html")
+
+
+# === KONSELOR: Catat Sesi Baru ===
+@app.route("/konselor/catat", methods=["GET", "POST"])
+@login_required
+def konselor_catat_sesi():
+    """Form pencatatan sesi konseling baru."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return redirect(url_for("index"))
+
+    from controller.KonselorController import (
+        get_all_kategori, get_all_layanan, create_sesi
+    )
+
+    if request.method == "POST":
+        user_id = g.user.get("sub")
+        success, message = create_sesi(user_id, request.form)
+        return jsonify({"success": success, "message": message})
+
+    # GET — render form
+    return render_template(
+        "konselorApp/catat_sesi.html",
+        prodi_list=majorID,
+        kategori_list=get_all_kategori(),
+        jenis_layanan_list=get_all_layanan()
+    )
+
+
+# === KONSELOR: Dashboard Rekap ===
+@app.route("/konselor/rekap")
+@login_required
+def konselor_rekap():
+    """Halaman dashboard rekap sesi konseling."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return redirect(url_for("index"))
+
+    from controller.KonselorController import get_all_kategori, get_all_layanan
+    return render_template(
+        "konselorApp/rekap_sesi.html",
+        prodi_list=majorID,
+        kategori_list=get_all_kategori(),
+        jenis_layanan_list=get_all_layanan()
+    )
+
+
+# === KONSELOR: Rekap Data (JSON) ===
+@app.route("/konselor/rekap/data")
+@login_required
+def konselor_rekap_data():
+    """JSON data rekap + riwayat sesi."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import get_rekap, get_riwayat_sesi
+    user_id = g.user.get("sub")
+    tahun = request.args.get("tahun", type=int)
+
+    stats = get_rekap(user_id, tahun=tahun)
+    sessions = get_riwayat_sesi(user_id, tahun=tahun)
+
+    # Serialize dates
+    for s in sessions:
+        if s.get("tanggal_sesi"):
+            s["tanggal_sesi"] = str(s["tanggal_sesi"])
+        if s.get("created_at"):
+            s["created_at"] = str(s["created_at"])
+
+    return jsonify({"success": True, "stats": stats, "sessions": sessions})
+
+
+# === KONSELOR: Hapus Sesi ===
+@app.route("/konselor/sesi/delete", methods=["POST"])
+@login_required
+def konselor_delete_sesi():
+    """Hapus sesi konseling."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import delete_sesi
+    user_id = g.user.get("sub")
+    session_id = request.form.get("session_id")
+
+    if not session_id:
+        return jsonify({"success": False, "message": "ID sesi tidak valid."})
+
+    success, message = delete_sesi(session_id, user_id)
+    return jsonify({"success": success, "message": message})
+
+
+# === KONSELOR: Update Sesi ===
+@app.route("/konselor/sesi/update", methods=["POST"])
+@login_required
+def konselor_update_sesi():
+    """Update sesi konseling."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import update_sesi
+    user_id = g.user.get("sub")
+    session_id = request.form.get("session_id")
+
+    if not session_id:
+        return jsonify({"success": False, "message": "ID sesi tidak valid."})
+
+    success, message = update_sesi(session_id, user_id, request.form)
+    return jsonify({"success": success, "message": message})
+
+
+# === KONSELOR: Kelola Master Data ===
+@app.route("/konselor/kelola")
+@login_required
+def konselor_kelola_master():
+    """Halaman CRUD master data (Kategori Masalah & Jenis Layanan)."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return redirect(url_for("index"))
+
+    from controller.KonselorController import get_all_kategori, get_all_layanan
+    return render_template(
+        "konselorApp/kelola_master.html",
+        kategori_list=get_all_kategori(),
+        layanan_list=get_all_layanan()
+    )
+
+
+# === KONSELOR: CRUD Kategori Masalah ===
+@app.route("/konselor/kategori", methods=["POST"])
+@login_required
+def konselor_kategori():
+    """CRUD untuk kategori masalah."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import (
+        create_kategori, update_kategori, delete_kategori
+    )
+
+    action = request.form.get("action")
+    nama = request.form.get("nama", "").strip()
+    item_id = request.form.get("id", type=int)
+
+    if action == "create":
+        if not nama:
+            return jsonify({"success": False, "message": "Nama tidak boleh kosong."})
+        success, message = create_kategori(nama)
+        # Get new ID
+        new_id = None
+        if success:
+            from models.konselor import kategori_masalah_model
+            all_kat = kategori_masalah_model.get_all()
+            for k in all_kat:
+                if k["nama"] == nama:
+                    new_id = k["id"]
+                    break
+        return jsonify({"success": success, "message": message, "id": new_id})
+
+    elif action == "update":
+        if not item_id or not nama:
+            return jsonify({"success": False, "message": "Data tidak lengkap."})
+        success, message = update_kategori(item_id, nama)
+        return jsonify({"success": success, "message": message})
+
+    elif action == "delete":
+        if not item_id:
+            return jsonify({"success": False, "message": "ID tidak valid."})
+        success, message = delete_kategori(item_id)
+        return jsonify({"success": success, "message": message})
+
+    return jsonify({"success": False, "message": "Action tidak valid."})
+
+
+# === KONSELOR: CRUD Jenis Layanan ===
+@app.route("/konselor/layanan", methods=["POST"])
+@login_required
+def konselor_layanan():
+    """CRUD untuk jenis layanan."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import (
+        create_layanan, update_layanan, delete_layanan
+    )
+
+    action = request.form.get("action")
+    nama = request.form.get("nama", "").strip()
+    item_id = request.form.get("id", type=int)
+
+    if action == "create":
+        if not nama:
+            return jsonify({"success": False, "message": "Nama tidak boleh kosong."})
+        success, message = create_layanan(nama)
+        new_id = None
+        if success:
+            from models.konselor import jenis_layanan_model
+            all_lay = jenis_layanan_model.get_all()
+            for l in all_lay:
+                if l["nama"] == nama:
+                    new_id = l["id"]
+                    break
+        return jsonify({"success": success, "message": message, "id": new_id})
+
+    elif action == "update":
+        if not item_id or not nama:
+            return jsonify({"success": False, "message": "Data tidak lengkap."})
+        success, message = update_layanan(item_id, nama)
+        return jsonify({"success": success, "message": message})
+
+    elif action == "delete":
+        if not item_id:
+            return jsonify({"success": False, "message": "ID tidak valid."})
+        success, message = delete_layanan(item_id)
+        return jsonify({"success": success, "message": message})
+
+    return jsonify({"success": False, "message": "Action tidak valid."})
 
 
 @app.route("/tools")

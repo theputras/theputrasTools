@@ -1479,7 +1479,7 @@ def generate_pdf_monthly(logbook_id, user_id, bulan):
                     desc_inner_rows.append([Spacer(1, 0.2 * cm)])
                     desc_inner_rows.append([rl_img])
                 except Exception as img_err:
-                    print(f"[PDF] Gagal load gambar: {img_err}")
+                    print(f"[PDF] Gagal load gambar: {img_err}")    
 
         if len(desc_inner_rows) > len(desc_flowables):
             inner = Table(desc_inner_rows, colWidths=[DESC_W - 0.5 * cm])
