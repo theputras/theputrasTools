@@ -16,6 +16,7 @@ import sys
 import os
 import re
 import logging
+import argparse
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from connection import get_connection
@@ -94,7 +95,7 @@ def extract_table_name_from_create(statement):
     return match.group(1) if match else None
 
 
-def run_schema_migration(cursor, existing_tables):
+def run_schema_migration(cursor, existing_tables, replace=False):
     """Jalankan migration dari Database theputrasTools.sql."""
     if not os.path.exists(SCHEMA_FILE):
         print(f"⚠️  File '{SCHEMA_FILE}' tidak ditemukan. Skip.")
@@ -118,7 +119,7 @@ def run_schema_migration(cursor, existing_tables):
                 print(f"  ⚠️  Gagal parse nama tabel dari: {stmt[:60]}...")
                 continue
 
-            if table_name in existing_tables:
+            if table_name in existing_tables and not replace:
                 print(f"  ⏭️  Tabel '{table_name}' sudah ada → Pengecekan kolom yang kurang...")
                 
                 # Parsing definis kolom dari create_table_statement
@@ -163,6 +164,16 @@ def run_schema_migration(cursor, existing_tables):
                                     print(f"  ❌ [AUTO-ALTER] Gagal menambah kolom '{col_name}': {e}")
                 
             else:
+                if replace and table_name in existing_tables:
+                    try:
+                        cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
+                        cursor.execute(f"DROP TABLE `{table_name}`")
+                        cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
+                        existing_tables.remove(table_name)
+                        print(f"  🗑️  [REPLACE] Tabel '{table_name}' di-drop.")
+                    except Exception as e:
+                        print(f"  ❌ Gagal drop tabel '{table_name}': {e}")
+
                 try:
                     cursor.execute(stmt)
                     existing_tables.add(table_name)
@@ -242,10 +253,12 @@ def run_seed_data(cursor):
     return seeded, skipped
 
 
-def fix_db():
+def fix_db(replace=False):
     """Main entry point: jalankan schema migration + seed data."""
     print("=" * 60)
     print("🔧 Smart Database Migration Runner")
+    if replace:
+        print("⚠️  Mode REPLACE AKTIF: Tabel yang sudah ada akan dihapus dan dibuat ulang!")
     print("=" * 60)
     
     print("\n🔌 Connecting to database...")
@@ -263,7 +276,7 @@ def fix_db():
         print(f"📊 Tabel yang sudah ada: {len(existing_tables)} tabel")
 
         # 2. Jalankan schema migration
-        schema_created, schema_skipped = run_schema_migration(cursor, existing_tables)
+        schema_created, schema_skipped = run_schema_migration(cursor, existing_tables, replace)
 
         # 3. Jalankan seed data
         seed_created, seed_skipped = run_seed_data(cursor)
@@ -289,7 +302,11 @@ def fix_db():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Smart Database Migration Runner")
+    parser.add_argument('--replace', action='store_true', help="Drop dan jalankan ulang semua CREATE TABLE")
+    args = parser.parse_args()
+
     if sys.stdout.encoding.lower() != 'utf-8':
         import io
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    fix_db()
+    fix_db(replace=args.replace)

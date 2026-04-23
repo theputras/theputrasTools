@@ -187,6 +187,97 @@ class JenisLayananModel:
             conn.close()
 
 
+class TindakLanjutModel:
+    """CRUD untuk master data Tindak Lanjut."""
+
+    def _get_connection(self):
+        return get_connection()
+
+    def get_all(self):
+        """Ambil semua tindak lanjut."""
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT id, nama FROM konselor_tindak_lanjut ORDER BY id")
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_all tindak_lanjut: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def create(self, nama):
+        """Tambah tindak lanjut baru."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO konselor_tindak_lanjut (nama) VALUES (%s)",
+                (nama.strip(),)
+            )
+            conn.commit()
+            return True, "Tindak lanjut berhasil ditambahkan."
+        except Exception as e:
+            if 'Duplicate' in str(e):
+                return False, "Tindak lanjut sudah ada."
+            logging.error(f"[Konselor] Error create tindak_lanjut: {e}")
+            return False, "Gagal menambah tindak lanjut."
+        finally:
+            cursor.close()
+            conn.close()
+
+    def update(self, tl_id, nama):
+        """Update nama tindak lanjut."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "UPDATE konselor_tindak_lanjut SET nama = %s WHERE id = %s",
+                (nama.strip(), tl_id)
+            )
+            conn.commit()
+            return True, "Tindak lanjut berhasil diperbarui."
+        except Exception as e:
+            if 'Duplicate' in str(e):
+                return False, "Nama tindak lanjut sudah digunakan."
+            logging.error(f"[Konselor] Error update tindak_lanjut: {e}")
+            return False, "Gagal memperbarui tindak lanjut."
+        finally:
+            cursor.close()
+            conn.close()
+
+    def delete(self, tl_id):
+        """Hapus tindak lanjut. Gagal jika masih dipakai di sesi."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "DELETE FROM konselor_tindak_lanjut WHERE id = %s",
+                (tl_id,)
+            )
+            conn.commit()
+            if cursor.rowcount == 0:
+                return False, "Tindak lanjut tidak ditemukan."
+            return True, "Tindak lanjut berhasil dihapus."
+        except Exception as e:
+            if 'foreign key' in str(e).lower() or 'restrict' in str(e).lower():
+                return False, "Tindak lanjut masih digunakan di data sesi. Tidak bisa dihapus."
+            logging.error(f"[Konselor] Error delete tindak_lanjut: {e}")
+            return False, "Gagal menghapus tindak lanjut."
+        finally:
+            cursor.close()
+            conn.close()
+
+
 class KonselorSessionModel:
     """Model untuk data sesi konseling."""
 
@@ -202,18 +293,19 @@ class KonselorSessionModel:
         try:
             cursor.execute("""
                 INSERT INTO konselor_sessions
-                (konselor_user_id, nim_hash, nim_encrypted, prodi, jenis_layanan_id, kategori_masalah_id, topik, tanggal_sesi, tindak_lanjut)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (konselor_user_id, nim_id, nama, dosen_wali, prodi, jenis_layanan_id, kategori_masalah_id, topik, tanggal_sesi, tindak_lanjut_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 data['konselor_user_id'],
-                data['nim_hash'],
-                data['nim_encrypted'],
+                data['nim_id'],
+                data.get('nama'),
+                data.get('dosen_wali'),
                 data.get('prodi'),
                 data['jenis_layanan_id'],
                 data['kategori_masalah_id'],
                 data['topik'],
                 data['tanggal_sesi'],
-                data.get('tindak_lanjut')
+                data.get('tindak_lanjut_id')
             ))
             conn.commit()
             return True, "Sesi konseling berhasil disimpan."
@@ -232,12 +324,13 @@ class KonselorSessionModel:
         cursor = conn.cursor(dictionary=True)
         try:
             query = """
-                SELECT s.id, s.nim_hash, s.nim_encrypted, s.prodi, s.topik, s.tanggal_sesi, s.tindak_lanjut, s.created_at,
+                SELECT s.id, s.nim_id, s.nama, s.dosen_wali, s.prodi, s.topik, s.tanggal_sesi, s.tindak_lanjut_id, s.created_at,
                        s.jenis_layanan_id, s.kategori_masalah_id,
-                       jl.nama AS jenis_layanan, km.nama AS kategori_masalah
+                       jl.nama AS jenis_layanan, km.nama AS kategori_masalah, tl.nama AS tindak_lanjut
                 FROM konselor_sessions s
                 LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
                 LEFT JOIN konselor_kategori_masalah km ON s.kategori_masalah_id = km.id
+                LEFT JOIN konselor_tindak_lanjut tl ON s.tindak_lanjut_id = tl.id
                 WHERE s.konselor_user_id = %s
             """
             params = [user_id]
@@ -263,7 +356,7 @@ class KonselorSessionModel:
         """
         Hitung statistik rekap:
         - Total sesi
-        - Klien unik (distinct nim_hash)
+        - Klien unik (distinct nim_id)
         - Sesi bulan ini
         - Distribusi per kategori masalah (untuk pie chart)
         """
@@ -276,14 +369,14 @@ class KonselorSessionModel:
             if tahun:
                 cursor.execute("""
                     SELECT COUNT(*) AS total_sesi,
-                           COUNT(DISTINCT nim_hash) AS klien_unik
+                           COUNT(DISTINCT nim_id) AS klien_unik
                     FROM konselor_sessions
                     WHERE konselor_user_id = %s AND YEAR(tanggal_sesi) = %s
                 """, (user_id, tahun))
             else:
                 cursor.execute("""
                     SELECT COUNT(*) AS total_sesi,
-                           COUNT(DISTINCT nim_hash) AS klien_unik
+                           COUNT(DISTINCT nim_id) AS klien_unik
                     FROM konselor_sessions
                     WHERE konselor_user_id = %s
                 """, (user_id,))
@@ -369,7 +462,7 @@ class KonselorSessionModel:
                     kategori_masalah_id = %s,
                     topik = %s,
                     tanggal_sesi = %s,
-                    tindak_lanjut = %s
+                    tindak_lanjut_id = %s
                 WHERE id = %s AND konselor_user_id = %s
             """, (
                 data.get('prodi'),
@@ -377,7 +470,7 @@ class KonselorSessionModel:
                 data['kategori_masalah_id'],
                 data['topik'],
                 data['tanggal_sesi'],
-                data.get('tindak_lanjut'),
+                data.get('tindak_lanjut_id'),
                 session_id,
                 user_id
             ))
@@ -418,4 +511,5 @@ class KonselorSessionModel:
 # Instances
 kategori_masalah_model = KategoriMasalahModel()
 jenis_layanan_model = JenisLayananModel()
+tindak_lanjut_model = TindakLanjutModel()
 konselor_session_model = KonselorSessionModel()

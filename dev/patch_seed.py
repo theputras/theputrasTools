@@ -27,5 +27,4 @@ new_sql_content = re.sub(pattern, replacer, sql_content)
 
 with open(seed_path, "w", encoding="utf-8") as f:
     f.write(new_sql_content)
-
 print("Seed file updated with Fernet tokens!")

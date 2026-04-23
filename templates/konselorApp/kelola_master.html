@@ -50,6 +50,11 @@
                     class="px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
                 <i class="fas fa-hand-holding-heart"></i> Jenis Layanan
             </button>
+            <button @click="activeTab = 'tindak_lanjut'"
+                    :class="activeTab === 'tindak_lanjut' ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    class="px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-clipboard-check"></i> Tindak Lanjut
+            </button>
         </div>
 
         <!-- ======================= -->
@@ -182,6 +187,71 @@
             </div>
         </div>
 
+        <!-- ======================= -->
+        <!-- TAB: TINDAK LANJUT      -->
+        <!-- ======================= -->
+        <div x-show="activeTab === 'tindak_lanjut'" x-transition x-cloak>
+            <!-- Add form -->
+            <div class="flex gap-2 mb-4">
+                <input type="text" x-model="newTindakLanjut" placeholder="Nama tindak lanjut baru..."
+                       @keydown.enter="addTindakLanjut()"
+                       class="flex-1 bg-gray-900/60 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-teal-500/30 focus:outline-none transition">
+                <button @click="addTindakLanjut()" :disabled="!newTindakLanjut.trim()"
+                        class="bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
+                    <i class="fas fa-plus text-xs"></i> Tambah
+                </button>
+            </div>
+
+            <!-- List -->
+            <div class="bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
+                <template x-if="tindakLanjutList.length === 0">
+                    <div class="p-8 text-center text-gray-600 text-sm">
+                        <i class="fas fa-clipboard-check text-2xl mb-2 block"></i>
+                        Belum ada tindak lanjut
+                    </div>
+                </template>
+
+                <template x-for="item in tindakLanjutList" :key="item.id">
+                    <div class="flex items-center gap-3 p-4 hover:bg-white/[0.02] transition-colors group">
+                        <div class="p-2 bg-teal-500/10 rounded-lg">
+                            <i class="fas fa-clipboard-check text-teal-400 text-xs"></i>
+                        </div>
+
+                        <!-- View mode -->
+                        <template x-if="editTindakLanjutId !== item.id">
+                            <div class="flex-1 flex items-center justify-between">
+                                <span class="text-sm text-white font-medium" x-text="item.nama"></span>
+                                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                                    <button @click="startEditTindakLanjut(item)" class="text-teal-400 hover:text-teal-300 p-2 rounded-lg hover:bg-teal-500/10 transition" title="Edit">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </button>
+                                    <button @click="deleteTindakLanjut(item.id, item.nama)" class="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/10 transition" title="Hapus">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Edit mode -->
+                        <template x-if="editTindakLanjutId === item.id">
+                            <div class="flex-1 flex items-center gap-2">
+                                <input type="text" x-model="editTindakLanjutNama"
+                                       @keydown.enter="saveEditTindakLanjut()"
+                                       @keydown.escape="editTindakLanjutId = null"
+                                       class="flex-1 bg-gray-800 border border-teal-500/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
+                                <button @click="saveEditTindakLanjut()" class="text-emerald-400 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-500/10 transition" title="Simpan">
+                                    <i class="fas fa-check text-xs"></i>
+                                </button>
+                                <button @click="editTindakLanjutId = null" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition" title="Batal">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
     </div>
 
     {% include 'muslimTools/prayerWidget.html' %}
@@ -203,6 +273,12 @@ function kelolaMasterApp() {
         newLayanan: '',
         editLayananId: null,
         editLayananNama: '',
+
+        // Tindak Lanjut
+        tindakLanjutList: JSON.parse('{{ tindak_lanjut_list | tojson }}'),
+        newTindakLanjut: '',
+        editTindakLanjutId: null,
+        editTindakLanjutNama: '',
 
         // === KATEGORI CRUD ===
         async addKategori() {
@@ -316,6 +392,65 @@ function kelolaMasterApp() {
             const data = await res.json();
             if (data.success) {
                 this.layananList = this.layananList.filter(l => l.id !== id);
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        // === TINDAK LANJUT CRUD ===
+        async addTindakLanjut() {
+            if (!this.newTindakLanjut.trim()) return;
+            const fd = new FormData();
+            fd.append('nama', this.newTindakLanjut.trim());
+            fd.append('action', 'create');
+            const res = await fetch('{{ url_for("konselor_tindak_lanjut") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                this.tindakLanjutList.push({ id: data.new_id, nama: this.newTindakLanjut.trim() });
+                this.newTindakLanjut = '';
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        startEditTindakLanjut(item) {
+            this.editTindakLanjutId = item.id;
+            this.editTindakLanjutNama = item.nama;
+        },
+
+        async saveEditTindakLanjut() {
+            if (!this.editTindakLanjutNama.trim()) return;
+            const fd = new FormData();
+            fd.append('id', this.editTindakLanjutId);
+            fd.append('nama', this.editTindakLanjutNama.trim());
+            fd.append('action', 'update');
+            const res = await fetch('{{ url_for("konselor_tindak_lanjut") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                const item = this.tindakLanjutList.find(t => t.id === this.editTindakLanjutId);
+                if (item) item.nama = this.editTindakLanjutNama.trim();
+                this.editTindakLanjutId = null;
+                if (window.showAlert) window.showAlert('success', data.message);
+            } else {
+                if (window.showAlert) window.showAlert('error', data.message);
+            }
+        },
+
+        async deleteTindakLanjut(id, nama) {
+            const yakin = window.showConfirm
+                ? await window.showConfirm('Hapus Tindak Lanjut?', `"${nama}" akan dihapus. Gagal jika masih digunakan.`, 'danger')
+                : confirm(`Hapus tindak lanjut "${nama}"?`);
+            if (!yakin) return;
+
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('action', 'delete');
+            const res = await fetch('{{ url_for("konselor_tindak_lanjut") }}', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                this.tindakLanjutList = this.tindakLanjutList.filter(t => t.id !== id);
                 if (window.showAlert) window.showAlert('success', data.message);
             } else {
                 if (window.showAlert) window.showAlert('error', data.message);

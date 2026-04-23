@@ -163,7 +163,11 @@
                                 <span class="text-[10px] text-gray-600" x-text="sesi.prodi || ''"></span>
                             </div>
                             <p class="text-sm text-white font-medium line-clamp-2" x-text="sesi.topik"></p>
-                            <p class="text-xs text-gray-600 mt-1 line-clamp-1" x-show="sesi.tindak_lanjut" x-text="'Tindak lanjut: ' + (sesi.tindak_lanjut || '')"></p>
+                            <p class="text-xs text-gray-500 mt-1" x-show="sesi.nama_sensor && sesi.nama_sensor !== '-'">
+                                <i class="fas fa-user text-violet-400/60 mr-0.5"></i>
+                                <span x-text="sesi.nama_sensor"></span>
+                            </p>
+                            <p class="text-xs text-gray-600 mt-0.5 line-clamp-1" x-show="sesi.tindak_lanjut" x-text="'Tindak lanjut: ' + (sesi.tindak_lanjut || '')"></p>
                         </div>
 
                         <!-- Chevron -->
@@ -227,6 +231,24 @@
 
                 <!-- ===== VIEW MODE ===== -->
                 <div x-show="!isEditing" class="p-5 space-y-4">
+                    <!-- Nama Mahasiswa (Tersensor) -->
+                    <div class="flex items-center gap-3 text-sm" x-show="selectedSesi.nama_sensor && selectedSesi.nama_sensor !== '-'">
+                        <div class="p-2 bg-violet-500/10 rounded-lg"><i class="fas fa-user text-violet-400 text-xs"></i></div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Nama Mahasiswa</p>
+                            <p class="text-white font-medium" x-text="selectedSesi.nama_sensor || '-'"></p>
+                        </div>
+                    </div>
+
+                    <!-- Dosen Wali -->
+                    <div class="flex items-center gap-3 text-sm" x-show="selectedSesi.dosen_wali">
+                        <div class="p-2 bg-cyan-500/10 rounded-lg"><i class="fas fa-chalkboard-teacher text-cyan-400 text-xs"></i></div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Dosen Wali</p>
+                            <p class="text-white font-medium" x-text="selectedSesi.dosen_wali || '-'"></p>
+                        </div>
+                    </div>
+
                     <!-- Tanggal -->
                     <div class="flex items-center gap-3 text-sm">
                         <div class="p-2 bg-violet-500/10 rounded-lg"><i class="fas fa-calendar text-violet-400 text-xs"></i></div>
@@ -283,7 +305,7 @@
                         </div>
                     </div>
 
-                    <!-- NIM Asli (Decrypted) -->
+                    <!-- NIM Asli -->
                     <div class="pt-2 border-t border-white/5">
                         <p class="text-[10px] text-gray-600 flex items-center gap-1">
                             <i class="fas fa-id-card"></i>
@@ -360,8 +382,13 @@
                         <label class="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">
                             <i class="fas fa-clipboard-check text-teal-400 mr-1"></i> Tindak Lanjut
                         </label>
-                        <textarea x-model="editForm.tindak_lanjut" rows="3"
-                                  class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition resize-none"></textarea>
+                        <select x-model="editForm.tindak_lanjut"
+                                class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition appearance-none">
+                            <option value="" class="bg-gray-900">— Pilih Tindak Lanjut (Opsional) —</option>
+                            {% for item in tindak_lanjut_list %}
+                            <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <!-- Action Buttons -->
@@ -628,7 +655,7 @@ function rekapApp() {
                 kategori_masalah_id: String(this.selectedSesi.kategori_masalah_id || ''),
                 topik: this.selectedSesi.topik || '',
                 tanggal_sesi: this.selectedSesi.tanggal_sesi || '',
-                tindak_lanjut: this.selectedSesi.tindak_lanjut || ''
+                tindak_lanjut: String(this.selectedSesi.tindak_lanjut_id || '')
             };
             this.isEditing = true;
         },

@@ -1,78 +1,51 @@
 # controller/KonselorController.py
 # Controller untuk fitur Pencatatan Sesi Konseling
-# NIM di-hash SHA-256 (satu arah) untuk privasi mahasiswa
+# NIM disimpan mentah, nama disensor saat display
 
-import hashlib
 import logging
 from models.konselor import (
     kategori_masalah_model,
     jenis_layanan_model,
-    konselor_session_model
+    konselor_session_model,
+    tindak_lanjut_model
 )
 
 
-import os
-import base64
-import hashlib
-from cryptography.fernet import Fernet
-
-def get_fernet():
-    key = os.getenv("SECRET_KEY")
-    if not key:
-        raise ValueError("SECRET_KEY missing in environment for Fernet encryption")
-    
-    # Derive a guaranteed 32-byte url-safe base64 key using SHA-256
-    # Supaya tidak error kalau SECRET_KEY di .env production cuma string biasa
-    derived_key = hashlib.sha256(key.encode('utf-8')).digest()
-    fernet_key = base64.urlsafe_b64encode(derived_key)
-    
-    return Fernet(fernet_key)
-
-def hash_nim(nim_raw):
+def censor_name(nama):
     """
-    Hash NIM menggunakan SHA-256 (satu arah) untuk menghitung statistik unique.
+    Sensor nama mahasiswa untuk ditampilkan di frontend.
+    Option B: karakter pertama tiap kata tetap, sisanya '*'
+    Contoh: "BUDI SANTOSO" → "B*** S******"
     """
-    if not nim_raw:
-        return None
-    return hashlib.sha256(nim_raw.strip().encode('utf-8')).hexdigest()
-
-def encrypt_nim(nim_raw):
-    """Enkripsi NIM dua arah."""
-    if not nim_raw:
-        return None
-    f = get_fernet()
-    return f.encrypt(nim_raw.strip().encode('utf-8')).decode('utf-8')
-
-def decrypt_nim(nim_encrypted):
-    """Dekripsi NIM dua arah."""
-    if not nim_encrypted:
-        return None
-    f = get_fernet()
-    try:
-        return f.decrypt(nim_encrypted.encode('utf-8')).decode('utf-8')
-    except Exception as e:
-        logging.error(f"[Konselor] Error decrypting NIM: {e}")
-        return "ERROR_DECRYPT"
+    if not nama:
+        return "-"
+    words = nama.strip().split()
+    censored = []
+    for word in words:
+        if len(word) <= 1:
+            censored.append(word)
+        else:
+            censored.append(word[0] + '*' * (len(word) - 1))
+    return ' '.join(censored)
 
 
 def create_sesi(konselor_user_id, form_data):
     """
     Proses pembuatan sesi baru:
     1. Validasi input
-    2. Hash NIM (SHA-256) untuk counting
-    3. Encrypt NIM (Fernet) untuk display
-    4. Simpan ke database
-    5. Buang NIM asli dari memori
+    2. Simpan NIM mentah, nama (plain text), dosen wali ke database
     """
     # 1. Validasi
     nim_raw = form_data.get('nim', '').strip()
+    nama = form_data.get('nama', '').strip()
+    dosen_wali = form_data.get('dosen_wali', '').strip()
     prodi = form_data.get('prodi', '').strip()
     jenis_layanan_id = form_data.get('jenis_layanan_id')
     kategori_masalah_id = form_data.get('kategori_masalah_id')
     topik = form_data.get('topik', '').strip()
     tanggal_sesi = form_data.get('tanggal_sesi')
     tindak_lanjut = form_data.get('tindak_lanjut', '').strip()
-
+    
     if not nim_raw:
         return False, "NIM wajib diisi."
     if not jenis_layanan_id:
@@ -84,25 +57,18 @@ def create_sesi(konselor_user_id, form_data):
     if not tanggal_sesi:
         return False, "Tanggal sesi wajib diisi."
 
-    # 2. Hash & Encrypt
-    nim_hashed = hash_nim(nim_raw)
-    nim_encrypted = encrypt_nim(nim_raw)
-
-    # 3. Buang NIM asli dari variabel lokal
-    nim_raw = None
-    del nim_raw
-
-    # 4. Simpan ke database
+    # 2. Simpan ke database
     data = {
         'konselor_user_id': konselor_user_id,
-        'nim_hash': nim_hashed,
-        'nim_encrypted': nim_encrypted,
+        'nim_id': nim_raw,
+        'nama': nama if nama else None,
+        'dosen_wali': dosen_wali if dosen_wali else None,
         'prodi': prodi if prodi else None,
         'jenis_layanan_id': int(jenis_layanan_id),
         'kategori_masalah_id': int(kategori_masalah_id),
         'topik': topik,
         'tanggal_sesi': tanggal_sesi,
-        'tindak_lanjut': tindak_lanjut if tindak_lanjut else None
+        'tindak_lanjut_id': int(tindak_lanjut) if tindak_lanjut else None
     }
 
     success, message = konselor_session_model.create_session(data)
@@ -127,15 +93,16 @@ def get_rekap(konselor_user_id, tahun=None):
 
 
 def get_riwayat_sesi(konselor_user_id, bulan=None, tahun=None):
-    """Ambil riwayat sesi konseling dan decrypt NIM."""
+    """Ambil riwayat sesi konseling, sensor nama untuk frontend."""
     sessions = konselor_session_model.get_sessions_by_konselor(
         konselor_user_id, bulan=bulan, tahun=tahun
     )
     for s in sessions:
-        if s.get('nim_encrypted'):
-            s['nim_asli'] = decrypt_nim(s['nim_encrypted'])
-            # Don't send the encrypted string to frontend if we don't need to (optional, but safe)
-            del s['nim_encrypted']
+        # NIM sudah mentah di nim_id
+        s['nim_asli'] = s.get('nim_id', '-')
+        # Sensor nama untuk display
+        s['nama_sensor'] = censor_name(s.get('nama'))
+        # dosen_wali sudah ada di record dari query
     return sessions
 
 
@@ -145,7 +112,7 @@ def delete_sesi(session_id, konselor_user_id):
 
 
 def update_sesi(session_id, konselor_user_id, form_data):
-    """Update sesi konseling (NIM tidak bisa diubah karena sudah di-hash)."""
+    """Update sesi konseling (NIM tidak bisa diubah)."""
     prodi = form_data.get('prodi', '').strip()
     jenis_layanan_id = form_data.get('jenis_layanan_id')
     kategori_masalah_id = form_data.get('kategori_masalah_id')
@@ -168,7 +135,7 @@ def update_sesi(session_id, konselor_user_id, form_data):
         'kategori_masalah_id': int(kategori_masalah_id),
         'topik': topik,
         'tanggal_sesi': tanggal_sesi,
-        'tindak_lanjut': tindak_lanjut if tindak_lanjut else None
+        'tindak_lanjut_id': int(tindak_lanjut) if tindak_lanjut else None
     }
 
     return konselor_session_model.update_session(session_id, konselor_user_id, data)
@@ -199,3 +166,15 @@ def update_layanan(layanan_id, nama):
 
 def delete_layanan(layanan_id):
     return jenis_layanan_model.delete(layanan_id)
+
+def get_all_tindak_lanjut():
+    return tindak_lanjut_model.get_all()
+
+def create_tindak_lanjut(nama):
+    return tindak_lanjut_model.create(nama)
+
+def update_tindak_lanjut(tl_id, nama):
+    return tindak_lanjut_model.update(tl_id, nama)
+
+def delete_tindak_lanjut(tl_id):
+    return tindak_lanjut_model.delete(tl_id)

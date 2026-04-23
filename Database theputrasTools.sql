@@ -298,28 +298,35 @@ CREATE TABLE konselor_kategori_masalah (
 -- B. Master: Jenis Layanan (CRUD dinamis)
 CREATE TABLE konselor_jenis_layanan (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nama VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    nama VARCHAR(150) NOT NULL UNIQUE
+);
+
+-- B.3. Master Tindak Lanjut
+CREATE TABLE konselor_tindak_lanjut (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(150) NOT NULL UNIQUE
 );
 
 -- C. Data Sesi Konseling
 CREATE TABLE konselor_sessions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     konselor_user_id BIGINT UNSIGNED NOT NULL,
-    nim_hash VARCHAR(64) NOT NULL,
-    nim_encrypted TEXT NOT NULL,
+    nim_id VARCHAR(64) NOT NULL,          -- NIM mentah (plain text)
+    nama VARCHAR(150) NULL,                 -- Nama mahasiswa (plain text, disensor saat display)
+    dosen_wali VARCHAR(150) NULL,           -- Dosen wali (plain text)
     prodi VARCHAR(100),
     jenis_layanan_id INT NOT NULL,
     kategori_masalah_id INT NOT NULL,
     topik TEXT NOT NULL,
     tanggal_sesi DATE NOT NULL,
-    tindak_lanjut TEXT,
+    tindak_lanjut_id INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_konselor_session_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_konselor_session_layanan FOREIGN KEY (jenis_layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT,
     CONSTRAINT fk_konselor_session_kategori FOREIGN KEY (kategori_masalah_id) REFERENCES konselor_kategori_masalah(id) ON DELETE RESTRICT,
-    INDEX idx_konselor_nim (nim_hash),
+    CONSTRAINT fk_konselor_session_tindak_lanjut FOREIGN KEY (tindak_lanjut_id) REFERENCES konselor_tindak_lanjut(id) ON DELETE RESTRICT,
+    INDEX idx_konselor_nim (nim_id),
     INDEX idx_konselor_kategori (kategori_masalah_id),
     INDEX idx_konselor_tanggal (tanggal_sesi)
 );
-

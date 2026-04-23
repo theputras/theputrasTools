@@ -56,60 +56,7 @@ INSERT INTO konselor_jenis_layanan (nama) VALUES ('Bimbingan Kelompok') ON DUPLI
 INSERT INTO konselor_jenis_layanan (nama) VALUES ('Konsultasi') ON DUPLICATE KEY UPDATE nama = VALUES(nama);
 INSERT INTO konselor_jenis_layanan (nama) VALUES ('Mediasi') ON DUPLICATE KEY UPDATE nama = VALUES(nama);
 
-
-INSERT INTO konselor_sessions 
-(konselor_user_id, nim_hash, nim_encrypted, prodi, jenis_layanan_id, kategori_masalah_id, topik, tanggal_sesi, tindak_lanjut) 
-VALUES
--- 1. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 1, 'Gagal Move On', '2026-01-05', 'Monitoring'),
-
--- 2. 24410100064
-(11, SHA2('24410100064', 256), TO_BASE64(AES_ENCRYPT('24410100064', 'secret_key')), 'SI', 1, 1, 'Gagal Move On', '2026-01-05', 'Monitoring'),
-
--- 3. 25410100066
-(11, SHA2('25410100066', 256), TO_BASE64(AES_ENCRYPT('25410100066', 'secret_key')), 'SI', 1, 2, 'Adaptasi Sosial', '2026-01-05', 'Monitoring'),
-
--- 4. 19420100042
-(11, SHA2('19420100042', 256), TO_BASE64(AES_ENCRYPT('19420100042', 'secret_key')), 'DKV', 2, 4, 'Progres Penyelesaian TA', '2026-01-05', 'Monitoring'),
-
--- 5. 24410100064
-(11, SHA2('24410100064', 256), TO_BASE64(AES_ENCRYPT('24410100064', 'secret_key')), 'SI', 1, 1, 'Gagal Move On', '2026-01-06', 'Monitoring'),
-
--- 6. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 1, 'Gagal Move On', '2026-01-11', 'Monitoring'),
-
--- 7. 23410100003
-(11, SHA2('23410100003', 256), TO_BASE64(AES_ENCRYPT('23410100003', 'secret_key')), 'SI', 1, 2, 'Problem Pertemanan', '2026-01-11', 'Monitoring'),
-
--- 8. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 4, 'Deadline Tugas dan Bingung Ide Tugas', '2026-01-12', 'Monitoring'),
-
--- 9. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 4, 'Stress Akademik dan Gagal Move On', '2026-01-13', 'Monitoring'),
-
--- 10. 23410100003
-(11, SHA2('23410100003', 256), TO_BASE64(AES_ENCRYPT('23410100003', 'secret_key')), 'SI', 1, 2, 'Problem Pertemanan', '2026-01-14', 'Monitoring'),
-
--- 11. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 1, 'Gagal Move On', '2026-01-15', 'Monitoring'),
-
--- 12. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 1, 'Gagal Move On', '2026-01-16', 'Monitoring'),
-
--- 13. 25410100066
-(11, SHA2('25410100066', 256), TO_BASE64(AES_ENCRYPT('25410100066', 'secret_key')), 'SI', 1, 3, 'Masalah keluarga', '2026-01-19', 'Monitoring'),
-
--- 14. 24410100064
-(11, SHA2('24410100064', 256), TO_BASE64(AES_ENCRYPT('24410100064', 'secret_key')), 'SI', 1, 3, 'Masalah keluarga', '2026-01-20', 'Monitoring'),
-
--- 15. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 1, 'Gagal Move On', '2026-01-21', 'Monitoring'),
-
--- 16. 23410100003
-(11, SHA2('23410100003', 256), TO_BASE64(AES_ENCRYPT('23410100003', 'secret_key')), 'SI', 1, 4, 'Bingung Perihal Magang', '2026-01-21', 'Monitoring'),
-
--- 17. 24420100040
-(11, SHA2('24420100040', 256), TO_BASE64(AES_ENCRYPT('24420100040', 'secret_key')), 'DKV', 1, 4, 'Problem Pertemanan, Stress Tugas', '2026-01-22', 'Terminasi Sementara'),
-
--- 18. 19420100042
-(11, SHA2('19420100042', 256), TO_BASE64(AES_ENCRYPT('19420100042', 'secret_key')), 'DKV', 2, 4, 'Progres Penyelesaian TA', '2026-01-05', 'Monitoring');
+-- Default Tindak Lanjut
+INSERT INTO konselor_tindak_lanjut (nama) VALUES ('Monitoring') ON DUPLICATE KEY UPDATE nama = VALUES(nama);
+INSERT INTO konselor_tindak_lanjut (nama) VALUES ('Terminasi Sementara') ON DUPLICATE KEY UPDATE nama = VALUES(nama);
+INSERT INTO konselor_tindak_lanjut (nama) VALUES ('Rujuk ke Pihak Lain') ON DUPLICATE KEY UPDATE nama = VALUES(nama);

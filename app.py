@@ -703,7 +703,7 @@ def konselor_catat_sesi():
         return redirect(url_for("index"))
 
     from controller.KonselorController import (
-        get_all_kategori, get_all_layanan, create_sesi
+        get_all_kategori, get_all_layanan, get_all_tindak_lanjut, create_sesi
     )
 
     if request.method == "POST":
@@ -716,8 +716,59 @@ def konselor_catat_sesi():
         "konselorApp/catat_sesi.html",
         prodi_list=majorID,
         kategori_list=get_all_kategori(),
-        jenis_layanan_list=get_all_layanan()
+        jenis_layanan_list=get_all_layanan(),
+        tindak_lanjut_list=get_all_tindak_lanjut()
     )
+
+
+# === KONSELOR: Lookup NIM via Scrapper ===
+@app.route("/konselor/lookup-nim")
+@login_required
+def konselor_lookup_nim():
+    """AJAX endpoint: cari data mahasiswa dari Sicyca via NIM."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import censor_name
+
+    nim = request.args.get("nim", "").strip()
+    if not nim:
+        return jsonify({"success": False, "message": "NIM wajib diisi."})
+
+    try:
+        # Jalankan di thread pool (sama kayak fitur komunitas)
+        # Supaya _get_current_user_id fallback ke bot user yang punya session Sicyca valid
+        future = executor.submit(search_mahasiswa, nim)
+        df = future.result(timeout=30)
+        if df.empty:
+            return jsonify({"success": False, "message": "Data mahasiswa tidak ditemukan."})
+
+        row = df.iloc[0]
+        data = {k.lower(): v for k, v in row.items()}
+
+        nama_raw = data.get("nama", "")
+        dosen_wali = data.get("dosen wali", "")
+        prodi_raw = data.get("prodi", "")
+
+        # Coba resolve prodi dari NIM via majorID
+        prodi_resolved = ""
+        if nim and len(nim) >= 7:
+            kode_prodi = nim[2:7]
+            prodi_resolved = majorID.get(kode_prodi, prodi_raw)
+        else:
+            prodi_resolved = prodi_raw
+
+        return jsonify({
+            "success": True,
+            "nama_raw": nama_raw,
+            "nama_sensor": censor_name(nama_raw),
+            "dosen_wali": dosen_wali,
+            "prodi": prodi_resolved
+        })
+    except Exception as e:
+        logging.error(f"[Konselor] Lookup NIM error: {e}")
+        return jsonify({"success": False, "message": "Gagal lookup data mahasiswa."})
 
 
 # === KONSELOR: Dashboard Rekap ===
@@ -729,12 +780,13 @@ def konselor_rekap():
     if role_id not in [1, 5]:
         return redirect(url_for("index"))
 
-    from controller.KonselorController import get_all_kategori, get_all_layanan
+    from controller.KonselorController import get_all_kategori, get_all_layanan, get_all_tindak_lanjut
     return render_template(
         "konselorApp/rekap_sesi.html",
         prodi_list=majorID,
         kategori_list=get_all_kategori(),
-        jenis_layanan_list=get_all_layanan()
+        jenis_layanan_list=get_all_layanan(),
+        tindak_lanjut_list=get_all_tindak_lanjut()
     )
 
 
@@ -813,11 +865,12 @@ def konselor_kelola_master():
     if role_id not in [1, 5]:
         return redirect(url_for("index"))
 
-    from controller.KonselorController import get_all_kategori, get_all_layanan
+    from controller.KonselorController import get_all_kategori, get_all_layanan, get_all_tindak_lanjut
     return render_template(
         "konselorApp/kelola_master.html",
         kategori_list=get_all_kategori(),
-        layanan_list=get_all_layanan()
+        layanan_list=get_all_layanan(),
+        tindak_lanjut_list=get_all_tindak_lanjut()
     )
 
 

@@ -45,7 +45,7 @@
                 <i class="fas fa-shield-halved text-violet-400 mt-0.5"></i>
                 <div>
                     <p class="text-xs text-violet-300 font-semibold">Privasi Terjamin</p>
-                    <p class="text-[11px] text-gray-500 mt-0.5">NIM mahasiswa akan di-enkripsi (hash SHA-256) satu arah. Data asli NIM <strong class="text-gray-400">tidak pernah disimpan</strong> di database.</p>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Nama mahasiswa akan <strong class="text-gray-400">disensor otomatis</strong> saat ditampilkan di rekap. Data disimpan secara aman di database.</p>
                 </div>
             </div>
         </div>
@@ -59,10 +59,45 @@
                     <i class="fas fa-id-card text-violet-400 mr-1"></i> NIM Mahasiswa <span class="text-red-400">*</span>
                 </label>
                 <input type="text" x-model="form.nim" required placeholder="Contoh: 23410100001"
+                       @input.debounce.600ms="lookupNIM()"
                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
+
+                <!-- Lookup Status -->
+                <div x-show="lookupStatus === 'loading'" class="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-violet-400"></i> Mencari data mahasiswa...
+                </div>
+                <div x-show="lookupStatus === 'error'" x-cloak class="mt-2 flex items-center gap-2 text-xs text-red-400">
+                    <i class="fas fa-exclamation-circle"></i> <span x-text="lookupMessage"></span>
+                </div>
+
+                <!-- Lookup Result Card -->
+                <div x-show="lookupStatus === 'found'" x-cloak
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="mt-3 bg-violet-500/5 border border-violet-500/10 rounded-2xl p-4 space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 bg-violet-500/10 rounded-lg">
+                            <i class="fas fa-user text-violet-400 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Nama Mahasiswa</p>
+                            <p class="text-sm text-white font-medium" x-text="lookupData.nama_sensor || '-'"></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 bg-blue-500/10 rounded-lg">
+                            <i class="fas fa-chalkboard-teacher text-blue-400 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Dosen Wali</p>
+                            <p class="text-sm text-white font-medium" x-text="lookupData.dosen_wali || '-'"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Prodi (dropdown dari majorID) -->
+            <!-- Prodi (dropdown dari majorID, auto-fill tapi bisa diedit) -->
             <div>
                 <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
                     <i class="fas fa-graduation-cap text-blue-400 mr-1"></i> Program Studi
@@ -74,6 +109,15 @@
                     <option value="{{ nama }}" class="bg-gray-900">{{ nama }}</option>
                     {% endfor %}
                 </select>
+            </div>
+
+            <!-- Dosen Wali (auto-fill dari lookup tapi bisa diedit) -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
+                    <i class="fas fa-chalkboard-teacher text-cyan-400 mr-1"></i> Dosen Wali
+                </label>
+                <input type="text" x-model="form.dosen_wali" placeholder="Otomatis terisi dari lookup NIM..."
+                       class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
             </div>
 
             <!-- Jenis Layanan (dropdown dinamis) -->
@@ -123,13 +167,18 @@
                        style="color-scheme: dark;">
             </div>
 
-            <!-- Tindak Lanjut -->
+            <!-- Tindak Lanjut (dropdown dinamis) -->
             <div>
                 <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
                     <i class="fas fa-clipboard-check text-teal-400 mr-1"></i> Tindak Lanjut
                 </label>
-                <textarea x-model="form.tindak_lanjut" rows="3" placeholder="Catatan rencana tindak lanjut (opsional)..."
-                          class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
+                <select x-model="form.tindak_lanjut"
+                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
+                    <option value="" class="bg-gray-900">— Pilih Tindak Lanjut (Opsional) —</option>
+                    {% for item in tindak_lanjut_list %}
+                    <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <!-- Submit Button -->
@@ -156,8 +205,13 @@
 function catatSesiApp() {
     return {
         isSubmitting: false,
+        lookupStatus: '', // '', 'loading', 'found', 'error'
+        lookupMessage: '',
+        lookupData: {},
         form: {
             nim: '',
+            nama: '',
+            dosen_wali: '',
             prodi: '',
             jenis_layanan_id: '',
             kategori_masalah_id: '',
@@ -170,6 +224,47 @@ function catatSesiApp() {
             // Default tanggal = hari ini
             const today = new Date();
             this.form.tanggal_sesi = today.toISOString().split('T')[0];
+        },
+
+        async lookupNIM() {
+            const nim = this.form.nim.trim();
+            // Reset kalau NIM terlalu pendek
+            if (nim.length < 11) {
+                this.lookupStatus = '';
+                this.lookupData = {};
+                this.form.nama = '';
+                this.form.dosen_wali = '';
+                return;
+            }
+
+            this.lookupStatus = 'loading';
+            try {
+                const res = await fetch(`{{ url_for("konselor_lookup_nim") }}?nim=${encodeURIComponent(nim)}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    this.lookupStatus = 'found';
+                    this.lookupData = data;
+                    // Set hidden values (raw, untuk disimpan ke DB)
+                    this.form.nama = data.nama_raw;
+                    this.form.dosen_wali = data.dosen_wali || '';
+                    // Auto-fill prodi jika belum terisi
+                    if (!this.form.prodi && data.prodi) {
+                        this.form.prodi = data.prodi;
+                    }
+                } else {
+                    this.lookupStatus = 'error';
+                    this.lookupMessage = data.message || 'Data tidak ditemukan.';
+                    this.form.nama = '';
+                    this.form.dosen_wali = '';
+                }
+            } catch (err) {
+                console.error('[Lookup NIM]', err);
+                this.lookupStatus = 'error';
+                this.lookupMessage = 'Gagal koneksi ke server.';
+                this.form.nama = '';
+                this.form.dosen_wali = '';
+            }
         },
 
         async submitForm() {
@@ -193,6 +288,8 @@ function catatSesiApp() {
                     // Reset form
                     this.form = {
                         nim: '',
+                        nama: '',
+                        dosen_wali: '',
                         prodi: '',
                         jenis_layanan_id: '',
                         kategori_masalah_id: '',
@@ -200,6 +297,8 @@ function catatSesiApp() {
                         tanggal_sesi: new Date().toISOString().split('T')[0],
                         tindak_lanjut: ''
                     };
+                    this.lookupStatus = '';
+                    this.lookupData = {};
                 } else {
                     if (window.showAlert) {
                         window.showAlert('error', data.message || 'Gagal menyimpan sesi.');
