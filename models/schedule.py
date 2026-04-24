@@ -22,7 +22,7 @@ class UserSchedule:
             query_meta = """
                 INSERT INTO user_schedules_metadata (user_id, last_scraped) 
                 VALUES (%s, %s)
-                ON DUPLICATE KEY UPDATE last_scraped = VALUES(last_scraped)
+                ON CONFLICT (user_id) DO UPDATE SET last_scraped = EXCLUDED.last_scraped
             """
             cursor.execute(query_meta, (user_id, last_scraped))
 
@@ -119,7 +119,7 @@ class UserSchedule:
             cursor.execute("""
                 INSERT INTO user_schedules_metadata (user_id, kalendar_uuid) 
                 VALUES (%s, %s)
-                ON DUPLICATE KEY UPDATE kalendar_uuid = VALUES(kalendar_uuid)
+                ON CONFLICT (user_id) DO UPDATE SET kalendar_uuid = EXCLUDED.kalendar_uuid
             """, (user_id, new_uuid))
             conn.commit()
             return new_uuid

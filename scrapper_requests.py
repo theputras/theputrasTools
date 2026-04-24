@@ -593,11 +593,11 @@ def _generic_search(endpoint, query, label, user_id=None) -> pd.DataFrame:
         logging.error(f"Error cari {label}: {e}")
         return pd.DataFrame()
 
-def search_mahasiswa(query):
-    return _generic_search("/komunitas/mahasiswa/", query, "Mahasiswa")
+def search_mahasiswa(query, user_id=None):
+    return _generic_search("/komunitas/mahasiswa/", query, "Mahasiswa", user_id)
 
-def search_staff(query):
-    return _generic_search("/komunitas/staff/", query, "Staff")
+def search_staff(query, user_id=None):
+    return _generic_search("/komunitas/staff/", query, "Staff", user_id)
 
 def fetch_photo_from_sicyca(role, id_, user_id=None):
     """

@@ -1,139 +1,275 @@
 -- ==========================================================
--- 1. MASTER TABEL (TIDAK BERGANTUNG PADA TABEL LAIN)
+-- 1. TABEL INDEPENDENT (TIDAK ADA FOREIGN KEY KE TABEL LAIN)
 -- ==========================================================
 
 CREATE TABLE roles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nama_role VARCHAR(50) NOT NULL,
     deskripsi TEXT
 );
 
 CREATE TABLE tools (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nama_tool VARCHAR(100) NOT NULL,
     route_name VARCHAR(100) NOT NULL UNIQUE,
-    deskripsi VARCHAR(255)
+    deskripsi VARCHAR(255) DEFAULT NULL
+);
+
+CREATE TABLE konselor_jenis_layanan (
+    id SERIAL PRIMARY KEY,
+    nama VARCHAR(150) NOT NULL UNIQUE
+);
+
+CREATE TABLE konselor_kategori_masalah (
+    id SERIAL PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE konselor_tindak_lanjut (
+    id SERIAL PRIMARY KEY,
+    nama VARCHAR(150) NOT NULL UNIQUE
+);
+
+CREATE TABLE ultah_records (
+    id SERIAL PRIMARY KEY,
+    nama VARCHAR(255) NOT NULL,
+    nim VARCHAR(20) DEFAULT NULL UNIQUE,
+    tanggal INT NOT NULL,
+    bulan INT NOT NULL,
+    tahun_lahir INT DEFAULT NULL,
+    foto_base64 TEXT,
+    google_calendar_event_id VARCHAR(255) DEFAULT NULL,
+    prodi VARCHAR(100) DEFAULT NULL,
+    is_from_sicyca SMALLINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ==========================================================
--- 2. TABEL JEMBATAN ROLE & TOOLS
+-- 2. TABEL USERS & JEMBATAN PERMISSION
 -- ==========================================================
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(150) DEFAULT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    role_id INT DEFAULT 3,
+    CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL
+);
 
 CREATE TABLE role_permissions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     role_id INT NOT NULL,
     tool_id INT NOT NULL,
-    is_allowed TINYINT(1) DEFAULT 0,
+    is_allowed SMALLINT DEFAULT 0,
+    UNIQUE (role_id, tool_id),
     CONSTRAINT fk_perm_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
-    CONSTRAINT fk_perm_tool FOREIGN KEY (tool_id) REFERENCES tools(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_role_tool (role_id, tool_id)
+    CONSTRAINT fk_perm_tool FOREIGN KEY (tool_id) REFERENCES tools(id) ON DELETE CASCADE
 );
+
 -- ==========================================================
--- 3. TABEL USERS UTAMA
--- ==========================================================
-CREATE TABLE `users` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `email` varchar(150) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `role_id` INT DEFAULT 3,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`),
-  -- Tambahan Constraint Foreign Key ke tabel Roles
-  CONSTRAINT fk_users_role FOREIGN KEY (`role_id`) REFERENCES roles(id) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
--- ==========================================================
--- 4. TABEL FITUR: GATE SICYCA
+-- 3. TABEL YANG BERGANTUNG LANGSUNG PADA USERS (LEVEL 1)
 -- ==========================================================
 
+CREATE TABLE webauthn_credentials (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    credential_id TEXT NOT NULL,
+    public_key TEXT NOT NULL,
+    sign_count INT DEFAULT 0,
+    transports VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT webauthn_credentials_ibfk_1 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE fingerprint_credentials (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    credential_id VARCHAR(255) NOT NULL UNIQUE,
+    public_key TEXT NOT NULL,
+    sign_count INT DEFAULT 0,
+    device_type VARCHAR(50) DEFAULT 'face',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_used TIMESTAMP DEFAULT NULL,
+    CONSTRAINT user_credentials_ibfk_1 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE gate_users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
     gate_username VARCHAR(50) NOT NULL,
     gate_password VARCHAR(255) NOT NULL,
-    is_active TINYINT(1) DEFAULT 1,
+    is_active SMALLINT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_user_gate (user_id),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_gate_users_parent FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE google_oauth_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    token_data JSON NOT NULL,
+    email VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_google_oauth_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE konselor_sessions (
+    id SERIAL PRIMARY KEY,
+    konselor_user_id BIGINT NOT NULL,
+    nim_id VARCHAR(64) NOT NULL,
+    nama VARCHAR(150) DEFAULT NULL,
+    dosen_wali VARCHAR(150) DEFAULT NULL,
+    prodi VARCHAR(100) DEFAULT NULL,
+    jenis_layanan_id INT NOT NULL,
+    topik TEXT NOT NULL,
+    tanggal_sesi DATE NOT NULL,
+    tindak_lanjut_id INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_konselor_session_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_konselor_session_layanan FOREIGN KEY (jenis_layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_konselor_session_tindak_lanjut FOREIGN KEY (tindak_lanjut_id) REFERENCES konselor_tindak_lanjut(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE logbooks (
+    id SERIAL PRIMARY KEY,
+    uuid VARCHAR(36) DEFAULT NULL UNIQUE,
+    user_id BIGINT NOT NULL,
+    fakultas VARCHAR(100) DEFAULT NULL,
+    prodi VARCHAR(100) DEFAULT NULL,
+    nama VARCHAR(150) DEFAULT NULL,
+    nim VARCHAR(50) DEFAULT NULL,
+    nama_mitra VARCHAR(150) DEFAULT NULL,
+    waktu_mulai DATE DEFAULT NULL,
+    waktu_selesai DATE DEFAULT NULL,
+    posisi_magang VARCHAR(100) DEFAULT NULL,
+    nama_mentor VARCHAR(150) DEFAULT NULL,
+    wa_mentor VARCHAR(20) DEFAULT NULL,
+    email_mentor VARCHAR(100) DEFAULT NULL,
+    google_doc_id VARCHAR(255) DEFAULT NULL,
+    google_doc_name VARCHAR(255) DEFAULT NULL,
+    ttd_mentor_path VARCHAR(255) DEFAULT NULL,
+    CONSTRAINT fk_logbooks_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE payment_transactions (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    reference_id VARCHAR(100) NOT NULL UNIQUE,
+    ipaymu_transaction_id INT DEFAULT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    status SMALLINT DEFAULT 0,
+    payment_method VARCHAR(50) DEFAULT 'qris',
+    payment_channel VARCHAR(50) DEFAULT NULL,
+    qr_data TEXT,
+    buyer_name VARCHAR(150) DEFAULT NULL,
+    buyer_phone VARCHAR(20) DEFAULT NULL,
+    buyer_email VARCHAR(150) DEFAULT NULL,
+    comments TEXT,
+    paid_at TIMESTAMP DEFAULT NULL,
+    expired_at TIMESTAMP DEFAULT NULL,
+    callback_data JSON DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE ramadan_config (
+    id SERIAL PRIMARY KEY,
+    hijri_year INT NOT NULL UNIQUE,
+    start_ramadan_muhammadiyah DATE DEFAULT NULL,
+    start_ramadan_pemerintah DATE DEFAULT NULL,
+    total_days INT DEFAULT 30,
+    updated_by BIGINT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_ramadan_updater FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE user_prayer_settings (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    preference VARCHAR(20) CHECK (preference IN ('muhammadiyah', 'nu')) DEFAULT 'nu',
+    city VARCHAR(100) DEFAULT 'Surabaya',
+    country VARCHAR(100) DEFAULT 'Indonesia',
+    hijri_adj INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_prayer_settings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_schedules (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    hari_tanggal VARCHAR(100) DEFAULT NULL,
+    jam VARCHAR(50) DEFAULT NULL,
+    ruang VARCHAR(50) DEFAULT NULL,
+    mata_kuliah VARCHAR(255) DEFAULT NULL,
+    dosen VARCHAR(255) DEFAULT NULL,
+    status_kuliah VARCHAR(100) DEFAULT NULL,
+    keterangan VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_schedules_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_schedules_metadata (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    last_scraped VARCHAR(100) DEFAULT NULL,
+    kalendar_uuid VARCHAR(100) DEFAULT NULL UNIQUE,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_schedules_meta_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_sessions (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    refresh_token CHAR(36) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    ip_address VARCHAR(45) DEFAULT NULL,
+    user_agent VARCHAR(255) DEFAULT NULL,
+    revoked SMALLINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_sessions_ibfk_1 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ==========================================================
+-- 4. TABEL ANAK (LEVEL 2 & 3 DEEP DEPENDENCIES)
+-- ==========================================================
+
 CREATE TABLE gate_sessions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     gate_user_id INT NOT NULL,
     xsrf_token TEXT,
     gate_session TEXT,
     sso_token TEXT,
     user_agent TEXT,
-    is_valid TINYINT(1) DEFAULT 0,
-    last_checked_at DATETIME NULL,
+    is_valid SMALLINT DEFAULT 0,
+    last_checked_at TIMESTAMP DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_gate_session_user FOREIGN KEY (gate_user_id) REFERENCES gate_users(id) ON DELETE CASCADE
-);-- ==========================================================
--- 5. TABEL FITUR: MANAJEMEN ULTAH
--- ==========================================================
-
-CREATE TABLE ultah_records (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nama VARCHAR(255) NOT NULL,
-    nim VARCHAR(20) DEFAULT NULL,
-    tanggal INT NOT NULL,
-    bulan INT NOT NULL,
-    tahun_lahir INT DEFAULT NULL,
-    foto_base64 LONGTEXT DEFAULT NULL,
-    google_calendar_event_id VARCHAR(255) DEFAULT NULL,
-    prodi VARCHAR(100) DEFAULT NULL,
-    is_from_sicyca TINYINT(1) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_nim (nim)
 );
 
-CREATE TABLE google_oauth_tokens (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    token_data JSON NOT NULL,
-    email VARCHAR(255) DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_user (user_id),
-    CONSTRAINT fk_google_oauth_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+CREATE TABLE konselor_session_kategori (
+    session_id INT NOT NULL,
+    kategori_id INT NOT NULL,
+    PRIMARY KEY (session_id, kategori_id),
+    CONSTRAINT fk_sk_kategori FOREIGN KEY (kategori_id) REFERENCES konselor_kategori_masalah(id) ON DELETE CASCADE,
+    CONSTRAINT fk_sk_session FOREIGN KEY (session_id) REFERENCES konselor_sessions(id) ON DELETE CASCADE
 );
 
--- ==========================================================
--- 6. TABEL FITUR: LOGBOOK MAGANG
--- ==========================================================
-
--- A. Induk: logbooks
-CREATE TABLE logbooks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    uuid VARCHAR(36) UNIQUE,
-    user_id BIGINT UNSIGNED NOT NULL,
-    fakultas VARCHAR(100),
-    prodi VARCHAR(100),
-    nama VARCHAR(150),
-    nim VARCHAR(50),
-    nama_mitra VARCHAR(150),
-    waktu_mulai DATE,
-    waktu_selesai DATE,
-    posisi_magang VARCHAR(100),
-    nama_mentor VARCHAR(150),
-    wa_mentor VARCHAR(20),
-    email_mentor VARCHAR(100),
-    google_doc_id VARCHAR(255) NULL,
-    google_doc_name VARCHAR(255) NULL,
-    ttd_mentor_path VARCHAR(255) NULL,  -- Path file gambar tanda tangan mentor (PNG)
-    CONSTRAINT fk_logbooks_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- B. Anak dari logbooks: logbook_entries
 CREATE TABLE logbook_entries (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    uuid VARCHAR(36) UNIQUE,
+    id SERIAL PRIMARY KEY,
+    uuid VARCHAR(36) DEFAULT NULL UNIQUE,
     logbook_id INT NOT NULL,
     tanggal DATE NOT NULL,
     aktivitas VARCHAR(255) NOT NULL,
@@ -141,192 +277,43 @@ CREATE TABLE logbook_entries (
     CONSTRAINT fk_logbook_entries_parent FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE
 );
 
--- C. Anak dari logbook_entries: logbook_images
 CREATE TABLE logbook_images (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     entry_id INT NOT NULL,
     path VARCHAR(255) NOT NULL,
     nama_asli VARCHAR(255) DEFAULT NULL,
-    deskripsi TEXT DEFAULT NULL,
-    tipe_berkas VARCHAR(50) NULL,      -- Contoh: image/jpeg, image/png
-    ukuran_berkas BIGINT NULL,         -- Dalam Bytes
-    dimensi VARCHAR(20) NULL,          -- Contoh: 1920x1080
+    deskripsi TEXT,
+    tipe_berkas VARCHAR(50) DEFAULT NULL,
+    ukuran_berkas BIGINT DEFAULT NULL,
+    dimensi VARCHAR(20) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_logbook_images_parent FOREIGN KEY (entry_id) REFERENCES logbook_entries(id) ON DELETE CASCADE
 );
 
--- D. Tracking approval tanda tangan per bulan
-CREATE TABLE logbook_signatures (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    logbook_id INT NOT NULL,
-    bulan VARCHAR(20) NOT NULL,        -- e.g. "Maret 2026"
-    is_approved TINYINT(1) DEFAULT 0,
-    approved_at TIMESTAMP NULL,
-    CONSTRAINT fk_sig_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_logbook_month (logbook_id, bulan)
-);
-
--- E. Resume kegiatan per bulan (rich text dari TipTap editor)
 CREATE TABLE logbook_resumes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     logbook_id INT NOT NULL,
-    bulan VARCHAR(20) NOT NULL,        -- e.g. "Februari 2026"
-    content TEXT,                       -- HTML content dari TipTap editor
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_resume_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_logbook_resume_month (logbook_id, bulan)
+    bulan VARCHAR(20) NOT NULL,
+    content TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (logbook_id, bulan),
+    CONSTRAINT fk_resume_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE webauthn_credentials (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL, -- Diubah jadi BIGINT UNSIGNED
-    credential_id TEXT NOT NULL,
-    public_key TEXT NOT NULL,
-    sign_count INT DEFAULT 0,
-    transports VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- ==========================================================
--- SEED DATA: TOOLS & PERMISSIONS
--- ==========================================================
--- Tool: Manajemen Ultah
-INSERT INTO tools (nama_tool, route_name, deskripsi) 
-VALUES ('Manajemen Ultah', 'manajemen_ultah', 'Kelola data ulang tahun & sync ke Google Calendar')
-ON DUPLICATE KEY UPDATE nama_tool = VALUES(nama_tool), deskripsi = VALUES(deskripsi);
-
--- ==========================================================
--- 7. TABEL FITUR: JADWAL SHOLAT & KALENDER HIJRIAH
--- ==========================================================
-
--- A. Preferensi sholat per-user (Muhammadiyah/NU, lokasi)
-CREATE TABLE user_prayer_settings (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    preference ENUM('muhammadiyah', 'nu') DEFAULT 'nu',
-    city VARCHAR(100) DEFAULT 'Surabaya',
-    country VARCHAR(100) DEFAULT 'Indonesia',
-    hijri_adj INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_user (user_id),
-    CONSTRAINT fk_prayer_settings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- B. Konfigurasi tanggal Ramadhan (admin-only, per tahun Hijriah)
-CREATE TABLE ramadan_config (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    hijri_year INT NOT NULL,
-    start_ramadan_muhammadiyah DATE DEFAULT NULL,
-    start_ramadan_pemerintah DATE DEFAULT NULL,
-    total_days INT DEFAULT 30,
-    updated_by BIGINT UNSIGNED DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_hijri_year (hijri_year),
-    CONSTRAINT fk_ramadan_updater FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+CREATE TABLE logbook_signatures (
+    id SERIAL PRIMARY KEY,
+    logbook_id INT NOT NULL,
+    bulan VARCHAR(20) NOT NULL,
+    is_approved SMALLINT DEFAULT 0,
+    approved_at TIMESTAMP DEFAULT NULL,
+    UNIQUE (logbook_id, bulan),
+    CONSTRAINT fk_sig_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE
 );
 
 -- ==========================================================
--- 8. TABEL FITUR: PEMBAYARAN (iPaymu QRIS)
+-- 5. TAMBAHAN INDEX UNTUK PERFORMA QUERY
 -- ==========================================================
-
-CREATE TABLE payment_transactions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    reference_id VARCHAR(100) NOT NULL UNIQUE,
-    ipaymu_transaction_id INT NULL,
-    amount DECIMAL(12,2) NOT NULL,
-    status TINYINT DEFAULT 0,               -- 0=pending, 1=success, -2=expired
-    payment_method VARCHAR(50) DEFAULT 'qris',
-    payment_channel VARCHAR(50) NULL,
-    qr_data TEXT NULL,                      -- QR string/URL dari iPaymu
-    buyer_name VARCHAR(150) NULL,
-    buyer_phone VARCHAR(20) NULL,
-    buyer_email VARCHAR(150) NULL,
-    comments TEXT NULL,
-    paid_at TIMESTAMP NULL,
-    expired_at TIMESTAMP NULL,
-    callback_data JSON NULL,                -- Raw callback data dari iPaymu
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_reference (reference_id),
-    INDEX idx_status (status),
-    INDEX idx_user_created (user_id, created_at)
-);
-
--- ==========================================================
--- 9. TABEL FITUR: JADWAL KULIAH USER
--- ==========================================================
-
-CREATE TABLE user_schedules_metadata (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL UNIQUE,
-    last_scraped VARCHAR(100),
-    kalendar_uuid VARCHAR(100) UNIQUE NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_schedules_meta_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE user_schedules (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    hari_tanggal VARCHAR(100),
-    jam VARCHAR(50),
-    ruang VARCHAR(50),
-    mata_kuliah VARCHAR(255),
-    dosen VARCHAR(255),
-    status_kuliah VARCHAR(100),
-    keterangan VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_schedules_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- ==========================================================
--- 10. TABEL FITUR: KONSELOR — PENCATATAN SESI KONSELING
--- ==========================================================
-
--- A. Master: Kategori Masalah (CRUD dinamis)
-CREATE TABLE konselor_kategori_masalah (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nama VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- B. Master: Jenis Layanan (CRUD dinamis)
-CREATE TABLE konselor_jenis_layanan (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nama VARCHAR(150) NOT NULL UNIQUE
-);
-
--- B.3. Master Tindak Lanjut
-CREATE TABLE konselor_tindak_lanjut (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nama VARCHAR(150) NOT NULL UNIQUE
-);
-
--- C. Data Sesi Konseling
-CREATE TABLE konselor_sessions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    konselor_user_id BIGINT UNSIGNED NOT NULL,
-    nim_id VARCHAR(64) NOT NULL,          -- NIM mentah (plain text)
-    nama VARCHAR(150) NULL,                 -- Nama mahasiswa (plain text, disensor saat display)
-    dosen_wali VARCHAR(150) NULL,           -- Dosen wali (plain text)
-    prodi VARCHAR(100),
-    jenis_layanan_id INT NOT NULL,
-    kategori_masalah_id INT NOT NULL,
-    topik TEXT NOT NULL,
-    tanggal_sesi DATE NOT NULL,
-    tindak_lanjut_id INT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_konselor_session_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_konselor_session_layanan FOREIGN KEY (jenis_layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_konselor_session_kategori FOREIGN KEY (kategori_masalah_id) REFERENCES konselor_kategori_masalah(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_konselor_session_tindak_lanjut FOREIGN KEY (tindak_lanjut_id) REFERENCES konselor_tindak_lanjut(id) ON DELETE RESTRICT,
-    INDEX idx_konselor_nim (nim_id),
-    INDEX idx_konselor_kategori (kategori_masalah_id),
-    INDEX idx_konselor_tanggal (tanggal_sesi)
-);
+CREATE INDEX idx_konselor_nim ON konselor_sessions(nim_id);
+CREATE INDEX idx_konselor_tanggal ON konselor_sessions(tanggal_sesi);
+CREATE INDEX idx_payment_status ON payment_transactions(status);
+CREATE INDEX idx_payment_user_created ON payment_transactions(user_id, created_at);

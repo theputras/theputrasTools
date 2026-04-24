@@ -46,12 +46,12 @@ class UserPrayerSettings:
                 INSERT INTO user_prayer_settings 
                 (user_id, preference, city, state, country, hijri_adj)
                 VALUES (%s, %s, %s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE
-                    preference = VALUES(preference),
-                    city = VALUES(city),
-                    state = VALUES(state),
-                    country = VALUES(country),
-                    hijri_adj = VALUES(hijri_adj),
+                ON CONFLICT (user_id) DO UPDATE SET
+                    preference = EXCLUDED.preference,
+                    city = EXCLUDED.city,
+                    state = EXCLUDED.state,
+                    country = EXCLUDED.country,
+                    hijri_adj = EXCLUDED.hijri_adj,
                     updated_at = NOW()
             """
             cursor.execute(query, (
@@ -163,11 +163,11 @@ class RamadanConfig:
                 INSERT INTO ramadan_config 
                 (hijri_year, start_ramadan_muhammadiyah, start_ramadan_pemerintah, total_days, updated_by)
                 VALUES (%s, %s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE
-                    start_ramadan_muhammadiyah = VALUES(start_ramadan_muhammadiyah),
-                    start_ramadan_pemerintah = VALUES(start_ramadan_pemerintah),
-                    total_days = VALUES(total_days),
-                    updated_by = VALUES(updated_by),
+                ON CONFLICT (hijri_year) DO UPDATE SET
+                    start_ramadan_muhammadiyah = EXCLUDED.start_ramadan_muhammadiyah,
+                    start_ramadan_pemerintah = EXCLUDED.start_ramadan_pemerintah,
+                    total_days = EXCLUDED.total_days,
+                    updated_by = EXCLUDED.updated_by,
                     updated_at = NOW()
             """
             cursor.execute(query, (

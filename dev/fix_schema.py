@@ -29,15 +29,15 @@ SEED_FILE = os.path.join(BASE_DIR, 'Seed theputrasTools.sql')
 
 def get_existing_tables(cursor):
     """Ambil list semua tabel yang sudah ada di database."""
-    cursor.execute("SHOW TABLES")
+    cursor.execute("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
     return {row[0] if isinstance(row, tuple) else list(row.values())[0] for row in cursor.fetchall()}
 
 
 def get_existing_columns(cursor, table_name):
     """Ambil list semua kolom dari tabel tertentu."""
     try:
-        cursor.execute(f"SHOW COLUMNS FROM `{table_name}`")
-        return {row[0] if isinstance(row, tuple) else row['Field'] for row in cursor.fetchall()}
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s", (table_name,))
+        return {row[0] if isinstance(row, tuple) else row.get('column_name', row[0]) for row in cursor.fetchall()}
     except Exception:
         return set()
 
@@ -152,7 +152,7 @@ def run_schema_migration(cursor, existing_tables, replace=False):
                         
                         if col_name and col_name not in existing_cols:
                             try:
-                                alter_stmt = f"ALTER TABLE `{table_name}` ADD COLUMN {col_def}"
+                                alter_stmt = f"ALTER TABLE \"{table_name}\" ADD COLUMN {col_def}"
                                 cursor.execute(alter_stmt)
                                 print(f"  ✅ [AUTO-ALTER] Menambahkan kolom '{col_name}' ke tabel '{table_name}'")
                                 created += 1
@@ -166,9 +166,7 @@ def run_schema_migration(cursor, existing_tables, replace=False):
             else:
                 if replace and table_name in existing_tables:
                     try:
-                        cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
-                        cursor.execute(f"DROP TABLE `{table_name}`")
-                        cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
+                        cursor.execute(f"DROP TABLE IF EXISTS \"{table_name}\" CASCADE")
                         existing_tables.remove(table_name)
                         print(f"  🗑️  [REPLACE] Tabel '{table_name}' di-drop.")
                     except Exception as e:
@@ -267,6 +265,7 @@ def fix_db(replace=False):
         print("❌ Gagal konek ke database!")
         return
 
+    conn.autocommit = True
     # Pakai dictionary=False supaya SHOW TABLES return tuple
     cursor = conn.cursor()
     

@@ -148,11 +148,11 @@ class GateSession:
                 INSERT INTO gate_sessions 
                 (gate_user_id, xsrf_token, gate_session, sso_token, user_agent, is_valid, last_checked_at)
                 VALUES (%s, %s, %s, %s, %s, 1, NOW())
-                ON DUPLICATE KEY UPDATE
-                    xsrf_token = VALUES(xsrf_token),
-                    gate_session = VALUES(gate_session),
-                    sso_token = VALUES(sso_token),
-                    user_agent = VALUES(user_agent),
+                ON CONFLICT (gate_user_id) DO UPDATE SET
+                    xsrf_token = EXCLUDED.xsrf_token,
+                    gate_session = EXCLUDED.gate_session,
+                    sso_token = EXCLUDED.sso_token,
+                    user_agent = EXCLUDED.user_agent,
                     is_valid = 1,
                     last_checked_at = NOW(),
                     updated_at = NOW()

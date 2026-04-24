@@ -652,12 +652,46 @@ def index():
         last_scraped, jadwal_data = user_schedule_model.get_schedules_by_user(user_id)
         calendar_uuid = user_schedule_model.get_or_create_calendar_uuid(user_id)
 
+        # LAZY LOADING LOGIC
+        needs_scrape = False
         if not jadwal_data and last_scraped == "Belum pernah di-scrape":
-            msg = "JADWAL BELUM TERSEDIA. Jalankan scraper terlebih dahulu atau tunggu jadwal otomatis berikutnya."
+            needs_scrape = True
+        elif last_scraped and last_scraped != "Belum pernah di-scrape":
+            try:
+                # Format dari scraper: "%A, %d %B %Y %H:%M:%S"
+                # Kita coba fallback manual agar tidak kena masalah locale bahasa Indonesia
+                # Jika repot diparse, cara gampang: cek umurnya kalau > 24 jam.
+                # Sayangnya parse string %A, %d %B %Y agak tricky dengan locale.
+                # Jadi kita biarkan user refresh manual kalau parse gagal. Tapi kita coba parse aja dulu.
+                import locale
+                dt_scraped = datetime.strptime(last_scraped, "%A, %d %B %Y %H:%M:%S")
+                now = datetime.now()
+                today_5am = now.replace(hour=5, minute=0, second=0, microsecond=0)
+                
+                if now >= today_5am and dt_scraped < today_5am:
+                    needs_scrape = True
+                elif now < today_5am and dt_scraped < (today_5am - timedelta(days=1)):
+                    needs_scrape = True
+            except ValueError:
+                # Parse gagal karena locale (misal "Senin, 24 April 2026 ...")
+                # Kita asumsikan aja butuh scrape kalau jadwal kosong
+                if not jadwal_data: needs_scrape = True
+
+        if needs_scrape:
+            # Cegah double execution dengan mengecek status yang ada di memory
+            status_jadwal = JADWAL_STATUS.get(user_id, {}).get("status")
+            if status_jadwal != "loading":
+                logging.info(f"[LAZY SCRAPE] Menjalankan jadwal otomatis untuk user_id: {user_id}")
+                executor.submit(run_scraper_and_save, user_id)
+                # Tambahkan fake message agar frontend tahu sedang loading
+                last_scraped = "Memproses pembaruan otomatis di belakang layar..."
+
+        if not jadwal_data and last_scraped == "Belum pernah di-scrape":
+            msg = "JADWAL BELUM TERSEDIA. Sedang menarik jadwal di latar belakang..."
             return render_template(
                 "index.html",
                 jadwal_list=[],
-                last_scraped=None,
+                last_scraped=last_scraped,
                 error_message=msg,
                 calendar_uuid=calendar_uuid,
             )
@@ -738,8 +772,9 @@ def konselor_lookup_nim():
 
     try:
         # Jalankan di thread pool (sama kayak fitur komunitas)
-        # Supaya _get_current_user_id fallback ke bot user yang punya session Sicyca valid
-        future = executor.submit(search_mahasiswa, nim)
+        # Supaya _get_current_user_id tidak fallback ke bot user
+        user_id = g.user.get("sub")
+        future = executor.submit(search_mahasiswa, nim, user_id=user_id)
         df = future.result(timeout=30)
         if df.empty:
             return jsonify({"success": False, "message": "Data mahasiswa tidak ditemukan."})
@@ -789,6 +824,30 @@ def konselor_rekap():
         tindak_lanjut_list=get_all_tindak_lanjut()
     )
 
+
+# === KONSELOR: Excel Import/Export ===
+@app.route("/konselor/template/download")
+@login_required
+def konselor_download_template():
+    """Download template excel untuk import sesi"""
+    from controller.KonselorController import download_template_excel
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+    return download_template_excel()
+
+@app.route("/konselor/sesi/import", methods=["POST"])
+@login_required
+def konselor_import_sesi():
+    """Import sesi dari excel dan auto-fill dari Sicyca"""
+    from controller.KonselorController import import_sesi_excel
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+    
+    # Passing the current user_id for the scraper to use
+    user_id = g.user.get("sub")
+    return import_sesi_excel(request, user_id)
 
 # === KONSELOR: Rekap Data (JSON) ===
 @app.route("/konselor/rekap/data")
@@ -967,6 +1026,52 @@ def konselor_layanan():
     return jsonify({"success": False, "message": "Action tidak valid."})
 
 
+# === KONSELOR: CRUD Tindak Lanjut ===
+@app.route("/konselor/tindak_lanjut", methods=["POST"])
+@login_required
+def konselor_tindak_lanjut():
+    """CRUD untuk tindak lanjut."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import (
+        create_tindak_lanjut, update_tindak_lanjut, delete_tindak_lanjut
+    )
+
+    action = request.form.get("action")
+    nama = request.form.get("nama", "").strip()
+    item_id = request.form.get("id", type=int)
+
+    if action == "create":
+        if not nama:
+            return jsonify({"success": False, "message": "Nama tidak boleh kosong."})
+        success, message = create_tindak_lanjut(nama)
+        new_id = None
+        if success:
+            from models.konselor import tindak_lanjut_model
+            all_tl = tindak_lanjut_model.get_all()
+            for tl in all_tl:
+                if tl["nama"] == nama:
+                    new_id = tl["id"]
+                    break
+        return jsonify({"success": success, "message": message, "id": new_id})
+
+    elif action == "update":
+        if not item_id or not nama:
+            return jsonify({"success": False, "message": "Data tidak lengkap."})
+        success, message = update_tindak_lanjut(item_id, nama)
+        return jsonify({"success": success, "message": message})
+
+    elif action == "delete":
+        if not item_id:
+            return jsonify({"success": False, "message": "ID tidak valid."})
+        success, message = delete_tindak_lanjut(item_id)
+        return jsonify({"success": success, "message": message})
+
+    return jsonify({"success": False, "message": "Action tidak valid."})
+
+
 @app.route("/tools")
 @login_required
 def tools_page():
@@ -1073,9 +1178,9 @@ def update_gate_credentials():
         query = """
             INSERT INTO gate_users (user_id, gate_username, gate_password)
             VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE
-            gate_username = VALUES(gate_username),
-            gate_password = VALUES(gate_password)
+            ON CONFLICT (user_id) DO UPDATE SET
+            gate_username = EXCLUDED.gate_username,
+            gate_password = EXCLUDED.gate_password
         """
         cursor.execute(query, (user_id, gate_username, encrypted_password))
         conn.commit()
@@ -1415,8 +1520,9 @@ def sicyca_undika():
             "api.get_my_profile_photo"
         )  # Pastikan route api.get_my_profile_photo ada
         try:
+            user_id = g.user.get("sub")
             df_mhs = search_mahasiswa(
-                nim
+                nim, user_id=user_id
             )  # Pastikan fungsi search_mahasiswa sudah diimport
             if not df_mhs.empty:
                 row = df_mhs.iloc[0]
@@ -1788,7 +1894,8 @@ def ultah_lookup_nim():
 
     try:
         # Search via scraper
-        df = search_mahasiswa(nim)
+        user_id = g.user.get("sub")
+        df = search_mahasiswa(nim, user_id=user_id)
 
         if not df.empty:
             # Ambil baris pertama
@@ -2784,7 +2891,7 @@ def toggle_tool():
         query = """
             INSERT INTO role_permissions (role_id, tool_id, is_allowed)
             VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE is_allowed = VALUES(is_allowed)
+            ON CONFLICT (role_id, tool_id) DO UPDATE SET is_allowed = EXCLUDED.is_allowed
         """
         cursor.execute(query, (role_id, tool_id, is_allowed))
         conn.commit()
@@ -3063,8 +3170,9 @@ def webauthn_login_verify():
 
 # scheduler = BackgroundScheduler(daemon=True)
 # Daftarkan job harian jam 05:00 WIB
-scheduler.add_job(run_scraper_and_save, "cron", hour=5, minute=0, id="scrape-05")
-scheduler.start()
+# Menonaktifkan auto-scrape semua jadwal jam 5 pagi agar server tidak berat
+# scheduler.add_job(run_scraper_and_save, "cron", hour=5, minute=0, id="scrape-05")
+# scheduler.start()
 boot_scrape_if_needed()
 
 logging.info(

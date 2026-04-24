@@ -758,10 +758,10 @@ def add_entry(logbook_id, tanggal, aktivitas, deskripsi, files):
         # 1. Insert Entry
         new_uuid = str(uuid.uuid4())[:8]
         cursor.execute(
-            "INSERT INTO logbook_entries (uuid, logbook_id, tanggal, aktivitas, deskripsi) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO logbook_entries (uuid, logbook_id, tanggal, aktivitas, deskripsi) VALUES (%s, %s, %s, %s, %s) RETURNING id",
             (new_uuid, logbook_id, tanggal, aktivitas, deskripsi),
         )
-        entry_id = cursor.lastrowid
+        entry_id = cursor.fetchone()[0]
 
         # 2. Process Files
         for file in files:
@@ -1791,7 +1791,7 @@ def get_available_months(logbook_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
-        "SELECT DISTINCT MONTH(tanggal) as bulan, YEAR(tanggal) as tahun FROM logbook_entries WHERE logbook_id = %s ORDER BY tahun ASC, bulan ASC",
+        "SELECT DISTINCT EXTRACT(MONTH FROM tanggal) as bulan, EXTRACT(YEAR FROM tanggal) as tahun FROM logbook_entries WHERE logbook_id = %s ORDER BY tahun ASC, bulan ASC",
         (logbook_id,),
     )
     rows = cursor.fetchall()
@@ -1800,8 +1800,8 @@ def get_available_months(logbook_id):
     result = []
     for row in rows:
         if row["bulan"] and row["tahun"]:
-            month_name = months_id[row["bulan"]]
-            result.append(f"{month_name} {row['tahun']}")
+            month_name = months_id[int(row["bulan"])]
+            result.append(f"{month_name} {int(row['tahun'])}")
     return result
 
 
@@ -1861,7 +1861,7 @@ def approve_signature(logbook_id, bulan, user_id):
             """
             INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at)
             VALUES (%s, %s, 1, NOW())
-            ON DUPLICATE KEY UPDATE is_approved = 1, approved_at = NOW()
+            ON CONFLICT (logbook_id, bulan) DO UPDATE SET is_approved = 1, approved_at = NOW()
         """,
             (logbook_id, bulan),
         )
@@ -1892,7 +1892,7 @@ def revoke_signature(logbook_id, bulan, user_id):
             """
             INSERT INTO logbook_signatures (logbook_id, bulan, is_approved, approved_at)
             VALUES (%s, %s, 0, NULL)
-            ON DUPLICATE KEY UPDATE is_approved = 0, approved_at = NULL
+            ON CONFLICT (logbook_id, bulan) DO UPDATE SET is_approved = 0, approved_at = NULL
         """,
             (logbook_id, bulan),
         )
@@ -1965,7 +1965,7 @@ def save_resume(logbook_id, bulan, content, user_id):
             """
             INSERT INTO logbook_resumes (logbook_id, bulan, content)
             VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE content = VALUES(content)
+            ON CONFLICT (logbook_id, bulan) DO UPDATE SET content = EXCLUDED.content
         """,
             (logbook_id, bulan, content),
         )

@@ -293,8 +293,9 @@ class KonselorSessionModel:
         try:
             cursor.execute("""
                 INSERT INTO konselor_sessions
-                (konselor_user_id, nim_id, nama, dosen_wali, prodi, jenis_layanan_id, kategori_masalah_id, topik, tanggal_sesi, tindak_lanjut_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (konselor_user_id, nim_id, nama, dosen_wali, prodi, jenis_layanan_id, topik, tanggal_sesi, tindak_lanjut_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
             """, (
                 data['konselor_user_id'],
                 data['nim_id'],
@@ -302,11 +303,21 @@ class KonselorSessionModel:
                 data.get('dosen_wali'),
                 data.get('prodi'),
                 data['jenis_layanan_id'],
-                data['kategori_masalah_id'],
                 data['topik'],
                 data['tanggal_sesi'],
                 data.get('tindak_lanjut_id')
             ))
+            
+            session_id = cursor.fetchone()[0]
+            kategori_ids = data.get('kategori_masalah_ids', [])
+            if kategori_ids:
+                mapped_values = [(session_id, int(k_id)) for k_id in kategori_ids if k_id]
+                if mapped_values:
+                    cursor.executemany(
+                        "INSERT INTO konselor_session_kategori (session_id, kategori_id) VALUES (%s, %s)",
+                        mapped_values
+                    )
+            
             conn.commit()
             return True, "Sesi konseling berhasil disimpan."
         except Exception as e:
@@ -325,24 +336,26 @@ class KonselorSessionModel:
         try:
             query = """
                 SELECT s.id, s.nim_id, s.nama, s.dosen_wali, s.prodi, s.topik, s.tanggal_sesi, s.tindak_lanjut_id, s.created_at,
-                       s.jenis_layanan_id, s.kategori_masalah_id,
-                       jl.nama AS jenis_layanan, km.nama AS kategori_masalah, tl.nama AS tindak_lanjut
+                       s.jenis_layanan_id,
+                       STRING_AGG(km.id::text, ',') AS kategori_masalah_id,
+                       jl.nama AS jenis_layanan, STRING_AGG(km.nama, ', ') AS kategori_masalah, tl.nama AS tindak_lanjut
                 FROM konselor_sessions s
                 LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
-                LEFT JOIN konselor_kategori_masalah km ON s.kategori_masalah_id = km.id
+                LEFT JOIN konselor_session_kategori sk ON s.id = sk.session_id
+                LEFT JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
                 LEFT JOIN konselor_tindak_lanjut tl ON s.tindak_lanjut_id = tl.id
                 WHERE s.konselor_user_id = %s
             """
             params = [user_id]
 
             if bulan and tahun:
-                query += " AND MONTH(s.tanggal_sesi) = %s AND YEAR(s.tanggal_sesi) = %s"
+                query += " AND EXTRACT(MONTH FROM s.tanggal_sesi) = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
                 params.extend([bulan, tahun])
             elif tahun:
-                query += " AND YEAR(s.tanggal_sesi) = %s"
+                query += " AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
                 params.append(tahun)
 
-            query += " ORDER BY s.tanggal_sesi DESC, s.created_at DESC"
+            query += " GROUP BY s.id, jl.nama, tl.nama ORDER BY s.tanggal_sesi DESC, s.created_at DESC"
             cursor.execute(query, tuple(params))
             return cursor.fetchall()
         except Exception as e:
@@ -371,7 +384,7 @@ class KonselorSessionModel:
                     SELECT COUNT(*) AS total_sesi,
                            COUNT(DISTINCT nim_id) AS klien_unik
                     FROM konselor_sessions
-                    WHERE konselor_user_id = %s AND YEAR(tanggal_sesi) = %s
+                    WHERE konselor_user_id = %s AND EXTRACT(YEAR FROM tanggal_sesi) = %s
                 """, (user_id, tahun))
             else:
                 cursor.execute("""
@@ -387,26 +400,28 @@ class KonselorSessionModel:
                 SELECT COUNT(*) AS sesi_bulan_ini
                 FROM konselor_sessions
                 WHERE konselor_user_id = %s
-                  AND MONTH(tanggal_sesi) = MONTH(CURDATE())
-                  AND YEAR(tanggal_sesi) = YEAR(CURDATE())
+                  AND EXTRACT(MONTH FROM tanggal_sesi) = EXTRACT(MONTH FROM CURRENT_DATE)
+                  AND EXTRACT(YEAR FROM tanggal_sesi) = EXTRACT(YEAR FROM CURRENT_DATE)
             """, (user_id,))
             bulan_ini = cursor.fetchone()
 
             # Distribusi per kategori
             if tahun:
                 cursor.execute("""
-                    SELECT km.nama AS kategori, COUNT(*) AS jumlah
-                    FROM konselor_sessions s
-                    LEFT JOIN konselor_kategori_masalah km ON s.kategori_masalah_id = km.id
-                    WHERE s.konselor_user_id = %s AND YEAR(s.tanggal_sesi) = %s
+                    SELECT km.nama AS kategori, COUNT(sk.session_id) AS jumlah
+                    FROM konselor_session_kategori sk
+                    JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
+                    JOIN konselor_sessions s ON sk.session_id = s.id
+                    WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
                     GROUP BY km.nama
                     ORDER BY jumlah DESC
                 """, (user_id, tahun))
             else:
                 cursor.execute("""
-                    SELECT km.nama AS kategori, COUNT(*) AS jumlah
-                    FROM konselor_sessions s
-                    LEFT JOIN konselor_kategori_masalah km ON s.kategori_masalah_id = km.id
+                    SELECT km.nama AS kategori, COUNT(sk.session_id) AS jumlah
+                    FROM konselor_session_kategori sk
+                    JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
+                    JOIN konselor_sessions s ON sk.session_id = s.id
                     WHERE s.konselor_user_id = %s
                     GROUP BY km.nama
                     ORDER BY jumlah DESC
@@ -416,16 +431,16 @@ class KonselorSessionModel:
             # Distribusi per jenis layanan
             if tahun:
                 cursor.execute("""
-                    SELECT jl.nama AS layanan, COUNT(*) AS jumlah
+                    SELECT jl.nama AS layanan, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
-                    WHERE s.konselor_user_id = %s AND YEAR(s.tanggal_sesi) = %s
+                    WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
                     GROUP BY jl.nama
                     ORDER BY jumlah DESC
                 """, (user_id, tahun))
             else:
                 cursor.execute("""
-                    SELECT jl.nama AS layanan, COUNT(*) AS jumlah
+                    SELECT jl.nama AS layanan, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
                     WHERE s.konselor_user_id = %s
@@ -459,7 +474,6 @@ class KonselorSessionModel:
                 UPDATE konselor_sessions
                 SET prodi = %s,
                     jenis_layanan_id = %s,
-                    kategori_masalah_id = %s,
                     topik = %s,
                     tanggal_sesi = %s,
                     tindak_lanjut_id = %s
@@ -467,17 +481,29 @@ class KonselorSessionModel:
             """, (
                 data.get('prodi'),
                 data['jenis_layanan_id'],
-                data['kategori_masalah_id'],
                 data['topik'],
                 data['tanggal_sesi'],
                 data.get('tindak_lanjut_id'),
                 session_id,
                 user_id
             ))
-            conn.commit()
-            if cursor.rowcount == 0:
+            
+            if cursor.rowcount > 0 or True:
+                # Update mapping kategori
+                cursor.execute("DELETE FROM konselor_session_kategori WHERE session_id = %s", (session_id,))
+                kategori_ids = data.get('kategori_masalah_ids', [])
+                if kategori_ids:
+                    mapped_values = [(session_id, int(k_id)) for k_id in kategori_ids if k_id]
+                    if mapped_values:
+                        cursor.executemany(
+                            "INSERT INTO konselor_session_kategori (session_id, kategori_id) VALUES (%s, %s)",
+                            mapped_values
+                        )
+                conn.commit()
+                return True, "Sesi berhasil diperbarui."
+            else:
+                conn.rollback()
                 return False, "Sesi tidak ditemukan atau Anda tidak memiliki akses."
-            return True, "Sesi berhasil diperbarui."
         except Exception as e:
             logging.error(f"[Konselor] Error update_session: {e}")
             return False, f"Gagal memperbarui sesi: {str(e)}"

@@ -19,7 +19,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-300 min-h-screen">
+<body class="bg-slate-50 text-gray-600 min-h-screen">
 
     <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl"
          x-data="catatSesiApp()"
@@ -29,12 +29,12 @@
         <div class="mb-8">
             <div class="flex items-center gap-3 mb-4">
                 <a href="{{ url_for('konselor_dashboard') }}"
-                   class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900/60 border border-white/5 text-white transition hover:bg-gray-800 active:scale-95">
+                   class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-800 transition hover:bg-white active:scale-95">
                     <i class="fas fa-arrow-left text-sm"></i>
                 </a>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                        <i class="fas fa-plus-circle text-violet-400 mr-1"></i> Catat <span class="gradient-text">Sesi Baru</span>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight">
+                        <i class="fas fa-plus-circle text-violet-500 mr-1"></i> Catat <span class="gradient-text">Sesi Baru</span>
                     </h1>
                     <p class="text-xs text-gray-500">Isi form di bawah untuk mencatat sesi konseling</p>
                 </div>
@@ -42,10 +42,10 @@
 
             <!-- Privacy notice -->
             <div class="flex items-start gap-3 p-4 bg-violet-500/5 border border-violet-500/10 rounded-2xl">
-                <i class="fas fa-shield-halved text-violet-400 mt-0.5"></i>
+                <i class="fas fa-shield-halved text-violet-500 mt-0.5"></i>
                 <div>
                     <p class="text-xs text-violet-300 font-semibold">Privasi Terjamin</p>
-                    <p class="text-[11px] text-gray-500 mt-0.5">Nama mahasiswa akan <strong class="text-gray-400">disensor otomatis</strong> saat ditampilkan di rekap. Data disimpan secara aman di database.</p>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Nama mahasiswa akan <strong class="text-gray-500">disensor otomatis</strong> saat ditampilkan di rekap. Data disimpan secara aman di database.</p>
                 </div>
             </div>
         </div>
@@ -55,16 +55,16 @@
 
             <!-- NIM -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-id-card text-violet-400 mr-1"></i> NIM Mahasiswa <span class="text-red-400">*</span>
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-id-card text-violet-500 mr-1"></i> NIM Mahasiswa <span class="text-red-400">*</span>
                 </label>
                 <input type="text" x-model="form.nim" required placeholder="Contoh: 23410100001"
                        @input.debounce.600ms="lookupNIM()"
-                       class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
+                       class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
 
                 <!-- Lookup Status -->
                 <div x-show="lookupStatus === 'loading'" class="mt-2 flex items-center gap-2 text-xs text-gray-500">
-                    <i class="fas fa-spinner fa-spin text-violet-400"></i> Mencari data mahasiswa...
+                    <i class="fas fa-spinner fa-spin text-violet-500"></i> Mencari data mahasiswa...
                 </div>
                 <div x-show="lookupStatus === 'error'" x-cloak class="mt-2 flex items-center gap-2 text-xs text-red-400">
                     <i class="fas fa-exclamation-circle"></i> <span x-text="lookupMessage"></span>
@@ -77,21 +77,21 @@
                      x-transition:enter-end="opacity-100 translate-y-0"
                      class="mt-3 bg-violet-500/5 border border-violet-500/10 rounded-2xl p-4 space-y-2">
                     <div class="flex items-center gap-2">
-                        <div class="p-1.5 bg-violet-500/10 rounded-lg">
-                            <i class="fas fa-user text-violet-400 text-xs"></i>
+                        <div class="p-1.5 bg-violet-50 rounded-lg">
+                            <i class="fas fa-user text-violet-500 text-xs"></i>
                         </div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Nama Mahasiswa</p>
-                            <p class="text-sm text-white font-medium" x-text="lookupData.nama_sensor || '-'"></p>
+                            <p class="text-sm text-gray-800 font-medium" x-text="lookupData.nama_sensor || '-'"></p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="p-1.5 bg-blue-500/10 rounded-lg">
-                            <i class="fas fa-chalkboard-teacher text-blue-400 text-xs"></i>
+                        <div class="p-1.5 bg-blue-50 rounded-lg">
+                            <i class="fas fa-chalkboard-teacher text-blue-500 text-xs"></i>
                         </div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Dosen Wali</p>
-                            <p class="text-sm text-white font-medium" x-text="lookupData.dosen_wali || '-'"></p>
+                            <p class="text-sm text-gray-800 font-medium" x-text="lookupData.dosen_wali || '-'"></p>
                         </div>
                     </div>
                 </div>
@@ -99,84 +99,84 @@
 
             <!-- Prodi (dropdown dari majorID, auto-fill tapi bisa diedit) -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-graduation-cap text-blue-400 mr-1"></i> Program Studi
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-graduation-cap text-blue-500 mr-1"></i> Program Studi
                 </label>
                 <select x-model="form.prodi"
-                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
-                    <option value="" class="bg-gray-900">— Pilih Prodi —</option>
+                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
+                    <option value="" class="bg-white">— Pilih Prodi —</option>
                     {% for kode, nama in prodi_list.items() %}
-                    <option value="{{ nama }}" class="bg-gray-900">{{ nama }}</option>
+                    <option value="{{ nama }}" class="bg-white">{{ nama }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <!-- Dosen Wali (auto-fill dari lookup tapi bisa diedit) -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-chalkboard-teacher text-cyan-400 mr-1"></i> Dosen Wali
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-chalkboard-teacher text-cyan-500 mr-1"></i> Dosen Wali
                 </label>
                 <input type="text" x-model="form.dosen_wali" placeholder="Otomatis terisi dari lookup NIM..."
-                       class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
+                       class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
             </div>
 
             <!-- Jenis Layanan (dropdown dinamis) -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-hand-holding-heart text-emerald-400 mr-1"></i> Jenis Layanan <span class="text-red-400">*</span>
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-hand-holding-heart text-emerald-500 mr-1"></i> Jenis Layanan <span class="text-red-400">*</span>
                 </label>
                 <select x-model="form.jenis_layanan_id" required
-                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
-                    <option value="" class="bg-gray-900">— Pilih Jenis Layanan —</option>
+                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
+                    <option value="" class="bg-white">— Pilih Jenis Layanan —</option>
                     {% for item in jenis_layanan_list %}
-                    <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                    <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <!-- Kategori Masalah (dropdown dinamis) -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-tags text-amber-400 mr-1"></i> Kategori Masalah <span class="text-red-400">*</span>
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-tags text-amber-500 mr-1"></i> Kategori Masalah <span class="text-red-400">*</span>
                 </label>
-                <select x-model="form.kategori_masalah_id" required
-                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
-                    <option value="" class="bg-gray-900">— Pilih Kategori —</option>
+                <p class="text-xs text-gray-500 mb-2 ml-1 mb-2">Tahan CTRL/CMD untuk memilih lebih dari satu kategori.</p>
+                <select x-model="form.kategori_masalah_id" required multiple
+                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm">
                     {% for item in kategori_list %}
-                    <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                    <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <!-- Topik Permasalahan -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-comment-dots text-rose-400 mr-1"></i> Topik Permasalahan <span class="text-red-400">*</span>
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-comment-dots text-rose-500 mr-1"></i> Topik Permasalahan <span class="text-red-400">*</span>
                 </label>
                 <textarea x-model="form.topik" required rows="3" placeholder="Jelaskan detail spesifik permasalahan..."
-                          class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
+                          class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
             </div>
 
             <!-- Tanggal Sesi -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-calendar-alt text-cyan-400 mr-1"></i> Tanggal Sesi <span class="text-red-400">*</span>
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-calendar-alt text-cyan-500 mr-1"></i> Tanggal Sesi <span class="text-red-400">*</span>
                 </label>
                 <input type="date" x-model="form.tanggal_sesi" required
-                       class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm"
+                       class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm"
                        style="color-scheme: dark;">
             </div>
 
             <!-- Tindak Lanjut (dropdown dinamis) -->
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2 ml-1">
-                    <i class="fas fa-clipboard-check text-teal-400 mr-1"></i> Tindak Lanjut
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-clipboard-check text-teal-500 mr-1"></i> Tindak Lanjut
                 </label>
                 <select x-model="form.tindak_lanjut"
-                        class="w-full bg-gray-900/60 border border-white/5 rounded-2xl p-4 text-white focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
-                    <option value="" class="bg-gray-900">— Pilih Tindak Lanjut (Opsional) —</option>
+                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
+                    <option value="" class="bg-white">— Pilih Tindak Lanjut (Opsional) —</option>
                     {% for item in tindak_lanjut_list %}
-                    <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                    <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -214,7 +214,7 @@ function catatSesiApp() {
             dosen_wali: '',
             prodi: '',
             jenis_layanan_id: '',
-            kategori_masalah_id: '',
+            kategori_masalah_id: [],
             topik: '',
             tanggal_sesi: '',
             tindak_lanjut: ''
@@ -272,7 +272,11 @@ function catatSesiApp() {
             try {
                 const formData = new FormData();
                 for (const [key, value] of Object.entries(this.form)) {
-                    formData.append(key, value);
+                    if (key === 'kategori_masalah_id') {
+                        formData.append('kategori_masalah_ids', JSON.stringify(value));
+                    } else {
+                        formData.append(key, value);
+                    }
                 }
 
                 const res = await fetch('{{ url_for("konselor_catat_sesi") }}', {
@@ -292,7 +296,7 @@ function catatSesiApp() {
                         dosen_wali: '',
                         prodi: '',
                         jenis_layanan_id: '',
-                        kategori_masalah_id: '',
+                        kategori_masalah_id: [],
                         topik: '',
                         tanggal_sesi: new Date().toISOString().split('T')[0],
                         tindak_lanjut: ''

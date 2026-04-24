@@ -226,8 +226,9 @@ def api_search():
     if not query:
         return "<p class='text-gray-400 p-4'>Query tidak boleh kosong.</p>"
 
-    future_mahasiswa = executor.submit(search_mahasiswa, query)
-    future_staff = executor.submit(search_staff, query)
+    user_id = g.user.get("sub")
+    future_mahasiswa = executor.submit(search_mahasiswa, query, user_id=user_id)
+    future_staff = executor.submit(search_staff, query, user_id=user_id)
     df_mahasiswa = future_mahasiswa.result()
     df_staff = future_staff.result()
 

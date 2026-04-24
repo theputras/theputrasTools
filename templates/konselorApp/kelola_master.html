@@ -19,7 +19,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-300 min-h-screen">
+<body class="bg-slate-50 text-gray-600 min-h-screen">
 
     <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl"
          x-data="kelolaMasterApp()">
@@ -27,31 +27,31 @@
         <!-- HEADER -->
         <div class="mb-8 flex items-center gap-3">
             <a href="{{ url_for('konselor_dashboard') }}"
-               class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900/60 border border-white/5 text-white transition hover:bg-gray-800 active:scale-95">
+               class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-800 transition hover:bg-white active:scale-95">
                 <i class="fas fa-arrow-left text-sm"></i>
             </a>
             <div>
-                <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                    <i class="fas fa-cogs text-violet-400 mr-1"></i> Kelola <span class="gradient-text">Master Data</span>
+                <h1 class="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight">
+                    <i class="fas fa-cogs text-violet-500 mr-1"></i> Kelola <span class="gradient-text">Master Data</span>
                 </h1>
                 <p class="text-xs text-gray-500">Atur kategori masalah dan jenis layanan konseling</p>
             </div>
         </div>
 
         <!-- TAB SELECTOR -->
-        <div class="flex p-1.5 bg-gray-900/60 backdrop-blur-md rounded-2xl border border-white/5 mb-6 w-fit">
+        <div class="flex p-1.5 bg-white backdrop-blur-md rounded-2xl border border-gray-200 mb-6 w-fit">
             <button @click="activeTab = 'kategori'"
-                    :class="activeTab === 'kategori' ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    :class="activeTab === 'kategori' ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/20' : 'text-gray-500 hover:text-gray-200'"
                     class="px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
                 <i class="fas fa-tags"></i> Kategori Masalah
             </button>
             <button @click="activeTab = 'layanan'"
-                    :class="activeTab === 'layanan' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    :class="activeTab === 'layanan' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-500 hover:text-gray-200'"
                     class="px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
                 <i class="fas fa-hand-holding-heart"></i> Jenis Layanan
             </button>
             <button @click="activeTab = 'tindak_lanjut'"
-                    :class="activeTab === 'tindak_lanjut' ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/20' : 'text-gray-400 hover:text-gray-200'"
+                    :class="activeTab === 'tindak_lanjut' ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/20' : 'text-gray-500 hover:text-gray-200'"
                     class="px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2">
                 <i class="fas fa-clipboard-check"></i> Tindak Lanjut
             </button>
@@ -65,7 +65,7 @@
             <div class="flex gap-2 mb-4">
                 <input type="text" x-model="newKategori" placeholder="Nama kategori baru..."
                        @keydown.enter="addKategori()"
-                       class="flex-1 bg-gray-900/60 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition">
+                       class="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition">
                 <button @click="addKategori()" :disabled="!newKategori.trim()"
                         class="bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
                     <i class="fas fa-plus text-xs"></i> Tambah
@@ -73,7 +73,7 @@
             </div>
 
             <!-- List -->
-            <div class="bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
+            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
                 <template x-if="kategoriList.length === 0">
                     <div class="p-8 text-center text-gray-600 text-sm">
                         <i class="fas fa-tags text-2xl mb-2 block"></i>
@@ -82,17 +82,17 @@
                 </template>
 
                 <template x-for="item in kategoriList" :key="item.id">
-                    <div class="flex items-center gap-3 p-4 hover:bg-white/[0.02] transition-colors group">
-                        <div class="p-2 bg-amber-500/10 rounded-lg">
-                            <i class="fas fa-tag text-amber-400 text-xs"></i>
+                    <div class="flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors group">
+                        <div class="p-2 bg-amber-50 rounded-lg">
+                            <i class="fas fa-tag text-amber-500 text-xs"></i>
                         </div>
 
                         <!-- View mode -->
                         <template x-if="editKategoriId !== item.id">
                             <div class="flex-1 flex items-center justify-between">
-                                <span class="text-sm text-white font-medium" x-text="item.nama"></span>
+                                <span class="text-sm text-gray-800 font-medium" x-text="item.nama"></span>
                                 <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                                    <button @click="startEditKategori(item)" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-500/10 transition" title="Edit">
+                                    <button @click="startEditKategori(item)" class="text-blue-500 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 transition" title="Edit">
                                         <i class="fas fa-edit text-xs"></i>
                                     </button>
                                     <button @click="deleteKategori(item.id, item.nama)" class="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/10 transition" title="Hapus">
@@ -108,11 +108,11 @@
                                 <input type="text" x-model="editKategoriNama"
                                        @keydown.enter="saveEditKategori()"
                                        @keydown.escape="editKategoriId = null"
-                                       class="flex-1 bg-gray-800 border border-violet-500/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
-                                <button @click="saveEditKategori()" class="text-emerald-400 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-500/10 transition" title="Simpan">
+                                       class="flex-1 bg-white border border-violet-500/30 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none">
+                                <button @click="saveEditKategori()" class="text-emerald-500 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-50 transition" title="Simpan">
                                     <i class="fas fa-check text-xs"></i>
                                 </button>
-                                <button @click="editKategoriId = null" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition" title="Batal">
+                                <button @click="editKategoriId = null" class="text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 transition" title="Batal">
                                     <i class="fas fa-times text-xs"></i>
                                 </button>
                             </div>
@@ -130,7 +130,7 @@
             <div class="flex gap-2 mb-4">
                 <input type="text" x-model="newLayanan" placeholder="Nama jenis layanan baru..."
                        @keydown.enter="addLayanan()"
-                       class="flex-1 bg-gray-900/60 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-blue-500/30 focus:outline-none transition">
+                       class="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 focus:border-blue-500/30 focus:outline-none transition">
                 <button @click="addLayanan()" :disabled="!newLayanan.trim()"
                         class="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
                     <i class="fas fa-plus text-xs"></i> Tambah
@@ -138,7 +138,7 @@
             </div>
 
             <!-- List -->
-            <div class="bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
+            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
                 <template x-if="layananList.length === 0">
                     <div class="p-8 text-center text-gray-600 text-sm">
                         <i class="fas fa-hand-holding-heart text-2xl mb-2 block"></i>
@@ -147,17 +147,17 @@
                 </template>
 
                 <template x-for="item in layananList" :key="item.id">
-                    <div class="flex items-center gap-3 p-4 hover:bg-white/[0.02] transition-colors group">
-                        <div class="p-2 bg-blue-500/10 rounded-lg">
-                            <i class="fas fa-hand-holding-heart text-blue-400 text-xs"></i>
+                    <div class="flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors group">
+                        <div class="p-2 bg-blue-50 rounded-lg">
+                            <i class="fas fa-hand-holding-heart text-blue-500 text-xs"></i>
                         </div>
 
                         <!-- View mode -->
                         <template x-if="editLayananId !== item.id">
                             <div class="flex-1 flex items-center justify-between">
-                                <span class="text-sm text-white font-medium" x-text="item.nama"></span>
+                                <span class="text-sm text-gray-800 font-medium" x-text="item.nama"></span>
                                 <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                                    <button @click="startEditLayanan(item)" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-500/10 transition" title="Edit">
+                                    <button @click="startEditLayanan(item)" class="text-blue-500 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 transition" title="Edit">
                                         <i class="fas fa-edit text-xs"></i>
                                     </button>
                                     <button @click="deleteLayanan(item.id, item.nama)" class="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/10 transition" title="Hapus">
@@ -173,11 +173,11 @@
                                 <input type="text" x-model="editLayananNama"
                                        @keydown.enter="saveEditLayanan()"
                                        @keydown.escape="editLayananId = null"
-                                       class="flex-1 bg-gray-800 border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
-                                <button @click="saveEditLayanan()" class="text-emerald-400 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-500/10 transition" title="Simpan">
+                                       class="flex-1 bg-white border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none">
+                                <button @click="saveEditLayanan()" class="text-emerald-500 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-50 transition" title="Simpan">
                                     <i class="fas fa-check text-xs"></i>
                                 </button>
-                                <button @click="editLayananId = null" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition" title="Batal">
+                                <button @click="editLayananId = null" class="text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 transition" title="Batal">
                                     <i class="fas fa-times text-xs"></i>
                                 </button>
                             </div>
@@ -195,7 +195,7 @@
             <div class="flex gap-2 mb-4">
                 <input type="text" x-model="newTindakLanjut" placeholder="Nama tindak lanjut baru..."
                        @keydown.enter="addTindakLanjut()"
-                       class="flex-1 bg-gray-900/60 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-teal-500/30 focus:outline-none transition">
+                       class="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 focus:border-teal-500/30 focus:outline-none transition">
                 <button @click="addTindakLanjut()" :disabled="!newTindakLanjut.trim()"
                         class="bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
                     <i class="fas fa-plus text-xs"></i> Tambah
@@ -203,7 +203,7 @@
             </div>
 
             <!-- List -->
-            <div class="bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
+            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
                 <template x-if="tindakLanjutList.length === 0">
                     <div class="p-8 text-center text-gray-600 text-sm">
                         <i class="fas fa-clipboard-check text-2xl mb-2 block"></i>
@@ -212,17 +212,17 @@
                 </template>
 
                 <template x-for="item in tindakLanjutList" :key="item.id">
-                    <div class="flex items-center gap-3 p-4 hover:bg-white/[0.02] transition-colors group">
-                        <div class="p-2 bg-teal-500/10 rounded-lg">
-                            <i class="fas fa-clipboard-check text-teal-400 text-xs"></i>
+                    <div class="flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors group">
+                        <div class="p-2 bg-teal-50 rounded-lg">
+                            <i class="fas fa-clipboard-check text-teal-500 text-xs"></i>
                         </div>
 
                         <!-- View mode -->
                         <template x-if="editTindakLanjutId !== item.id">
                             <div class="flex-1 flex items-center justify-between">
-                                <span class="text-sm text-white font-medium" x-text="item.nama"></span>
+                                <span class="text-sm text-gray-800 font-medium" x-text="item.nama"></span>
                                 <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                                    <button @click="startEditTindakLanjut(item)" class="text-teal-400 hover:text-teal-300 p-2 rounded-lg hover:bg-teal-500/10 transition" title="Edit">
+                                    <button @click="startEditTindakLanjut(item)" class="text-teal-500 hover:text-teal-300 p-2 rounded-lg hover:bg-teal-50 transition" title="Edit">
                                         <i class="fas fa-edit text-xs"></i>
                                     </button>
                                     <button @click="deleteTindakLanjut(item.id, item.nama)" class="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/10 transition" title="Hapus">
@@ -238,11 +238,11 @@
                                 <input type="text" x-model="editTindakLanjutNama"
                                        @keydown.enter="saveEditTindakLanjut()"
                                        @keydown.escape="editTindakLanjutId = null"
-                                       class="flex-1 bg-gray-800 border border-teal-500/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
-                                <button @click="saveEditTindakLanjut()" class="text-emerald-400 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-500/10 transition" title="Simpan">
+                                       class="flex-1 bg-white border border-teal-500/30 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none">
+                                <button @click="saveEditTindakLanjut()" class="text-emerald-500 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-50 transition" title="Simpan">
                                     <i class="fas fa-check text-xs"></i>
                                 </button>
-                                <button @click="editTindakLanjutId = null" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition" title="Batal">
+                                <button @click="editTindakLanjutId = null" class="text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 transition" title="Batal">
                                     <i class="fas fa-times text-xs"></i>
                                 </button>
                             </div>

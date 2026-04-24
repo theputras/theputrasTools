@@ -25,7 +25,7 @@
         .card-glow:hover { box-shadow: 0 0 30px -5px rgba(139, 92, 246, 0.15); }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-300 min-h-screen" x-data="rekapApp()" x-init="loadRekap()">
+<body class="bg-slate-50 text-gray-600 min-h-screen" x-data="rekapApp()" x-init="loadRekap()">
 
     <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-5xl">
 
@@ -33,12 +33,12 @@
         <div class="mb-8">
             <div class="flex items-center gap-3 mb-2">
                 <a href="{{ url_for('konselor_dashboard') }}"
-                   class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900/60 border border-white/5 text-white transition hover:bg-gray-800 active:scale-95">
+                   class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-800 transition hover:bg-white active:scale-95">
                     <i class="fas fa-arrow-left text-sm"></i>
                 </a>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                        <i class="fas fa-chart-pie text-violet-400 mr-1"></i> Dashboard <span class="gradient-text">Rekap</span>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight">
+                        <i class="fas fa-chart-pie text-violet-500 mr-1"></i> Dashboard <span class="gradient-text">Rekap</span>
                     </h1>
                     <p class="text-xs text-gray-500">Statistik dan visualisasi sesi konseling</p>
                 </div>
@@ -47,43 +47,43 @@
 
         <!-- STAT CARDS -->
         <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
-            <div class="card-glow bg-gray-900/60 border border-white/5 rounded-2xl p-4 sm:p-5 group hover:border-violet-500/20">
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 group hover:border-violet-200">
                 <div class="flex items-center gap-2 mb-2">
-                    <div class="p-2 bg-violet-500/10 rounded-xl">
-                        <i class="fas fa-comments text-violet-400 text-sm"></i>
+                    <div class="p-2 bg-violet-50 rounded-xl">
+                        <i class="fas fa-comments text-violet-500 text-sm"></i>
                     </div>
-                    <span class="text-[10px] font-bold text-violet-400/60 uppercase tracking-widest">Total Sesi</span>
+                    <span class="text-[10px] font-bold text-violet-500/60 uppercase tracking-widest">Total Sesi</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-extrabold text-white" x-text="stats.total_sesi">0</p>
+                <p class="text-2xl sm:text-3xl font-extrabold text-gray-800" x-text="stats.total_sesi">0</p>
             </div>
 
-            <div class="card-glow bg-gray-900/60 border border-white/5 rounded-2xl p-4 sm:p-5 group hover:border-blue-500/20">
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 group hover:border-blue-200">
                 <div class="flex items-center gap-2 mb-2">
-                    <div class="p-2 bg-blue-500/10 rounded-xl">
-                        <i class="fas fa-users text-blue-400 text-sm"></i>
+                    <div class="p-2 bg-blue-50 rounded-xl">
+                        <i class="fas fa-users text-blue-500 text-sm"></i>
                     </div>
-                    <span class="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest">Klien Unik</span>
+                    <span class="text-[10px] font-bold text-blue-500/60 uppercase tracking-widest">Klien Unik</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-extrabold text-white" x-text="stats.klien_unik">0</p>
+                <p class="text-2xl sm:text-3xl font-extrabold text-gray-800" x-text="stats.klien_unik">0</p>
             </div>
 
-            <div class="card-glow bg-gray-900/60 border border-white/5 rounded-2xl p-4 sm:p-5 group hover:border-emerald-500/20">
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 group hover:border-emerald-200">
                 <div class="flex items-center gap-2 mb-2">
-                    <div class="p-2 bg-emerald-500/10 rounded-xl">
-                        <i class="fas fa-calendar-check text-emerald-400 text-sm"></i>
+                    <div class="p-2 bg-emerald-50 rounded-xl">
+                        <i class="fas fa-calendar-check text-emerald-500 text-sm"></i>
                     </div>
-                    <span class="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest">Bulan Ini</span>
+                    <span class="text-[10px] font-bold text-emerald-500/60 uppercase tracking-widest">Bulan Ini</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-extrabold text-white" x-text="stats.sesi_bulan_ini">0</p>
+                <p class="text-2xl sm:text-3xl font-extrabold text-gray-800" x-text="stats.sesi_bulan_ini">0</p>
             </div>
         </div>
 
         <!-- CHARTS ROW -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
             <!-- Pie Chart: Kategori Masalah -->
-            <div class="card-glow bg-gray-900/60 border border-white/5 rounded-2xl p-5">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-chart-pie text-amber-400"></i> Distribusi Kategori Masalah
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5">
+                <h3 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-pie text-amber-500"></i> Distribusi Kategori Masalah
                 </h3>
                 <div class="relative" style="max-height: 280px;">
                     <canvas id="chartKategori"></canvas>
@@ -95,9 +95,9 @@
             </div>
 
             <!-- Pie Chart: Jenis Layanan -->
-            <div class="card-glow bg-gray-900/60 border border-white/5 rounded-2xl p-5">
-                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-chart-doughnut text-blue-400"></i> Distribusi Jenis Layanan
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5">
+                <h3 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-doughnut text-blue-500"></i> Distribusi Jenis Layanan
                 </h3>
                 <div class="relative" style="max-height: 280px;">
                     <canvas id="chartLayanan"></canvas>
@@ -110,29 +110,48 @@
         </div>
 
         <!-- RIWAYAT SESI -->
-        <div class="card-glow bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-5 border-b border-white/5">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i class="fas fa-history text-violet-400"></i> Riwayat Sesi
+        <div class="card-glow bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-5 border-b border-gray-200">
+                <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-history text-violet-500"></i> Riwayat Sesi
                 </h3>
                 <div class="flex items-center gap-2">
                     <button @click="openFilter()"
-                            class="text-xs font-bold text-blue-400 bg-blue-500/10 px-4 py-2 rounded-full hover:bg-blue-500/20 transition flex items-center gap-1.5"
+                            class="text-xs font-bold text-blue-500 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition flex items-center gap-1.5"
                             :class="isFilterActive ? 'ring-2 ring-blue-500/50' : ''">
                         <i class="fas fa-calendar-alt text-[10px]"></i> 
                         <span x-text="filterBtnText">Filter</span>
                     </button>
-                    <a href="{{ url_for('konselor_catat_sesi') }}"
-                       class="text-xs font-bold text-violet-400 bg-violet-500/10 px-4 py-2 rounded-full hover:bg-violet-500/20 transition flex items-center gap-1.5">
-                        <i class="fas fa-plus text-[10px]"></i> Catat Sesi Baru
-                    </a>
+                    <div class="relative" x-data="{ openDropdown: false }">
+                        <button @click="openDropdown = !openDropdown" @click.outside="openDropdown = false"
+                           class="text-xs font-bold text-violet-500 bg-violet-50 px-4 py-2 rounded-full hover:bg-violet-100 transition flex items-center gap-1.5">
+                            <i class="fas fa-plus text-[10px]"></i> Catat Sesi Baru
+                            <i class="fas fa-chevron-down text-[8px] ml-1"></i>
+                        </button>
+
+                        <div x-show="openDropdown" x-cloak
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                            <a href="{{ url_for('konselor_catat_sesi') }}" class="block px-4 py-3 text-sm text-gray-600 hover:bg-white hover:text-gray-800 transition border-b border-gray-200">
+                                <i class="fas fa-file-signature w-5 text-violet-500"></i> Tambah Baru
+                            </a>
+                            <button @click="openImportModal(); openDropdown = false" class="w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-white hover:text-gray-800 transition">
+                                <i class="fas fa-file-excel w-5 text-emerald-500"></i> Import dari Excel
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="divide-y divide-white/5">
+            <div class="divide-y divide-gray-200">
                 <template x-if="sessions.length === 0 && !isLoading">
                     <div class="p-10 text-center">
-                        <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-inbox text-gray-600 text-2xl"></i>
                         </div>
                         <p class="text-sm text-gray-500 font-medium">Belum ada sesi tercatat</p>
@@ -142,36 +161,36 @@
 
                 <template x-if="isLoading">
                     <div class="p-8 text-center">
-                        <i class="fas fa-spinner fa-spin text-violet-400 text-xl mb-2"></i>
+                        <i class="fas fa-spinner fa-spin text-violet-500 text-xl mb-2"></i>
                         <p class="text-sm text-gray-500">Memuat data...</p>
                     </div>
                 </template>
 
                 <template x-for="(sesi, idx) in filteredSessions" :key="sesi.id">
                     <div @click="openDetail(sesi)" 
-                         class="flex items-start gap-4 p-4 hover:bg-white/[0.03] transition-colors group cursor-pointer">
+                         class="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors group cursor-pointer">
                         <!-- Date badge -->
-                        <div class="flex-shrink-0 w-12 h-12 bg-violet-500/10 rounded-xl flex flex-col items-center justify-center">
-                            <span class="text-xs font-bold text-violet-400" x-text="new Date(sesi.tanggal_sesi).getDate()"></span>
+                        <div class="flex-shrink-0 w-12 h-12 bg-violet-50 rounded-xl flex flex-col items-center justify-center">
+                            <span class="text-xs font-bold text-violet-500" x-text="new Date(sesi.tanggal_sesi).getDate()"></span>
                             <span class="text-[9px] text-gray-500" x-text="new Date(sesi.tanggal_sesi).toLocaleDateString('id-ID', {month: 'short'})"></span>
                         </div>
 
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-1 flex-wrap">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400" x-text="sesi.kategori_masalah"></span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400" x-text="sesi.jenis_layanan"></span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-500" x-text="sesi.kategori_masalah"></span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-500" x-text="sesi.jenis_layanan"></span>
                                 <span class="text-[10px] text-gray-600" x-text="sesi.prodi || ''"></span>
                             </div>
-                            <p class="text-sm text-white font-medium line-clamp-2" x-text="sesi.topik"></p>
+                            <p class="text-sm text-gray-800 font-medium line-clamp-2" x-text="sesi.topik"></p>
                             <p class="text-xs text-gray-500 mt-1" x-show="sesi.nama_sensor && sesi.nama_sensor !== '-'">
-                                <i class="fas fa-user text-violet-400/60 mr-0.5"></i>
+                                <i class="fas fa-user text-violet-500/60 mr-0.5"></i>
                                 <span x-text="sesi.nama_sensor"></span>
                             </p>
                             <p class="text-xs text-gray-600 mt-0.5 line-clamp-1" x-show="sesi.tindak_lanjut" x-text="'Tindak lanjut: ' + (sesi.tindak_lanjut || '')"></p>
                         </div>
 
                         <!-- Chevron -->
-                        <div class="flex-shrink-0 text-gray-700 group-hover:text-violet-400 transition p-2">
+                        <div class="flex-shrink-0 text-gray-700 group-hover:text-violet-500 transition p-2">
                             <i class="fas fa-chevron-right text-xs"></i>
                         </div>
                     </div>
@@ -189,7 +208,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-[50] flex items-end sm:items-center justify-center p-0 sm:p-4"
+             class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 pb-40"
              @click.self="closeModal()">
 
             <!-- Backdrop -->
@@ -203,18 +222,18 @@
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="translate-y-0 opacity-100 scale-100"
                  x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95"
-                 class="relative w-full sm:max-w-lg bg-gray-900 border border-white/10 rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+                 class="relative w-full sm:max-w-lg bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
                 
                 <!-- Modal Header -->
-                <div class="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-white/5 bg-gray-900/95 backdrop-blur rounded-t-3xl sm:rounded-t-2xl">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fas fa-file-lines text-violet-400"></i>
+                <div class="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-gray-200 bg-white/95 backdrop-blur rounded-t-3xl sm:rounded-t-2xl">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-file-lines text-violet-500"></i>
                         <span x-text="isEditing ? 'Edit Sesi' : 'Detail Sesi'"></span>
                     </h3>
                     <div class="flex items-center gap-1">
                         <!-- Toggle edit -->
                         <template x-if="!isEditing">
-                            <button @click="startEdit()" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-500/10 transition" title="Edit">
+                            <button @click="startEdit()" class="text-blue-500 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 transition" title="Edit">
                                 <i class="fas fa-edit text-sm"></i>
                             </button>
                         </template>
@@ -223,7 +242,7 @@
                             <i class="fas fa-trash-alt text-sm"></i>
                         </button>
                         <!-- Close -->
-                        <button @click="closeModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition">
+                        <button @click="closeModal()" class="text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 transition">
                             <i class="fas fa-times text-sm"></i>
                         </button>
                     </div>
@@ -233,83 +252,83 @@
                 <div x-show="!isEditing" class="p-5 space-y-4">
                     <!-- Nama Mahasiswa (Tersensor) -->
                     <div class="flex items-center gap-3 text-sm" x-show="selectedSesi.nama_sensor && selectedSesi.nama_sensor !== '-'">
-                        <div class="p-2 bg-violet-500/10 rounded-lg"><i class="fas fa-user text-violet-400 text-xs"></i></div>
+                        <div class="p-2 bg-violet-50 rounded-lg"><i class="fas fa-user text-violet-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Nama Mahasiswa</p>
-                            <p class="text-white font-medium" x-text="selectedSesi.nama_sensor || '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.nama_sensor || '-'"></p>
                         </div>
                     </div>
 
                     <!-- Dosen Wali -->
                     <div class="flex items-center gap-3 text-sm" x-show="selectedSesi.dosen_wali">
-                        <div class="p-2 bg-cyan-500/10 rounded-lg"><i class="fas fa-chalkboard-teacher text-cyan-400 text-xs"></i></div>
+                        <div class="p-2 bg-cyan-50 rounded-lg"><i class="fas fa-chalkboard-teacher text-cyan-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Dosen Wali</p>
-                            <p class="text-white font-medium" x-text="selectedSesi.dosen_wali || '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.dosen_wali || '-'"></p>
                         </div>
                     </div>
 
                     <!-- Tanggal -->
                     <div class="flex items-center gap-3 text-sm">
-                        <div class="p-2 bg-violet-500/10 rounded-lg"><i class="fas fa-calendar text-violet-400 text-xs"></i></div>
+                        <div class="p-2 bg-violet-50 rounded-lg"><i class="fas fa-calendar text-violet-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Tanggal Sesi</p>
-                            <p class="text-white font-medium" x-text="selectedSesi.tanggal_sesi ? new Date(selectedSesi.tanggal_sesi).toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) : '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.tanggal_sesi ? new Date(selectedSesi.tanggal_sesi).toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) : '-'"></p>
                         </div>
                     </div>
 
                     <!-- Prodi -->
                     <div class="flex items-center gap-3 text-sm">
-                        <div class="p-2 bg-blue-500/10 rounded-lg"><i class="fas fa-graduation-cap text-blue-400 text-xs"></i></div>
+                        <div class="p-2 bg-blue-50 rounded-lg"><i class="fas fa-graduation-cap text-blue-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Program Studi</p>
-                            <p class="text-white font-medium" x-text="selectedSesi.prodi || '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.prodi || '-'"></p>
                         </div>
                     </div>
 
                     <!-- Jenis Layanan -->
                     <div class="flex items-center gap-3 text-sm">
-                        <div class="p-2 bg-emerald-500/10 rounded-lg"><i class="fas fa-hand-holding-heart text-emerald-400 text-xs"></i></div>
+                        <div class="p-2 bg-emerald-50 rounded-lg"><i class="fas fa-hand-holding-heart text-emerald-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Jenis Layanan</p>
-                            <p class="text-white font-medium" x-text="selectedSesi.jenis_layanan || '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.jenis_layanan || '-'"></p>
                         </div>
                     </div>
 
                     <!-- Kategori -->
                     <div class="flex items-center gap-3 text-sm">
-                        <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fas fa-tags text-amber-400 text-xs"></i></div>
+                        <div class="p-2 bg-amber-50 rounded-lg"><i class="fas fa-tags text-amber-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Kategori Masalah</p>
-                            <p class="text-white font-medium" x-text="selectedSesi.kategori_masalah || '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.kategori_masalah || '-'"></p>
                         </div>
                     </div>
 
                     <!-- Topik -->
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1.5 ml-1">
-                            <i class="fas fa-comment-dots text-rose-400 mr-1"></i> Topik Permasalahan
+                            <i class="fas fa-comment-dots text-rose-500 mr-1"></i> Topik Permasalahan
                         </p>
-                        <div class="bg-gray-800/50 border border-white/5 rounded-xl p-4">
-                            <p class="text-sm text-white leading-relaxed whitespace-pre-wrap" x-text="selectedSesi.topik || '-'"></p>
+                        <div class="bg-slate-50 border border-gray-200 rounded-xl p-4">
+                            <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap" x-text="selectedSesi.topik || '-'"></p>
                         </div>
                     </div>
 
                     <!-- Tindak Lanjut -->
                     <div x-show="selectedSesi.tindak_lanjut">
                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1.5 ml-1">
-                            <i class="fas fa-clipboard-check text-teal-400 mr-1"></i> Tindak Lanjut
+                            <i class="fas fa-clipboard-check text-teal-500 mr-1"></i> Tindak Lanjut
                         </p>
-                        <div class="bg-gray-800/50 border border-white/5 rounded-xl p-4">
-                            <p class="text-sm text-white leading-relaxed whitespace-pre-wrap" x-text="selectedSesi.tindak_lanjut || ''"></p>
+                        <div class="bg-slate-50 border border-gray-200 rounded-xl p-4">
+                            <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap" x-text="selectedSesi.tindak_lanjut || ''"></p>
                         </div>
                     </div>
 
                     <!-- NIM Asli -->
-                    <div class="pt-2 border-t border-white/5">
+                    <div class="pt-2 border-t border-gray-200">
                         <p class="text-[10px] text-gray-600 flex items-center gap-1">
                             <i class="fas fa-id-card"></i>
-                            NIM Mahasiswa: <span class="font-mono text-white font-bold ml-1" x-text="selectedSesi.nim_asli || '-'"></span>
+                            NIM Mahasiswa: <span class="font-mono text-gray-800 font-bold ml-1" x-text="selectedSesi.nim_asli || '-'"></span>
                         </p>
                     </div>
                 </div>
@@ -318,75 +337,75 @@
                 <div x-show="isEditing" x-cloak class="p-5 space-y-4">
                     <!-- Prodi -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">
-                            <i class="fas fa-graduation-cap text-blue-400 mr-1"></i> Program Studi
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">
+                            <i class="fas fa-graduation-cap text-blue-500 mr-1"></i> Program Studi
                         </label>
                         <select x-model="editForm.prodi"
-                                class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition appearance-none">
-                            <option value="" class="bg-gray-900">— Pilih Prodi —</option>
+                                class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-violet-500/30 focus:outline-none transition appearance-none">
+                            <option value="" class="bg-white">— Pilih Prodi —</option>
                             {% for kode, nama in prodi_list.items() %}
-                            <option value="{{ nama }}" class="bg-gray-900">{{ nama }}</option>
+                            <option value="{{ nama }}" class="bg-white">{{ nama }}</option>
                             {% endfor %}
                         </select>
                     </div>
 
                     <!-- Jenis Layanan -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">
-                            <i class="fas fa-hand-holding-heart text-emerald-400 mr-1"></i> Jenis Layanan <span class="text-red-400">*</span>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">
+                            <i class="fas fa-hand-holding-heart text-emerald-500 mr-1"></i> Jenis Layanan <span class="text-red-400">*</span>
                         </label>
                         <select x-model="editForm.jenis_layanan_id" required
-                                class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition appearance-none">
-                            <option value="" class="bg-gray-900">— Pilih —</option>
+                                class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-violet-500/30 focus:outline-none transition appearance-none">
+                            <option value="" class="bg-white">— Pilih —</option>
                             {% for item in jenis_layanan_list %}
-                            <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                            <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
                             {% endfor %}
                         </select>
                     </div>
 
                     <!-- Kategori Masalah -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">
-                            <i class="fas fa-tags text-amber-400 mr-1"></i> Kategori Masalah <span class="text-red-400">*</span>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">
+                            <i class="fas fa-tags text-amber-500 mr-1"></i> Kategori Masalah <span class="text-red-400">*</span>
                         </label>
-                        <select x-model="editForm.kategori_masalah_id" required
-                                class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition appearance-none">
-                            <option value="" class="bg-gray-900">— Pilih —</option>
+                        <select x-model="editForm.kategori_masalah_id" required multiple
+                                class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-violet-500/30 focus:outline-none transition">
                             {% for item in kategori_list %}
-                            <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                            <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
                             {% endfor %}
                         </select>
+                        <p class="text-[10px] text-gray-500 mt-1">Tahan CTRL/CMD untuk memilih > 1 kategori.</p>
                     </div>
 
                     <!-- Topik -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">
-                            <i class="fas fa-comment-dots text-rose-400 mr-1"></i> Topik Permasalahan <span class="text-red-400">*</span>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">
+                            <i class="fas fa-comment-dots text-rose-500 mr-1"></i> Topik Permasalahan <span class="text-red-400">*</span>
                         </label>
                         <textarea x-model="editForm.topik" required rows="3"
-                                  class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition resize-none"></textarea>
+                                  class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-violet-500/30 focus:outline-none transition resize-none"></textarea>
                     </div>
 
                     <!-- Tanggal Sesi -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">
-                            <i class="fas fa-calendar text-cyan-400 mr-1"></i> Tanggal Sesi <span class="text-red-400">*</span>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">
+                            <i class="fas fa-calendar text-cyan-500 mr-1"></i> Tanggal Sesi <span class="text-red-400">*</span>
                         </label>
                         <input type="date" x-model="editForm.tanggal_sesi" required
-                               class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition"
+                               class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-violet-500/30 focus:outline-none transition"
                                style="color-scheme: dark;">
                     </div>
 
                     <!-- Tindak Lanjut -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">
-                            <i class="fas fa-clipboard-check text-teal-400 mr-1"></i> Tindak Lanjut
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 ml-1">
+                            <i class="fas fa-clipboard-check text-teal-500 mr-1"></i> Tindak Lanjut
                         </label>
                         <select x-model="editForm.tindak_lanjut"
-                                class="w-full bg-gray-800/60 border border-white/5 rounded-xl p-3 text-sm text-white focus:border-violet-500/30 focus:outline-none transition appearance-none">
-                            <option value="" class="bg-gray-900">— Pilih Tindak Lanjut (Opsional) —</option>
+                                class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-violet-500/30 focus:outline-none transition appearance-none">
+                            <option value="" class="bg-white">— Pilih Tindak Lanjut (Opsional) —</option>
                             {% for item in tindak_lanjut_list %}
-                            <option value="{{ item.id }}" class="bg-gray-900">{{ item.nama }}</option>
+                            <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -394,7 +413,7 @@
                     <!-- Action Buttons -->
                     <div class="flex gap-2 pt-2">
                         <button @click="cancelEdit()"
-                                class="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-3 rounded-xl text-sm transition active:scale-[0.98]">
+                                class="flex-1 bg-white hover:bg-gray-700 text-gray-600 font-bold py-3 rounded-xl text-sm transition active:scale-[0.98]">
                             Batal
                         </button>
                         <button @click="saveEdit()" :disabled="isSaving"
@@ -408,6 +427,66 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- ============================================ -->
+    <!-- IMPORT EXCEL MODAL                           -->
+    <!-- ============================================ -->
+    <div x-show="showImportModal" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
+         @click.self="closeImportModal()">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeImportModal()"></div>
+
+        <div x-show="showImportModal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+             x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+             x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+             class="relative w-full sm:max-w-md bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl p-6">
+             
+             <div class="flex items-center justify-between mb-5 border-b border-gray-200 pb-4">
+                 <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                     <i class="fas fa-file-excel text-emerald-500"></i> Import Data Excel
+                 </h3>
+                 <button @click="closeImportModal()" class="text-gray-500 hover:text-gray-800 transition">
+                     <i class="fas fa-times"></i>
+                 </button>
+             </div>
+
+             <p class="text-sm text-gray-500 mb-6">
+                Download template Excel, isi data yang diperlukan, lalu upload kembali ke sistem. Data yang NIM-nya valid akan dilengkapi otomatis dari Sicyca.
+             </p>
+
+             <div class="space-y-3">
+                 <!-- Download Template -->
+                 <a href="{{ url_for('konselor_download_template') }}" class="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-700 text-gray-800 font-bold py-3 px-4 rounded-xl text-sm transition">
+                     <i class="fas fa-download text-emerald-500"></i> Download Template
+                 </a>
+
+                 <!-- Upload Area -->
+                 <form @submit.prevent="submitImport" enctype="multipart/form-data">
+                     <label class="w-full mt-3 flex flex-col items-center justify-center border-2 border-dashed border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-500/5 rounded-xl p-6 cursor-pointer transition group">
+                         <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 group-hover:text-emerald-500 mb-3 transition"></i>
+                         <span class="text-sm font-medium text-gray-600" x-text="importFileName || 'Pilih file .xlsx'"></span>
+                         <input type="file" class="hidden" accept=".xlsx, .xls" @change="handleFileSelect">
+                     </label>
+                     
+                     <button type="submit" :disabled="!importFile || isImporting"
+                             class="w-full mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 rounded-xl text-sm transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2">
+                         <i class="fas" :class="isImporting ? 'fa-spinner fa-spin' : 'fa-check'"></i>
+                         <span x-text="isImporting ? 'Mengimport...' : 'Import Sekarang'"></span>
+                     </button>
+                 </form>
+             </div>
+        </div>
     </div>
 
     <!-- Filter Modal (Bottom Sheet di Mobile) -->
@@ -434,7 +513,7 @@
              
             <!-- Header Modal -->
             <div class="flex items-center justify-between pb-4 border-b border-gray-200 shrink-0">
-                <button @click="closeFilter()" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-700 bg-gray-100 rounded-full transition">
+                <button @click="closeFilter()" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 bg-gray-100 rounded-full transition">
                     <i class="fas fa-chevron-left text-sm"></i>
                 </button>
                 <h3 class="text-[15px] font-bold text-gray-800">Filter</h3>
@@ -541,6 +620,11 @@ function rekapApp() {
         isSaving: false,
         selectedSesi: {},
         editForm: {},
+        
+        showImportModal: false,
+        importFile: null,
+        importFileName: '',
+        isImporting: false,
 
         stats: {
             total_sesi: 0,
@@ -552,6 +636,7 @@ function rekapApp() {
         sessions: [],
         
         // --- Filter Logic ---
+        searchNim: new URLSearchParams(window.location.search).get('nim') || '',
         showFilterModal: false,
         filterError: '',
         isFilterActive: false,
@@ -561,16 +646,24 @@ function rekapApp() {
         dateRange: [], // stores flatpickr selected dates
 
         get filteredSessions() {
-            if (!this.isFilterActive || this.dateRange.length !== 2) {
-                return this.sessions;
-            }
-            let start = this.dateRange[0].setHours(0, 0, 0, 0);
-            let end = this.dateRange[1].setHours(23, 59, 59, 999);
+            let res = this.sessions;
             
-            return this.sessions.filter(s => {
-                let sd = new Date(s.tanggal_sesi).getTime();
-                return sd >= start && sd <= end;
-            });
+            // Filter by NIM if set
+            if (this.searchNim) {
+                res = res.filter(s => s.nim_asli === this.searchNim);
+            }
+            
+            // Filter by Date Range if active
+            if (this.isFilterActive && this.dateRange.length === 2) {
+                let start = this.dateRange[0].setHours(0, 0, 0, 0);
+                let end = this.dateRange[1].setHours(23, 59, 59, 999);
+                res = res.filter(s => {
+                    let sd = new Date(s.tanggal_sesi).getTime();
+                    return sd >= start && sd <= end;
+                });
+            }
+            
+            return res;
         },
 
         openFilter() {
@@ -633,6 +726,54 @@ function rekapApp() {
             }
         },
         // --------------------
+        
+        // === IMPORT EXCEL ===
+        openImportModal() {
+            this.showImportModal = true;
+            this.importFile = null;
+            this.importFileName = '';
+            document.body.style.overflow = 'hidden';
+        },
+        closeImportModal() {
+            this.showImportModal = false;
+            document.body.style.overflow = '';
+        },
+        handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                this.importFile = file;
+                this.importFileName = file.name;
+            }
+        },
+        async submitImport() {
+            if (!this.importFile) return;
+            this.isImporting = true;
+            
+            try {
+                const fd = new FormData();
+                fd.append('file', this.importFile);
+                
+                const res = await fetch('{{ url_for("konselor_import_sesi") }}', {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    if (window.showAlert) window.showAlert('success', data.message);
+                    this.closeImportModal();
+                    this.loadRekap();
+                } else {
+                    if (window.showAlert) window.showAlert('error', data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                if (window.showAlert) window.showAlert('error', 'Gagal mengimport data.');
+            } finally {
+                this.isImporting = false;
+            }
+        },
+        // --------------------
 
         // === MODAL ===
         openDetail(sesi) {
@@ -652,7 +793,7 @@ function rekapApp() {
             this.editForm = {
                 prodi: this.selectedSesi.prodi || '',
                 jenis_layanan_id: String(this.selectedSesi.jenis_layanan_id || ''),
-                kategori_masalah_id: String(this.selectedSesi.kategori_masalah_id || ''),
+                kategori_masalah_id: this.selectedSesi.kategori_masalah_id ? String(this.selectedSesi.kategori_masalah_id).split(',') : [],
                 topik: this.selectedSesi.topik || '',
                 tanggal_sesi: this.selectedSesi.tanggal_sesi || '',
                 tindak_lanjut: String(this.selectedSesi.tindak_lanjut_id || '')
@@ -670,7 +811,11 @@ function rekapApp() {
                 const fd = new FormData();
                 fd.append('session_id', this.selectedSesi.id);
                 for (const [key, value] of Object.entries(this.editForm)) {
-                    fd.append(key, value);
+                    if (key === 'kategori_masalah_id') {
+                        fd.append('kategori_masalah_ids', JSON.stringify(value));
+                    } else {
+                        fd.append(key, value);
+                    }
                 }
 
                 const res = await fetch('{{ url_for("konselor_update_sesi") }}', {

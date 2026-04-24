@@ -45,9 +45,9 @@ try:
     query = """
     INSERT INTO gate_users (user_id, gate_username, gate_password, is_active) 
     VALUES (%s, %s, %s, 1)
-    ON DUPLICATE KEY UPDATE 
-        gate_username = VALUES(gate_username),
-        gate_password = VALUES(gate_password),
+    ON CONFLICT (user_id) DO UPDATE SET 
+        gate_username = EXCLUDED.gate_username,
+        gate_password = EXCLUDED.gate_password,
         is_active = 1,
         updated_at = NOW()
     """

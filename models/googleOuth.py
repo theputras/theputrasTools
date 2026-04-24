@@ -159,9 +159,9 @@ class GoogleCalendarService:
             cursor.execute("""
                 INSERT INTO google_oauth_tokens (user_id, token_data, email)
                 VALUES (%s, %s, %s)
-                ON DUPLICATE KEY UPDATE 
-                    token_data = VALUES(token_data),
-                    email = IF(VALUES(email) IS NOT NULL, VALUES(email), email),
+                ON CONFLICT (user_id) DO UPDATE SET 
+                    token_data = EXCLUDED.token_data,
+                    email = COALESCE(EXCLUDED.email, google_oauth_tokens.email),
                     updated_at = CURRENT_TIMESTAMP
             """, (user_id, json.dumps(token_data), email))
             

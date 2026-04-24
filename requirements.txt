@@ -8,7 +8,7 @@ python-dotenv
 lxml
 APScheduler
 cachetools
-mysql-connector-python
+psycopg2-binary
 bcrypt
 PyJWT
 pytz
@@ -27,3 +27,4 @@ Pillow
 bleach
 Flask-Limiter
 reportlab
+openpyxl

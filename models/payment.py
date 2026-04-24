@@ -275,13 +275,14 @@ class PaymentTransaction:
                 (user_id, reference_id, amount, buyer_name, buyer_phone, 
                  buyer_email, comments, qr_data, ipaymu_transaction_id, status)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
+                RETURNING id
             """
             cursor.execute(query, (
                 user_id, reference_id, amount, buyer_name, buyer_phone,
                 buyer_email, comments, qr_data, ipaymu_transaction_id
             ))
             conn.commit()
-            return cursor.lastrowid
+            return cursor.fetchone()[0] if cursor.rowcount > 0 else None
         except Exception as e:
             logging.error(f"[PaymentTransaction] Create error: {e}")
             conn.rollback()
