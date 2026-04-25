@@ -39,6 +39,19 @@ def create_sesi(konselor_user_id, form_data):
     nim_raw = form_data.get('nim', '').strip()
     nama = form_data.get('nama', '').strip()
     dosen_wali = form_data.get('dosen_wali', '').strip()
+    
+    # Auto-lookup dosen wali jika kosong
+    if not dosen_wali and nim_raw:
+        try:
+            from scrapper.mahasiswa import search_mahasiswa
+            df_mhs = search_mahasiswa(nim_raw, user_id=konselor_user_id)
+            if not df_mhs.empty:
+                mhs_data = df_mhs.iloc[0]
+                mhs_dict = {str(k).lower(): v for k, v in mhs_data.items()}
+                dosen_wali = mhs_dict.get('dosen wali', '')
+        except Exception as e:
+            logging.error(f"[Konselor] Auto-lookup dosen wali gagal untuk {nim_raw}: {e}")
+            
     prodi = form_data.get('prodi', '').strip()
     jenis_layanan_id = form_data.get('jenis_layanan_id')
     kategori_masalah_ids_str = form_data.get('kategori_masalah_ids', '[]')
@@ -50,6 +63,7 @@ def create_sesi(konselor_user_id, form_data):
     topik = form_data.get('topik', '').strip()
     tanggal_sesi = form_data.get('tanggal_sesi')
     tindak_lanjut = form_data.get('tindak_lanjut', '').strip()
+    catatan_kesimpulan = form_data.get('catatan_kesimpulan', '').strip()
     
     if not nim_raw:
         return False, "NIM wajib diisi."
@@ -73,7 +87,10 @@ def create_sesi(konselor_user_id, form_data):
         'kategori_masalah_ids': kategori_masalah_ids,
         'topik': topik,
         'tanggal_sesi': tanggal_sesi,
-        'tindak_lanjut_id': int(tindak_lanjut) if tindak_lanjut else None
+        'tindak_lanjut_id': int(tindak_lanjut) if tindak_lanjut else None,
+        'catatan_kesimpulan': catatan_kesimpulan if catatan_kesimpulan else None,
+        'waktu_mulai': form_data.get('waktu_mulai'),
+        'waktu_selesai': form_data.get('waktu_selesai')
     }
 
     success, message = konselor_session_model.create_session(data)
@@ -129,6 +146,7 @@ def update_sesi(session_id, konselor_user_id, form_data):
     topik = form_data.get('topik', '').strip()
     tanggal_sesi = form_data.get('tanggal_sesi')
     tindak_lanjut = form_data.get('tindak_lanjut', '').strip()
+    catatan_kesimpulan = form_data.get('catatan_kesimpulan', '').strip()
 
     if not jenis_layanan_id:
         return False, "Jenis layanan wajib dipilih."
@@ -145,10 +163,104 @@ def update_sesi(session_id, konselor_user_id, form_data):
         'kategori_masalah_ids': kategori_masalah_ids,
         'topik': topik,
         'tanggal_sesi': tanggal_sesi,
-        'tindak_lanjut_id': int(tindak_lanjut) if tindak_lanjut else None
+        'tindak_lanjut_id': int(tindak_lanjut) if tindak_lanjut else None,
+        'catatan_kesimpulan': catatan_kesimpulan if catatan_kesimpulan else None
     }
 
     return konselor_session_model.update_session(session_id, konselor_user_id, data)
+
+
+# === Penjadwalan ===
+from models.konselor import konselor_jadwal_model
+
+def create_jadwal(konselor_user_id, form_data):
+    nim = form_data.get('nim', '').strip()
+    nama = form_data.get('nama', '').strip()
+    prodi = form_data.get('prodi', '').strip()
+    layanan_id = form_data.get('layanan_id')
+    tanggal = form_data.get('tanggal')
+    jam = form_data.get('jam')
+    
+    if not nim or not layanan_id or not tanggal or not jam:
+        return False, "Data tidak lengkap."
+        
+    # Validasi jam bentrok
+    existing = get_jadwal_by_date(konselor_user_id, tanggal)
+    for j in existing:
+        if j['status'] in ('Menunggu', 'Berlangsung') and j['jam'] == jam:
+            return False, f"Jadwal pada jam {jam} sudah terisi."
+            
+    data = {
+        'konselor_user_id': konselor_user_id,
+        'nim': nim,
+        'nama': nama if nama else None,
+        'prodi': prodi if prodi else None,
+        'layanan_id': int(layanan_id),
+        'tanggal': tanggal,
+        'jam': jam,
+        'status': 'Menunggu'
+    }
+    
+    return konselor_jadwal_model.create(data)
+
+def get_jadwal_by_date(konselor_user_id, start_date, end_date=None):
+    jadwals = konselor_jadwal_model.get_by_konselor_and_date_range(konselor_user_id, start_date, end_date)
+    # Format jam for display and censor nama for frontend
+    for j in jadwals:
+        # Check if jam has seconds like "09:00:00", truncate to "09:00"
+        jam_str = str(j['jam'])
+        if len(jam_str) > 5:
+             j['jam'] = jam_str[:5]
+        j['tanggal'] = str(j['tanggal'])
+        # Sensor nama untuk frontend, DB tetap simpan asli
+        j['nama_sensor'] = censor_name(j.get('nama'))
+    return jadwals
+
+def reschedule_jadwal(jadwal_id, konselor_user_id, form_data):
+    tanggal = form_data.get('tanggalBaru')
+    jam = form_data.get('jamBaru')
+    if not tanggal or not jam:
+        return False, "Tanggal dan jam baru wajib diisi."
+        
+    # Validasi jam bentrok (kecuali dengan dirinya sendiri)
+    existing = get_jadwal_by_date(konselor_user_id, tanggal)
+    for j in existing:
+        if str(j['id']) != str(jadwal_id) and j['status'] in ('Menunggu', 'Berlangsung') and j['jam'] == jam:
+            return False, f"Jadwal pada jam {jam} sudah terisi."
+            
+    return konselor_jadwal_model.update_waktu(jadwal_id, konselor_user_id, tanggal, jam)
+
+def update_status_jadwal(jadwal_id, konselor_user_id, status):
+    if status not in ('Menunggu', 'Berlangsung', 'Jeda', 'Selesai', 'Dibatalkan'):
+        return False, "Status tidak valid."
+    return konselor_jadwal_model.update_status(jadwal_id, konselor_user_id, status)
+
+def get_jadwal_detail(jadwal_id):
+    jadwal = konselor_jadwal_model.get_by_id(jadwal_id)
+    if jadwal:
+        jam_str = str(jadwal['jam'])
+        if len(jam_str) > 5:
+             jadwal['jam'] = jam_str[:5]
+        jadwal['tanggal'] = str(jadwal['tanggal'])
+        # Sensor nama untuk frontend display
+        jadwal['nama_sensor'] = censor_name(jadwal.get('nama'))
+    return jadwal
+
+def get_available_slots(konselor_user_id, tanggal):
+    """Return only booked slots for the given date, with censored names."""
+    booked_slots_query = konselor_jadwal_model.get_by_konselor_and_date_range(konselor_user_id, tanggal, tanggal)
+    
+    slots = []
+    for j in booked_slots_query:
+        jam_str = str(j['jam'])
+        if len(jam_str) > 5:
+            jam_str = jam_str[:5]
+        slots.append({
+            'jam': jam_str,
+            'nama': censor_name(j.get('nama')),
+            'status': j.get('status', 'Menunggu')
+        })
+    return slots
 
 
 # === CRUD Master Data ===

@@ -180,15 +180,15 @@
                     <span class="text-[10px] text-gray-500 mt-0.5">Master data</span>
                 </a>
 
-                <button @click="showComingSoon('Jadwal')"
-                        class="group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-amber-600/10 to-orange-600/10 
+                <a href="/konselor/jadwal"
+                   class="group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-amber-600/10 to-orange-600/10 
                                border border-amber-500/10 rounded-2xl hover:border-amber-500/30 transition-all duration-300 active:scale-95">
                     <div class="p-3 bg-amber-50 rounded-xl mb-3 group-hover:bg-amber-100 transition-colors group-hover:scale-110 duration-300">
                         <i class="fas fa-calendar-alt text-amber-500 text-lg"></i>
                     </div>
                     <span class="text-xs font-bold text-gray-800">Jadwal</span>
-                    <span class="text-[10px] text-gray-500 mt-0.5">Segera hadir</span>
-                </button>
+                    <span class="text-[10px] text-gray-500 mt-0.5">Penjadwalan</span>
+                </a>
             </div>
         </div>
 
@@ -219,7 +219,9 @@
 
                     <!-- Schedule Items -->
                     <template x-for="(jadwal, idx) in jadwalHariIni" :key="idx">
-                        <div class="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-4 p-4 transition-colors group"
+                             :class="['Selesai', 'Dibatalkan'].includes(jadwal.status) ? 'cursor-not-allowed opacity-75 bg-gray-50/50' : 'hover:bg-gray-50 cursor-pointer'"
+                             @click="!['Selesai', 'Dibatalkan'].includes(jadwal.status) && startSession(jadwal.id)">
                             <div class="flex-shrink-0 text-center min-w-[50px]">
                                 <p class="text-xs font-bold text-violet-500" x-text="jadwal.waktu"></p>
                                 <p class="text-[10px] text-gray-600" x-text="jadwal.durasi"></p>
@@ -230,11 +232,13 @@
                                 <p class="text-xs text-gray-500" x-text="jadwal.topik"></p>
                             </div>
                             <div class="flex-shrink-0">
-                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full group-hover:shadow-md transition"
                                       :class="jadwal.status === 'Terjadwal' 
                                         ? 'bg-blue-50 text-blue-500' 
                                         : jadwal.status === 'Berlangsung' 
                                         ? 'bg-emerald-50 text-emerald-500' 
+                                        : jadwal.status === 'Pause Konseling'
+                                        ? 'bg-orange-50 text-orange-500'
                                         : 'bg-gray-500/15 text-gray-500'"
                                       x-text="jadwal.status"></span>
                             </div>
@@ -290,7 +294,7 @@
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <div class="relative flex-1 sm:flex-none">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-xs"></i>
-                        <input type="text" x-model="searchQuery" placeholder="Cari nama..." 
+                        <input type="text" x-model="searchQuery" placeholder="Cari NIM..." 
                                class="w-full sm:w-56 bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-800 
                                       placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition">
                     </div>
@@ -382,27 +386,59 @@ function konselorDashboard() {
 
         async loadDashboardData() {
             try {
-                // Fetch dynamic data from the recap endpoint
-                const res = await fetch('{{ url_for("konselor_rekap_data") }}');
-                const data = await res.json();
-                
-                if (data.success) {
-                    // Count pending (empty tindak_lanjut) vs selesai
-                    const sessions = data.sessions || [];
-                    const pendingCount = sessions.filter(s => !s.tindak_lanjut || s.tindak_lanjut.trim() === '').length;
-                    const selesaiCount = sessions.filter(s => s.tindak_lanjut && s.tindak_lanjut.trim() !== '').length;
+                // Fetch jadwal hari ini + rekap data in parallel
+                const [jadwalRes, rekapRes] = await Promise.all([
+                    fetch('/konselor/jadwal/data'),
+                    fetch('{{ url_for("konselor_rekap_data") }}')
+                ]);
+                const jadwalData = await jadwalRes.json();
+                const rekapData = await rekapRes.json();
+
+                // --- Jadwal Hari Ini ---
+                if (jadwalData.success) {
+                    this.jadwalHariIni = (jadwalData.hari_ini || []).map(j => ({
+                        id: j.id,
+                        waktu: j.jam,
+                        durasi: '',
+                        nama: j.nama_sensor || j.nama,
+                        topik: j.layanan,
+                        status: j.status === 'Menunggu' ? 'Terjadwal' 
+                             : j.status === 'Berlangsung' ? 'Berlangsung' 
+                             : j.status === 'Jeda' ? 'Pause Konseling'
+                             : j.status
+                    }));
+                }
+
+                // --- Rekap Stats & Mahasiswa Binaan ---
+                if (rekapData.success) {
+                    const sessions = rekapData.sessions || [];
+                    
+                    // Pending = sesi yang tindak_lanjut BUKAN "Selesai" (termasuk kosong/null)
+                    // "Selesai" di sini merujuk pada nama tindak_lanjut dari master data
+                    const pendingCount = sessions.filter(s => {
+                        const tl = (s.tindak_lanjut || '').trim().toLowerCase();
+                        return !tl || tl !== 'selesai';
+                    }).length;
+                    
+                    // Selesai = sesi yang tindak_lanjut-nya adalah "Selesai"
+                    const selesaiCount = sessions.filter(s => {
+                        const tl = (s.tindak_lanjut || '').trim().toLowerCase();
+                        return tl === 'selesai';
+                    }).length;
 
                     this.stats = {
-                        totalMahasiswa: data.stats.klien_unik || 0,
-                        sesibulanIni: data.stats.sesi_bulan_ini || 0,
+                        totalMahasiswa: rekapData.stats.klien_unik || 0,
+                        sesibulanIni: rekapData.stats.sesi_bulan_ini || 0,
                         pending: pendingCount,
                         selesai: selesaiCount
                     };
 
                     // Map 5 most recent sessions to recent activity feed
                     this.aktivitas = sessions.slice(0, 5).map(s => {
+                        const tl = (s.tindak_lanjut || '').trim().toLowerCase();
+                        const isDone = tl === 'selesai';
                         return {
-                            type: s.tindak_lanjut ? 'selesai' : 'sesi', // Icon type
+                            type: isDone ? 'selesai' : 'sesi',
                             judul: `${s.jenis_layanan} - ${s.kategori_masalah}`,
                             deskripsi: s.topik,
                             waktu: new Date(s.tanggal_sesi).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'})
@@ -411,13 +447,18 @@ function konselorDashboard() {
 
                     // Build unique Mahasiswa Binaan based on latest session
                     const binaanMap = new Map();
-                    // Sessions are already ordered by tanggal_sesi DESC from backend
+                    // Sessions are ordered by tanggal_sesi DESC from backend
                     sessions.forEach(s => {
                         if (!binaanMap.has(s.nim_asli)) {
-                            // Status is "Selesai" if tindak_lanjut exists, else "Aktif"
-                            let statusKonseling = 'Aktif';
-                            if (s.tindak_lanjut && s.tindak_lanjut.trim() !== '') {
+                            // Status dari tindak_lanjut terakhir (realtime dari DB)
+                            const tl = (s.tindak_lanjut || '').trim();
+                            const tlLower = tl.toLowerCase();
+                            let statusKonseling = 'Proses';
+                            if (tlLower === 'selesai') {
                                 statusKonseling = 'Selesai';
+                            } else if (tl) {
+                                // Ada tindak lanjut tapi bukan "Selesai" → masih progres
+                                statusKonseling = 'Aktif';
                             }
                             binaanMap.set(s.nim_asli, {
                                 nama: s.nama_sensor && s.nama_sensor !== '-' ? s.nama_sensor : s.nim_asli,
@@ -432,6 +473,19 @@ function konselorDashboard() {
             } catch (err) {
                 console.error("Gagal load data dashboard:", err);
             }
+        },
+
+        async startSession(id) {
+            try {
+                // Update status ke Berlangsung dulu
+                const fd = new FormData();
+                fd.append('id', id);
+                fd.append('status', 'Berlangsung');
+                await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+            } catch (err) {
+                console.error('Gagal update status:', err);
+            }
+            window.location.href = `/konselor/live-session?id=${id}`;
         },
 
         showComingSoon(feature) {

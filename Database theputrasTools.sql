@@ -130,12 +130,34 @@ CREATE TABLE konselor_sessions (
     jenis_layanan_id INT NOT NULL,
     topik TEXT NOT NULL,
     tanggal_sesi DATE NOT NULL,
+    waktu_mulai VARCHAR(10) DEFAULT NULL,
+    waktu_selesai VARCHAR(10) DEFAULT NULL,
     tindak_lanjut_id INT DEFAULT NULL,
+    catatan_kesimpulan TEXT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_konselor_session_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_konselor_session_layanan FOREIGN KEY (jenis_layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT,
     CONSTRAINT fk_konselor_session_tindak_lanjut FOREIGN KEY (tindak_lanjut_id) REFERENCES konselor_tindak_lanjut(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE konselor_jadwal (
+    id SERIAL PRIMARY KEY,
+    konselor_user_id BIGINT NOT NULL,
+    nim VARCHAR(64) NOT NULL,
+    nama VARCHAR(150) DEFAULT NULL,
+    prodi VARCHAR(100) DEFAULT NULL,
+    layanan_id INT NOT NULL,
+    tanggal DATE NOT NULL,
+    jam VARCHAR(10) NOT NULL,
+    waktu_mulai TIMESTAMP DEFAULT NULL,
+    total_pause_ms BIGINT DEFAULT 0,
+    last_pause_time TIMESTAMP DEFAULT NULL,
+    status VARCHAR(20) DEFAULT 'Menunggu' CHECK (status IN ('Menunggu', 'Berlangsung', 'Jeda', 'Selesai', 'Dibatalkan')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_konselor_jadwal_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_konselor_jadwal_layanan FOREIGN KEY (layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE logbooks (
@@ -317,3 +339,14 @@ CREATE INDEX idx_konselor_nim ON konselor_sessions(nim_id);
 CREATE INDEX idx_konselor_tanggal ON konselor_sessions(tanggal_sesi);
 CREATE INDEX idx_payment_status ON payment_transactions(status);
 CREATE INDEX idx_payment_user_created ON payment_transactions(user_id, created_at);
+
+
+
+-- -- ==========================================================
+-- -- 6. DATA DUMMY
+-- -- ==========================================================
+-- INSERT INTO konselor_jadwal (konselor_user_id, nim, nama, prodi, layanan_id, tanggal, jam, status) VALUES
+-- (1, '23410100001', 'Budi Santoso', 'S1 Sistem Informasi', 1, CURRENT_DATE, '09:00', 'Menunggu'),
+-- (1, '23410100002', 'Siti Aminah', 'S1 DKV', 2, CURRENT_DATE, '13:00', 'Menunggu'),
+-- (1, '23410100003', 'Andi Wijaya', 'D3 Teknik Komputer', 1, CURRENT_DATE + INTERVAL '1 day', '10:00', 'Menunggu')
+-- ON CONFLICT DO NOTHING;

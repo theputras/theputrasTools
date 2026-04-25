@@ -727,6 +727,176 @@ def konselor_dashboard():
     return render_template("konselorApp/indexKonselor.html")
 
 
+
+# === KONSELOR: Jadwal Main ===
+@app.route("/konselor/jadwal")
+@login_required
+def konselor_jadwal_main():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return redirect(url_for("index"))
+    
+    from controller.KonselorController import get_all_layanan
+    return render_template("konselorApp/jadwalKonsul_konselor/jadwal_main.html", layanan_list=get_all_layanan())
+
+@app.route("/konselor/jadwal/data")
+@login_required
+def konselor_jadwal_data():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+        
+    from controller.KonselorController import get_jadwal_by_date
+    user_id = g.user.get("sub")
+    
+    today = datetime.now(SCHEDULER_TZ).strftime("%Y-%m-%d")
+    jadwal_hari_ini = get_jadwal_by_date(user_id, today, today)
+    
+    tomorrow = (datetime.now(SCHEDULER_TZ) + timedelta(days=1)).strftime("%Y-%m-%d")
+    jadwal_mendatang = get_jadwal_by_date(user_id, tomorrow)
+    
+    return jsonify({
+        "success": True,
+        "hari_ini": jadwal_hari_ini,
+        "mendatang": jadwal_mendatang
+    })
+
+@app.route("/konselor/jadwal/create", methods=["POST"])
+@login_required
+def konselor_jadwal_create():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+        
+    from controller.KonselorController import create_jadwal
+    user_id = g.user.get("sub")
+    success, msg = create_jadwal(user_id, request.form)
+    return jsonify({"success": success, "message": msg})
+
+@app.route("/konselor/jadwal/reschedule", methods=["POST"])
+@login_required
+def konselor_jadwal_reschedule():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+        
+    from controller.KonselorController import reschedule_jadwal
+    user_id = g.user.get("sub")
+    jadwal_id = request.form.get("id")
+    success, msg = reschedule_jadwal(jadwal_id, user_id, request.form)
+    return jsonify({"success": success, "message": msg})
+
+@app.route("/konselor/jadwal/update-status", methods=["POST"])
+@login_required
+def konselor_jadwal_update_status():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+        
+    from controller.KonselorController import update_status_jadwal
+    user_id = g.user.get("sub")
+    jadwal_id = request.form.get("id")
+    status = request.form.get("status")
+    
+    if not jadwal_id or not status:
+        return jsonify({"success": False, "message": "Data tidak lengkap"}), 400
+        
+    success, msg = update_status_jadwal(jadwal_id, user_id, status)
+    return jsonify({"success": success, "message": msg})
+
+@app.route("/konselor/jadwal/slots")
+@login_required
+def konselor_jadwal_slots():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+        
+    from controller.KonselorController import get_available_slots
+    user_id = g.user.get("sub")
+    tanggal = request.args.get("tanggal")
+    if not tanggal:
+         return jsonify({"success": False, "message": "Tanggal wajib diisi"})
+         
+    slots = get_available_slots(user_id, tanggal)
+    return jsonify({"success": True, "slots": slots})
+
+@app.route("/konselor/live-session")
+@login_required
+def konselor_live_session():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return redirect(url_for("index"))
+        
+    from controller.KonselorController import get_jadwal_detail, update_status_jadwal, get_all_kategori, get_all_tindak_lanjut
+    user_id = g.user.get("sub")
+    jadwal_id = request.args.get("id")
+    
+    if not jadwal_id:
+        return redirect(url_for("konselor_jadwal_main"))
+        
+    jadwal = get_jadwal_detail(jadwal_id)
+    if not jadwal or str(jadwal['konselor_user_id']) != str(user_id):
+         flash("Jadwal tidak ditemukan.", "error")
+         return redirect(url_for("konselor_jadwal_main"))
+         
+    if jadwal['status'] in ['Selesai', 'Dibatalkan']:
+         flash("Sesi sudah selesai atau dibatalkan.", "error")
+         return redirect(url_for("konselor_jadwal_main"))
+         
+    if jadwal['status'] in ['Menunggu', 'Jeda']:
+        update_status_jadwal(jadwal_id, user_id, 'Berlangsung')
+        # Re-fetch untuk mendapatkan update waktu_mulai dan total_pause_ms yang baru
+        jadwal = get_jadwal_detail(jadwal_id)
+        
+    if jadwal.get('waktu_mulai'):
+        from datetime import datetime
+        if isinstance(jadwal['waktu_mulai'], datetime):
+             jadwal['waktu_mulai'] = jadwal['waktu_mulai'].isoformat()
+        else:
+             jadwal['waktu_mulai'] = str(jadwal['waktu_mulai'])
+        
+    return render_template("konselorApp/jadwalKonsul_konselor/live_session.html", 
+                           jadwal=jadwal, 
+                           kategori_list=get_all_kategori(), 
+                           tindak_lanjut_list=get_all_tindak_lanjut())
+
+@app.route("/konselor/live-session/finish", methods=["POST"])
+@login_required
+def konselor_live_session_finish():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+        
+    from controller.KonselorController import update_status_jadwal, get_jadwal_detail, create_sesi
+    user_id = g.user.get("sub")
+    jadwal_id = request.form.get("jadwal_id")
+    
+    jadwal = get_jadwal_detail(jadwal_id)
+    if not jadwal or str(jadwal['konselor_user_id']) != str(user_id):
+        return jsonify({"success": False, "message": "Jadwal tidak ditemukan."})
+        
+    form_data = {
+        'nim': jadwal['nim'],
+        'nama': jadwal['nama'],
+        'prodi': jadwal['prodi'],
+        'jenis_layanan_id': jadwal['layanan_id'],
+        'tanggal_sesi': jadwal['tanggal'],
+        'topik': request.form.get('topik'),
+        'kategori_masalah_ids': request.form.get('kategori_masalah_ids'),
+        'catatan_kesimpulan': request.form.get('catatan_kesimpulan'),
+        'tindak_lanjut': request.form.get('tindak_lanjut'),
+        'waktu_mulai': request.form.get('waktu_mulai'),
+        'waktu_selesai': request.form.get('waktu_selesai')
+    }
+    
+    success_sesi, msg_sesi = create_sesi(user_id, form_data)
+    if success_sesi:
+        update_status_jadwal(jadwal_id, user_id, 'Selesai')
+        return jsonify({"success": True, "message": "Sesi berhasil diselesaikan."})
+    else:
+        return jsonify({"success": False, "message": msg_sesi})
+
+
 # === KONSELOR: Catat Sesi Baru ===
 @app.route("/konselor/catat", methods=["GET", "POST"])
 @login_required

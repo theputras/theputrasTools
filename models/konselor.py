@@ -293,8 +293,8 @@ class KonselorSessionModel:
         try:
             cursor.execute("""
                 INSERT INTO konselor_sessions
-                (konselor_user_id, nim_id, nama, dosen_wali, prodi, jenis_layanan_id, topik, tanggal_sesi, tindak_lanjut_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (konselor_user_id, nim_id, nama, dosen_wali, prodi, jenis_layanan_id, topik, tanggal_sesi, waktu_mulai, waktu_selesai, tindak_lanjut_id, catatan_kesimpulan)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
             """, (
                 data['konselor_user_id'],
@@ -305,7 +305,10 @@ class KonselorSessionModel:
                 data['jenis_layanan_id'],
                 data['topik'],
                 data['tanggal_sesi'],
-                data.get('tindak_lanjut_id')
+                data.get('waktu_mulai'),
+                data.get('waktu_selesai'),
+                data.get('tindak_lanjut_id'),
+                data.get('catatan_kesimpulan')
             ))
             
             session_id = cursor.fetchone()[0]
@@ -335,7 +338,7 @@ class KonselorSessionModel:
         cursor = conn.cursor(dictionary=True)
         try:
             query = """
-                SELECT s.id, s.nim_id, s.nama, s.dosen_wali, s.prodi, s.topik, s.tanggal_sesi, s.tindak_lanjut_id, s.created_at,
+                SELECT s.id, s.nim_id, s.nama, s.dosen_wali, s.prodi, s.topik, s.tanggal_sesi, s.waktu_mulai, s.waktu_selesai, s.tindak_lanjut_id, s.catatan_kesimpulan, s.created_at,
                        s.jenis_layanan_id,
                        STRING_AGG(km.id::text, ',') AS kategori_masalah_id,
                        jl.nama AS jenis_layanan, STRING_AGG(km.nama, ', ') AS kategori_masalah, tl.nama AS tindak_lanjut
@@ -395,14 +398,25 @@ class KonselorSessionModel:
                 """, (user_id,))
             totals = cursor.fetchone()
 
-            # Sesi bulan ini
+            # Sesi bulan ini: Gabungan dari sesi yang sudah dicatat (konselor_sessions) 
+            # DITAMBAH dengan jadwal yang masih Menunggu/Berlangsung (konselor_jadwal)
             cursor.execute("""
-                SELECT COUNT(*) AS sesi_bulan_ini
-                FROM konselor_sessions
-                WHERE konselor_user_id = %s
-                  AND EXTRACT(MONTH FROM tanggal_sesi) = EXTRACT(MONTH FROM CURRENT_DATE)
-                  AND EXTRACT(YEAR FROM tanggal_sesi) = EXTRACT(YEAR FROM CURRENT_DATE)
-            """, (user_id,))
+                SELECT 
+                    (SELECT COUNT(*) 
+                     FROM konselor_sessions 
+                     WHERE konselor_user_id = %s 
+                       AND EXTRACT(MONTH FROM tanggal_sesi) = EXTRACT(MONTH FROM CURRENT_DATE)
+                       AND EXTRACT(YEAR FROM tanggal_sesi) = EXTRACT(YEAR FROM CURRENT_DATE)
+                    ) 
+                    + 
+                    (SELECT COUNT(*) 
+                     FROM konselor_jadwal 
+                     WHERE konselor_user_id = %s 
+                       AND status IN ('Menunggu', 'Berlangsung')
+                       AND EXTRACT(MONTH FROM tanggal) = EXTRACT(MONTH FROM CURRENT_DATE)
+                       AND EXTRACT(YEAR FROM tanggal) = EXTRACT(YEAR FROM CURRENT_DATE)
+                    ) AS sesi_bulan_ini
+            """, (user_id, user_id))
             bulan_ini = cursor.fetchone()
 
             # Distribusi per kategori
@@ -476,7 +490,8 @@ class KonselorSessionModel:
                     jenis_layanan_id = %s,
                     topik = %s,
                     tanggal_sesi = %s,
-                    tindak_lanjut_id = %s
+                    tindak_lanjut_id = %s,
+                    catatan_kesimpulan = %s
                 WHERE id = %s AND konselor_user_id = %s
             """, (
                 data.get('prodi'),
@@ -484,6 +499,7 @@ class KonselorSessionModel:
                 data['topik'],
                 data['tanggal_sesi'],
                 data.get('tindak_lanjut_id'),
+                data.get('catatan_kesimpulan'),
                 session_id,
                 user_id
             ))
@@ -534,8 +550,168 @@ class KonselorSessionModel:
             conn.close()
 
 
+class KonselorJadwalModel:
+    """Model untuk penjadwalan konseling."""
+
+    def _get_connection(self):
+        return get_connection()
+
+    def create(self, data):
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                INSERT INTO konselor_jadwal (konselor_user_id, nim, nama, prodi, layanan_id, tanggal, jam, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+            """, (
+                data['konselor_user_id'],
+                data['nim'],
+                data.get('nama'),
+                data.get('prodi'),
+                data['layanan_id'],
+                data['tanggal'],
+                data['jam'],
+                data.get('status', 'Menunggu')
+            ))
+            conn.commit()
+            return True, "Jadwal berhasil dibuat."
+        except Exception as e:
+            logging.error(f"[Konselor] Error create_jadwal: {e}")
+            return False, "Gagal membuat jadwal."
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_by_konselor_and_date_range(self, user_id, start_date, end_date=None):
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            if end_date:
+                query = """
+                    SELECT j.*, l.nama as layanan
+                    FROM konselor_jadwal j
+                    LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                    WHERE j.konselor_user_id = %s AND j.tanggal >= %s AND j.tanggal <= %s
+                    ORDER BY j.tanggal ASC, j.jam ASC
+                """
+                cursor.execute(query, (user_id, start_date, end_date))
+            else:
+                query = """
+                    SELECT j.*, l.nama as layanan
+                    FROM konselor_jadwal j
+                    LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                    WHERE j.konselor_user_id = %s AND j.tanggal >= %s
+                    ORDER BY j.tanggal ASC, j.jam ASC
+                """
+                cursor.execute(query, (user_id, start_date))
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_jadwal: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_by_id(self, jadwal_id):
+        conn = self._get_connection()
+        if not conn:
+            return None
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                SELECT j.*, l.nama as layanan
+                FROM konselor_jadwal j
+                LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                WHERE j.id = %s
+            """, (jadwal_id,))
+            return cursor.fetchone()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_jadwal_by_id: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def update_waktu(self, jadwal_id, user_id, tanggal, jam):
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                UPDATE konselor_jadwal
+                SET tanggal = %s, jam = %s, updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s AND konselor_user_id = %s
+            """, (tanggal, jam, jadwal_id, user_id))
+            if cursor.rowcount > 0:
+                conn.commit()
+                return True, "Jadwal berhasil di-reschedule."
+            else:
+                conn.rollback()
+                return False, "Jadwal tidak ditemukan atau bukan milik Anda."
+        except Exception as e:
+            logging.error(f"[Konselor] Error reschedule: {e}")
+            return False, "Gagal melakukan reschedule."
+        finally:
+            cursor.close()
+            conn.close()
+            
+    def update_status(self, jadwal_id, user_id, status):
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            # Jika status 'Berlangsung', set waktu_mulai jika belum ada, reset last_pause_time, & tambah total_pause_ms
+            if status == 'Berlangsung':
+                cursor.execute("""
+                    UPDATE konselor_jadwal
+                    SET status = %s, 
+                        total_pause_ms = CASE WHEN last_pause_time IS NOT NULL 
+                                              THEN COALESCE(total_pause_ms, 0) + (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_pause_time)) * 1000)::BIGINT
+                                              ELSE COALESCE(total_pause_ms, 0) END,
+                        last_pause_time = NULL,
+                        waktu_mulai = COALESCE(waktu_mulai, CURRENT_TIMESTAMP),
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
+                """, (status, jadwal_id, user_id))
+            elif status == 'Jeda':
+                cursor.execute("""
+                    UPDATE konselor_jadwal
+                    SET status = %s, 
+                        last_pause_time = CURRENT_TIMESTAMP,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
+                """, (status, jadwal_id, user_id))
+            else:
+                cursor.execute("""
+                    UPDATE konselor_jadwal
+                    SET status = %s, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
+                """, (status, jadwal_id, user_id))
+                
+            if cursor.rowcount > 0:
+                conn.commit()
+                return True, f"Status diperbarui menjadi {status}."
+            else:
+                conn.rollback()
+                return False, "Jadwal tidak ditemukan."
+        except Exception as e:
+            logging.error(f"[Konselor] Error update_status: {e}")
+            return False, "Gagal memperbarui status."
+        finally:
+            cursor.close()
+            conn.close()
+
+
 # Instances
 kategori_masalah_model = KategoriMasalahModel()
 jenis_layanan_model = JenisLayananModel()
 tindak_lanjut_model = TindakLanjutModel()
 konselor_session_model = KonselorSessionModel()
+konselor_jadwal_model = KonselorJadwalModel()

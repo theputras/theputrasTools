@@ -44,7 +44,7 @@
             <div class="flex items-start gap-3 p-4 bg-violet-500/5 border border-violet-500/10 rounded-2xl">
                 <i class="fas fa-shield-halved text-violet-500 mt-0.5"></i>
                 <div>
-                    <p class="text-xs text-violet-300 font-semibold">Privasi Terjamin</p>
+                    <p class="text-xs text-violet-600 font-semibold">Privasi Terjamin</p>
                     <p class="text-[11px] text-gray-500 mt-0.5">Nama mahasiswa akan <strong class="text-gray-500">disensor otomatis</strong> saat ditampilkan di rekap. Data disimpan secara aman di database.</p>
                 </div>
             </div>
@@ -181,6 +181,15 @@
                 </select>
             </div>
 
+            <!-- Catatan Kesimpulan -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
+                    <i class="fas fa-file-alt text-indigo-500 mr-1"></i> Catatan Kesimpulan
+                </label>
+                <textarea x-model="form.catatan_kesimpulan" rows="3" placeholder="Opsional: Tuliskan kesimpulan dari sesi ini..."
+                          class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
+            </div>
+
             <!-- Submit Button -->
             <button type="submit" :disabled="isSubmitting"
                     class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500
@@ -217,7 +226,8 @@ function catatSesiApp() {
             kategori_masalah_id: [],
             topik: '',
             tanggal_sesi: '',
-            tindak_lanjut: ''
+            tindak_lanjut: '',
+            catatan_kesimpulan: ''
         },
 
         init() {
@@ -299,7 +309,8 @@ function catatSesiApp() {
                         kategori_masalah_id: [],
                         topik: '',
                         tanggal_sesi: new Date().toISOString().split('T')[0],
-                        tindak_lanjut: ''
+                        tindak_lanjut: '',
+                        catatan_kesimpulan: ''
                     };
                     this.lookupStatus = '';
                     this.lookupData = {};

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Session - Konselor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-glow { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-glow:hover { box-shadow: 0 0 30px -5px rgba(139, 92, 246, 0.15); }
+        
+        /* Pulse dot for live status */
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-emerald 2s infinite;
+        }
+        @keyframes pulse-emerald {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-600 min-h-screen" x-data="liveSessionApp()" x-init="init()">
+
+    <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-4xl">
+
+        <!-- HEADER & LIVE STATUS -->
+        <div class="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <button @click="confirmBack()" 
+                   class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-800 transition hover:bg-white active:scale-95">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </button>
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-2.5 h-2.5 rounded-full" :class="isPaused ? 'bg-amber-500' : 'bg-emerald-500 pulse-dot'"></div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest" :class="isPaused ? 'text-amber-600' : 'text-emerald-600'" x-text="isPaused ? 'Sesi Sedang Dijeda (Pause)' : 'Sesi Sedang Berlangsung'"></span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight">
+                        <i class="fas fa-headset text-violet-500 mr-1"></i> Live <span class="gradient-text">Session</span>
+                    </h1>
+                </div>
+            </div>
+            
+            <div class="bg-white px-4 py-2 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-3 w-full sm:w-auto">
+                <i class="fas fa-stopwatch text-violet-500"></i>
+                <div class="font-mono font-bold text-gray-800 tracking-wider" x-text="sessionDuration">00:00:00</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- LEFT COLUMN: IDENTITAS (READONLY) -->
+            <div class="lg:col-span-1 space-y-4">
+                <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5 sticky top-6">
+                    <h3 class="text-sm font-bold text-gray-800 border-b border-gray-100 pb-3 mb-4 flex items-center gap-2">
+                        <i class="fas fa-id-badge text-blue-500"></i> Informasi Klien
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Nama Mahasiswa</p>
+                            <p class="text-sm font-semibold text-gray-800" x-text="sessionData.nama"></p>
+                            <p class="text-xs text-gray-500 mt-0.5" x-text="sessionData.nim"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Program Studi</p>
+                            <p class="text-sm text-gray-800" x-text="sessionData.prodi"></p>
+                        </div>
+
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Jenis Layanan</p>
+                            <span class="inline-block text-xs font-bold bg-violet-50 text-violet-600 px-3 py-1 rounded-full" x-text="sessionData.layanan"></span>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-100">
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Waktu Mulai</p>
+                            <p class="text-sm text-gray-800" x-text="sessionData.tanggal + ' - ' + sessionData.jam_mulai + ' WIB'"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: INPUT SESI -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5 sm:p-6">
+                    <h3 class="text-sm font-bold text-gray-800 border-b border-gray-100 pb-3 mb-5 flex items-center gap-2">
+                        <i class="fas fa-pen-nib text-emerald-500"></i> Pencatatan Selama Sesi
+                    </h3>
+
+                    <div class="space-y-5">
+                        <!-- Kategori Masalah -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-2 ml-1 uppercase tracking-wider">
+                                Kategori Masalah <span class="text-red-400">*</span>
+                            </label>
+                            <select x-model="formInput.kategori_masalah_id" required multiple
+                                    class="w-full bg-slate-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-emerald-500/50 focus:bg-white focus:outline-none transition min-h-[120px]">
+                                <!-- Options should be injected via backend, using mockup for now -->
+                                {% for item in kategori_list %}
+                                <option value="{{ item.id }}">{{ item.nama }}</option>
+                                {% endfor %}
+                            </select>
+                            <p class="text-[10px] text-gray-500 mt-1.5 ml-1">Tahan CTRL/CMD untuk memilih lebih dari satu kategori yang relevan selama sesi.</p>
+                        </div>
+
+                        <!-- Topik Permasalahan -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-2 ml-1 uppercase tracking-wider">
+                                Topik / Detail Permasalahan <span class="text-red-400">*</span>
+                            </label>
+                            <textarea x-model="formInput.topik" required rows="8" placeholder="Ketik permasalahan yang disampaikan klien saat mendengarkan..."
+                                      class="w-full bg-slate-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-800 focus:border-emerald-500/50 focus:bg-white focus:outline-none transition resize-y leading-relaxed"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Akhiri Sesi -->
+                    <div class="mt-8 pt-6 border-t border-gray-100 flex gap-3">
+                        <button @click="batalKonsul()"
+                                class="w-14 sm:w-16 flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 font-bold py-4 rounded-xl transition-all duration-300 active:scale-[0.98]"
+                                title="Batalkan Sesi">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button @click="togglePause()"
+                                class="w-14 sm:w-16 flex items-center justify-center bg-amber-100 hover:bg-amber-200 text-amber-600 font-bold py-4 rounded-xl transition-all duration-300 active:scale-[0.98]"
+                                title="Jeda Sesi">
+                            <i class="fas" :class="isPaused ? 'fa-play' : 'fa-pause'"></i>
+                        </button>
+                        <button @click="openWrapUpModal()" :disabled="!isSessionValid"
+                                class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-rose-600/20 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm">
+                            <i class="fas fa-flag-checkered"></i> Akhiri Sesi & Tulis Kesimpulan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: WRAP-UP SESI (KESIMPULAN)         -->
+    <!-- ========================================== -->
+    <div x-show="showWrapUpModal" x-cloak
+         class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 pb-40">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+             x-show="showWrapUpModal"
+             x-transition.opacity.duration.300ms></div>
+
+        <!-- Modal Content -->
+        <div class="relative w-full sm:max-w-xl bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[90vh] flex flex-col"
+             x-show="showWrapUpModal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+             x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+             x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95">
+            
+            <div class="flex items-center justify-between p-5 border-b border-gray-100 shrink-0 bg-rose-50 rounded-t-3xl sm:rounded-t-2xl">
+                <h3 class="text-sm font-bold text-rose-600 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check"></i> Wrap-up Sesi Konseling
+                </h3>
+                <button @click="showWrapUpModal = false" class="text-rose-400 hover:text-rose-600 transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto space-y-5">
+                <div class="bg-blue-50/50 border border-blue-100 text-blue-800 text-xs p-3 rounded-xl flex items-start gap-2">
+                    <i class="fas fa-info-circle mt-0.5 text-blue-500"></i>
+                    <p>Sesi telah dihentikan sementara. Selesaikan catatan kesimpulan dan tindak lanjut untuk menutup sesi ini sepenuhnya.</p>
+                </div>
+
+                <!-- Catatan Kesimpulan -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1.5 ml-1 uppercase tracking-wider">
+                        Kesimpulan / Notes (Catatan Internal) <span class="text-red-400">*</span>
+                    </label>
+                    <textarea x-model="formInput.catatan_kesimpulan" required rows="5" placeholder="Tuliskan intisari dari pertemuan, insight konselor, dll..."
+                              class="w-full bg-slate-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-rose-500/50 focus:bg-white focus:outline-none transition resize-none"></textarea>
+                </div>
+
+                <!-- Tindak Lanjut -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1.5 ml-1 uppercase tracking-wider">
+                        Rencana Tindak Lanjut <span class="text-red-400">*</span>
+                    </label>
+                    <select x-model="formInput.tindak_lanjut" required
+                            class="w-full bg-slate-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-rose-500/50 focus:bg-white focus:outline-none transition appearance-none">
+                        <option value="">— Pilih Tindak Lanjut —</option>
+                                {% for item in tindak_lanjut_list %}
+                                <option value="{{ item.id }}">{{ item.nama }}</option>
+                                {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="p-5 border-t border-gray-100 shrink-0 flex gap-3">
+                <button @click="showWrapUpModal = false"
+                        class="w-1/3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-bold py-3.5 rounded-xl transition-all duration-300 active:scale-[0.98] text-sm">
+                    Kembali
+                </button>
+                <button @click="simpanSelesai()" :disabled="!isWrapUpValid || isSubmitting"
+                        class="w-2/3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm">
+                    <template x-if="isSubmitting"><i class="fas fa-spinner fa-spin"></i></template>
+                    <template x-if="!isSubmitting"><i class="fas fa-check-circle"></i></template>
+                    <span x-text="isSubmitting ? 'Menyimpan...' : 'Simpan & Selesaikan'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+{% include 'alert.html' %}
+<script>
+// Standalone handler so we can reliably add/remove it outside of Alpine's proxy
+const unloadHandler = (e) => {
+    e.preventDefault();
+    e.returnValue = '';
+};
+
+function liveSessionApp() {
+    return {
+        showWrapUpModal: false,
+        isSubmitting: false,
+        isPaused: false,
+        
+        timerInterval: null,
+        startTime: null,
+        pausedElapsed: 0,     // total elapsed ms when paused
+        pauseStartTime: null, // when pause started
+        sessionDuration: '00:00:00',
+        
+        // Data from backend (Jinja2 injected)
+        sessionData: {
+            id: '{{ jadwal.id }}',
+            nim: '{{ jadwal.nim }}',
+            nama: '{{ jadwal.nama_sensor or jadwal.nama }}',
+            prodi: '{{ jadwal.prodi }}',
+            layanan: '{{ jadwal.layanan }}',
+            tanggal: '{{ jadwal.tanggal }}',
+            jam_mulai: '{{ jadwal.jam }}',
+            layanan_id: '{{ jadwal.layanan_id }}',
+            waktu_mulai_db: '{{ jadwal.waktu_mulai or "" }}',
+            total_pause_ms: parseInt('{{ jadwal.total_pause_ms or 0 }}') || 0
+        },
+
+        formInput: {
+            kategori_masalah_id: [],
+            topik: '',
+            catatan_kesimpulan: '',
+            tindak_lanjut: ''
+        },
+
+        waktuMulai: null,
+
+        init() {
+            // Gunakan waktu_mulai dari database (ketika tombol 'Mulai Sesi Sekarang' dipencet)
+            if (this.sessionData.waktu_mulai_db) {
+                // startTime digeser maju sebanyak total_pause_ms supaya hitungan stopwatch lebih lambat = durasi asli
+                this.startTime = new Date(this.sessionData.waktu_mulai_db).getTime() + this.sessionData.total_pause_ms;
+            } else {
+                this.startTime = Date.now();
+            }
+            
+            // Set input waktu_mulai (HH:MM) untuk dikirim ke backend saat wrap-up
+            const startDate = new Date(this.startTime);
+            this.waktuMulai = String(startDate.getHours()).padStart(2, '0') + ':' + String(startDate.getMinutes()).padStart(2, '0');
+            
+            // Start duration timer
+            this.timerInterval = setInterval(() => {
+                if (!this.isPaused) {
+                    const elapsed = Date.now() - this.startTime;
+                    this.sessionDuration = this._formatDuration(elapsed);
+                }
+            }, 1000);
+            
+            // Prevent accidental page close
+            window.addEventListener('beforeunload', unloadHandler);
+        },
+
+        _formatDuration(ms) {
+            const totalSec = Math.floor(ms / 1000);
+            const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+            const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+            const s = String(totalSec % 60).padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        },
+
+        async togglePause() {
+            try {
+                const fd = new FormData();
+                fd.append('id', this.sessionData.id);
+                fd.append('status', this.isPaused ? 'Berlangsung' : 'Jeda');
+                await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+                
+                if (this.isPaused) {
+                    // Resume: adjust startTime to account for paused duration
+                    const pausedDuration = Date.now() - this.pauseStartTime;
+                    this.startTime += pausedDuration;
+                    this.isPaused = false;
+                    this.pauseStartTime = null;
+                } else {
+                    // Pause
+                    this.isPaused = true;
+                    this.pauseStartTime = Date.now();
+                }
+            } catch (err) {
+                console.error("Gagal update status pause", err);
+                const msg = 'Gagal menyinkronkan status sesi ke database. Pastikan koneksi stabil.';
+                if(window.showAlert) window.showAlert('error', msg);
+                else alert(msg);
+            }
+        },
+
+        async confirmBack() {
+            // Auto-pause the session when leaving
+            if (!this.isPaused) {
+                try {
+                    const fd = new FormData();
+                    fd.append('id', this.sessionData.id);
+                    fd.append('status', 'Jeda');
+                    await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+                } catch(e) {
+                    console.error("Gagal menjeda sesi sebelum kembali", e);
+                }
+            }
+            
+            clearInterval(this.timerInterval);
+            window.removeEventListener('beforeunload', unloadHandler);
+            window.location.href = '/konselor/jadwal';
+        },
+
+        async batalKonsul() {
+            const yakin = await showConfirm('Batalkan Jadwal', 'Apakah Anda yakin ingin membatalkan jadwal ini secara sepihak? Status jadwal akan diubah menjadi Dibatalkan.', 'danger');
+            if (yakin) {
+                try {
+                    const fd = new FormData();
+                    fd.append('id', this.sessionData.id);
+                    fd.append('status', 'Dibatalkan');
+                    await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+                    
+                    clearInterval(this.timerInterval);
+                    window.removeEventListener('beforeunload', unloadHandler);
+                    window.location.href = '/konselor/jadwal';
+                } catch (err) {
+                    console.error('Gagal membatalkan jadwal:', err);
+                }
+            }
+        },
+
+        get isSessionValid() {
+            return this.formInput.kategori_masalah_id.length > 0 && this.formInput.topik.trim().length > 0;
+        },
+
+        get isWrapUpValid() {
+            return this.formInput.catatan_kesimpulan.trim().length > 0 && this.formInput.tindak_lanjut;
+        },
+
+        openWrapUpModal() {
+            if (!this.isSessionValid) return;
+            this.showWrapUpModal = true;
+        },
+
+        async simpanSelesai() {
+            this.isSubmitting = true;
+            clearInterval(this.timerInterval);
+            window.removeEventListener('beforeunload', unloadHandler);
+
+            try {
+                const fd = new FormData();
+                fd.append('jadwal_id', this.sessionData.id);
+                fd.append('topik', this.formInput.topik);
+                fd.append('catatan_kesimpulan', this.formInput.catatan_kesimpulan);
+                fd.append('tindak_lanjut', this.formInput.tindak_lanjut);
+                fd.append('kategori_masalah_ids', JSON.stringify(this.formInput.kategori_masalah_id));
+                
+                fd.append('waktu_mulai', this.waktuMulai);
+                const endNow = new Date();
+                fd.append('waktu_selesai', String(endNow.getHours()).padStart(2, '0') + ':' + String(endNow.getMinutes()).padStart(2, '0'));
+                
+                const res = await fetch('/konselor/live-session/finish', { method: 'POST', body: fd });
+                const data = await res.json();
+                
+                if (data.success) {
+                    if(window.showAlert) window.showAlert('success', data.message);
+                    window.location.href = '/konselor/jadwal';
+                } else {
+                    if(window.showAlert) window.showAlert('error', data.message);
+                    this.isSubmitting = false;
+                }
+            } catch(err) {
+                console.error(err);
+                if(window.showAlert) window.showAlert('error', 'Gagal menyimpan sesi.');
+                this.isSubmitting = false;
+            }
+        }
+    }
+}
+</script>
+</body>
+</html>
