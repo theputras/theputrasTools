@@ -79,43 +79,98 @@
         </div>
 
         <!-- CHARTS ROW -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-            <!-- Pie Chart: Kategori Masalah -->
-            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5">
-                <h3 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <i class="fas fa-chart-pie text-amber-500"></i> Distribusi Kategori Masalah
-                </h3>
-                <div class="relative" style="max-height: 280px;">
-                    <canvas id="chartKategori"></canvas>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- 1. Vertical Bar Chart: Kategori Masalah -->
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5 flex flex-col min-h-[480px]">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-[11px] font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-chart-bar text-amber-500"></i> Kategori Masalah
+                    </h3>
+                    <template x-if="activeFilters.kategori">
+                        <button @click="activeFilters.kategori = ''" 
+                                class="text-[9px] bg-amber-50 text-amber-600 px-2 py-1 rounded-lg border border-amber-100 hover:bg-amber-100 transition flex items-center gap-1.5">
+                            <span x-text="`Filter: ${activeFilters.kategori}`"></span>
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </template>
                 </div>
-                <div x-show="stats.kategori_distribusi.length === 0" class="text-center py-8 text-gray-600 text-sm">
-                    <i class="fas fa-chart-pie text-3xl mb-2 block"></i>
-                    Belum ada data
+                <div class="relative flex-1" style="height: 380px;">
+                    <canvas id="chartKategori"></canvas>
                 </div>
             </div>
 
-            <!-- Pie Chart: Jenis Layanan -->
-            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5">
-                <h3 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <i class="fas fa-chart-doughnut text-blue-500"></i> Distribusi Jenis Layanan
-                </h3>
-                <div class="relative" style="max-height: 280px;">
+            <!-- 2. Donut Chart: Jenis Layanan -->
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5 flex flex-col min-h-[480px]">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-[11px] font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-chart-pie text-blue-500"></i> Jenis Layanan
+                    </h3>
+                    <template x-if="activeFilters.layanan">
+                        <button @click="activeFilters.layanan = ''" 
+                                class="text-[9px] bg-blue-50 text-blue-600 px-2 py-1 rounded-lg border border-blue-100 hover:bg-blue-100 transition flex items-center gap-1.5">
+                            <span x-text="`Filter: ${activeFilters.layanan}`"></span>
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </template>
+                </div>
+                <div class="relative flex-1" style="height: 380px;">
                     <canvas id="chartLayanan"></canvas>
                 </div>
-                <div x-show="stats.layanan_distribusi.length === 0" class="text-center py-8 text-gray-600 text-sm">
-                    <i class="fas fa-chart-pie text-3xl mb-2 block"></i>
-                    Belum ada data
+            </div>
+
+            <!-- 3. Horizontal Bar Chart: Program Studi -->
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5 flex flex-col min-h-[480px]">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-[11px] font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-graduation-cap text-emerald-500"></i> Program Studi
+                    </h3>
+                    <template x-if="activeFilters.prodi">
+                        <button @click="activeFilters.prodi = ''" 
+                                class="text-[9px] bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition flex items-center gap-1.5">
+                            <span x-text="`Filter: ${activeFilters.prodi}`"></span>
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </template>
+                </div>
+                <div class="relative flex-1" style="height: 380px;">
+                    <canvas id="chartProdi"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- RIWAYAT SESI -->
-        <div class="card-glow bg-white border border-gray-200 rounded-2xl overflow-hidden">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-5 border-b border-gray-200">
-                <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fas fa-history text-violet-500"></i> Riwayat Sesi
-                </h3>
-                <div class="flex items-center gap-2">
+        <div class="card-glow bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-5 border-b border-gray-100">
+                <div class="flex flex-col">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-history text-violet-500"></i> Riwayat Sesi
+                    </h3>
+                    <!-- Combined Active Filters Indicator -->
+                    <div x-show="activeFilters.kategori || activeFilters.layanan || activeFilters.prodi || searchNim || searchQuery || isFilterActive" x-cloak class="mt-2 flex flex-wrap gap-2">
+                        <template x-if="searchQuery">
+                            <span class="text-[9px] bg-indigo-50 text-indigo-700 font-bold px-2 py-1 rounded border border-indigo-200">Cari: <span x-text="searchQuery"></span></span>
+                        </template>
+                        <template x-if="searchNim">
+                            <span class="text-[9px] bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded border border-slate-200">NIM: <span x-text="searchNim"></span></span>
+                        </template>
+                        <template x-if="activeFilters.kategori">
+                            <span class="text-[9px] bg-amber-50 text-amber-700 font-bold px-2 py-1 rounded border border-amber-200">Kategori: <span x-text="activeFilters.kategori"></span></span>
+                        </template>
+                        <template x-if="activeFilters.layanan">
+                            <span class="text-[9px] bg-blue-50 text-blue-700 font-bold px-2 py-1 rounded border border-blue-200">Layanan: <span x-text="activeFilters.layanan"></span></span>
+                        </template>
+                        <template x-if="activeFilters.prodi">
+                            <span class="text-[9px] bg-emerald-50 text-emerald-700 font-bold px-2 py-1 rounded border border-emerald-200">Prodi: <span x-text="activeFilters.prodi"></span></span>
+                        </template>
+                        <button @click="resetAllFilters()" class="text-[9px] text-red-500 font-bold hover:underline">Reset Semua</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                    <div class="relative w-full sm:w-48">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-[10px]"></i>
+                        <input type="text" x-model="searchQuery" placeholder="Cari Nama/NIM..." 
+                               class="w-full bg-white border border-gray-200 rounded-full pl-9 pr-4 py-2 text-xs text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition">
+                    </div>
                     <button @click="openFilter()"
                             class="text-xs font-bold text-blue-500 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition flex items-center gap-1.5"
                             :class="isFilterActive ? 'ring-2 ring-blue-500/50' : ''">
@@ -136,7 +191,7 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-100 overflow-hidden">
                             <a href="{{ url_for('konselor_catat_sesi') }}" class="block px-4 py-3 text-sm text-gray-600 hover:bg-white hover:text-gray-800 transition border-b border-gray-200">
                                 <i class="fas fa-file-signature w-5 text-violet-500"></i> Tambah Baru
                             </a>
@@ -149,13 +204,21 @@
             </div>
 
             <div class="divide-y divide-gray-200">
-                <template x-if="sessions.length === 0 && !isLoading">
-                    <div class="p-10 text-center">
-                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-inbox text-gray-600 text-2xl"></i>
+                <template x-if="filteredSessions.length === 0 && !isLoading">
+                    <div class="p-12 text-center">
+                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100 shadow-sm">
+                            <i class="fas fa-search-minus text-gray-300 text-3xl" x-show="isFilterActive || searchNim || activeFilters.kategori || activeFilters.layanan || activeFilters.prodi"></i>
+                            <i class="fas fa-inbox text-gray-300 text-3xl" x-show="!(isFilterActive || searchNim || activeFilters.kategori || activeFilters.layanan || activeFilters.prodi)"></i>
                         </div>
-                        <p class="text-sm text-gray-500 font-medium">Belum ada sesi tercatat</p>
-                        <p class="text-xs text-gray-600 mt-1">Mulai catat sesi konseling pertama Anda</p>
+                        <h4 class="text-gray-800 font-bold text-sm" x-text="(isFilterActive || searchNim || searchQuery || activeFilters.kategori || activeFilters.layanan || activeFilters.prodi) ? 'Tidak ada hasil ditemukan' : 'Belum ada sesi tercatat'"></h4>
+                        <p class="text-xs text-gray-500 mt-1.5 max-w-[200px] mx-auto leading-relaxed" 
+                           x-text="(isFilterActive || searchNim || searchQuery || activeFilters.kategori || activeFilters.layanan || activeFilters.prodi) ? 'Coba ubah filter atau kata kunci pencarian Anda' : 'Mulai catat sesi konseling pertama Anda untuk melihat riwayat di sini'"></p>
+                        
+                        <div class="mt-6" x-show="isFilterActive || searchNim || searchQuery || activeFilters.kategori || activeFilters.layanan || activeFilters.prodi">
+                            <button @click="resetAllFilters()" class="text-xs font-bold text-violet-500 bg-violet-50 px-4 py-2 rounded-full hover:bg-violet-100 transition">
+                                Reset Semua Filter
+                            </button>
+                        </div>
                     </div>
                 </template>
 
@@ -258,11 +321,11 @@
                 <!-- ===== VIEW MODE ===== -->
                 <div x-show="!isEditing" class="p-5 space-y-4">
                     <!-- Nama Mahasiswa (Tersensor) -->
-                    <div class="flex items-center gap-3 text-sm" x-show="selectedSesi.nama_sensor && selectedSesi.nama_sensor !== '-'">
+                    <div class="flex items-center gap-3 text-sm">
                         <div class="p-2 bg-violet-50 rounded-lg"><i class="fas fa-user text-violet-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Nama Mahasiswa</p>
-                            <p class="text-gray-800 font-medium" x-text="selectedSesi.nama_sensor || '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.nim_id === '001' || selectedSesi.nim_id === '002' ? (selectedSesi.nama_klien || selectedSesi.nama) : (selectedSesi.nama_sensor || '-')"></p>
                         </div>
                     </div>
 
@@ -292,7 +355,25 @@
                         <div class="p-2 bg-blue-50 rounded-lg"><i class="fas fa-graduation-cap text-blue-500 text-xs"></i></div>
                         <div>
                             <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Program Studi</p>
-                            <p class="text-gray-800 font-medium" x-text="selectedSesi.prodi || '-'"></p>
+                            <p class="text-gray-800 font-medium" x-text="selectedSesi.prodi_klien || selectedSesi.prodi || '-'"></p>
+                        </div>
+                    </div>
+
+                    <!-- MBTI & ABK (Centralized Data) -->
+                    <div class="flex gap-4" x-show="selectedSesi.mbti || selectedSesi.status_abk">
+                        <div class="flex-1 flex items-center gap-3 text-sm" x-show="selectedSesi.mbti">
+                            <div class="p-2 bg-indigo-50 rounded-lg"><i class="fas fa-brain text-indigo-500 text-xs"></i></div>
+                            <div>
+                                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">MBTI</p>
+                                <p class="text-gray-800 font-bold uppercase" x-text="selectedSesi.mbti"></p>
+                            </div>
+                        </div>
+                        <div class="flex-1 flex items-center gap-3 text-sm" x-show="selectedSesi.status_abk">
+                            <div class="p-2 bg-rose-50 rounded-lg"><i class="fas fa-universal-access text-rose-500 text-xs"></i></div>
+                            <div>
+                                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Status ABK</p>
+                                <p class="text-gray-800 font-bold" x-text="selectedSesi.status_abk"></p>
+                            </div>
                         </div>
                     </div>
 
@@ -501,17 +582,32 @@
                  </a>
 
                  <!-- Upload Area -->
-                 <form @submit.prevent="submitImport" enctype="multipart/form-data">
-                     <label class="w-full mt-3 flex flex-col items-center justify-center border-2 border-dashed border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-500/5 rounded-xl p-6 cursor-pointer transition group">
-                         <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 group-hover:text-emerald-500 mb-3 transition"></i>
-                         <span class="text-sm font-medium text-gray-600" x-text="importFileName || 'Pilih file .xlsx'"></span>
-                         <input type="file" class="hidden" accept=".xlsx, .xls" @change="handleFileSelect">
-                     </label>
+                  <form @submit.prevent="submitImport" enctype="multipart/form-data">
+                      <label class="w-full mt-3 flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 transition group relative overflow-hidden"
+                             :class="isImporting ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60' : (isDragging ? 'border-emerald-500 bg-emerald-500/10 cursor-pointer' : 'border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-500/5 cursor-pointer')"
+                             @dragover.prevent="!isImporting && (isDragging = true)"
+                             @dragleave.prevent="isDragging = false"
+                             @drop.prevent="!isImporting && handleFileSelect($event)"
+                             @click="isImporting && $event.preventDefault()">
+                          
+                          <div class="flex flex-col items-center justify-center z-10">
+                              <i class="fas fa-cloud-upload-alt text-4xl mb-4 transition"
+                                 :class="isImporting ? 'text-gray-300' : (isDragging ? 'text-emerald-500 scale-110' : 'text-gray-500 group-hover:text-emerald-500')"></i>
+                              <span class="text-sm font-bold text-gray-600 text-center" x-text="isImporting ? 'Sedang memproses...' : (importFileName || 'Pilih file atau seret ke sini (.xlsx)')"></span>
+                              <p class="text-[10px] text-gray-400 mt-2" x-show="!isImporting">Maksimal 10MB • Format .xlsx / .xls</p>
+                          </div>
+                          
+                          <input type="file" class="hidden" accept=".xlsx, .xls" @change="handleFileSelect" :disabled="isImporting">
+                      </label>
                      
                      <button type="submit" :disabled="!importFile || isImporting"
-                             class="w-full mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 rounded-xl text-sm transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2">
-                         <i class="fas" :class="isImporting ? 'fa-spinner fa-spin' : 'fa-check'"></i>
-                         <span x-text="isImporting ? 'Mengimport...' : 'Import Sekarang'"></span>
+                             class="w-full mt-4 text-white font-extrabold py-4 rounded-xl text-sm transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden shadow-lg shadow-emerald-500/10"
+                             :style="isImporting 
+                               ? `background: linear-gradient(to right, #059669 ${importProgress}%, #374151 ${importProgress}%);`
+                               : 'background: linear-gradient(to right, #059669, #0d9488);'"
+                             :class="isImporting ? 'cursor-not-allowed' : 'hover:from-emerald-500 hover:to-teal-500'">
+                         <i class="fas z-10" :class="isImporting ? 'fa-spinner fa-spin' : 'fa-check-circle'"></i>
+                         <span class="z-10" x-text="isImporting ? `Mengimport... ${importProgress}%` : 'Import Sekarang'"></span>
                      </button>
                  </form>
              </div>
@@ -573,6 +669,7 @@
 <script>
 let chartKategoriInstance = null;
 let chartLayananInstance = null;
+let chartProdiInstance = null;
 
 const CHART_COLORS = [
     'rgba(167, 139, 250, 0.8)',  // violet
@@ -585,54 +682,73 @@ const CHART_COLORS = [
     'rgba(163, 230, 53, 0.8)',   // lime
 ];
 
-function renderPieChart(canvasId, labels, data, existingChart) {
+function renderAppChart(canvasId, chartType, labels, data, existingChart, onSelect, extraOptions = {}) {
     if (existingChart) existingChart.destroy();
     if (!labels.length) return null;
 
     const ctx = document.getElementById(canvasId);
     if (!ctx) return null;
 
+    // Use horizontal bar for prodi
+    const isHorizontal = extraOptions.indexAxis === 'y';
+
     return new Chart(ctx, {
-        type: 'doughnut',
+        type: chartType,
         data: {
             labels: labels,
             datasets: [{
                 data: data,
-                backgroundColor: CHART_COLORS.slice(0, labels.length),
-                borderColor: 'rgba(15, 15, 25, 0.8)',
+                backgroundColor: labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]),
+                borderColor: '#fff',
                 borderWidth: 2,
-                hoverBorderWidth: 3,
-                hoverBorderColor: '#fff'
+                hoverBorderWidth: 4,
+                borderRadius: chartType === 'bar' ? 6 : 0
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
-            cutout: '55%',
+            maintainAspectRatio: false,
+            indexAxis: extraOptions.indexAxis || 'x',
+            cutout: chartType === 'doughnut' ? '65%' : 0,
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    onSelect(labels[index]);
+                }
+            },
+            scales: chartType === 'bar' ? {
+                x: {
+                    display: !isHorizontal,
+                    grid: { display: false },
+                    ticks: { font: { size: 10 } }
+                },
+                y: {
+                    grid: { color: 'rgba(0,0,0,0.03)' },
+                    ticks: { font: { size: 10 } }
+                }
+            } : {},
             plugins: {
                 legend: {
+                    display: chartType === 'doughnut',
                     position: 'bottom',
                     labels: {
-                        color: '#9ca3af',
-                        font: { size: 11, family: 'Inter', weight: '600' },
-                        padding: 16,
-                        usePointStyle: true,
-                        pointStyleWidth: 8
+                        color: '#475569',
+                        font: { size: 10, family: 'Inter', weight: '600' },
+                        padding: 15,
+                        boxWidth: 8,
+                        usePointStyle: true
                     }
                 },
                 tooltip: {
                     backgroundColor: 'rgba(17, 17, 27, 0.95)',
                     titleFont: { family: 'Inter', weight: '700' },
-                    bodyFont: { family: 'Inter' },
-                    borderColor: 'rgba(139, 92, 246, 0.3)',
-                    borderWidth: 1,
                     padding: 12,
                     cornerRadius: 12,
                     callbacks: {
                         label: function(ctx) {
                             const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
                             const pct = ((ctx.raw / total) * 100).toFixed(1);
-                            return ` ${ctx.label}: ${ctx.raw} sesi (${pct}%)`;
+                            return ` ${ctx.raw} sesi (${pct}%)`;
                         }
                     }
                 }
@@ -648,41 +764,86 @@ function rekapApp() {
         isEditing: false,
         isSaving: false,
         selectedSesi: {},
-        editForm: {},
+        editForm: {
+            kategori_masalah_id: []
+        },
         
         showImportModal: false,
         importFile: null,
         importFileName: '',
         isImporting: false,
+        importProgress: 0,
+        isDragging: false,
+        pollingInterval: null,
 
         stats: {
             total_sesi: 0,
             klien_unik: 0,
             sesi_bulan_ini: 0,
             kategori_distribusi: [],
-            layanan_distribusi: []
+            layanan_distribusi: [],
+            prodi_distribusi: []
         },
         sessions: [],
         
-        // --- Filter Logic ---
+        // --- Smart Filter Logic ---
         searchNim: new URLSearchParams(window.location.search).get('nim') || '',
+        searchNama: new URLSearchParams(window.location.search).get('nama') || '',
+        searchQuery: '',
+        activeFilters: {
+            kategori: '',
+            layanan: '',
+            prodi: ''
+        },
+        
         showFilterModal: false,
         filterError: '',
         isFilterActive: false,
-        filterBtnText: 'Filter',
+        filterBtnText: 'Filter Tanggal',
         selectedDateText: 'Pilih tanggal',
         fpInstance: null,
-        dateRange: [], // stores flatpickr selected dates
+        dateRange: [], 
 
         get filteredSessions() {
             let res = this.sessions;
             
-            // Filter by NIM if set
+            // 0. Search by Keyword (NIM or Nama)
+            if (this.searchQuery) {
+                const q = this.searchQuery.toLowerCase();
+                res = res.filter(s => 
+                    (s.nim_asli || '').toLowerCase().includes(q) || 
+                    (s.nama_sensor || '').toLowerCase().includes(q)
+                );
+            }
+
+            // 1. Filter by NIM (from URL)
             if (this.searchNim) {
-                res = res.filter(s => s.nim_asli === this.searchNim);
+                res = res.filter(s => s.nim_id === this.searchNim);
+                // Filter by Nama for special codes 001/002
+                if (this.searchNama && ['001', '002'].includes(this.searchNim)) {
+                    res = res.filter(s => (s.nama_klien || s.nama || '').toLowerCase() === this.searchNama.toLowerCase());
+                }
+            }
+
+            // 2. Filter by Kategori (Combinable)
+            if (this.activeFilters.kategori) {
+                const val = this.activeFilters.kategori.toLowerCase();
+                res = res.filter(s => (s.kategori_masalah || '').toLowerCase().includes(val));
+            }
+
+            // 3. Filter by Layanan (Combinable)
+            if (this.activeFilters.layanan) {
+                const val = this.activeFilters.layanan.toLowerCase();
+                res = res.filter(s => (s.jenis_layanan || '').toLowerCase() === val);
+            }
+
+            // 4. Filter by Prodi (Combinable)
+            if (this.activeFilters.prodi) {
+                const val = this.activeFilters.prodi.toLowerCase();
+                res = res.filter(s => (s.prodi || 'Lainnya/Staff').toLowerCase() === val);
             }
             
-            // Filter by Date Range if active
+            // 5. Filter by Date Range
             if (this.isFilterActive && this.dateRange.length === 2) {
                 let start = this.dateRange[0].setHours(0, 0, 0, 0);
                 let end = this.dateRange[1].setHours(23, 59, 59, 999);
@@ -695,158 +856,63 @@ function rekapApp() {
             return res;
         },
 
-        openFilter() {
-            this.showFilterModal = true;
-            document.body.style.overflow = 'hidden';
-            
-            // Initialize flatpickr if not already initialized
-            const that = this;
-            if (!this.fpInstance) {
-                setTimeout(() => {
-                    this.fpInstance = flatpickr(document.createElement("input"), {
-                        inline: true,
-                        mode: "range",
-                        appendTo: document.getElementById('calendar-container'),
-                        locale: "id",
-                        maxDate: "today",
-                        showMonths: 1,
-                        onChange: function(selectedDates, dateStr, instance) {
-                            that.filterError = '';
-                            that.selectedDateText = 'Pilih tanggal';
-                            if(selectedDates.length === 2) {
-                                const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
-                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                                
-                                if(diffDays > 31) {
-                                    that.filterError = "Periode maksimal yang dapat dipilih hanya 31 hari terakhir.";
-                                    instance.clear();
-                                } else {
-                                    const format = { day: 'numeric', month: 'short', year: 'numeric' };
-                                    const startStr = selectedDates[0].toLocaleDateString('id-ID', format);
-                                    const endStr = selectedDates[1].toLocaleDateString('id-ID', format);
-                                    that.selectedDateText = `${startStr} - ${endStr}`;
-                                    that.dateRange = selectedDates;
-                                }
-                            } else if (selectedDates.length === 1) {
-                                const startStr = selectedDates[0].toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                                that.selectedDateText = `${startStr} - ...`;
-                            }
-                        }
-                    });
-                }, 50);
-            }
+        resetAllFilters() {
+            this.activeFilters = { kategori: '', layanan: '', prodi: '' };
+            this.searchNim = '';
+            this.searchNama = '';
+            this.searchQuery = '';
+            this.isFilterActive = false;
+            this.filterBtnText = 'Filter Tanggal';
+            if (this.fpInstance) this.fpInstance.clear();
         },
 
-        closeFilter() {
-            this.showFilterModal = false;
-            document.body.style.overflow = '';
-        },
-
-        applyFilter() {
-            if (this.dateRange.length === 2) {
-                this.isFilterActive = true;
-                const format = { day: 'numeric', month: 'short' };
-                const startStr = this.dateRange[0].toLocaleDateString('id-ID', format);
-                const endStr = this.dateRange[1].toLocaleDateString('id-ID', format);
-                this.filterBtnText = `${startStr} - ${endStr}`;
-                this.closeFilter();
-            } else {
-                this.filterError = 'Harap pilih rentang tanggal mulai dan akhir.';
-            }
-        },
-        // --------------------
-        
-        // === IMPORT EXCEL ===
-        openImportModal() {
-            this.showImportModal = true;
-            this.importFile = null;
-            this.importFileName = '';
-            document.body.style.overflow = 'hidden';
-        },
-        closeImportModal() {
-            this.showImportModal = false;
-            document.body.style.overflow = '';
-        },
-        handleFileSelect(e) {
-            const file = e.target.files[0];
-            if (file) {
-                this.importFile = file;
-                this.importFileName = file.name;
-            }
-        },
-        async submitImport() {
-            if (!this.importFile) return;
-            this.isImporting = true;
-            
-            try {
-                const fd = new FormData();
-                fd.append('file', this.importFile);
-                
-                const res = await fetch('{{ url_for("konselor_import_sesi") }}', {
-                    method: 'POST',
-                    body: fd
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    if (window.showAlert) window.showAlert('success', data.message);
-                    this.closeImportModal();
-                    this.loadRekap();
-                } else {
-                    if (window.showAlert) window.showAlert('error', data.message);
-                }
-            } catch (err) {
-                console.error(err);
-                if (window.showAlert) window.showAlert('error', 'Gagal mengimport data.');
-            } finally {
-                this.isImporting = false;
-            }
-        },
-        // --------------------
-
-        // === MODAL ===
+        // === MODAL DETAIL / EDIT ===
         openDetail(sesi) {
             this.selectedSesi = { ...sesi };
             this.isEditing = false;
             this.showModal = true;
-            document.body.style.overflow = 'hidden';
         },
-
         closeModal() {
             this.showModal = false;
             this.isEditing = false;
-            document.body.style.overflow = '';
         },
-
         startEdit() {
+            // Mapping kategori_masalah_id dari string comma separated ke array
+            let katIds = [];
+            if (this.selectedSesi.kategori_masalah_id) {
+                katIds = this.selectedSesi.kategori_masalah_id.split(',').map(id => id.trim());
+            }
+
             this.editForm = {
+                session_id: this.selectedSesi.id,
                 prodi: this.selectedSesi.prodi || '',
-                jenis_layanan_id: String(this.selectedSesi.jenis_layanan_id || ''),
-                kategori_masalah_id: this.selectedSesi.kategori_masalah_id ? String(this.selectedSesi.kategori_masalah_id).split(',') : [],
+                jenis_layanan_id: this.selectedSesi.jenis_layanan_id || '',
+                kategori_masalah_id: katIds,
                 topik: this.selectedSesi.topik || '',
                 tanggal_sesi: this.selectedSesi.tanggal_sesi || '',
-                tindak_lanjut: String(this.selectedSesi.tindak_lanjut_id || ''),
+                tindak_lanjut: this.selectedSesi.tindak_lanjut_id || '',
                 catatan_kesimpulan: this.selectedSesi.catatan_kesimpulan || ''
             };
             this.isEditing = true;
         },
-
         cancelEdit() {
             this.isEditing = false;
         },
-
         async saveEdit() {
+            if (this.isSaving) return;
             this.isSaving = true;
+
             try {
                 const fd = new FormData();
-                fd.append('session_id', this.selectedSesi.id);
-                for (const [key, value] of Object.entries(this.editForm)) {
-                    if (key === 'kategori_masalah_id') {
-                        fd.append('kategori_masalah_ids', JSON.stringify(value));
-                    } else {
-                        fd.append(key, value);
-                    }
-                }
+                fd.append('session_id', this.editForm.session_id);
+                fd.append('prodi', this.editForm.prodi);
+                fd.append('jenis_layanan_id', this.editForm.jenis_layanan_id);
+                fd.append('topik', this.editForm.topik);
+                fd.append('tanggal_sesi', this.editForm.tanggal_sesi);
+                fd.append('tindak_lanjut', this.editForm.tindak_lanjut);
+                fd.append('catatan_kesimpulan', this.editForm.catatan_kesimpulan);
+                // Backend expects JSON array string for kategori_masalah_ids
+                fd.append('kategori_masalah_ids', JSON.stringify(this.editForm.kategori_masalah_id));
 
                 const res = await fetch('{{ url_for("konselor_update_sesi") }}', {
                     method: 'POST',
@@ -869,6 +935,128 @@ function rekapApp() {
             }
         },
 
+        // === IMPORT EXCEL ===
+        openImportModal() {
+            this.importFile = null;
+            this.importFileName = '';
+            this.importProgress = 0;
+            this.showImportModal = true;
+            this.$nextTick(() => {
+                const fileInput = document.querySelector('input[type="file"]');
+                if (fileInput) fileInput.value = '';
+            });
+        },
+        closeImportModal() {
+            this.showImportModal = false;
+            this.stopPollingProgress();
+        },
+        handleFileSelect(e) {
+            const file = e.target.files ? e.target.files[0] : (e.dataTransfer ? e.dataTransfer.files[0] : null);
+            if (file) {
+                if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                    if (window.showAlert) window.showAlert('error', 'Format file harus .xlsx atau .xls');
+                    return;
+                }
+                this.importFile = file;
+                this.importFileName = file.name;
+            }
+            this.isDragging = false;
+        },
+        startPollingProgress() {
+            this.importProgress = 0;
+            this.pollingInterval = setInterval(async () => {
+                try {
+                    const res = await fetch('{{ url_for("konselor_import_sesi") }}');
+                    const data = await res.json();
+                    if (data.success) {
+                        this.importProgress = data.progress;
+                    }
+                } catch (err) {
+                    console.error('Polling error:', err);
+                }
+            }, 500); // Poll every 500ms
+        },
+        stopPollingProgress() {
+            if (this.pollingInterval) {
+                clearInterval(this.pollingInterval);
+                this.pollingInterval = null;
+            }
+        },
+        async submitImport() {
+            if (!this.importFile || this.isImporting) return;
+            this.isImporting = true;
+            this.importProgress = 0;
+            this.startPollingProgress();
+
+            try {
+                const fd = new FormData();
+                fd.append('file', this.importFile);
+
+                const res = await fetch('{{ url_for("konselor_import_sesi") }}', {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    this.importProgress = 100;
+                    setTimeout(() => {
+                        if (window.showAlert) window.showAlert('success', data.message);
+                        this.closeImportModal();
+                        this.loadRekap();
+                    }, 500);
+                } else {
+                    if (window.showAlert) window.showAlert('error', data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                if (window.showAlert) window.showAlert('error', 'Gagal mengimport data.');
+            } finally {
+                this.isImporting = false;
+                this.stopPollingProgress();
+            }
+        },
+
+        // === FILTER TANGGAL ===
+        openFilter() {
+            this.showFilterModal = true;
+            this.$nextTick(() => {
+                if (!this.fpInstance) {
+                    this.fpInstance = flatpickr("#calendar-container", {
+                        inline: true,
+                        mode: "range",
+                        dateFormat: "Y-m-d",
+                        locale: "id",
+                        onChange: (selectedDates) => {
+                            this.dateRange = selectedDates;
+                            if (selectedDates.length === 2) {
+                                const start = selectedDates[0].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+                                const end = selectedDates[1].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+                                this.selectedDateText = `${start} - ${end}`;
+                            } else {
+                                this.selectedDateText = "Pilih rentang tanggal";
+                            }
+                        }
+                    });
+                }
+            });
+        },
+        closeFilter() {
+            this.showFilterModal = false;
+        },
+        applyFilter() {
+            if (this.dateRange.length === 2) {
+                this.isFilterActive = true;
+                const start = this.dateRange[0].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+                const end = this.dateRange[1].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+                this.filterBtnText = `${start} - ${end}`;
+                this.closeFilter();
+            } else {
+                this.filterError = 'Silakan pilih rentang tanggal (Mulai & Selesai)';
+                setTimeout(() => this.filterError = '', 3000);
+            }
+        },
+
         // === DATA ===
         async loadRekap() {
             this.isLoading = true;
@@ -881,13 +1069,28 @@ function rekapApp() {
                     this.sessions = data.sessions || [];
 
                     this.$nextTick(() => {
+                        // 1. Kategori -> Vertical Bar
                         const katLabels = this.stats.kategori_distribusi.map(k => k.kategori);
                         const katData = this.stats.kategori_distribusi.map(k => k.jumlah);
-                        chartKategoriInstance = renderPieChart('chartKategori', katLabels, katData, chartKategoriInstance);
+                        chartKategoriInstance = renderAppChart('chartKategori', 'bar', katLabels, katData, chartKategoriInstance, (val) => {
+                            this.activeFilters.kategori = val;
+                        });
 
+                        // 2. Layanan -> Donut
                         const layLabels = this.stats.layanan_distribusi.map(l => l.layanan);
                         const layData = this.stats.layanan_distribusi.map(l => l.jumlah);
-                        chartLayananInstance = renderPieChart('chartLayanan', layLabels, layData, chartLayananInstance);
+                        chartLayananInstance = renderAppChart('chartLayanan', 'doughnut', layLabels, layData, chartLayananInstance, (val) => {
+                            this.activeFilters.layanan = val;
+                        });
+
+                        // 3. Prodi -> Horizontal Bar
+                        if (this.stats.prodi_distribusi) {
+                            const prodiLabels = this.stats.prodi_distribusi.map(p => p.prodi);
+                            const prodiData = this.stats.prodi_distribusi.map(p => p.jumlah);
+                            chartProdiInstance = renderAppChart('chartProdi', 'bar', prodiLabels, prodiData, chartProdiInstance, (val) => {
+                                this.activeFilters.prodi = val;
+                            }, { indexAxis: 'y' });
+                        }
                     });
                 }
             } catch (err) {
@@ -928,6 +1131,7 @@ function rekapApp() {
         }
     }
 }
+
 </script>
 </body>
 </html>

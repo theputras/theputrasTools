@@ -1007,6 +1007,22 @@ def konselor_lookup_civitas():
     try:
         user_id = g.user.get("sub")
         results = []
+
+        # 0. Cari di local database (konselor_data_klien) dulu
+        from models.konselor import klien_model
+        local_results = klien_model.get_all_by_id_civitas(query)
+        for local_klien in local_results:
+            results.append({
+                "role": (local_klien.get("status_civitas") or "mahasiswa").lower(),
+                "nim": local_klien["id_civitas"],
+                "nama_raw": local_klien["nama"],
+                "nama_sensor": local_klien["nama"] if local_klien["id_civitas"] in ['001', '002'] else censor_name(local_klien["nama"]),
+                "dosen_wali": local_klien["dosen_wali"],
+                "prodi": local_klien["prodi"],
+                "mbti": local_klien.get("mbti"),
+                "status_abk": local_klien.get("status_abk"),
+                "is_local": True
+            })
         
         is_11_digits = query.isdigit() and len(query) == 11
         is_6_digits = query.isdigit() and len(query) == 6
@@ -1076,8 +1092,17 @@ def konselor_lookup_civitas():
             if not df_mhs.empty: results.extend(process_df(df_mhs, "mahasiswa"))
             if not df_staff.empty: results.extend(process_df(df_staff, "staff"))
 
-        # Jika masih kosong
-        if not results:
+        # Deduplicate results based on NIM + Nama
+        seen_keys = set()
+        unique_results = []
+        for r in results:
+            # Gunakan tuple (nim, nama) sebagai key unik
+            key = (str(r['nim']).strip(), str(r.get('nama_raw', '')).strip())
+            if key not in seen_keys:
+                unique_results.append(r)
+                seen_keys.add(key)
+
+        if not unique_results:
             return jsonify(
                 {"success": False, "message": f"Data '{query}' tidak ditemukan."}
             )
@@ -1085,8 +1110,8 @@ def konselor_lookup_civitas():
         return jsonify(
             {
                 "success": True,
-                "count": len(results),
-                "data": results,
+                "count": len(unique_results),
+                "data": unique_results,
             }
         )
 
@@ -1132,19 +1157,24 @@ def konselor_download_template():
     return download_template_excel()
 
 
-@app.route("/konselor/sesi/import", methods=["POST"])
+@app.route("/konselor/sesi/import", methods=["GET", "POST"])
 @login_required
 def konselor_import_sesi():
-    """Import sesi dari excel dan auto-fill dari Sicyca"""
-    from controller.KonselorController import import_sesi_excel
-
+    """Import sesi (POST) atau cek progress import (GET)."""
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
-    # Passing the current user_id for the scraper to use
     user_id = g.user.get("sub")
-    return import_sesi_excel(request, user_id)
+    
+    if request.method == "POST":
+        from controller.KonselorController import import_sesi_excel
+        return import_sesi_excel(request, user_id)
+    else:
+        # Method GET: Cek progress
+        from controller.KonselorController import get_import_progress
+        progress = get_import_progress(user_id)
+        return jsonify({"success": True, "progress": progress})
 
 
 # === KONSELOR: Rekap Data (JSON) ===
@@ -1172,6 +1202,38 @@ def konselor_rekap_data():
             s["created_at"] = str(s["created_at"])
 
     return jsonify({"success": True, "stats": stats, "sessions": sessions})
+
+
+@app.route("/konselor/klien/data")
+@login_required
+def konselor_klien_data():
+    """Endpoint untuk mengambil data semua klien."""
+    from controller.KonselorController import get_all_klien_data
+
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    data = get_all_klien_data()
+    return jsonify({"success": True, "clients": data})
+
+
+@app.route("/konselor/klien/update-metadata", methods=["POST"])
+@login_required
+def konselor_update_klien_metadata():
+    """Endpoint untuk update metadata klien (MBTI, ABK)."""
+    from controller.KonselorController import update_klien_metadata
+
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    id_civitas = request.form.get("id_civitas")
+    if not id_civitas:
+        return jsonify({"success": False, "message": "ID Civitas wajib diisi"}), 400
+
+    success, message = update_klien_metadata(id_civitas, request.form)
+    return jsonify({"success": success, "message": message})
 
 
 # === KONSELOR: Hapus Sesi ===

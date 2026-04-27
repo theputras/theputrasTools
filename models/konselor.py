@@ -6,6 +6,134 @@ import logging
 from connection import get_connection
 
 
+class KlienModel:
+    """CRUD untuk master data Klien (Mahasiswa/Staff)."""
+
+    def _get_connection(self):
+        return get_connection()
+
+    def get_all(self):
+        conn = self._get_connection()
+        if not conn: return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM konselor_data_klien ORDER BY nama ASC")
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_all klien: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_by_id_civitas(self, id_civitas):
+        """Ambil satu data klien terbaru berdasarkan ID."""
+        conn = self._get_connection()
+        if not conn: return None
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas = %s ORDER BY updated_at DESC", (id_civitas,))
+            return cursor.fetchone()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_by_id_civitas: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_all_by_id_civitas(self, id_civitas):
+        """Ambil semua data klien yang memiliki ID yang sama (untuk 001/002)."""
+        conn = self._get_connection()
+        if not conn: return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas = %s ORDER BY nama ASC", (id_civitas,))
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_all_by_id_civitas: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_by_identity(self, id_civitas, nama):
+        """Ambil data klien berdasarkan kombinasi ID dan Nama."""
+        conn = self._get_connection()
+        if not conn: return None
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas = %s AND nama = %s", (id_civitas, (nama or "").strip()))
+            return cursor.fetchone()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_by_identity: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def upsert(self, data):
+        """Tambah atau update data klien (id_civitas + nama sebagai key). Mengembalikan ID klien."""
+        conn = self._get_connection()
+        if not conn: return None
+        cursor = conn.cursor()
+        try:
+            sql = """
+                INSERT INTO konselor_data_klien (id_civitas, nama, prodi, dosen_wali, mbti, status_abk, status_civitas)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (id_civitas, nama) DO UPDATE SET
+                    prodi = EXCLUDED.prodi,
+                    dosen_wali = EXCLUDED.dosen_wali,
+                    mbti = COALESCE(EXCLUDED.mbti, konselor_data_klien.mbti),
+                    status_abk = COALESCE(EXCLUDED.status_abk, konselor_data_klien.status_abk),
+                    status_civitas = EXCLUDED.status_civitas,
+                    updated_at = CURRENT_TIMESTAMP
+                RETURNING id
+            """
+            cursor.execute(sql, (
+                data.get('id_civitas'),
+                data.get('nama'),
+                data.get('prodi'),
+                data.get('dosen_wali'),
+                data.get('mbti'),
+                data.get('status_abk'),
+                data.get('status_civitas', 'Mahasiswa')
+            ))
+            client_id = cursor.fetchone()[0]
+            conn.commit()
+            return client_id
+        except Exception as e:
+            logging.error(f"[Konselor] Error upsert klien: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def update_metadata(self, id_civitas, nama, metadata):
+        """Update metadata khusus seperti MBTI atau ABK."""
+        conn = self._get_connection()
+        if not conn: return False
+        cursor = conn.cursor()
+        try:
+            fields = []
+            values = []
+            for k, v in metadata.items():
+                fields.append(f"{k} = %s")
+                values.append(v)
+            values.append(id_civitas)
+            values.append((nama or "").strip())
+            
+            sql = f"UPDATE konselor_data_klien SET {', '.join(fields)}, updated_at = CURRENT_TIMESTAMP WHERE id_civitas = %s AND nama = %s"
+            cursor.execute(sql, tuple(values))
+            conn.commit()
+            return True
+        except Exception as e:
+            logging.error(f"[Konselor] Error update_metadata klien: {e}")
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+
 class KategoriMasalahModel:
     """CRUD untuk master data Kategori Masalah."""
 
@@ -297,16 +425,13 @@ class KonselorSessionModel:
             cursor.execute(
                 """
                 INSERT INTO konselor_sessions
-                (konselor_user_id, nim_id, nama, dosen_wali, prodi, jenis_layanan_id, topik, tanggal_sesi, waktu_mulai, waktu_selesai, tindak_lanjut_id, catatan_kesimpulan)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (konselor_user_id, id_klien, jenis_layanan_id, topik, tanggal_sesi, waktu_mulai, waktu_selesai, tindak_lanjut_id, catatan_kesimpulan)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
             """,
                 (
                     data["konselor_user_id"],
-                    data["nim_id"],
-                    data.get("nama"),
-                    data.get("dosen_wali"),
-                    data.get("prodi"),
+                    data["id_klien"],
                     data["jenis_layanan_id"],
                     data["topik"],
                     data["tanggal_sesi"],
@@ -339,25 +464,32 @@ class KonselorSessionModel:
             conn.close()
 
     def get_sessions_by_konselor(self, user_id, bulan=None, tahun=None):
-        """Ambil daftar sesi milik konselor tertentu, opsional filter bulan/tahun."""
+        """Ambil daftar sesi milik konselor tertentu, opsional filter bulan/tahun dengan metadata klien."""
         conn = self._get_connection()
         if not conn:
             return []
         cursor = conn.cursor(dictionary=True)
         try:
             query = """
-                SELECT s.id, s.nim_id, s.nama, s.dosen_wali, s.prodi, s.topik, s.tanggal_sesi, s.waktu_mulai, s.waktu_selesai, s.tindak_lanjut_id, s.catatan_kesimpulan, s.created_at,
+                SELECT s.id, s.id_klien, dk.id_civitas as nim_id, dk.nama, dk.dosen_wali, dk.prodi, s.topik, s.tanggal_sesi, s.waktu_mulai, s.waktu_selesai, s.tindak_lanjut_id, s.catatan_kesimpulan, s.created_at,
                        s.jenis_layanan_id,
-                       STRING_AGG(km.id::text, ',') AS kategori_masalah_id,
-                       jl.nama AS jenis_layanan, STRING_AGG(km.nama, ', ') AS kategori_masalah, tl.nama AS tindak_lanjut
+                       dk.nama as nama_klien, dk.prodi as prodi_klien, dk.dosen_wali as dosen_wali_klien,
+                       dk.mbti, dk.status_abk, dk.status_civitas,
+                       STRING_AGG(DISTINCT km.id::text, ',') AS kategori_masalah_id,
+                       jl.nama AS jenis_layanan, STRING_AGG(DISTINCT km.nama, ', ') AS kategori_masalah, tl.nama AS tindak_lanjut
                 FROM konselor_sessions s
                 LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
                 LEFT JOIN konselor_session_kategori sk ON s.id = sk.session_id
                 LEFT JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
                 LEFT JOIN konselor_tindak_lanjut tl ON s.tindak_lanjut_id = tl.id
+                JOIN konselor_data_klien dk ON s.id_klien = dk.id
                 WHERE s.konselor_user_id = %s
             """
             params = [user_id]
+            group_by = """
+                GROUP BY s.id, dk.id, jl.nama, tl.nama
+                ORDER BY s.tanggal_sesi DESC, s.id DESC
+            """
 
             if bulan and tahun:
                 query += " AND EXTRACT(MONTH FROM s.tanggal_sesi) = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
@@ -366,7 +498,7 @@ class KonselorSessionModel:
                 query += " AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
                 params.append(tahun)
 
-            query += " GROUP BY s.id, jl.nama, tl.nama ORDER BY s.tanggal_sesi DESC, s.created_at DESC"
+            query += group_by
             cursor.execute(query, tuple(params))
             return cursor.fetchall()
         except Exception as e:
@@ -394,7 +526,7 @@ class KonselorSessionModel:
                 cursor.execute(
                     """
                     SELECT COUNT(*) AS total_sesi,
-                           COUNT(DISTINCT nim_id) AS klien_unik
+                           COUNT(DISTINCT id_klien) AS klien_unik
                     FROM konselor_sessions
                     WHERE konselor_user_id = %s AND EXTRACT(YEAR FROM tanggal_sesi) = %s
                 """,
@@ -404,7 +536,7 @@ class KonselorSessionModel:
                 cursor.execute(
                     """
                     SELECT COUNT(*) AS total_sesi,
-                           COUNT(DISTINCT nim_id) AS klien_unik
+                           COUNT(DISTINCT id_klien) AS klien_unik
                     FROM konselor_sessions
                     WHERE konselor_user_id = %s
                 """,
@@ -492,13 +624,42 @@ class KonselorSessionModel:
                 )
             layanan_dist = cursor.fetchall()
 
+            # Distribusi per Prodi
+            if tahun:
+                cursor.execute(
+                    """
+                    SELECT COALESCE(dk.prodi, 'Lainnya/Staff') AS prodi, COUNT(s.id) AS jumlah
+                    FROM konselor_sessions s
+                    JOIN konselor_data_klien dk ON s.id_klien = dk.id
+                    WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
+                    GROUP BY dk.prodi
+                    ORDER BY jumlah DESC
+                """,
+                    (user_id, tahun),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT COALESCE(dk.prodi, 'Lainnya/Staff') AS prodi, COUNT(s.id) AS jumlah
+                    FROM konselor_sessions s
+                    JOIN konselor_data_klien dk ON s.id_klien = dk.id
+                    WHERE s.konselor_user_id = %s
+                    GROUP BY dk.prodi
+                    ORDER BY jumlah DESC
+                """,
+                    (user_id,),
+                )
+            prodi_dist = cursor.fetchall()
+
             return {
                 "total_sesi": totals["total_sesi"] if totals else 0,
                 "klien_unik": totals["klien_unik"] if totals else 0,
                 "sesi_bulan_ini": bulan_ini["sesi_bulan_ini"] if bulan_ini else 0,
                 "kategori_distribusi": kategori_dist,
                 "layanan_distribusi": layanan_dist,
+                "prodi_distribusi": prodi_dist,
             }
+            
         except Exception as e:
             logging.error(f"[Konselor] Error get_rekap_stats: {e}")
             return None
@@ -516,8 +677,7 @@ class KonselorSessionModel:
             cursor.execute(
                 """
                 UPDATE konselor_sessions
-                SET prodi = %s,
-                    jenis_layanan_id = %s,
+                SET jenis_layanan_id = %s,
                     topik = %s,
                     tanggal_sesi = %s,
                     tindak_lanjut_id = %s,
@@ -525,7 +685,6 @@ class KonselorSessionModel:
                 WHERE id = %s AND konselor_user_id = %s
             """,
                 (
-                    data.get("prodi"),
                     data["jenis_layanan_id"],
                     data["topik"],
                     data["tanggal_sesi"],
@@ -601,17 +760,13 @@ class KonselorJadwalModel:
         try:
             cursor.execute(
                 """
-                INSERT INTO konselor_jadwal (konselor_user_id, nim, nama, prodi, dosen_wali, role, layanan_id, tanggal, jam, status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO konselor_jadwal (konselor_user_id, id_klien, layanan_id, tanggal, jam, status)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING id
             """,
                 (
                     data["konselor_user_id"],
-                    data["nim"],
-                    data.get("nama"),
-                    data.get("prodi"),
-                    data.get("dosen_wali"),
-                    data.get("role", "mahasiswa"),
+                    data["id_klien"],
                     data["layanan_id"],
                     data["tanggal"],
                     data["jam"],
@@ -635,18 +790,20 @@ class KonselorJadwalModel:
         try:
             if end_date:
                 query = """
-                    SELECT j.*, l.nama as layanan
+                    SELECT j.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
                     FROM konselor_jadwal j
                     LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                    JOIN konselor_data_klien dk ON j.id_klien = dk.id
                     WHERE j.konselor_user_id = %s AND j.tanggal >= %s AND j.tanggal <= %s
                     ORDER BY j.tanggal ASC, j.jam ASC
                 """
                 cursor.execute(query, (user_id, start_date, end_date))
             else:
                 query = """
-                    SELECT j.*, l.nama as layanan
+                    SELECT j.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
                     FROM konselor_jadwal j
                     LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                    JOIN konselor_data_klien dk ON j.id_klien = dk.id
                     WHERE j.konselor_user_id = %s AND j.tanggal >= %s
                     ORDER BY j.tanggal ASC, j.jam ASC
                 """
@@ -667,9 +824,10 @@ class KonselorJadwalModel:
         try:
             cursor.execute(
                 """
-                SELECT j.*, l.nama as layanan
+                SELECT j.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
                 FROM konselor_jadwal j
                 LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                JOIN konselor_data_klien dk ON j.id_klien = dk.id
                 WHERE j.id = %s
             """,
                 (jadwal_id,),
@@ -718,9 +876,10 @@ class KonselorJadwalModel:
         try:
             cursor.execute(
                 """
-                SELECT j.*, l.nama AS layanan
+                SELECT j.*, l.nama AS layanan, dk.id_civitas as nim, dk.nama, dk.prodi
                 FROM konselor_jadwal j
                 LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                JOIN konselor_data_klien dk ON j.id_klien = dk.id
                 WHERE j.konselor_user_id = %s
                 ORDER BY j.tanggal DESC, j.jam DESC
             """,
@@ -796,4 +955,5 @@ kategori_masalah_model = KategoriMasalahModel()
 jenis_layanan_model = JenisLayananModel()
 tindak_lanjut_model = TindakLanjutModel()
 konselor_session_model = KonselorSessionModel()
+klien_model = KlienModel()
 konselor_jadwal_model = KonselorJadwalModel()

@@ -119,14 +119,24 @@ CREATE TABLE google_oauth_tokens (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_google_oauth_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE TABLE konselor_data_klien (
+    id SERIAL PRIMARY KEY,
+    id_civitas VARCHAR(64) NOT NULL,
+    nama VARCHAR(150) DEFAULT NULL,
+    prodi VARCHAR(100) DEFAULT NULL,
+    dosen_wali VARCHAR(150) DEFAULT NULL,
+    mbti VARCHAR(20) DEFAULT NULL,
+    status_abk VARCHAR(100) DEFAULT NULL,
+    status_civitas VARCHAR(50) DEFAULT 'Mahasiswa',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_id_nama UNIQUE (id_civitas, nama)
+);
 
 CREATE TABLE konselor_sessions (
     id SERIAL PRIMARY KEY,
     konselor_user_id BIGINT NOT NULL,
-    nim_id VARCHAR(64) NOT NULL,
-    nama VARCHAR(150) DEFAULT NULL,
-    dosen_wali VARCHAR(150) DEFAULT NULL,
-    prodi VARCHAR(100) DEFAULT NULL,
+    id_klien INT NOT NULL,
     jenis_layanan_id INT NOT NULL,
     topik TEXT NOT NULL,
     tanggal_sesi DATE NOT NULL,
@@ -138,15 +148,14 @@ CREATE TABLE konselor_sessions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_konselor_session_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_konselor_session_layanan FOREIGN KEY (jenis_layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_konselor_session_tindak_lanjut FOREIGN KEY (tindak_lanjut_id) REFERENCES konselor_tindak_lanjut(id) ON DELETE RESTRICT
+    CONSTRAINT fk_konselor_session_tindak_lanjut FOREIGN KEY (tindak_lanjut_id) REFERENCES konselor_tindak_lanjut(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_konselor_session_klien FOREIGN KEY (id_klien) REFERENCES konselor_data_klien(id) ON DELETE CASCADE
 );
 
 CREATE TABLE konselor_jadwal (
     id SERIAL PRIMARY KEY,
     konselor_user_id BIGINT NOT NULL,
-    nim VARCHAR(64) NOT NULL,
-    nama VARCHAR(150) DEFAULT NULL,
-    prodi VARCHAR(100) DEFAULT NULL,
+    id_klien INT NOT NULL,
     layanan_id INT NOT NULL,
     tanggal DATE NOT NULL,
     jam VARCHAR(10) NOT NULL,
@@ -157,7 +166,8 @@ CREATE TABLE konselor_jadwal (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_konselor_jadwal_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_konselor_jadwal_layanan FOREIGN KEY (layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT
+    CONSTRAINT fk_konselor_jadwal_layanan FOREIGN KEY (layanan_id) REFERENCES konselor_jenis_layanan(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_konselor_jadwal_klien FOREIGN KEY (id_klien) REFERENCES konselor_data_klien(id) ON DELETE CASCADE
 );
 
 CREATE TABLE logbooks (

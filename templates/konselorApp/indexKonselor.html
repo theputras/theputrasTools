@@ -569,10 +569,18 @@
                                     class="text-sm font-semibold text-gray-800 truncate"
                                     x-text="mhs.nama"
                                 ></p>
-                                <p
-                                    class="text-xs text-gray-500"
-                                    x-text="mhs.nim + ' • ' + mhs.prodi"
-                                ></p>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <p
+                                        class="text-[10px] text-gray-500"
+                                        x-text="mhs.nim + ' • ' + mhs.prodi"
+                                    ></p>
+                                    <template x-if="mhs.mbti">
+                                        <span class="text-[9px] font-bold bg-violet-50 text-violet-500 px-1.5 py-0.5 rounded uppercase" x-text="mhs.mbti"></span>
+                                    </template>
+                                    <template x-if="mhs.status_abk">
+                                        <span class="text-[9px] font-bold bg-rose-50 text-rose-500 px-1.5 py-0.5 rounded" x-text="mhs.status_abk"></span>
+                                    </template>
+                                </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span
@@ -585,7 +593,7 @@
                                     x-text="mhs.statusKonseling"
                                 ></span>
                                 <a
-                                    :href="'{{ url_for('konselor_rekap') }}?nim=' + mhs.nim"
+                                    :href="'{{ url_for('konselor_rekap') }}?nim=' + mhs.nim + (['001', '002'].includes(mhs.nim) ? '&nama=' + encodeURIComponent(mhs.nama) : '')"
                                     class="text-gray-600 hover:text-violet-500 transition p-1.5 rounded-lg hover:bg-violet-50 opacity-0 group-hover:opacity-100 flex items-center justify-center"
                                     title="Lihat Rekap Sesi"
                                 >
@@ -654,13 +662,15 @@
 
                     async loadDashboardData() {
                         try {
-                            // Fetch jadwal hari ini + rekap data in parallel
-                            const [jadwalRes, rekapRes] = await Promise.all([
+                            // Fetch jadwal hari ini + rekap data + klien data in parallel
+                            const [jadwalRes, rekapRes, klienRes] = await Promise.all([
                                 fetch("/konselor/jadwal/data"),
                                 fetch('{{ url_for("konselor_rekap_data") }}'),
+                                fetch("/konselor/klien/data"),
                             ]);
                             const jadwalData = await jadwalRes.json();
                             const rekapData = await rekapRes.json();
+                            const klienData = await klienRes.json();
 
                             // --- Jadwal Hari Ini ---
                             if (jadwalData.success) {
@@ -706,7 +716,7 @@
 
                                 this.stats = {
                                     totalMahasiswa:
-                                        rekapData.stats.klien_unik || 0,
+                                        (klienData.clients || []).length,
                                     sesibulanIni:
                                         rekapData.stats.sesi_bulan_ini || 0,
                                     pending: pendingCount,
@@ -735,38 +745,36 @@
                                         };
                                     });
 
-                                // Build unique Mahasiswa Binaan based on latest session
-                                const binaanMap = new Map();
-                                // Sessions are ordered by tanggal_sesi DESC from backend
-                                sessions.forEach((s) => {
-                                    if (!binaanMap.has(s.nim_asli)) {
-                                        // Status dari tindak_lanjut terakhir (realtime dari DB)
-                                        const tl = (
-                                            s.tindak_lanjut || ""
-                                        ).trim();
-                                        const tlLower = tl.toLowerCase();
-                                        let statusKonseling = "Proses";
-                                        if (tlLower === "selesai") {
-                                            statusKonseling = "Selesai";
-                                        } else if (tl) {
-                                            // Ada tindak lanjut tapi bukan "Selesai" → masih progres
-                                            statusKonseling = "Aktif";
+                                // Build unique Mahasiswa Binaan based on Centralized Klien Table
+                                if (klienData.success) {
+                                    // Map session status for each client
+                                    const statusMap = new Map();
+                                    sessions.forEach((s) => {
+                                        if (!statusMap.has(s.nim_id)) {
+                                            const tl = (s.tindak_lanjut || "").trim().toLowerCase();
+                                            let status = "Aktif";
+                                            if (tl === "selesai") status = "Selesai";
+                                            statusMap.set(s.nim_id, status);
                                         }
-                                        binaanMap.set(s.nim_asli, {
-                                            nama:
-                                                s.nama_sensor &&
-                                                s.nama_sensor !== "-"
-                                                    ? s.nama_sensor
-                                                    : s.nim_asli,
-                                            nim: s.nim_asli,
-                                            prodi: s.prodi || "Tidak diketahui",
-                                            statusKonseling: statusKonseling,
-                                        });
-                                    }
-                                });
-                                this.mahasiswaBinaan = Array.from(
-                                    binaanMap.values(),
-                                );
+                                    });
+
+                                    this.mahasiswaBinaan = klienData.clients.map((c) => {
+                                        // Helper to censor name (similar to backend logic)
+                                        const censor = (nama) => {
+                                            if (!nama) return "-";
+                                            return nama.split(' ').map(w => w[0] + '*'.repeat(Math.max(0, w.length-1))).join(' ');
+                                        };
+
+                                        return {
+                                            nama: (c.id_civitas === '001' || c.id_civitas === '002') ? c.nama : censor(c.nama),
+                                            nim: c.id_civitas,
+                                            prodi: c.prodi || "Tidak diketahui",
+                                            mbti: c.mbti,
+                                            status_abk: c.status_abk,
+                                            statusKonseling: statusMap.get(c.id_civitas) || "Proses",
+                                        };
+                                    });
+                                }
                             }
                         } catch (err) {
                             console.error("Gagal load data dashboard:", err);

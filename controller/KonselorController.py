@@ -9,7 +9,17 @@ from models.konselor import (
     kategori_masalah_model,
     konselor_session_model,
     tindak_lanjut_model,
+    klien_model,
 )
+
+
+# Global store for import progress
+import_progress = {}
+
+
+def get_import_progress(user_id):
+    """Ambil persentase progress import untuk user tertentu."""
+    return import_progress.get(str(user_id), 0)
 
 
 def censor_name(nama):
@@ -81,13 +91,22 @@ def create_sesi(konselor_user_id, form_data):
     if not tanggal_sesi:
         return False, "Tanggal sesi wajib diisi."
 
-    # 2. Simpan ke database
+    # 2. Upsert ke tabel data klien untuk sinkronisasi dan dapatkan ID
+    klien_data = {
+        "id_civitas": nim_raw,
+        "nama": nama,
+        "prodi": prodi,
+        "dosen_wali": dosen_wali,
+        "status_civitas": "Mahasiswa"
+    }
+    id_klien = klien_model.upsert(klien_data)
+    if not id_klien:
+        return False, "Gagal memproses data klien."
+
+    # 3. Simpan ke database sesi
     data = {
         "konselor_user_id": konselor_user_id,
-        "nim_id": nim_raw,
-        "nama": nama if nama else None,
-        "dosen_wali": dosen_wali if dosen_wali else None,
-        "prodi": prodi if prodi else None,
+        "id_klien": id_klien,
         "jenis_layanan_id": int(jenis_layanan_id),
         "kategori_masalah_ids": kategori_masalah_ids,
         "topik": topik,
@@ -211,12 +230,22 @@ def create_sesi_bulk(konselor_user_id, form_data):
                     f"[Konselor Bulk] Auto-lookup dosen wali gagal untuk {nim_raw}: {e}"
                 )
 
+        # Upsert ke tabel data klien untuk sinkronisasi dan dapatkan ID
+        kd = {
+            "id_civitas": nim_raw,
+            "nama": nama,
+            "prodi": prodi,
+            "dosen_wali": dosen_wali,
+            "status_civitas": p.get("role", "Mahasiswa")
+        }
+        id_klien = klien_model.upsert(kd)
+        if not id_klien:
+            failed_nims.append(nim_raw)
+            continue
+
         data = {
             "konselor_user_id": konselor_user_id,
-            "nim_id": nim_raw,
-            "nama": nama if nama else None,
-            "dosen_wali": dosen_wali if dosen_wali else None,
-            "prodi": prodi if prodi else None,
+            "id_klien": id_klien,
             "jenis_layanan_id": int(jenis_layanan_id),
             "kategori_masalah_ids": kategori_masalah_ids,
             "topik": topik,
@@ -310,7 +339,6 @@ def update_sesi(session_id, konselor_user_id, form_data):
         return False, "Tanggal sesi wajib diisi."
 
     data = {
-        "prodi": prodi if prodi else None,
         "jenis_layanan_id": int(jenis_layanan_id),
         "kategori_masalah_ids": kategori_masalah_ids,
         "topik": topik,
@@ -345,13 +373,21 @@ def create_jadwal(konselor_user_id, form_data):
         if j["status"] in ("Menunggu", "Berlangsung") and j["jam"] == jam:
             return False, f"Jadwal pada jam {jam} sudah terisi."
 
+    # Upsert ke tabel data klien untuk sinkronisasi dan dapatkan ID
+    klien_data = {
+        "id_civitas": nim,
+        "nama": nama,
+        "prodi": prodi,
+        "dosen_wali": dosen_wali,
+        "status_civitas": role
+    }
+    id_klien = klien_model.upsert(klien_data)
+    if not id_klien:
+        return False, "Gagal memproses data klien."
+
     data = {
         "konselor_user_id": konselor_user_id,
-        "nim": nim,
-        "nama": nama if nama else None,
-        "prodi": prodi if prodi else None,
-        "dosen_wali": dosen_wali if dosen_wali else None,
-        "role": role,
+        "id_klien": id_klien,
         "layanan_id": int(layanan_id),
         "tanggal": tanggal,
         "jam": jam,
@@ -495,30 +531,25 @@ from scrapper_requests import search_mahasiswa
 
 
 def download_template_excel():
+    from datetime import datetime
+
     df = pd.DataFrame(
         columns=[
-            "NIM",
+            "NIM/NIK/Kode",
             "Tanggal Sesi (YYYY-MM-DD)",
             "Topik Permasalahan",
-            "Jenis Layanan ID",
-            "Kategori Masalah IDs (Pisahkan dengan koma)",
-            "Tindak Lanjut ID (Opsional)",
-            "Prodi (Opsional)",
+            "Jenis Layanan",
+            "Kategori Masalah (Pisahkan dengan koma)",
+            "Tindak Lanjut",
             "Nama (Opsional)",
-            "Dosen Wali (Opsional)",
         ]
     )
 
-    layanan = pd.DataFrame(get_all_layanan())
-    kategori = pd.DataFrame(get_all_kategori())
-    tindak_lanjut = pd.DataFrame(get_all_tindak_lanjut())
+    sheet_name = datetime.now().strftime("%B %Y")
 
     output = BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        df.to_excel(writer, sheet_name="Form Import", index=False)
-        layanan.to_excel(writer, sheet_name="Ref Layanan", index=False)
-        kategori.to_excel(writer, sheet_name="Ref Kategori", index=False)
-        tindak_lanjut.to_excel(writer, sheet_name="Ref Tindak Lanjut", index=False)
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
 
     output.seek(0)
     return send_file(
@@ -538,13 +569,29 @@ def import_sesi_excel(request, user_id):
         return jsonify({"success": False, "message": "File tidak valid"})
 
     try:
-        df = pd.read_excel(file, sheet_name="Form Import")
-        df = df.fillna("")
+        # Baca semua sheet sekaligus
+        all_sheets = pd.read_excel(file, sheet_name=None)
+        df_list = []
+        
+        # Iterasi tiap sheet
+        for sheet_name, sheet_df in all_sheets.items():
+            # Cek apakah sheet ini punya kolom minimal (NIM/NIK/Kode)
+            cols = [str(c).strip().lower() for c in sheet_df.columns]
+            if "nim/nik/kode" in cols or "nim" in cols:
+                sheet_df = sheet_df.fillna("")
+                df_list.append(sheet_df)
+        
+        if not df_list:
+            return jsonify({"success": False, "message": "Tidak ada data valid ditemukan di sheet manapun (Pastikan header sesuai template)"})
+        
+        df = pd.concat(df_list, ignore_index=True)
 
         success_count = 0
         error_count = 0
+        skipped_count = 0
 
         from app import majorID
+        from models.konselor import konselor_session_model
 
         layanan_map = {v["nama"].lower().strip(): v["id"] for v in get_all_layanan()}
         kategori_map = {
@@ -552,12 +599,48 @@ def import_sesi_excel(request, user_id):
         }
         tl_map = {v["nama"].lower().strip(): v["id"] for v in get_all_tindak_lanjut()}
 
+        # Ambil sesi yang sudah ada untuk pengecekan duplikat
+        existing_sessions = konselor_session_model.get_sessions_by_konselor(user_id)
+        existing_keys = set()
+        for s in existing_sessions:
+            e_nim = str(s.get("nim_id", "")).strip()
+            e_tgl_val = s.get("tanggal_sesi")
+            if hasattr(e_tgl_val, "strftime"):
+                e_tgl = e_tgl_val.strftime("%Y-%m-%d")
+            else:
+                e_tgl = str(e_tgl_val).strip()
+                if " " in e_tgl:
+                    e_tgl = e_tgl.split(" ")[0]
+            e_topik = str(s.get("topik", "")).strip().lower()
+            existing_keys.add((e_nim, e_tgl, e_topik))
+
+        total_rows = len(df)
+        import_progress[str(user_id)] = 0
+
         for index, row in df.iterrows():
-            nim = str(row.get("NIM", "")).strip()
+            # Helper untuk ambil value kolom secara case-insensitive
+            def get_col(names):
+                for name in names:
+                    for c in row.index:
+                        if str(c).strip().lower() == name.lower():
+                            return str(row[c]).strip()
+                return ""
+
+            # Update progress
+            if total_rows > 0:
+                import_progress[str(user_id)] = int(((index + 1) / total_rows) * 100)
+            
+            nim = get_col(["NIM/NIK/Kode", "NIM", "NIK"])
+            if nim.startswith("'"):
+                nim = nim[1:]
             if nim.endswith(".0"):
                 nim = nim[:-2]
+            
+            # Normalisasi kode khusus (misal '2' dari CSV jadi '002')
+            if nim.isdigit() and len(nim) < 3 and int(nim) in [1, 2]:
+                nim = nim.zfill(3)
 
-            tanggal_raw = str(row.get("Tanggal Sesi (YYYY-MM-DD)", "")).strip()
+            tanggal_raw = get_col(["Tanggal Sesi (YYYY-MM-DD)", "Tanggal Sesi", "Tanggal"])
             if " " in tanggal_raw:
                 tanggal_raw = tanggal_raw.split(" ")[0]
             try:
@@ -565,19 +648,31 @@ def import_sesi_excel(request, user_id):
                 tanggal = parsed_date.strftime("%Y-%m-%d")
             except Exception:
                 tanggal = tanggal_raw
+            
+            topik = get_col(["Topik Permasalahan", "Topik"])
 
-            topik = str(row.get("Topik Permasalahan", "")).strip()
+            if (nim, tanggal, topik.lower()) in existing_keys:
+                skipped_count += 1
+                logging.info(f"[Konselor Import] Skip duplikat NIM {nim} pada {tanggal}")
+                continue
 
-            jenis_layanan_val = str(row.get("Jenis Layanan ID", "")).strip()
+            jenis_layanan_val = get_col(["Jenis Layanan", "Jenis Layanan ID", "Layanan"])
             jenis_layanan_id = None
-            if jenis_layanan_val.isdigit():
-                jenis_layanan_id = int(jenis_layanan_val)
-            elif jenis_layanan_val.endswith(".0") and jenis_layanan_val[:-2].isdigit():
-                jenis_layanan_id = int(jenis_layanan_val[:-2])
-            else:
-                jenis_layanan_id = layanan_map.get(jenis_layanan_val.lower())
+            if jenis_layanan_val:
+                if jenis_layanan_val.isdigit():
+                    jenis_layanan_id = int(jenis_layanan_val)
+                elif jenis_layanan_val.endswith(".0") and jenis_layanan_val[:-2].isdigit():
+                    jenis_layanan_id = int(jenis_layanan_val[:-2])
+                else:
+                    jl_lower = jenis_layanan_val.lower()
+                    if jl_lower in layanan_map:
+                        jenis_layanan_id = layanan_map[jl_lower]
+                    else:
+                        create_layanan(jenis_layanan_val)
+                        layanan_map = {v["nama"].lower().strip(): v["id"] for v in get_all_layanan()}
+                        jenis_layanan_id = layanan_map.get(jl_lower)
 
-            tl_val = str(row.get("Tindak Lanjut ID (Opsional)", "")).strip()
+            tl_val = get_col(["Tindak Lanjut", "Tindak Lanjut ID", "Status"])
             tindak_lanjut_id = None
             if tl_val:
                 if tl_val.isdigit():
@@ -585,15 +680,17 @@ def import_sesi_excel(request, user_id):
                 elif tl_val.endswith(".0") and tl_val[:-2].isdigit():
                     tindak_lanjut_id = int(tl_val[:-2])
                 else:
-                    tindak_lanjut_id = tl_map.get(tl_val.lower())
-
-            kategori_raw = str(
-                row.get("Kategori Masalah IDs (Pisahkan dengan koma)", "")
-            ).strip()
-
-            prodi = str(row.get("Prodi (Opsional)", "")).strip()
-            nama = str(row.get("Nama (Opsional)", "")).strip()
-            dosen_wali = str(row.get("Dosen Wali (Opsional)", "")).strip()
+                    tl_lower = tl_val.lower()
+                    if tl_lower in tl_map:
+                        tindak_lanjut_id = tl_map[tl_lower]
+                    else:
+                        create_tindak_lanjut(tl_val)
+                        tl_map = {v["nama"].lower().strip(): v["id"] for v in get_all_tindak_lanjut()}
+                        tindak_lanjut_id = tl_map.get(tl_lower)
+            kategori_raw = get_col(["Kategori Masalah (Pisahkan dengan koma)", "Kategori Masalah", "Kategori"])
+            prodi = get_col(["Prodi (Opsional)", "Prodi", "Bagian"])
+            nama = get_col(["Nama (Opsional)", "Nama"])
+            dosen_wali = get_col(["Dosen Wali (Opsional)", "Dosen Wali", "Dosen"])
 
             if (
                 not nim
@@ -619,6 +716,11 @@ def import_sesi_excel(request, user_id):
                     k_norm = k.lower().replace(" ", "")
                     if k_norm in kategori_map:
                         kategori_ids.append(kategori_map[k_norm])
+                    else:
+                        create_kategori(k)
+                        kategori_map = {v["nama"].lower().replace(" ", ""): v["id"] for v in get_all_kategori()}
+                        if k_norm in kategori_map:
+                            kategori_ids.append(kategori_map[k_norm])
 
             if not kategori_ids:
                 error_count += 1
@@ -627,7 +729,13 @@ def import_sesi_excel(request, user_id):
                 )
                 continue
 
-            if not nama or not dosen_wali or not prodi:
+            if nim in ["001", "002"]:
+                # Kode khusus: 001 (Manual), 002 (Dummy)
+                if nim == "002" and not nama:
+                    nama = "Mahasiswa Dummy"
+                    prodi = "S1 Sistem Informasi"
+                    dosen_wali = "Dosen Dummy"
+            elif not nama or not dosen_wali or not prodi:
                 try:
                     df_mhs = search_mahasiswa(nim, user_id=user_id)
                     if not df_mhs.empty:
@@ -643,12 +751,23 @@ def import_sesi_excel(request, user_id):
                 except Exception as e:
                     logging.error(f"[Konselor] Auto-fill gagal untuk NIM {nim}: {e}")
 
+            # Upsert ke tabel data klien untuk sinkronisasi dan dapatkan ID
+            kd = {
+                "id_civitas": nim,
+                "nama": nama,
+                "prodi": prodi,
+                "dosen_wali": dosen_wali,
+                "status_civitas": "Mahasiswa"
+            }
+            id_klien = klien_model.upsert(kd)
+            if not id_klien:
+                error_count += 1
+                logging.error(f"[Konselor Import] Gagal upsert klien {nim}")
+                continue
+
             data = {
                 "konselor_user_id": user_id,
-                "nim_id": nim,
-                "nama": nama if nama else None,
-                "dosen_wali": dosen_wali if dosen_wali else None,
-                "prodi": prodi if prodi else None,
+                "id_klien": id_klien,
                 "jenis_layanan_id": jenis_layanan_id,
                 "kategori_masalah_ids": kategori_ids,
                 "topik": topik,
@@ -659,17 +778,48 @@ def import_sesi_excel(request, user_id):
             success, msg = konselor_session_model.create_session(data)
             if success:
                 success_count += 1
+                existing_keys.add((nim, tanggal, topik.lower()))
             else:
                 error_count += 1
                 logging.error(f"[Konselor Import] Gagal simpan sesi {nim}: {msg}")
 
+        msg_parts = [f"Import selesai. {success_count} berhasil."]
+        if skipped_count > 0:
+            msg_parts.append(f"{skipped_count} dilewati (duplikat).")
+        if error_count > 0:
+            msg_parts.append(f"{error_count} gagal/tidak lengkap.")
+
+        # Clean up progress after finish
+        if str(user_id) in import_progress:
+            del import_progress[str(user_id)]
+
         return jsonify(
             {
                 "success": True,
-                "message": f"Import selesai. {success_count} berhasil, {error_count} gagal/dilewati.",
+                "message": " ".join(msg_parts),
             }
         )
 
     except Exception as e:
         logging.error(f"[Konselor Import] Error: {e}")
         return jsonify({"success": False, "message": f"Gagal membaca file: {str(e)}"})
+
+def get_all_klien_data():
+    """Ambil semua data klien untuk dashboard."""
+    return klien_model.get_all()
+
+
+def update_klien_metadata(id_civitas, form_data):
+    """Update metadata mbti/abk dari klien."""
+    metadata = {}
+    if "mbti" in form_data:
+        metadata["mbti"] = form_data.get("mbti")
+    if "status_abk" in form_data:
+        metadata["status_abk"] = form_data.get("status_abk")
+    
+    if not metadata:
+        return False, "Tidak ada data untuk diupdate"
+    
+    nama = form_data.get("nama")
+    success = klien_model.update_metadata(id_civitas, nama, metadata)
+    return success, "Data berhasil diperbarui" if success else "Gagal memperbarui data"
