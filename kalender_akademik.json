@@ -1,0 +1,398 @@
+{
+    "metadata": {
+        "last_scraped": "Sunday, 26 April 2026 22:29:31",
+        "total_jadwal": 65
+    },
+    "data": [
+        {
+            "date": "2026-02-16",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-02-17",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-02-23",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-02-24",
+            "title": "Pengumuman Nilai",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-02-25",
+            "title": "Herregistrasi & Perwalian",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-02-26",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-02-27",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-02-28",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-02-13",
+            "title": "Kelengkapan Yudisium Akhir",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-02-20",
+            "title": "Pengumuman Yudisium",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-03-23",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-24",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-25",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-26",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-27",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-18",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-19",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-20",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-21",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-03-30",
+            "title": "Pembatalan KRS",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-03-31",
+            "title": "Pembatalan KRS",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-04-02",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-04-03",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-04-27",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-04-28",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-04-29",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-04-30",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-05-01",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-05-04",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-05-05",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-05-06",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-05-07",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-05-08",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-05-14",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-05-15",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-05-20",
+            "title": "Hari Upacara",
+            "color": "bg-purple-500/20 text-purple-300 border-purple-500/30",
+            "icon": "fa-graduation-cap"
+        },
+        {
+            "date": "2026-05-27",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-05-28",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-05-02",
+            "title": "Hari Upacara",
+            "color": "bg-purple-500/20 text-purple-300 border-purple-500/30",
+            "icon": "fa-graduation-cap"
+        },
+        {
+            "date": "2026-06-01",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-06-16",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-06-19",
+            "title": "Daftar Sidang TA Akhir",
+            "color": "bg-purple-500/20 text-purple-300 border-purple-500/30",
+            "icon": "fa-graduation-cap"
+        },
+        {
+            "date": "2026-06-29",
+            "title": "Hari Tenang",
+            "color": "bg-blue-500/20 text-blue-300 border-blue-500/30",
+            "icon": "fa-book"
+        },
+        {
+            "date": "2026-06-30",
+            "title": "Hari Tenang",
+            "color": "bg-blue-500/20 text-blue-300 border-blue-500/30",
+            "icon": "fa-book"
+        },
+        {
+            "date": "2026-06-30",
+            "title": "Daftar Sidang TA Akhir",
+            "color": "bg-purple-500/20 text-purple-300 border-purple-500/30",
+            "icon": "fa-graduation-cap"
+        },
+        {
+            "date": "2026-06-30",
+            "title": "Pengumuman Presensi",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-07-01",
+            "title": "Hari Tenang",
+            "color": "bg-blue-500/20 text-blue-300 border-blue-500/30",
+            "icon": "fa-book"
+        },
+        {
+            "date": "2026-07-02",
+            "title": "Hari Tenang",
+            "color": "bg-blue-500/20 text-blue-300 border-blue-500/30",
+            "icon": "fa-book"
+        },
+        {
+            "date": "2026-07-03",
+            "title": "Hari Tenang",
+            "color": "bg-blue-500/20 text-blue-300 border-blue-500/30",
+            "icon": "fa-book"
+        },
+        {
+            "date": "2026-07-06",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-07-07",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-07-08",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-07-09",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-07-10",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-07-13",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-07-14",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-07-15",
+            "title": "UTS / UAS",
+            "color": "bg-amber-500/20 text-amber-300 border-amber-500/30",
+            "icon": "fa-edit"
+        },
+        {
+            "date": "2026-08-07",
+            "title": "Kelengkapan Yudisium Akhir",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-08-14",
+            "title": "Pengumuman Yudisium",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-08-17",
+            "title": "Hari Upacara",
+            "color": "bg-purple-500/20 text-purple-300 border-purple-500/30",
+            "icon": "fa-graduation-cap"
+        },
+        {
+            "date": "2026-08-17",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        },
+        {
+            "date": "2026-08-19",
+            "title": "Pengumuman Nilai",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-08-19",
+            "title": "Herregistrasi & Perwalian",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-08-20",
+            "title": "Herregistrasi & Perwalian",
+            "color": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+            "icon": "fa-clipboard-list"
+        },
+        {
+            "date": "2026-08-25",
+            "title": "Libur Nasional",
+            "color": "bg-red-500/20 text-red-300 border-red-500/30",
+            "icon": "fa-star"
+        }
+    ]
+}

@@ -13,3 +13,5 @@ app.log
 *.log
 htmlgateAsli/
 app.log
+notes.txt
+venv/

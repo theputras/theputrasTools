@@ -126,6 +126,8 @@ from scrapper_requests import (
     fetch_sskm_data,
     scrape_data,
     search_mahasiswa,
+    search_staff,
+    scrape_kalender_akademik,
 )
 
 load_dotenv()  # biar bisa baca file .env
@@ -664,10 +666,11 @@ def index():
                 # Sayangnya parse string %A, %d %B %Y agak tricky dengan locale.
                 # Jadi kita biarkan user refresh manual kalau parse gagal. Tapi kita coba parse aja dulu.
                 import locale
+
                 dt_scraped = datetime.strptime(last_scraped, "%A, %d %B %Y %H:%M:%S")
                 now = datetime.now()
                 today_5am = now.replace(hour=5, minute=0, second=0, microsecond=0)
-                
+
                 if now >= today_5am and dt_scraped < today_5am:
                     needs_scrape = True
                 elif now < today_5am and dt_scraped < (today_5am - timedelta(days=1)):
@@ -675,13 +678,16 @@ def index():
             except ValueError:
                 # Parse gagal karena locale (misal "Senin, 24 April 2026 ...")
                 # Kita asumsikan aja butuh scrape kalau jadwal kosong
-                if not jadwal_data: needs_scrape = True
+                if not jadwal_data:
+                    needs_scrape = True
 
         if needs_scrape:
             # Cegah double execution dengan mengecek status yang ada di memory
             status_jadwal = JADWAL_STATUS.get(user_id, {}).get("status")
             if status_jadwal != "loading":
-                logging.info(f"[LAZY SCRAPE] Menjalankan jadwal otomatis untuk user_id: {user_id}")
+                logging.info(
+                    f"[LAZY SCRAPE] Menjalankan jadwal otomatis untuk user_id: {user_id}"
+                )
                 executor.submit(run_scraper_and_save, user_id)
                 # Tambahkan fake message agar frontend tahu sedang loading
                 last_scraped = "Memproses pembaruan otomatis di belakang layar..."
@@ -727,7 +733,6 @@ def konselor_dashboard():
     return render_template("konselorApp/indexKonselor.html")
 
 
-
 # === KONSELOR: Jadwal Main ===
 @app.route("/konselor/jadwal")
 @login_required
@@ -735,9 +740,15 @@ def konselor_jadwal_main():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return redirect(url_for("index"))
-    
+
     from controller.KonselorController import get_all_layanan
-    return render_template("konselorApp/jadwalKonsul_konselor/jadwal_main.html", layanan_list=get_all_layanan())
+
+    return render_template(
+        "konselorApp/jadwalKonsul_konselor/jadwal_main.html",
+        layanan_list=get_all_layanan(),
+        prodi_list=majorID,
+    )
+
 
 @app.route("/konselor/jadwal/data")
 @login_required
@@ -745,21 +756,21 @@ def konselor_jadwal_data():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-        
+
     from controller.KonselorController import get_jadwal_by_date
+
     user_id = g.user.get("sub")
-    
+
     today = datetime.now(SCHEDULER_TZ).strftime("%Y-%m-%d")
     jadwal_hari_ini = get_jadwal_by_date(user_id, today, today)
-    
+
     tomorrow = (datetime.now(SCHEDULER_TZ) + timedelta(days=1)).strftime("%Y-%m-%d")
     jadwal_mendatang = get_jadwal_by_date(user_id, tomorrow)
-    
-    return jsonify({
-        "success": True,
-        "hari_ini": jadwal_hari_ini,
-        "mendatang": jadwal_mendatang
-    })
+
+    return jsonify(
+        {"success": True, "hari_ini": jadwal_hari_ini, "mendatang": jadwal_mendatang}
+    )
+
 
 @app.route("/konselor/jadwal/create", methods=["POST"])
 @login_required
@@ -767,11 +778,13 @@ def konselor_jadwal_create():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-        
+
     from controller.KonselorController import create_jadwal
+
     user_id = g.user.get("sub")
     success, msg = create_jadwal(user_id, request.form)
     return jsonify({"success": success, "message": msg})
+
 
 @app.route("/konselor/jadwal/reschedule", methods=["POST"])
 @login_required
@@ -779,12 +792,14 @@ def konselor_jadwal_reschedule():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-        
+
     from controller.KonselorController import reschedule_jadwal
+
     user_id = g.user.get("sub")
     jadwal_id = request.form.get("id")
     success, msg = reschedule_jadwal(jadwal_id, user_id, request.form)
     return jsonify({"success": success, "message": msg})
+
 
 @app.route("/konselor/jadwal/update-status", methods=["POST"])
 @login_required
@@ -792,17 +807,45 @@ def konselor_jadwal_update_status():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-        
+
     from controller.KonselorController import update_status_jadwal
+
     user_id = g.user.get("sub")
     jadwal_id = request.form.get("id")
     status = request.form.get("status")
-    
+
     if not jadwal_id or not status:
         return jsonify({"success": False, "message": "Data tidak lengkap"}), 400
-        
+
     success, msg = update_status_jadwal(jadwal_id, user_id, status)
     return jsonify({"success": success, "message": msg})
+
+
+@app.route("/konselor/jadwal/history")
+@login_required
+def konselor_jadwal_history():
+    """Ambil semua riwayat jadwal milik konselor untuk tab History."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import censor_name
+    from models.konselor import konselor_jadwal_model
+
+    user_id = g.user.get("sub")
+    try:
+        jadwals = konselor_jadwal_model.get_all_by_konselor(user_id)
+        for j in jadwals:
+            jam_str = str(j.get("jam", ""))
+            if len(jam_str) > 5:
+                j["jam"] = jam_str[:5]
+            j["tanggal"] = str(j.get("tanggal", ""))
+            j["nama_sensor"] = censor_name(j.get("nama"))
+        return jsonify({"success": True, "history": jadwals})
+    except Exception as e:
+        logging.error(f"[Konselor] Jadwal history error: {e}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
 
 @app.route("/konselor/jadwal/slots")
 @login_required
@@ -810,15 +853,17 @@ def konselor_jadwal_slots():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-        
+
     from controller.KonselorController import get_available_slots
+
     user_id = g.user.get("sub")
     tanggal = request.args.get("tanggal")
     if not tanggal:
-         return jsonify({"success": False, "message": "Tanggal wajib diisi"})
-         
+        return jsonify({"success": False, "message": "Tanggal wajib diisi"})
+
     slots = get_available_slots(user_id, tanggal)
     return jsonify({"success": True, "slots": slots})
+
 
 @app.route("/konselor/live-session")
 @login_required
@@ -826,39 +871,49 @@ def konselor_live_session():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return redirect(url_for("index"))
-        
-    from controller.KonselorController import get_jadwal_detail, update_status_jadwal, get_all_kategori, get_all_tindak_lanjut
+
+    from controller.KonselorController import (
+        get_all_kategori,
+        get_all_tindak_lanjut,
+        get_jadwal_detail,
+        update_status_jadwal,
+    )
+
     user_id = g.user.get("sub")
     jadwal_id = request.args.get("id")
-    
+
     if not jadwal_id:
         return redirect(url_for("konselor_jadwal_main"))
-        
+
     jadwal = get_jadwal_detail(jadwal_id)
-    if not jadwal or str(jadwal['konselor_user_id']) != str(user_id):
-         flash("Jadwal tidak ditemukan.", "error")
-         return redirect(url_for("konselor_jadwal_main"))
-         
-    if jadwal['status'] in ['Selesai', 'Dibatalkan']:
-         flash("Sesi sudah selesai atau dibatalkan.", "error")
-         return redirect(url_for("konselor_jadwal_main"))
-         
-    if jadwal['status'] in ['Menunggu', 'Jeda']:
-        update_status_jadwal(jadwal_id, user_id, 'Berlangsung')
+    if not jadwal or str(jadwal["konselor_user_id"]) != str(user_id):
+        flash("Jadwal tidak ditemukan.", "error")
+        return redirect(url_for("konselor_jadwal_main"))
+
+    if jadwal["status"] in ["Selesai", "Dibatalkan"]:
+        flash("Sesi sudah selesai atau dibatalkan.", "error")
+        return redirect(url_for("konselor_jadwal_main"))
+
+    if jadwal["status"] in ["Menunggu", "Jeda"]:
+        update_status_jadwal(jadwal_id, user_id, "Berlangsung")
         # Re-fetch untuk mendapatkan update waktu_mulai dan total_pause_ms yang baru
         jadwal = get_jadwal_detail(jadwal_id)
-        
-    if jadwal.get('waktu_mulai'):
+
+    if jadwal.get("waktu_mulai"):
         from datetime import datetime
-        if isinstance(jadwal['waktu_mulai'], datetime):
-             jadwal['waktu_mulai'] = jadwal['waktu_mulai'].isoformat()
+
+        if isinstance(jadwal["waktu_mulai"], datetime):
+            jadwal["waktu_mulai"] = jadwal["waktu_mulai"].isoformat()
         else:
-             jadwal['waktu_mulai'] = str(jadwal['waktu_mulai'])
-        
-    return render_template("konselorApp/jadwalKonsul_konselor/live_session.html", 
-                           jadwal=jadwal, 
-                           kategori_list=get_all_kategori(), 
-                           tindak_lanjut_list=get_all_tindak_lanjut())
+            jadwal["waktu_mulai"] = str(jadwal["waktu_mulai"])
+
+    return render_template(
+        "konselorApp/jadwalKonsul_konselor/live_session.html",
+        jadwal=jadwal,
+        kategori_list=get_all_kategori(),
+        tindak_lanjut_list=get_all_tindak_lanjut(),
+    )
+
 
 @app.route("/konselor/live-session/finish", methods=["POST"])
 @login_required
@@ -866,32 +921,37 @@ def konselor_live_session_finish():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-        
-    from controller.KonselorController import update_status_jadwal, get_jadwal_detail, create_sesi
+
+    from controller.KonselorController import (
+        create_sesi,
+        get_jadwal_detail,
+        update_status_jadwal,
+    )
+
     user_id = g.user.get("sub")
     jadwal_id = request.form.get("jadwal_id")
-    
+
     jadwal = get_jadwal_detail(jadwal_id)
-    if not jadwal or str(jadwal['konselor_user_id']) != str(user_id):
+    if not jadwal or str(jadwal["konselor_user_id"]) != str(user_id):
         return jsonify({"success": False, "message": "Jadwal tidak ditemukan."})
-        
+
     form_data = {
-        'nim': jadwal['nim'],
-        'nama': jadwal['nama'],
-        'prodi': jadwal['prodi'],
-        'jenis_layanan_id': jadwal['layanan_id'],
-        'tanggal_sesi': jadwal['tanggal'],
-        'topik': request.form.get('topik'),
-        'kategori_masalah_ids': request.form.get('kategori_masalah_ids'),
-        'catatan_kesimpulan': request.form.get('catatan_kesimpulan'),
-        'tindak_lanjut': request.form.get('tindak_lanjut'),
-        'waktu_mulai': request.form.get('waktu_mulai'),
-        'waktu_selesai': request.form.get('waktu_selesai')
+        "nim": jadwal["nim"],
+        "nama": jadwal["nama"],
+        "prodi": jadwal["prodi"],
+        "jenis_layanan_id": jadwal["layanan_id"],
+        "tanggal_sesi": jadwal["tanggal"],
+        "topik": request.form.get("topik"),
+        "kategori_masalah_ids": request.form.get("kategori_masalah_ids"),
+        "catatan_kesimpulan": request.form.get("catatan_kesimpulan"),
+        "tindak_lanjut": request.form.get("tindak_lanjut"),
+        "waktu_mulai": request.form.get("waktu_mulai"),
+        "waktu_selesai": request.form.get("waktu_selesai"),
     }
-    
+
     success_sesi, msg_sesi = create_sesi(user_id, form_data)
     if success_sesi:
-        update_status_jadwal(jadwal_id, user_id, 'Selesai')
+        update_status_jadwal(jadwal_id, user_id, "Selesai")
         return jsonify({"success": True, "message": "Sesi berhasil diselesaikan."})
     else:
         return jsonify({"success": False, "message": msg_sesi})
@@ -907,12 +967,15 @@ def konselor_catat_sesi():
         return redirect(url_for("index"))
 
     from controller.KonselorController import (
-        get_all_kategori, get_all_layanan, get_all_tindak_lanjut, create_sesi
+        create_sesi_bulk,
+        get_all_kategori,
+        get_all_layanan,
+        get_all_tindak_lanjut,
     )
 
     if request.method == "POST":
         user_id = g.user.get("sub")
-        success, message = create_sesi(user_id, request.form)
+        success, message = create_sesi_bulk(user_id, request.form)
         return jsonify({"success": success, "message": message})
 
     # GET — render form
@@ -921,59 +984,128 @@ def konselor_catat_sesi():
         prodi_list=majorID,
         kategori_list=get_all_kategori(),
         jenis_layanan_list=get_all_layanan(),
-        tindak_lanjut_list=get_all_tindak_lanjut()
+        tindak_lanjut_list=get_all_tindak_lanjut(),
     )
 
 
 # === KONSELOR: Lookup NIM via Scrapper ===
-@app.route("/konselor/lookup-nim")
+@app.route("/konselor/lookup-civitas")
 @login_required
-def konselor_lookup_nim():
-    """AJAX endpoint: cari data mahasiswa dari Sicyca via NIM."""
+def konselor_lookup_civitas():
+    """AJAX endpoint: cari data mahasiswa/staff dari Sicyca (Fleksibel: Nama/NIM/NIK)."""
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import censor_name
+    # Imports are already at top, but local import for safety if preferred
+    from scrapper_requests import search_mahasiswa, search_staff
 
-    nim = request.args.get("nim", "").strip()
-    if not nim:
-        return jsonify({"success": False, "message": "NIM wajib diisi."})
+    query = request.args.get("civitas", "").strip()
+    if not query:
+        return jsonify({"success": False, "message": "Query pencarian wajib diisi."})
 
     try:
-        # Jalankan di thread pool (sama kayak fitur komunitas)
-        # Supaya _get_current_user_id tidak fallback ke bot user
         user_id = g.user.get("sub")
-        future = executor.submit(search_mahasiswa, nim, user_id=user_id)
-        df = future.result(timeout=30)
+        
+        df = pd.DataFrame()
+        role = ""
+
+        # Logic Fleksibel:
+        # - Jika 11 digit: Prioritas Mahasiswa
+        # - Jika 6 digit: Prioritas Staff
+        # - Lainnya: Mahasiswa -> Staff
+        
+        is_11_digits = query.isdigit() and len(query) == 11
+        is_6_digits = query.isdigit() and len(query) == 6
+
+        if is_11_digits:
+            # Prioritas Mahasiswa
+            future_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
+            df = future_mhs.result(timeout=30)
+            if not df.empty:
+                role = "mahasiswa"
+            else:
+                # Fallback ke staff if not found
+                future_staff = executor.submit(search_staff, query, user_id=user_id)
+                df = future_staff.result(timeout=30)
+                if not df.empty: role = "staff"
+        elif is_6_digits:
+            # Prioritas Staff
+            future_staff = executor.submit(search_staff, query, user_id=user_id)
+            df = future_staff.result(timeout=30)
+            if not df.empty:
+                role = "staff"
+            else:
+                # Fallback ke mahasiswa
+                future_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
+                df = future_mhs.result(timeout=30)
+                if not df.empty: role = "mahasiswa"
+        else:
+            # Nama atau input lain: Mahasiswa first
+            future_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
+            df = future_mhs.result(timeout=30)
+            if not df.empty:
+                role = "mahasiswa"
+            else:
+                future_staff = executor.submit(search_staff, query, user_id=user_id)
+                df = future_staff.result(timeout=30)
+                if not df.empty:
+                    role = "staff"
+
+        # Jika masih kosong
         if df.empty:
-            return jsonify({"success": False, "message": "Data mahasiswa tidak ditemukan."})
+            return jsonify(
+                {"success": False, "message": f"Data '{query}' tidak ditemukan."}
+            )
 
         row = df.iloc[0]
         data = {k.lower(): v for k, v in row.items()}
-
         nama_raw = data.get("nama", "")
-        dosen_wali = data.get("dosen wali", "")
-        prodi_raw = data.get("prodi", "")
+        # Ambil NIM/NIK dari kolom 'nim' atau 'nik' atau 'id' jika ada
+        # Scraper generic biasanya mengembalikan kolom sesuai tabel Sicyca
+        found_id = data.get("nim") or data.get("nik") or query
 
-        # Coba resolve prodi dari NIM via majorID
-        prodi_resolved = ""
-        if nim and len(nim) >= 7:
-            kode_prodi = nim[2:7]
-            prodi_resolved = majorID.get(kode_prodi, prodi_raw)
+        if role == "mahasiswa":
+            dosen_wali = data.get("dosen wali", "")
+            prodi_raw = data.get("prodi", "")
+            # Coba resolve prodi dari ID found_id via majorID
+            prodi_resolved = ""
+            if found_id and len(found_id) >= 7:
+                kode_prodi = found_id[2:7]
+                prodi_resolved = majorID.get(kode_prodi, prodi_raw)
+            else:
+                prodi_resolved = prodi_raw
+
+            return jsonify(
+                {
+                    "success": True,
+                    "role": "mahasiswa",
+                    "nim": found_id,
+                    "nama_raw": nama_raw,
+                    "nama_sensor": censor_name(nama_raw),
+                    "dosen_wali": dosen_wali,
+                    "prodi": prodi_resolved,
+                }
+            )
         else:
-            prodi_resolved = prodi_raw
+            # Staff
+            prodi_staff = data.get("bagian", "")
+            return jsonify(
+                {
+                    "success": True,
+                    "role": "staff",
+                    "nim": found_id,
+                    "nama_raw": nama_raw,
+                    "nama_sensor": nama_raw,
+                    "dosen_wali": "",
+                    "prodi": prodi_staff,
+                }
+            )
 
-        return jsonify({
-            "success": True,
-            "nama_raw": nama_raw,
-            "nama_sensor": censor_name(nama_raw),
-            "dosen_wali": dosen_wali,
-            "prodi": prodi_resolved
-        })
     except Exception as e:
-        logging.error(f"[Konselor] Lookup NIM error: {e}")
-        return jsonify({"success": False, "message": "Gagal lookup data mahasiswa."})
+        logging.error(f"[Konselor] Lookup Civitas error: {e}")
+        return jsonify({"success": False, "message": "Gagal lookup data dari server."})
 
 
 # === KONSELOR: Dashboard Rekap ===
@@ -985,13 +1117,18 @@ def konselor_rekap():
     if role_id not in [1, 5]:
         return redirect(url_for("index"))
 
-    from controller.KonselorController import get_all_kategori, get_all_layanan, get_all_tindak_lanjut
+    from controller.KonselorController import (
+        get_all_kategori,
+        get_all_layanan,
+        get_all_tindak_lanjut,
+    )
+
     return render_template(
         "konselorApp/rekap_sesi.html",
         prodi_list=majorID,
         kategori_list=get_all_kategori(),
         jenis_layanan_list=get_all_layanan(),
-        tindak_lanjut_list=get_all_tindak_lanjut()
+        tindak_lanjut_list=get_all_tindak_lanjut(),
     )
 
 
@@ -1001,23 +1138,27 @@ def konselor_rekap():
 def konselor_download_template():
     """Download template excel untuk import sesi"""
     from controller.KonselorController import download_template_excel
+
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
     return download_template_excel()
+
 
 @app.route("/konselor/sesi/import", methods=["POST"])
 @login_required
 def konselor_import_sesi():
     """Import sesi dari excel dan auto-fill dari Sicyca"""
     from controller.KonselorController import import_sesi_excel
+
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-    
+
     # Passing the current user_id for the scraper to use
     user_id = g.user.get("sub")
     return import_sesi_excel(request, user_id)
+
 
 # === KONSELOR: Rekap Data (JSON) ===
 @app.route("/konselor/rekap/data")
@@ -1029,6 +1170,7 @@ def konselor_rekap_data():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import get_rekap, get_riwayat_sesi
+
     user_id = g.user.get("sub")
     tahun = request.args.get("tahun", type=int)
 
@@ -1055,6 +1197,7 @@ def konselor_delete_sesi():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import delete_sesi
+
     user_id = g.user.get("sub")
     session_id = request.form.get("session_id")
 
@@ -1075,6 +1218,7 @@ def konselor_update_sesi():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import update_sesi
+
     user_id = g.user.get("sub")
     session_id = request.form.get("session_id")
 
@@ -1094,12 +1238,17 @@ def konselor_kelola_master():
     if role_id not in [1, 5]:
         return redirect(url_for("index"))
 
-    from controller.KonselorController import get_all_kategori, get_all_layanan, get_all_tindak_lanjut
+    from controller.KonselorController import (
+        get_all_kategori,
+        get_all_layanan,
+        get_all_tindak_lanjut,
+    )
+
     return render_template(
         "konselorApp/kelola_master.html",
         kategori_list=get_all_kategori(),
         layanan_list=get_all_layanan(),
-        tindak_lanjut_list=get_all_tindak_lanjut()
+        tindak_lanjut_list=get_all_tindak_lanjut(),
     )
 
 
@@ -1113,7 +1262,9 @@ def konselor_kategori():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
-        create_kategori, update_kategori, delete_kategori
+        create_kategori,
+        delete_kategori,
+        update_kategori,
     )
 
     action = request.form.get("action")
@@ -1128,6 +1279,7 @@ def konselor_kategori():
         new_id = None
         if success:
             from models.konselor import kategori_masalah_model
+
             all_kat = kategori_masalah_model.get_all()
             for k in all_kat:
                 if k["nama"] == nama:
@@ -1160,7 +1312,9 @@ def konselor_layanan():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
-        create_layanan, update_layanan, delete_layanan
+        create_layanan,
+        delete_layanan,
+        update_layanan,
     )
 
     action = request.form.get("action")
@@ -1174,6 +1328,7 @@ def konselor_layanan():
         new_id = None
         if success:
             from models.konselor import jenis_layanan_model
+
             all_lay = jenis_layanan_model.get_all()
             for l in all_lay:
                 if l["nama"] == nama:
@@ -1206,7 +1361,9 @@ def konselor_tindak_lanjut():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
-        create_tindak_lanjut, update_tindak_lanjut, delete_tindak_lanjut
+        create_tindak_lanjut,
+        delete_tindak_lanjut,
+        update_tindak_lanjut,
     )
 
     action = request.form.get("action")
@@ -1220,6 +1377,7 @@ def konselor_tindak_lanjut():
         new_id = None
         if success:
             from models.konselor import tindak_lanjut_model
+
             all_tl = tindak_lanjut_model.get_all()
             for tl in all_tl:
                 if tl["nama"] == nama:
@@ -1853,6 +2011,14 @@ def krs_sicyca():
     """Menyajikan file HTML utama."""
     return render_template("undika/sicyca/krsSicyca.html")
 
+
+@app.route("/kalenderAkademik")
+@login_required
+def kalender_akademik_sicyca():
+    """Menyajikan file HTML Kalender Akademik Sicyca."""
+    user_id = g.user.get("sub")
+    data_kalender = scrape_kalender_akademik(user_id)
+    return render_template("undika/sicyca/kalenderAkademikSicyca.html", data_kalender=data_kalender)
 
 @app.route("/sskm_record")
 # @login_required

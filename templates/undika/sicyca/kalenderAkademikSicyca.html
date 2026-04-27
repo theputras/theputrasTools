@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender Akademik - Sicyca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans min-h-screen flex flex-col pb-32">
+
+<div class="flex-1 flex flex-col items-center pt-6 px-4 w-full max-w-4xl mx-auto"
+     x-data="kalenderAkademikApp()" x-init="init()">
+
+    <!-- Header -->
+    <div class="text-center mb-6 w-full">
+        <h1 class="text-2xl font-bold text-white tracking-tight flex items-center justify-center gap-3">
+            <i class="fas fa-calendar-alt text-blue-400"></i>
+            Kalender Akademik
+        </h1>
+        <p class="text-gray-500 text-sm mt-1">Universitas Dinamika {% if data_kalender.semester %} - Semester {{ data_kalender.semester }}{% endif %}</p>
+    </div>
+
+    <a href="{{ url_for('sicyca_undika') }}" class="self-start text-blue-400 hover:text-blue-300 mb-4 inline-block transition-colors duration-200 font-medium">
+        &laquo; Kembali ke Dashboard
+    </a>
+
+    <!-- Calendar Container -->
+    <div class="w-full">
+        
+        <!-- Month Navigation -->
+        <div class="flex items-center justify-between mb-4 bg-gray-800/60 rounded-2xl p-3 border border-white/5">
+            <button @click="prevMonth()" class="w-10 h-10 rounded-xl bg-gray-700/50 hover:bg-gray-700 flex items-center justify-center transition text-gray-400 hover:text-white shadow-md border border-white/5">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="text-center">
+                <p class="text-white font-bold text-lg tracking-wide" x-text="monthName + ' ' + currentYear"></p>
+                <p class="text-xs text-gray-500">Semester 252 (Genap)</p>
+            </div>
+            <button @click="nextMonth()" class="w-10 h-10 rounded-xl bg-gray-700/50 hover:bg-gray-700 flex items-center justify-center transition text-gray-400 hover:text-white shadow-md border border-white/5">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="bg-gray-800 border border-white/5 rounded-2xl overflow-hidden shadow-lg shadow-black/20">
+            <!-- Weekday Headers -->
+            <div class="grid grid-cols-7 border-b border-white/5 bg-gray-900/40">
+                <template x-for="d in ['Min','Sen','Sel','Rab','Kam','Jum','Sab']" :key="d">
+                    <div class="text-center text-[10px] font-semibold uppercase tracking-wider text-gray-500 py-2 border-r border-white/5 last:border-r-0" x-text="d"></div>
+                </template>
+            </div>
+
+            <!-- Grid Body -->
+            <div class="grid grid-cols-7 bg-white/5 gap-px">
+                <!-- Empty cells for offset -->
+                <template x-for="n in firstDayOffset" :key="'blank-'+n">
+                    <div class="bg-gray-800 min-h-[6rem] sm:min-h-[7rem]"></div>
+                </template>
+                
+                <!-- Day cells -->
+                <template x-for="day in calendarDays" :key="day.date">
+                    <div class="bg-gray-800 p-1.5 sm:p-2 min-h-[6rem] sm:min-h-[7rem] flex flex-col relative transition group hover:bg-gray-700/30"
+                         :class="day.isToday ? 'ring-1 ring-inset ring-blue-500/50 bg-blue-900/10' : ''">
+                        
+                        <!-- Header: Date Numbers -->
+                        <div class="flex items-start justify-between mb-1">
+                            <span class="w-6 h-6 flex items-center justify-center text-xs font-bold rounded-full"
+                                  :class="day.isToday ? 'bg-blue-500 text-white shadow-md' : (day.isSunday ? 'text-red-400' : 'text-gray-300')"
+                                  x-text="day.dayNumber"></span>
+                        </div>
+
+                        <!-- Events -->
+                        <div class="mt-auto space-y-1">
+                            <template x-for="event in day.events" :key="event.title">
+                                <div class="px-1.5 py-1 rounded text-[9px] sm:text-[10px] font-medium border line-clamp-2 leading-tight shadow-sm"
+                                     :class="event.color"
+                                     :title="event.title">
+                                    <i class="fas text-[8px] mr-1" :class="event.icon"></i>
+                                    <span x-text="event.title"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                
+                <!-- Extra padding cells to fill the last row -->
+                <template x-for="n in (42 - (calendarDays.length + firstDayOffset))" :key="'pad-'+n">
+                    <template x-if="(calendarDays.length + firstDayOffset) > 35 || n <= (35 - (calendarDays.length + firstDayOffset))">
+                        <div class="bg-gray-800 min-h-[6rem] sm:min-h-[7rem]"></div>
+                    </template>
+                </template>
+            </div>
+        </div>
+
+        <!-- Legend / Keterangan Kode -->
+        <div class="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-400">
+            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Hari ini</span>
+            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> Libur Nasional / Minggu</span>
+            <span class="flex items-center gap-2"><div class="px-1.5 py-0.5 rounded bg-blue-500/20 border border-blue-500/30 text-blue-300 text-[10px]"><i class="fas fa-book mr-1"></i>Perkuliahan</div></span>
+            <span class="flex items-center gap-2"><div class="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px]"><i class="fas fa-edit mr-1"></i>UTS / UAS</div></span>
+            <span class="flex items-center gap-2"><div class="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[10px]"><i class="fas fa-clipboard-list mr-1"></i>KRS / Revisi</div></span>
+            <span class="flex items-center gap-2"><div class="px-1.5 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-purple-300 text-[10px]"><i class="fas fa-graduation-cap mr-1"></i>Wisuda / Lainnya</div></span>
+        </div>
+
+        <!-- Link Gambar Asli (Opsional) -->
+        <div class="mt-8 text-center">
+            <button @click="$store.confirm.open('Lihat Gambar Asli', 'Ingin melihat gambar Kalender Akademik resolusi penuh dari Sicyca?', 'info').then(res => { if(res) window.open('/static/kalender/kalender-akd-252-belakang-rev.png', '_blank') })" 
+                    class="text-xs font-bold text-gray-500 hover:text-white transition flex items-center justify-center gap-2 mx-auto bg-gray-800 px-4 py-2 rounded-full border border-white/5 hover:border-white/10">
+                <i class="fas fa-image"></i> Lihat Gambar Asli (JPG)
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+{% include 'undika/sicyca/navNativeSicyca.html' %}
+{% include 'alert.html' %}
+
+<script>
+function kalenderAkademikApp() {
+    return {
+        currentMonth: new Date().getMonth(),
+        currentYear: new Date().getFullYear(),
+        monthName: '',
+        firstDayOffset: 0,
+        calendarDays: [],
+        
+        // DATA MOCKUP SEMESTER GENAP 252 (Sesuai Struktur Kode Gambar)
+        // Format Warna (Tailwind): 
+        // Libur: bg-red-500/20 text-red-300 border-red-500/30
+        // Perkuliahan: bg-blue-500/20 text-blue-300 border-blue-500/30
+        // Ujian: bg-amber-500/20 text-amber-300 border-amber-500/30
+        // KRS/Administrasi: bg-emerald-500/20 text-emerald-300 border-emerald-500/30
+        // Wisuda/Lainnya: bg-purple-500/20 text-purple-300 border-purple-500/30
+        academicEvents: {{ data_kalender.events | tojson | safe if data_kalender and data_kalender.events else '[]' | safe }},
+
+        init() {
+            // Set awal ke bulan Februari 2026 (Estimasi mulainya semester Genap 252)
+            // Hapus 2 baris ini kalau mau mulai dari bulan saat ini berjalan
+            // this.currentMonth = 1; // Februari (0-indexed)
+            // this.currentYear = 2026;
+            
+            this.generateCalendar();
+        },
+
+        prevMonth() {
+            this.currentMonth--;
+            if (this.currentMonth < 0) { 
+                this.currentMonth = 11; 
+                this.currentYear--; 
+            }
+            this.generateCalendar();
+        },
+
+        nextMonth() {
+            this.currentMonth++;
+            if (this.currentMonth > 11) { 
+                this.currentMonth = 0; 
+                this.currentYear++; 
+            }
+            this.generateCalendar();
+        },
+
+        generateCalendar() {
+            const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            this.monthName = monthNames[this.currentMonth];
+            
+            const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+            const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+            
+            this.firstDayOffset = firstDay.getDay(); // 0 (Minggu) to 6 (Sabtu)
+            const daysInMonth = lastDay.getDate();
+            
+            const today = new Date();
+            const isCurrentMonthYear = today.getMonth() === this.currentMonth && today.getFullYear() === this.currentYear;
+            
+            this.calendarDays = Array.from({length: daysInMonth}, (_, i) => {
+                const dayNum = i + 1;
+                // Format string YYYY-MM-DD
+                const dStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                
+                const isSunday = new Date(this.currentYear, this.currentMonth, dayNum).getDay() === 0;
+                
+                return { 
+                    dayNumber: dayNum, 
+                    date: dStr, 
+                    isToday: isCurrentMonthYear && dayNum === today.getDate(), 
+                    isSunday: isSunday,
+                    events: this.academicEvents.filter(e => e.date === dStr)
+                };
+            });
+        }
+    };
+}
+</script>
+</body>
+</html>

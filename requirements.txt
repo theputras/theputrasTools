@@ -28,3 +28,5 @@ bleach
 Flask-Limiter
 reportlab
 openpyxl
+opencv-python
+easyocr

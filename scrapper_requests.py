@@ -968,3 +968,355 @@ def fetch_sskm_data(user_id=None):
     except Exception as e:
         logging.error(f"[SSKM] Error scraping: {e}")
         return result
+
+_kalender_cache_data = None
+_kalender_cache_time = 0
+
+def scrape_kalender_akademik(user_id=None):
+    """
+    Mencari semester aktif dari histori, lalu mengambil & mendownload
+    gambar kalender akademik jika belum ada di lokal. (SSR Cache 1 Hari)
+    """
+    global _kalender_cache_data, _kalender_cache_time
+    now = time.time()
+    
+    json_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kalender_akademik.json')
+    
+    # Cache 1 hari (86400 detik) untuk mengurangi request berat ke Sicyca
+    if _kalender_cache_data and (now - _kalender_cache_time < 86400):
+        logging.info("[Kalender] Menggunakan data gambar dari cache (memory).")
+        # Ensure we always populate events from cache or JSON
+        return _kalender_cache_data
+
+    target_user = _get_current_user_id(user_id)
+    sess = get_authenticated_session(target_user)
+    if not sess:
+        # Fallback to reading from JSON if session is invalid
+        if os.path.exists(json_file_path):
+             try:
+                 with open(json_file_path, 'r', encoding='utf-8') as f:
+                     saved_data = json.load(f)
+                     if "data" in saved_data:
+                          return {"success": True, "message": "Dari Cache JSON", "images": [], "semester": "", "events": saved_data["data"]}
+             except Exception:
+                 pass
+        return {"success": False, "message": "Gagal mendapatkan sesi valid.", "images": [], "semester": "", "events": []}
+
+    try:
+        # 1. Pengecekkan semester aktif dari histori (Ambil baris terakhir)
+        histori_url = urljoin(TARGET_URL, "/akademik/histori")
+        r_histori = sess.get(histori_url, timeout=20, headers={"Referer": TARGET_URL})
+        soup_histori = BeautifulSoup(r_histori.text, "lxml")
+        
+        semester_aktif = ""
+        tabel_histori = soup_histori.find("table", class_="sicycatable")
+        if tabel_histori:
+            rows = tabel_histori.find_all("tr")
+            if len(rows) > 1: # Baris 0 biasanya header tabel
+                last_row = rows[-1]
+                cols = last_row.find_all("td")
+                if len(cols) > 1:
+                    semester_aktif = cols[1].get_text(strip=True)
+        
+        # 2. Ambil gambar kalender
+        kalender_url = urljoin(TARGET_URL, "/akademik/kalender")
+        r_kalender = sess.get(kalender_url, timeout=20, headers={"Referer": TARGET_URL})
+        soup_kalender = BeautifulSoup(r_kalender.text, "lxml")
+
+        images = []
+        box = soup_kalender.find("div", class_="boxcontainer")
+        if box:
+            img_tags = box.find_all("img")
+            
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            save_dir = os.path.join(base_dir, "static", "kalender")
+            os.makedirs(save_dir, exist_ok=True) # Buat folder kalau blm ada
+
+            for img in img_tags:
+                src = img.get("src")
+                if src and "kalenderakademik" in src:
+                    img_url = urljoin(TARGET_URL, src)
+                    filename = os.path.basename(img_url)
+                    local_path = os.path.join(save_dir, filename)
+                    
+                    is_new = not os.path.exists(local_path)
+                    # Download jika gambar blm ada di local server
+                    if is_new:
+                        logging.info(f"[Kalender] Mengunduh kalender baru: {filename}")
+                        img_data = sess.get(img_url, timeout=20).content
+                        with open(local_path, "wb") as f:
+                            f.write(img_data)
+                    
+                    images.append({
+                        "url": f"/static/kalender/{filename}",
+                        "filename": filename,
+                        "local_path": local_path,
+                        "is_new": is_new
+                    })
+        
+        # Ekstrak event dinamis dari gambar kalender pertama menggunakan OCR
+        events_data = []
+        json_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kalender_akademik.json')
+        
+        # Load from file if image was not newly downloaded and json exists
+        need_ocr = True
+        if images and images[-1].get("local_path"):
+             last_image = images[-1]
+             last_image_path = last_image["local_path"]
+             is_new_image = last_image.get("is_new", False)
+             
+             # If the image was NOT just downloaded, try reading from JSON first
+             if not is_new_image and os.path.exists(json_file_path):
+                try:
+                    with open(json_file_path, 'r', encoding='utf-8') as f:
+                        saved_data = json.load(f)
+                        if "data" in saved_data and len(saved_data["data"]) > 0:
+                            events_data = saved_data["data"]
+                            need_ocr = False
+                            logging.info(f"[Kalender] Data loaded from {json_file_path}")
+                except Exception as e:
+                    logging.warning(f"Gagal membaca json kalender: {e}")
+             
+             if need_ocr:
+                 # Proses gambar dengan EasyOCR dan OpenCV
+                 events_data = parse_kalender_image_with_ocr(last_image_path, filename=last_image["filename"])
+                 
+                 # Save to JSON
+                 try:
+                     with open(json_file_path, 'w', encoding='utf-8') as f:
+                         json.dump({
+                             "metadata": {
+                                 "last_scraped": datetime.now().strftime("%A, %d %B %Y %H:%M:%S"),
+                                 "total_jadwal": len(events_data)
+                             },
+                             "data": events_data
+                         }, f, indent=4)
+                     logging.info(f"[Kalender] Data saved to {json_file_path}")
+                 except Exception as e:
+                     logging.error(f"Gagal menyimpan json kalender: {e}")
+        else:
+            events_data = []
+
+        result = {
+            "success": True,
+            "semester": semester_aktif,
+            "images": images,
+            "events": events_data
+        }
+        
+        # Simpan ke cache
+        _kalender_cache_data = result
+        _kalender_cache_time = now
+        return result
+
+    except Exception as e:
+        logging.error(f"[Kalender] Error scrape kalender: {e}")
+        events_data = []
+        if os.path.exists(json_file_path):
+             try:
+                 with open(json_file_path, 'r', encoding='utf-8') as f:
+                     saved_data = json.load(f)
+                     if "data" in saved_data and len(saved_data["data"]) > 0:
+                          events_data = saved_data["data"]
+             except Exception:
+                 pass
+        return {"success": False, "message": str(e), "images": [], "semester": "", "events": events_data}
+
+def parse_kalender_image_with_ocr(image_path, filename=""):
+    """
+    Ekstrak data kalender secara visual realtime menggunakan OpenCV dan EasyOCR.
+    """
+    base_year = 2026
+    start_month = 2
+    
+    if filename:
+        match = re.search(r'akd-(\d{2})(\d)', filename)
+        if match:
+            year_prefix = int(match.group(1))
+            sem_type = int(match.group(2))
+            
+            if sem_type == 1: # Gasal
+                base_year = 2000 + year_prefix
+                start_month = 8
+            elif sem_type == 2: # Genap
+                base_year = 2000 + year_prefix + 1
+                start_month = 2
+
+    try:
+        import cv2
+        import numpy as np
+        import easyocr
+    except ImportError:
+        logging.error("[OCR] Library OpenCV atau EasyOCR belum terinstall. Menggunakan fallback statis.")
+        return []
+
+    try:
+        logging.info(f"[OCR] Memulai proses ekstraksi realtime pada: {image_path}")
+        img = cv2.imread(image_path)
+        if img is None:
+            logging.error(f"[OCR] Gagal memuat gambar: {image_path}")
+            return []
+            
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        
+        # Inisialisasi OCR hanya untuk membaca angka tanggal
+        reader = easyocr.Reader(['en'], gpu=True, verbose=False)
+        results = reader.readtext(img, allowlist='0123456789')
+        
+        def get_mask(hsv_img, lower, upper):
+            return cv2.inRange(hsv_img, lower, upper)
+            
+        tailwind_classes = {
+            'Herregistrasi & Perwalian': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Perubahan KRS': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Pembatalan KRS': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Data KRS Tetap': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Batas Pengajuan Cuti': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Pelaksanaan Praktikum': ('bg-blue-500/20 text-blue-300 border-blue-500/30', 'fa-flask'),
+            'Pengumuman Nilai': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Pengumuman Presensi': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Ujian Praktikum': ('bg-amber-500/20 text-amber-300 border-amber-500/30', 'fa-edit'),
+            'UTS / UAS': ('bg-amber-500/20 text-amber-300 border-amber-500/30', 'fa-edit'),
+            'Pengumuman Yudisium': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'Hari Tenang': ('bg-blue-500/20 text-blue-300 border-blue-500/30', 'fa-book'),
+            'Libur Semester': ('bg-red-500/20 text-red-300 border-red-500/30', 'fa-star'),
+            'Libur Nasional': ('bg-red-500/20 text-red-300 border-red-500/30', 'fa-star'),
+            'Daftar Sidang TA Akhir': ('bg-purple-500/20 text-purple-300 border-purple-500/30', 'fa-graduation-cap'),
+            'Dies Natalis': ('bg-purple-500/20 text-purple-300 border-purple-500/30', 'fa-graduation-cap'),
+            'Wisuda': ('bg-purple-500/20 text-purple-300 border-purple-500/30', 'fa-graduation-cap'),
+            'Hari Upacara': ('bg-purple-500/20 text-purple-300 border-purple-500/30', 'fa-graduation-cap'),
+            'Kelengkapan Yudisium Akhir': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list'),
+            'KRS / Revisi': ('bg-emerald-500/20 text-emerald-300 border-emerald-500/30', 'fa-clipboard-list')
+        }
+
+        extracted_events = []
+        width = img.shape[1]
+        table_start_x = int(width * 0.1)
+        table_end_x = int(width * 0.95)
+        table_width = table_end_x - table_start_x
+        
+        for (bbox, text, prob) in results:
+            if not text.isdigit(): continue
+            date_num = int(text)
+            if not (1 <= date_num <= 31): continue
+            
+            x_center = int((bbox[0][0] + bbox[2][0]) / 2)
+            y_center = int((bbox[0][1] + bbox[2][1]) / 2)
+            
+            if x_center < table_start_x or x_center > table_end_x:
+                continue
+            
+            y1, y2 = max(0, y_center-15), min(img.shape[0], y_center+15)
+            x1, x2 = max(0, x_center-15), min(img.shape[1], x_center+15)
+            roi_hsv = hsv[y1:y2, x1:x2]
+            
+            if roi_hsv.size == 0: continue
+            
+            red_mask = get_mask(roi_hsv, np.array([0, 150, 150]), np.array([10, 255, 255])) | \
+                       get_mask(roi_hsv, np.array([170, 150, 150]), np.array([179, 255, 255]))
+            pink_mask = get_mask(roi_hsv, np.array([140, 50, 150]), np.array([170, 150, 255]))
+            yellow_mask = get_mask(roi_hsv, np.array([20, 150, 200]), np.array([35, 255, 255]))
+            light_blue_mask = get_mask(roi_hsv, np.array([90, 100, 150]), np.array([110, 255, 255]))
+            dark_blue_mask = get_mask(roi_hsv, np.array([100, 150, 100]), np.array([130, 255, 255]))
+            dark_green_mask = get_mask(roi_hsv, np.array([40, 150, 100]), np.array([80, 255, 200]))
+            light_green_mask = get_mask(roi_hsv, np.array([40, 100, 150]), np.array([80, 200, 255]))
+            purple_mask = get_mask(roi_hsv, np.array([130, 150, 100]), np.array([160, 255, 255]))
+            light_purple_mask = get_mask(roi_hsv, np.array([130, 20, 200]), np.array([160, 100, 255]))
+            brown_gray_mask = get_mask(roi_hsv, np.array([0, 0, 50]), np.array([180, 50, 150]))
+            brown_mask = get_mask(roi_hsv, np.array([10, 50, 150]), np.array([25, 150, 255]))
+            
+            total_px = roi_hsv.shape[0] * roi_hsv.shape[1]
+            if total_px == 0: continue
+            
+            red_ratio = np.count_nonzero(red_mask) / total_px
+            pink_ratio = np.count_nonzero(pink_mask) / total_px
+            yellow_ratio = np.count_nonzero(yellow_mask) / total_px
+            light_blue_ratio = np.count_nonzero(light_blue_mask) / total_px
+            dark_blue_ratio = np.count_nonzero(dark_blue_mask) / total_px
+            dark_green_ratio = np.count_nonzero(dark_green_mask) / total_px
+            light_green_ratio = np.count_nonzero(light_green_mask) / total_px
+            purple_ratio = np.count_nonzero(purple_mask) / total_px
+            light_purple_ratio = np.count_nonzero(light_purple_mask) / total_px
+            brown_gray_ratio = np.count_nonzero(brown_gray_mask) / total_px
+            brown_ratio = np.count_nonzero(brown_mask) / total_px
+            
+            detected_evt = None
+            
+            if red_ratio > 0.4: detected_evt = 'Libur Nasional'
+            elif yellow_ratio > 0.4: detected_evt = 'Libur Semester'
+            elif light_blue_ratio > 0.4: detected_evt = 'UTS / UAS'
+            elif dark_green_ratio > 0.4: detected_evt = 'Pengumuman Yudisium'
+            elif light_purple_ratio > 0.4: detected_evt = 'Hari Tenang'
+            elif brown_gray_ratio > 0.4: detected_evt = 'Kelengkapan Yudisium Akhir'
+            
+            if detected_evt is None:
+                h, w = roi_hsv.shape[0], roi_hsv.shape[1]
+                h2, w2 = h//2, w//2
+                if h2 > 0 and w2 > 0:
+                    red_top_right = np.count_nonzero(red_mask[0:h2, w2:w]) / (h2 * (w-w2) + 1)
+                    yellow_top_left = np.count_nonzero(yellow_mask[0:h2, 0:w2]) / (h2 * w2 + 1)
+                    light_blue_bottom_right = np.count_nonzero(light_blue_mask[h2:h, w2:w]) / ((h-h2) * (w-w2) + 1)
+                    
+                    if red_top_right > 0.2: detected_evt = 'Data KRS Tetap'
+                    elif yellow_top_left > 0.2: detected_evt = 'Dies Natalis'
+                    elif light_blue_bottom_right > 0.2: detected_evt = 'Pengumuman Nilai'
+                
+            if detected_evt is None:
+                h, w = roi_hsv.shape[0], roi_hsv.shape[1]
+                center_red = np.count_nonzero(red_mask[h//4:3*h//4, w//4:3*w//4]) / ((h//2)*(w//2)+1)
+                
+                if red_ratio > 0.03:
+                    corners_red = (np.count_nonzero(red_mask[0:5, 0:5]) + 
+                                   np.count_nonzero(red_mask[0:5, -5:]) + 
+                                   np.count_nonzero(red_mask[-5:, 0:5]) + 
+                                   np.count_nonzero(red_mask[-5:, -5:]))
+                    if center_red > 0.15: detected_evt = 'Batas Pengajuan Cuti'
+                    elif center_red > 0.02 and corners_red < 5: detected_evt = 'Pembatalan KRS'
+                    elif corners_red > 5: detected_evt = 'Perubahan KRS'
+                    else: detected_evt = 'Ujian Praktikum'
+                elif pink_ratio > 0.03: detected_evt = 'Herregistrasi & Perwalian'
+                elif dark_blue_ratio > 0.03: detected_evt = 'Pengumuman Presensi'
+                elif purple_ratio > 0.03: detected_evt = 'Daftar Sidang TA Akhir'
+                elif light_green_ratio > 0.03: detected_evt = 'Hari Upacara'
+                elif light_blue_ratio > 0.03: detected_evt = 'Wisuda'
+                elif brown_ratio > 0.03: detected_evt = 'Pelaksanaan Praktikum'
+            
+            if detected_evt:
+                col_width = table_width / 6.0
+                rel_x = x_center - table_start_x
+                col_index = min(5, max(0, int(rel_x / col_width)))
+                
+                current_month = start_month + col_index
+                event_year = base_year
+                if current_month > 12:
+                    current_month -= 12
+                    event_year += 1
+                    
+                date_str = f"{event_year}-{current_month:02d}-{date_num:02d}"
+                color_class, icon = tailwind_classes.get(detected_evt, ('bg-gray-500/20 text-gray-300', 'fa-calendar'))
+                
+                is_duplicate = False
+                for ev in extracted_events:
+                    if ev['date'] == date_str and ev['title'] == detected_evt:
+                        is_duplicate = True
+                        break
+                
+                if not is_duplicate:
+                    extracted_events.append({
+                        "date": date_str,
+                        "title": detected_evt,
+                        "color": color_class,
+                        "icon": icon
+                    })
+                
+        if len(extracted_events) == 0:
+            logging.warning("[OCR] Tidak ada data signifikan yang terdeteksi, menggunakan fallback statis.")
+            return []
+            
+        logging.info(f"[OCR] Selesai membaca gambar. {len(extracted_events)} event berhasil dideteksi realtime.")
+        return extracted_events
+        
+    except Exception as e:
+        logging.error(f"[OCR] Terjadi kesalahan fatal dalam mendeteksi: {e}")
+        return []
+    

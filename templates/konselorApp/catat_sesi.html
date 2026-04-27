@@ -1,335 +1,756 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catat Sesi Konseling - Konselor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        [x-cloak] { display: none !important; }
-        body { font-family: 'Inter', sans-serif; }
-        .gradient-text {
-            background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-    </style>
-</head>
-<body class="bg-slate-50 text-gray-600 min-h-screen">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Catat Sesi Konseling - Konselor</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+            body {
+                font-family: "Inter", sans-serif;
+            }
+            .gradient-text {
+                background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+        </style>
+    </head>
+    <body class="bg-slate-50 text-gray-600 min-h-screen">
+        <div
+            class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl"
+            x-data="catatSesiApp()"
+            x-init="init()"
+        >
+            <!-- HEADER -->
+            <div class="mt-10">
+                <div class="flex items-center gap-3 mb-6">
+                    <a
+                        href="{{ url_for('konselor_dashboard') }}"
+                        class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-800 transition hover:bg-white active:scale-95"
+                    >
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </a>
+                    <div>
+                        <h1
+                            class="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight"
+                        >
+                            <i
+                                class="fas fa-plus-circle text-violet-500 mr-1"
+                            ></i>
+                            Catat <span class="gradient-text">Sesi Baru</span>
+                        </h1>
+                        <p class="text-xs text-gray-500">
+                            Isi form di bawah untuk mencatat sesi konseling
+                        </p>
+                    </div>
+                </div>
 
-    <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl"
-         x-data="catatSesiApp()"
-         x-init="init()">
-
-        <!-- HEADER -->
-        <div class="mb-8">
-            <div class="flex items-center gap-3 mb-4">
-                <a href="{{ url_for('konselor_dashboard') }}"
-                   class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-800 transition hover:bg-white active:scale-95">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight">
-                        <i class="fas fa-plus-circle text-violet-500 mr-1"></i> Catat <span class="gradient-text">Sesi Baru</span>
-                    </h1>
-                    <p class="text-xs text-gray-500">Isi form di bawah untuk mencatat sesi konseling</p>
+                <!-- Privacy notice -->
+                <div
+                    class="flex items-start gap-3 p-4 bg-violet-500/5 border border-violet-500/10 rounded-2xl mb-2"
+                >
+                    <i class="fas fa-shield-halved text-violet-500 mt-0.5"></i>
+                    <div>
+                        <p class="text-xs text-violet-600 font-semibold">
+                            Privasi Terjamin
+                        </p>
+                        <p class="text-[11px] text-gray-500 mt-0.5">
+                            Nama mahasiswa akan
+                            <strong class="text-gray-500"
+                                >disensor otomatis</strong
+                            >
+                            saat ditampilkan di rekap. Data disimpan secara aman
+                            di database.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Privacy notice -->
-            <div class="flex items-start gap-3 p-4 bg-violet-500/5 border border-violet-500/10 rounded-2xl">
-                <i class="fas fa-shield-halved text-violet-500 mt-0.5"></i>
+            <!-- FORM -->
+            <form @submit.prevent="submitForm()" class="space-y-8 pt-4">
+                <!-- ====================== NIM / NIK (Multiple) ====================== -->
                 <div>
-                    <p class="text-xs text-violet-600 font-semibold">Privasi Terjamin</p>
-                    <p class="text-[11px] text-gray-500 mt-0.5">Nama mahasiswa akan <strong class="text-gray-500">disensor otomatis</strong> saat ditampilkan di rekap. Data disimpan secara aman di database.</p>
+                    <label
+                        class="block text-sm font-semibold text-gray-600 mb-2 ml-1"
+                    >
+                        <div class="flex items-center gap-1.5">
+                            <i class="fas fa-id-card text-violet-500 mr-1"></i>
+                            Nama / NIM / NIK
+                            <div class="relative flex items-center" x-data="{ openTooltip: false }">
+                                <i class="fas fa-question-circle text-gray-400 text-xs cursor-help p-1" 
+                                   @mouseenter="openTooltip = true" @mouseleave="openTooltip = false"
+                                   @click="openTooltip = !openTooltip"></i>
+                                <div x-show="openTooltip" x-cloak
+                                     class="absolute left-6 top-0 z-50 w-56 p-3 bg-gray-900/95 backdrop-blur-md text-white text-[10px] rounded-xl shadow-2xl border border-white/10"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95 translate-x-2"
+                                     x-transition:enter-end="opacity-100 scale-100 translate-x-0"
+                                     x-transition:leave="transition ease-in duration-150">
+                                    <div class="space-y-1.5">
+                                        <p class="font-bold text-violet-300 border-b border-white/10 pb-1 mb-1">Kode Khusus Input</p>
+                                        <p><span class="text-violet-400 font-bold">001</span> : Aktifkan Mode Input Manual (jika data tidak ada di sistem / lupa NIM)</p>
+                                        <p><span class="text-blue-400 font-bold">002</span> : Data dummy (akan disembunyikan di daftar binaan)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-red-400">*</span>
+                        </div>
+                        <span class="text-[10px] text-gray-400 font-normal ml-1"
+                            >— bisa lebih dari satu klien sekaligus</span
+                        >
+                    </label>
+
+                    <!-- Input row -->
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            x-model="nimInput"
+                            placeholder="Cari Nama, NIM, atau NIK..."
+                            @input.debounce.600ms="lookupInput()"
+                            class="flex-1 bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm"
+                        />
+                        <button
+                            type="button"
+                            x-show="['found', 'manual'].includes(nimInputStatus)"
+                            x-cloak
+                            @click="addParticipant()"
+                            class="flex-shrink-0 bg-violet-600 hover:bg-violet-500 active:scale-95 text-white font-semibold px-5 rounded-2xl text-sm transition flex items-center gap-1.5"
+                        >
+                            <i class="fas fa-plus text-xs"></i>
+                            <span>Tambah</span>
+                        </button>
+                    </div>
+
+                    <!-- Lookup: loading -->
+                    <div
+                        x-show="nimInputStatus === 'loading'"
+                        class="mt-2 flex items-center gap-2 text-xs text-gray-500"
+                    >
+                        <i class="fas fa-spinner fa-spin text-violet-500"></i>
+                        Mencari data...
+                    </div>
+
+                    <!-- Lookup: found or manual (preview card) -->
+                    <div
+                        x-show="['found', 'manual'].includes(nimInputStatus)"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 -translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        class="mt-3 bg-violet-500/5 border border-violet-500/10 rounded-2xl p-4 space-y-4"
+                    >
+                        <!-- Role Badge & Toggle -->
+                        <div class="flex justify-between items-center">
+                            <p class="text-[10px] font-bold text-violet-500 uppercase tracking-widest">Preview Klien</p>
+                            <div class="flex gap-1.5" x-show="nimInput !== '002'">
+                                <button type="button" @click="nimInputData.role = 'mahasiswa'" 
+                                        :disabled="nimInput.length === 11 || nimInput.length === 6 || nimInputStatus === 'found'"
+                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                        :class="nimInputData.role === 'mahasiswa' ? 'bg-violet-600 text-white' : 'bg-violet-100 text-violet-600'">Mahasiswa</button>
+                                <button type="button" @click="nimInputData.role = 'staff'" 
+                                        :disabled="nimInput.length === 11 || nimInput.length === 6 || nimInputStatus === 'found'"
+                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                        :class="nimInputData.role === 'staff' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'">Staff</button>
+                            </div>
+                        </div>
+
+                        <!-- Manual/Editable Inputs -->
+                        <div class="grid grid-cols-1 gap-4">
+                            <!-- Nama -->
+                            <div class="col-span-full">
+                                <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block">Nama Klien</label>
+                                <input type="text" x-model="nimInputManualData.nama" 
+                                       :readonly="nimInputStatus === 'found'"
+                                       placeholder="Input nama klien..."
+                                       :class="nimInputStatus === 'found' ? 'bg-slate-50/50' : 'bg-white'"
+                                       class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-violet-500 focus:outline-none transition">
+                            </div>
+
+                            <!-- Prodi / Bagian & Dosen Wali (Shown for regular found data, hidden for 001/002) -->
+                            <div x-show="!['001', '002'].includes(nimInput)" x-cloak class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block"
+                                           x-text="nimInputData.role === 'staff' ? 'Bagian / Unit' : 'Program Studi'"></label>
+                                    <input type="text" x-model="nimInputManualData.prodi" readonly
+                                           class="w-full bg-slate-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none transition">
+                                </div>
+                                <div x-show="nimInputData.role !== 'staff'">
+                                    <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block">Dosen Wali</label>
+                                    <input type="text" x-model="nimInputManualData.dosen_wali" readonly
+                                           class="w-full bg-slate-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none transition">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Participants list -->
+                    <div
+                        x-show="participants.length > 0"
+                        class="mt-4 space-y-2"
+                    >
+                        <p
+                            class="text-[10px] text-gray-500 uppercase font-bold tracking-widest ml-1 mb-2"
+                        >
+                            Peserta Sesi (<span
+                                x-text="participants.length"
+                            ></span
+                            >)
+                        </p>
+                        <template x-for="(p, i) in participants" :key="i">
+                            <div
+                                class="bg-white border border-gray-200 rounded-xl p-3 space-y-2"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <!-- Avatar icon -->
+                                    <div
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                        :class="p.role === 'mahasiswa' ? 'bg-violet-50 text-violet-500' : 'bg-blue-50 text-blue-500'"
+                                    >
+                                        <i class="fas fa-user text-xs"></i>
+                                    </div>
+                                    <!-- Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <template x-if="p.role === 'mahasiswa'">
+                                            <p
+                                                class="text-sm font-semibold text-gray-800 truncate"
+                                                x-text="p.nama_sensor || p.nim"
+                                            ></p>
+                                        </template>
+                                        <template x-if="p.role !== 'mahasiswa'">
+                                            <p
+                                                class="text-sm font-semibold text-gray-400 italic truncate"
+                                                x-text="p.nama_raw || '(nama belum diisi)'"
+                                            ></p>
+                                        </template>
+                                        <p
+                                            class="text-xs text-gray-400"
+                                            x-text="p.nim"
+                                        ></p>
+                                    </div>
+                                    <!-- Badge + remove -->
+                                    <div
+                                        class="flex items-center gap-2 flex-shrink-0"
+                                    >
+                                        <span
+                                            class="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase"
+                                            :class="p.role === 'mahasiswa' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600'"
+                                            x-text="p.role"
+                                        ></span>
+                                        <button
+                                            type="button"
+                                            @click="removeParticipant(i)"
+                                            class="text-gray-400 hover:text-red-400 transition p-1 rounded-lg hover:bg-red-50"
+                                        >
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Staff: manual name input per participant -->
+                                <template x-if="p.role !== 'mahasiswa' && p.nim === '001'">
+                                    <div class="pt-2 border-t border-gray-100">
+                                        <input
+                                            type="text"
+                                            x-model="p.nama_raw"
+                                            placeholder="Input nama staff manual..."
+                                            class="w-full bg-gray-50 border border-violet-200 rounded-xl px-3 py-2 text-sm text-gray-800 focus:border-violet-500 focus:outline-none transition"
+                                        />
+                                        <p
+                                            class="text-[9px] text-gray-400 mt-1 italic"
+                                        >
+                                            * Khusus staff manual, nama diinput manual
+                                        </p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-            </div>
+
+                <!-- ====================== Hidden Details Sections (Kept in data, hidden from UI) ====================== -->
+                <div class="hidden">
+                    <template x-for="(p, i) in participants" :key="'details-' + i">
+                        <div>
+                            <input type="hidden" x-model="p.prodi">
+                            <input type="hidden" x-model="p.dosen_wali">
+                        </div>
+                    </template>
+                </div>
+
+                <!-- ====================== Detail Sesi Section ====================== -->
+                <div class="pt-2">
+                    <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                        <span class="w-8 h-px bg-gray-200"></span>
+                        Detail Sesi Konseling
+                        <span class="flex-1 h-px bg-gray-200"></span>
+                    </h2>
+
+                    <div class="space-y-10">
+                        <!-- Jenis Layanan -->
+                        <div>
+                            <label
+                                class="block text-sm font-semibold text-gray-600 mb-2 ml-1"
+                            >
+                                <i
+                                    class="fas fa-hand-holding-heart text-emerald-500 mr-1"
+                                ></i>
+                                Jenis Layanan <span class="text-red-400">*</span>
+                            </label>
+                            <select
+                                x-model="form.jenis_layanan_id"
+                                required
+                                class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none"
+                            >
+                                <option value="" class="bg-white">
+                                    — Pilih Jenis Layanan —
+                                </option>
+                                {% for item in jenis_layanan_list %}
+                                <option value="{{ item.id }}" class="bg-white">
+                                    {{ item.nama }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Kategori Masalah -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-3 ml-1">
+                                <i class="fas fa-tags text-amber-500 mr-1"></i> Kategori Masalah <span class="text-red-400">*</span>
+                            </label>
+                            
+                            <!-- Grid Layout Selection -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 ml-1">
+                                {% for item in kategori_list %}
+                                <button
+                                    type="button"
+                                    @click="toggleKategori('{{ item.id }}')"
+                                    :class="form.kategori_masalah_id.includes('{{ item.id }}') 
+                                        ? 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-200/50' 
+                                        : 'bg-white text-gray-600 border-gray-200 hover:border-amber-300'"
+                                    class="relative flex items-center justify-center text-center p-3.5 rounded-2xl border transition-all duration-300 active:scale-95 min-h-[64px]"
+                                >
+                                    <!-- Selection Indicator -->
+                                    <div x-show="form.kategori_masalah_id.includes('{{ item.id }}')" 
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-50"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         class="absolute -top-2 -right-2 w-6 h-6 bg-white text-amber-500 rounded-full flex items-center justify-center shadow-md border border-amber-100">
+                                        <i class="fas fa-check text-[10px]"></i>
+                                    </div>
+                                    <span class="text-[11px] font-bold leading-snug">{{ item.nama }}</span>
+                                </button>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Error message if none selected -->
+                            <div x-show="form.kategori_masalah_id.length === 0" x-cloak class="mt-2 ml-1 text-[10px] text-red-400 italic">
+                                * Pilih minimal satu kategori masalah
+                            </div>
+                        </div>
+
+                <!-- ====================== Topik Permasalahan ====================== -->
+                <div>
+                    <label
+                        class="block text-sm font-semibold text-gray-600 mb-2 ml-1"
+                    >
+                        <i class="fas fa-comment-dots text-rose-500 mr-1"></i>
+                        Topik Permasalahan <span class="text-red-400">*</span>
+                    </label>
+                    <textarea
+                        x-model="form.topik"
+                        required
+                        rows="3"
+                        placeholder="Jelaskan detail spesifik permasalahan..."
+                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"
+                    ></textarea>
+                </div>
+
+                <!-- ====================== Tanggal Sesi ====================== -->
+                <div>
+                    <label
+                        class="block text-sm font-semibold text-gray-600 mb-2 ml-1"
+                    >
+                        <i class="fas fa-calendar-alt text-cyan-500 mr-1"></i>
+                        Tanggal Sesi <span class="text-red-400">*</span>
+                    </label>
+                    <input
+                        type="date"
+                        x-model="form.tanggal_sesi"
+                        required
+                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm"
+                    />
+                </div>
+
+                <!-- ====================== Tindak Lanjut ====================== -->
+                <div>
+                    <label
+                        class="block text-sm font-semibold text-gray-600 mb-2 ml-1"
+                    >
+                        <i
+                            class="fas fa-clipboard-check text-teal-500 mr-1"
+                        ></i>
+                        Tindak Lanjut
+                    </label>
+                    <select
+                        x-model="form.tindak_lanjut"
+                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none"
+                    >
+                        <option value="" class="bg-white">
+                            — Pilih Tindak Lanjut (Opsional) —
+                        </option>
+                        {% for item in tindak_lanjut_list %}
+                        <option value="{{ item.id }}" class="bg-white">
+                            {{ item.nama }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                        <!-- Catatan Kesimpulan -->
+                        <div>
+                            <label
+                                class="block text-sm font-semibold text-gray-600 mb-2 ml-1"
+                            >
+                                <i class="fas fa-file-alt text-indigo-500 mr-1"></i>
+                                Catatan Kesimpulan
+                            </label>
+                            <textarea
+                                x-model="form.catatan_kesimpulan"
+                                rows="3"
+                                placeholder="Opsional: Tuliskan kesimpulan dari sesi ini..."
+                                class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====================== Submit Button ====================== -->
+                <button
+                    type="submit"
+                    :disabled="isSubmitting || participants.length === 0 || form.kategori_masalah_id.length === 0"
+                    class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-violet-600/20 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+                >
+                    <template x-if="isSubmitting">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </template>
+                    <template x-if="!isSubmitting">
+                        <i class="fas fa-save"></i>
+                    </template>
+                    <span
+                        x-text="isSubmitting
+                            ? 'Menyimpan...'
+                            : participants.length === 0
+                                ? 'Tambahkan minimal 1 klien'
+                                : form.kategori_masalah_id.length === 0
+                                    ? 'Pilih minimal 1 Kategori Masalah'
+                                    : participants.length === 1
+                                        ? 'Simpan Sesi Konseling'
+                                        : 'Simpan ' + participants.length + ' Sesi Konseling'"
+                    ></span>
+                </button>
+            </form>
         </div>
 
-        <!-- FORM -->
-        <form @submit.prevent="submitForm()" class="space-y-5">
+        {% include 'muslimTools/prayerWidget.html' %} {% include
+        'nativeNav.html' %}
 
-            <!-- NIM -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-id-card text-violet-500 mr-1"></i> NIM Mahasiswa <span class="text-red-400">*</span>
-                </label>
-                <input type="text" x-model="form.nim" required placeholder="Contoh: 23410100001"
-                       @input.debounce.600ms="lookupNIM()"
-                       class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
+        <script>
+            function catatSesiApp() {
+                return {
+                    isSubmitting: false,
 
-                <!-- Lookup Status -->
-                <div x-show="lookupStatus === 'loading'" class="mt-2 flex items-center gap-2 text-xs text-gray-500">
-                    <i class="fas fa-spinner fa-spin text-violet-500"></i> Mencari data mahasiswa...
-                </div>
-                <div x-show="lookupStatus === 'error'" x-cloak class="mt-2 flex items-center gap-2 text-xs text-red-400">
-                    <i class="fas fa-exclamation-circle"></i> <span x-text="lookupMessage"></span>
-                </div>
+                    // ── Current NIM/NIK input state ──────────────────────────────────
+                    nimInput: "",
+                    nimInputStatus: "", // '' | 'loading' | 'found' | 'error' | 'manual'
+                    nimInputMessage: "",
+                    nimInputData: {},
+                    nimInputManualData: { nama: "", prodi: "", dosen_wali: "" },
+                    
+                    // ── Master data lookup ───────────────────────────────────────────
+                    kategoriList: {{ kategori_list|tojson }},
+                    getKategoriName(id) {
+                        const found = this.kategoriList.find(k => k.id == id);
+                        return found ? found.nama : id;
+                    },
 
-                <!-- Lookup Result Card -->
-                <div x-show="lookupStatus === 'found'" x-cloak
-                     x-transition:enter="transition ease-out duration-200"
-                     x-transition:enter-start="opacity-0 -translate-y-1"
-                     x-transition:enter-end="opacity-100 translate-y-0"
-                     class="mt-3 bg-violet-500/5 border border-violet-500/10 rounded-2xl p-4 space-y-2">
-                    <div class="flex items-center gap-2">
-                        <div class="p-1.5 bg-violet-50 rounded-lg">
-                            <i class="fas fa-user text-violet-500 text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Nama Mahasiswa</p>
-                            <p class="text-sm text-gray-800 font-medium" x-text="lookupData.nama_sensor || '-'"></p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="p-1.5 bg-blue-50 rounded-lg">
-                            <i class="fas fa-chalkboard-teacher text-blue-500 text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Dosen Wali</p>
-                            <p class="text-sm text-gray-800 font-medium" x-text="lookupData.dosen_wali || '-'"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    // ── Participants list ─────────────────────────────────────────────
+                    // Each: { nim, role, nama_sensor, nama_raw, prodi, dosen_wali, message }
+                    // prodi and dosen_wali are PER-PARTICIPANT (not session-level)
+                    participants: [],
 
-            <!-- Prodi (dropdown dari majorID, auto-fill tapi bisa diedit) -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-graduation-cap text-blue-500 mr-1"></i> Program Studi
-                </label>
-                <select x-model="form.prodi"
-                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
-                    <option value="" class="bg-white">— Pilih Prodi —</option>
-                    {% for kode, nama in prodi_list.items() %}
-                    <option value="{{ nama }}" class="bg-white">{{ nama }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Dosen Wali (auto-fill dari lookup tapi bisa diedit) -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-chalkboard-teacher text-cyan-500 mr-1"></i> Dosen Wali
-                </label>
-                <input type="text" x-model="form.dosen_wali" placeholder="Otomatis terisi dari lookup NIM..."
-                       class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm">
-            </div>
-
-            <!-- Jenis Layanan (dropdown dinamis) -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-hand-holding-heart text-emerald-500 mr-1"></i> Jenis Layanan <span class="text-red-400">*</span>
-                </label>
-                <select x-model="form.jenis_layanan_id" required
-                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
-                    <option value="" class="bg-white">— Pilih Jenis Layanan —</option>
-                    {% for item in jenis_layanan_list %}
-                    <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Kategori Masalah (dropdown dinamis) -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-tags text-amber-500 mr-1"></i> Kategori Masalah <span class="text-red-400">*</span>
-                </label>
-                <p class="text-xs text-gray-500 mb-2 ml-1 mb-2">Tahan CTRL/CMD untuk memilih lebih dari satu kategori.</p>
-                <select x-model="form.kategori_masalah_id" required multiple
-                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm">
-                    {% for item in kategori_list %}
-                    <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Topik Permasalahan -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-comment-dots text-rose-500 mr-1"></i> Topik Permasalahan <span class="text-red-400">*</span>
-                </label>
-                <textarea x-model="form.topik" required rows="3" placeholder="Jelaskan detail spesifik permasalahan..."
-                          class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
-            </div>
-
-            <!-- Tanggal Sesi -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-calendar-alt text-cyan-500 mr-1"></i> Tanggal Sesi <span class="text-red-400">*</span>
-                </label>
-                <input type="date" x-model="form.tanggal_sesi" required
-                       class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm"
-                       style="color-scheme: dark;">
-            </div>
-
-            <!-- Tindak Lanjut (dropdown dinamis) -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-clipboard-check text-teal-500 mr-1"></i> Tindak Lanjut
-                </label>
-                <select x-model="form.tindak_lanjut"
-                        class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 focus:border-violet-500/30 focus:outline-none transition text-sm appearance-none">
-                    <option value="" class="bg-white">— Pilih Tindak Lanjut (Opsional) —</option>
-                    {% for item in tindak_lanjut_list %}
-                    <option value="{{ item.id }}" class="bg-white">{{ item.nama }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Catatan Kesimpulan -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2 ml-1">
-                    <i class="fas fa-file-alt text-indigo-500 mr-1"></i> Catatan Kesimpulan
-                </label>
-                <textarea x-model="form.catatan_kesimpulan" rows="3" placeholder="Opsional: Tuliskan kesimpulan dari sesi ini..."
-                          class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-gray-800 placeholder-gray-600 focus:border-violet-500/30 focus:outline-none transition text-sm resize-none"></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" :disabled="isSubmitting"
-                    class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500
-                           text-white font-bold py-4 rounded-2xl shadow-lg shadow-violet-600/20
-                           transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed
-                           flex items-center justify-center gap-2 text-sm">
-                <template x-if="isSubmitting">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </template>
-                <template x-if="!isSubmitting">
-                    <i class="fas fa-save"></i>
-                </template>
-                <span x-text="isSubmitting ? 'Menyimpan...' : 'Simpan Sesi Konseling'"></span>
-            </button>
-        </form>
-    </div>
-
-    {% include 'muslimTools/prayerWidget.html' %}
-    {% include 'nativeNav.html' %}
-
-<script>
-function catatSesiApp() {
-    return {
-        isSubmitting: false,
-        lookupStatus: '', // '', 'loading', 'found', 'error'
-        lookupMessage: '',
-        lookupData: {},
-        form: {
-            nim: '',
-            nama: '',
-            dosen_wali: '',
-            prodi: '',
-            jenis_layanan_id: '',
-            kategori_masalah_id: [],
-            topik: '',
-            tanggal_sesi: '',
-            tindak_lanjut: '',
-            catatan_kesimpulan: ''
-        },
-
-        init() {
-            // Default tanggal = hari ini
-            const today = new Date();
-            this.form.tanggal_sesi = today.toISOString().split('T')[0];
-        },
-
-        async lookupNIM() {
-            const nim = this.form.nim.trim();
-            // Reset kalau NIM terlalu pendek
-            if (nim.length < 11) {
-                this.lookupStatus = '';
-                this.lookupData = {};
-                this.form.nama = '';
-                this.form.dosen_wali = '';
-                return;
-            }
-
-            this.lookupStatus = 'loading';
-            try {
-                const res = await fetch(`{{ url_for("konselor_lookup_nim") }}?nim=${encodeURIComponent(nim)}`);
-                const data = await res.json();
-
-                if (data.success) {
-                    this.lookupStatus = 'found';
-                    this.lookupData = data;
-                    // Set hidden values (raw, untuk disimpan ke DB)
-                    this.form.nama = data.nama_raw;
-                    this.form.dosen_wali = data.dosen_wali || '';
-                    // Auto-fill prodi jika belum terisi
-                    if (!this.form.prodi && data.prodi) {
-                        this.form.prodi = data.prodi;
-                    }
-                } else {
-                    this.lookupStatus = 'error';
-                    this.lookupMessage = data.message || 'Data tidak ditemukan.';
-                    this.form.nama = '';
-                    this.form.dosen_wali = '';
-                }
-            } catch (err) {
-                console.error('[Lookup NIM]', err);
-                this.lookupStatus = 'error';
-                this.lookupMessage = 'Gagal koneksi ke server.';
-                this.form.nama = '';
-                this.form.dosen_wali = '';
-            }
-        },
-
-        async submitForm() {
-            this.isSubmitting = true;
-            try {
-                const formData = new FormData();
-                for (const [key, value] of Object.entries(this.form)) {
-                    if (key === 'kategori_masalah_id') {
-                        formData.append('kategori_masalah_ids', JSON.stringify(value));
-                    } else {
-                        formData.append(key, value);
-                    }
-                }
-
-                const res = await fetch('{{ url_for("konselor_catat_sesi") }}', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    if (window.showAlert) {
-                        window.showAlert('success', data.message || 'Sesi berhasil disimpan!');
-                    }
-                    // Reset form
-                    this.form = {
-                        nim: '',
-                        nama: '',
-                        dosen_wali: '',
-                        prodi: '',
-                        jenis_layanan_id: '',
+                    // ── Session-level form fields ─────────────────────────────────────
+                    form: {
+                        jenis_layanan_id: "",
                         kategori_masalah_id: [],
-                        topik: '',
-                        tanggal_sesi: new Date().toISOString().split('T')[0],
-                        tindak_lanjut: '',
-                        catatan_kesimpulan: ''
-                    };
-                    this.lookupStatus = '';
-                    this.lookupData = {};
-                } else {
-                    if (window.showAlert) {
-                        window.showAlert('error', data.message || 'Gagal menyimpan sesi.');
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-                if (window.showAlert) {
-                    window.showAlert('error', 'Terjadi kesalahan koneksi.');
-                }
-            } finally {
-                this.isSubmitting = false;
+                        topik: "",
+                        tanggal_sesi: "",
+                        tindak_lanjut: "",
+                        catatan_kesimpulan: "",
+                    },
+
+                    toggleKategori(id) {
+                        const strId = String(id);
+                        if (this.form.kategori_masalah_id.includes(strId)) {
+                            this.form.kategori_masalah_id = this.form.kategori_masalah_id.filter(k => k !== strId);
+                        } else {
+                            this.form.kategori_masalah_id.push(strId);
+                        }
+                    },
+
+                    // ── Init ─────────────────────────────────────────────────────────
+                    init() {
+                        const today = new Date();
+                        this.form.tanggal_sesi = today
+                            .toISOString()
+                            .split("T")[0];
+                    },
+
+                    // ── Lookup the current nimInput value ────────────────────────────
+                    async lookupInput() {
+                        const nim = this.nimInput.trim();
+
+                        // Handle special code 001 (Mode Manual)
+                        if (nim === "001") {
+                            this.nimInputStatus = "manual";
+                            this.nimInputMessage = "Mode input manual aktif.";
+                            this.nimInputData = { role: "mahasiswa" };
+                            this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                            return;
+                        }
+
+                        // Handle special code 002 (Data Dummy)
+                        if (nim === "002") {
+                            this.nimInputStatus = "manual";
+                            this.nimInputMessage = "Data dummy aktif.";
+                            this.nimInputData = { role: "mahasiswa" };
+                            this.nimInputManualData = { nama: "Mahasiswa Dummy", prodi: "S1 Sistem Informasi", dosen_wali: "Dosen Dummy" };
+                            return;
+                        }
+
+                        // Reset if input length is too short for any search (min 3)
+                        if (nim.length < 3) {
+                            this.nimInputStatus = "";
+                            this.nimInputData = {};
+                            this.nimInputMessage = "";
+                            this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                            return;
+                        }
+
+                        // Duplicate guard
+                        if (this.participants.some((p) => p.nim === nim)) {
+                            this.nimInputStatus = "error";
+                            this.nimInputMessage =
+                                "NIM/NIK ini sudah ditambahkan ke sesi.";
+                            return;
+                        }
+
+                        this.nimInputStatus = "loading";
+                        try {
+                            const res = await fetch(
+                                `{{ url_for("konselor_lookup_civitas") }}?civitas=${encodeURIComponent(nim)}`,
+                            );
+                            const data = await res.json();
+
+                            if (data.success) {
+                                this.nimInputStatus = "found";
+                                this.nimInputData = data;
+                                // Fill manual fields with found data
+                                this.nimInputManualData = {
+                                    nama: data.nama_raw || data.nama_sensor || "",
+                                    prodi: data.prodi || "",
+                                    dosen_wali: data.dosen_wali || ""
+                                };
+                            } else {
+                                this.nimInputStatus = "error";
+                                this.nimInputMessage =
+                                    data.message || "Data tidak ditemukan.";
+                                this.nimInputData = {};
+                                this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                            }
+                        } catch (err) {
+                            console.error("[Lookup NIM]", err);
+                            this.nimInputStatus = "error";
+                            this.nimInputMessage = "Gagal koneksi ke server.";
+                            this.nimInputData = {};
+                            this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                        }
+                    },
+
+                    // ── Add the previewed lookup result to participants ───────────────
+                    addParticipant() {
+                        if (!['found', 'manual'].includes(this.nimInputStatus)) return;
+
+                        const nim = this.nimInput.trim();
+                        const data = this.nimInputData;
+                        const manual = this.nimInputManualData;
+
+                        // Use actual NIM if found via name search
+                        const actualNim = data.nim || nim;
+
+                        // Double-check for duplicates
+                        if (this.participants.some((p) => p.nim === actualNim)) {
+                            if (window.showAlert) window.showAlert("error", "Klien ini sudah ada dalam daftar.");
+                            return;
+                        }
+
+                        this.participants.push({
+                            nim: actualNim,
+                            role: data.role || "mahasiswa",
+                            nama_sensor: data.nama_sensor || manual.nama || actualNim,
+                            nama_raw: manual.nama || actualNim,
+                            prodi: manual.prodi || "",
+                            dosen_wali: manual.dosen_wali || "",
+                        });
+
+                        // Clear input + preview
+                        this.nimInput = "";
+                        this.nimInputStatus = "";
+                        this.nimInputData = {};
+                        this.nimInputMessage = "";
+                        this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                    },
+
+                    // ── Remove a participant ──────────────────────────────────────────
+                    removeParticipant(idx) {
+                        this.participants.splice(idx, 1);
+                    },
+
+                    // ── Submit ───────────────────────────────────────────────────────
+                    async submitForm() {
+                        if (this.participants.length === 0) {
+                            if (window.showAlert)
+                                window.showAlert(
+                                    "error",
+                                    "Tambahkan minimal satu NIM/NIK klien terlebih dahulu.",
+                                );
+                            else
+                                alert(
+                                    "Tambahkan minimal satu NIM/NIK klien terlebih dahulu.",
+                                );
+                            return;
+                        }
+
+                        if (this.form.kategori_masalah_id.length === 0) {
+                            if (window.showAlert)
+                                window.showAlert(
+                                    "error",
+                                    "Pilih minimal satu Kategori Masalah.",
+                                );
+                            else
+                                alert("Pilih minimal satu Kategori Masalah.");
+                            return;
+                        }
+
+                        this.isSubmitting = true;
+                        try {
+                            const formData = new FormData();
+
+                            // Send full participants array (nim + nama + prodi + dosen_wali per person)
+                            formData.append(
+                                "participants",
+                                JSON.stringify(
+                                    this.participants.map((p) => ({
+                                        nim: p.nim,
+                                        nama: p.nama_raw || "",
+                                        prodi: p.prodi || "",
+                                        dosen_wali: p.dosen_wali || "",
+                                        role: p.role || "",
+                                    })),
+                                ),
+                            );
+
+                            // Backward-compat: primary participant single fields
+                            formData.append("nim", this.participants[0].nim);
+                            formData.append(
+                                "nama",
+                                this.participants[0].nama_raw || "",
+                            );
+
+                            // Session-level fields
+                            for (const [key, value] of Object.entries(
+                                this.form,
+                            )) {
+                                if (key === "kategori_masalah_id") {
+                                    formData.append(
+                                        "kategori_masalah_ids",
+                                        JSON.stringify(value),
+                                    );
+                                } else {
+                                    formData.append(key, value);
+                                }
+                            }
+
+                            const res = await fetch(
+                                '{{ url_for("konselor_catat_sesi") }}',
+                                {
+                                    method: "POST",
+                                    body: formData,
+                                },
+                            );
+                            const data = await res.json();
+
+                            if (data.success) {
+                                if (window.showAlert)
+                                    window.showAlert(
+                                        "success",
+                                        data.message ||
+                                            "Sesi berhasil disimpan!",
+                                    );
+
+                                // Full reset
+                                this.participants = [];
+                                this.nimInput = "";
+                                this.nimInputStatus = "";
+                                this.nimInputData = {};
+                                this.nimInputMessage = "";
+                                this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                                this.form = {
+                                    jenis_layanan_id: "",
+                                    kategori_masalah_id: [],
+                                    topik: "",
+                                    tanggal_sesi: new Date()
+                                        .toISOString()
+                                        .split("T")[0],
+                                    tindak_lanjut: "",
+                                    catatan_kesimpulan: "",
+                                };
+                            } else {
+                                if (window.showAlert)
+                                    window.showAlert(
+                                        "error",
+                                        data.message || "Gagal menyimpan sesi.",
+                                    );
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            if (window.showAlert)
+                                window.showAlert(
+                                    "error",
+                                    "Terjadi kesalahan koneksi.",
+                                );
+                        } finally {
+                            this.isSubmitting = false;
+                        }
+                    },
+                };
             }
-        }
-    }
-}
-</script>
-</body>
+        </script>
+    </body>
 </html>

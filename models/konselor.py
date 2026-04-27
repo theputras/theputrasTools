@@ -2,6 +2,7 @@
 # Model untuk fitur Pencatatan Sesi Konseling
 
 import logging
+
 from connection import get_connection
 
 
@@ -36,12 +37,12 @@ class KategoriMasalahModel:
         try:
             cursor.execute(
                 "INSERT INTO konselor_kategori_masalah (nama) VALUES (%s)",
-                (nama.strip(),)
+                (nama.strip(),),
             )
             conn.commit()
             return True, "Kategori berhasil ditambahkan."
         except Exception as e:
-            if 'Duplicate' in str(e):
+            if "Duplicate" in str(e):
                 return False, "Kategori sudah ada."
             logging.error(f"[Konselor] Error create kategori: {e}")
             return False, "Gagal menambah kategori."
@@ -58,12 +59,12 @@ class KategoriMasalahModel:
         try:
             cursor.execute(
                 "UPDATE konselor_kategori_masalah SET nama = %s WHERE id = %s",
-                (nama.strip(), kategori_id)
+                (nama.strip(), kategori_id),
             )
             conn.commit()
             return True, "Kategori berhasil diperbarui."
         except Exception as e:
-            if 'Duplicate' in str(e):
+            if "Duplicate" in str(e):
                 return False, "Nama kategori sudah digunakan."
             logging.error(f"[Konselor] Error update kategori: {e}")
             return False, "Gagal memperbarui kategori."
@@ -79,16 +80,18 @@ class KategoriMasalahModel:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "DELETE FROM konselor_kategori_masalah WHERE id = %s",
-                (kategori_id,)
+                "DELETE FROM konselor_kategori_masalah WHERE id = %s", (kategori_id,)
             )
             conn.commit()
             if cursor.rowcount == 0:
                 return False, "Kategori tidak ditemukan."
             return True, "Kategori berhasil dihapus."
         except Exception as e:
-            if 'foreign key' in str(e).lower() or 'restrict' in str(e).lower():
-                return False, "Kategori masih digunakan di data sesi. Tidak bisa dihapus."
+            if "foreign key" in str(e).lower() or "restrict" in str(e).lower():
+                return (
+                    False,
+                    "Kategori masih digunakan di data sesi. Tidak bisa dihapus.",
+                )
             logging.error(f"[Konselor] Error delete kategori: {e}")
             return False, "Gagal menghapus kategori."
         finally:
@@ -126,13 +129,12 @@ class JenisLayananModel:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO konselor_jenis_layanan (nama) VALUES (%s)",
-                (nama.strip(),)
+                "INSERT INTO konselor_jenis_layanan (nama) VALUES (%s)", (nama.strip(),)
             )
             conn.commit()
             return True, "Jenis layanan berhasil ditambahkan."
         except Exception as e:
-            if 'Duplicate' in str(e):
+            if "Duplicate" in str(e):
                 return False, "Jenis layanan sudah ada."
             logging.error(f"[Konselor] Error create layanan: {e}")
             return False, "Gagal menambah jenis layanan."
@@ -149,12 +151,12 @@ class JenisLayananModel:
         try:
             cursor.execute(
                 "UPDATE konselor_jenis_layanan SET nama = %s WHERE id = %s",
-                (nama.strip(), layanan_id)
+                (nama.strip(), layanan_id),
             )
             conn.commit()
             return True, "Jenis layanan berhasil diperbarui."
         except Exception as e:
-            if 'Duplicate' in str(e):
+            if "Duplicate" in str(e):
                 return False, "Nama layanan sudah digunakan."
             logging.error(f"[Konselor] Error update layanan: {e}")
             return False, "Gagal memperbarui jenis layanan."
@@ -170,16 +172,18 @@ class JenisLayananModel:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "DELETE FROM konselor_jenis_layanan WHERE id = %s",
-                (layanan_id,)
+                "DELETE FROM konselor_jenis_layanan WHERE id = %s", (layanan_id,)
             )
             conn.commit()
             if cursor.rowcount == 0:
                 return False, "Jenis layanan tidak ditemukan."
             return True, "Jenis layanan berhasil dihapus."
         except Exception as e:
-            if 'foreign key' in str(e).lower() or 'restrict' in str(e).lower():
-                return False, "Jenis layanan masih digunakan di data sesi. Tidak bisa dihapus."
+            if "foreign key" in str(e).lower() or "restrict" in str(e).lower():
+                return (
+                    False,
+                    "Jenis layanan masih digunakan di data sesi. Tidak bisa dihapus.",
+                )
             logging.error(f"[Konselor] Error delete layanan: {e}")
             return False, "Gagal menghapus jenis layanan."
         finally:
@@ -217,13 +221,12 @@ class TindakLanjutModel:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO konselor_tindak_lanjut (nama) VALUES (%s)",
-                (nama.strip(),)
+                "INSERT INTO konselor_tindak_lanjut (nama) VALUES (%s)", (nama.strip(),)
             )
             conn.commit()
             return True, "Tindak lanjut berhasil ditambahkan."
         except Exception as e:
-            if 'Duplicate' in str(e):
+            if "Duplicate" in str(e):
                 return False, "Tindak lanjut sudah ada."
             logging.error(f"[Konselor] Error create tindak_lanjut: {e}")
             return False, "Gagal menambah tindak lanjut."
@@ -240,12 +243,12 @@ class TindakLanjutModel:
         try:
             cursor.execute(
                 "UPDATE konselor_tindak_lanjut SET nama = %s WHERE id = %s",
-                (nama.strip(), tl_id)
+                (nama.strip(), tl_id),
             )
             conn.commit()
             return True, "Tindak lanjut berhasil diperbarui."
         except Exception as e:
-            if 'Duplicate' in str(e):
+            if "Duplicate" in str(e):
                 return False, "Nama tindak lanjut sudah digunakan."
             logging.error(f"[Konselor] Error update tindak_lanjut: {e}")
             return False, "Gagal memperbarui tindak lanjut."
@@ -260,17 +263,17 @@ class TindakLanjutModel:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                "DELETE FROM konselor_tindak_lanjut WHERE id = %s",
-                (tl_id,)
-            )
+            cursor.execute("DELETE FROM konselor_tindak_lanjut WHERE id = %s", (tl_id,))
             conn.commit()
             if cursor.rowcount == 0:
                 return False, "Tindak lanjut tidak ditemukan."
             return True, "Tindak lanjut berhasil dihapus."
         except Exception as e:
-            if 'foreign key' in str(e).lower() or 'restrict' in str(e).lower():
-                return False, "Tindak lanjut masih digunakan di data sesi. Tidak bisa dihapus."
+            if "foreign key" in str(e).lower() or "restrict" in str(e).lower():
+                return (
+                    False,
+                    "Tindak lanjut masih digunakan di data sesi. Tidak bisa dihapus.",
+                )
             logging.error(f"[Konselor] Error delete tindak_lanjut: {e}")
             return False, "Gagal menghapus tindak lanjut."
         finally:
@@ -291,36 +294,41 @@ class KonselorSessionModel:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO konselor_sessions
                 (konselor_user_id, nim_id, nama, dosen_wali, prodi, jenis_layanan_id, topik, tanggal_sesi, waktu_mulai, waktu_selesai, tindak_lanjut_id, catatan_kesimpulan)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
-            """, (
-                data['konselor_user_id'],
-                data['nim_id'],
-                data.get('nama'),
-                data.get('dosen_wali'),
-                data.get('prodi'),
-                data['jenis_layanan_id'],
-                data['topik'],
-                data['tanggal_sesi'],
-                data.get('waktu_mulai'),
-                data.get('waktu_selesai'),
-                data.get('tindak_lanjut_id'),
-                data.get('catatan_kesimpulan')
-            ))
-            
+            """,
+                (
+                    data["konselor_user_id"],
+                    data["nim_id"],
+                    data.get("nama"),
+                    data.get("dosen_wali"),
+                    data.get("prodi"),
+                    data["jenis_layanan_id"],
+                    data["topik"],
+                    data["tanggal_sesi"],
+                    data.get("waktu_mulai"),
+                    data.get("waktu_selesai"),
+                    data.get("tindak_lanjut_id"),
+                    data.get("catatan_kesimpulan"),
+                ),
+            )
+
             session_id = cursor.fetchone()[0]
-            kategori_ids = data.get('kategori_masalah_ids', [])
+            kategori_ids = data.get("kategori_masalah_ids", [])
             if kategori_ids:
-                mapped_values = [(session_id, int(k_id)) for k_id in kategori_ids if k_id]
+                mapped_values = [
+                    (session_id, int(k_id)) for k_id in kategori_ids if k_id
+                ]
                 if mapped_values:
                     cursor.executemany(
                         "INSERT INTO konselor_session_kategori (session_id, kategori_id) VALUES (%s, %s)",
-                        mapped_values
+                        mapped_values,
                     )
-            
+
             conn.commit()
             return True, "Sesi konseling berhasil disimpan."
         except Exception as e:
@@ -383,45 +391,55 @@ class KonselorSessionModel:
         try:
             # Total sesi & klien unik (all time atau per tahun)
             if tahun:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT COUNT(*) AS total_sesi,
                            COUNT(DISTINCT nim_id) AS klien_unik
                     FROM konselor_sessions
                     WHERE konselor_user_id = %s AND EXTRACT(YEAR FROM tanggal_sesi) = %s
-                """, (user_id, tahun))
+                """,
+                    (user_id, tahun),
+                )
             else:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT COUNT(*) AS total_sesi,
                            COUNT(DISTINCT nim_id) AS klien_unik
                     FROM konselor_sessions
                     WHERE konselor_user_id = %s
-                """, (user_id,))
+                """,
+                    (user_id,),
+                )
             totals = cursor.fetchone()
 
-            # Sesi bulan ini: Gabungan dari sesi yang sudah dicatat (konselor_sessions) 
+            # Sesi bulan ini: Gabungan dari sesi yang sudah dicatat (konselor_sessions)
             # DITAMBAH dengan jadwal yang masih Menunggu/Berlangsung (konselor_jadwal)
-            cursor.execute("""
-                SELECT 
-                    (SELECT COUNT(*) 
-                     FROM konselor_sessions 
-                     WHERE konselor_user_id = %s 
+            cursor.execute(
+                """
+                SELECT
+                    (SELECT COUNT(*)
+                     FROM konselor_sessions
+                     WHERE konselor_user_id = %s
                        AND EXTRACT(MONTH FROM tanggal_sesi) = EXTRACT(MONTH FROM CURRENT_DATE)
                        AND EXTRACT(YEAR FROM tanggal_sesi) = EXTRACT(YEAR FROM CURRENT_DATE)
-                    ) 
-                    + 
-                    (SELECT COUNT(*) 
-                     FROM konselor_jadwal 
-                     WHERE konselor_user_id = %s 
+                    )
+                    +
+                    (SELECT COUNT(*)
+                     FROM konselor_jadwal
+                     WHERE konselor_user_id = %s
                        AND status IN ('Menunggu', 'Berlangsung')
                        AND EXTRACT(MONTH FROM tanggal) = EXTRACT(MONTH FROM CURRENT_DATE)
                        AND EXTRACT(YEAR FROM tanggal) = EXTRACT(YEAR FROM CURRENT_DATE)
                     ) AS sesi_bulan_ini
-            """, (user_id, user_id))
+            """,
+                (user_id, user_id),
+            )
             bulan_ini = cursor.fetchone()
 
             # Distribusi per kategori
             if tahun:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT km.nama AS kategori, COUNT(sk.session_id) AS jumlah
                     FROM konselor_session_kategori sk
                     JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
@@ -429,9 +447,12 @@ class KonselorSessionModel:
                     WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
                     GROUP BY km.nama
                     ORDER BY jumlah DESC
-                """, (user_id, tahun))
+                """,
+                    (user_id, tahun),
+                )
             else:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT km.nama AS kategori, COUNT(sk.session_id) AS jumlah
                     FROM konselor_session_kategori sk
                     JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
@@ -439,36 +460,44 @@ class KonselorSessionModel:
                     WHERE s.konselor_user_id = %s
                     GROUP BY km.nama
                     ORDER BY jumlah DESC
-                """, (user_id,))
+                """,
+                    (user_id,),
+                )
             kategori_dist = cursor.fetchall()
 
             # Distribusi per jenis layanan
             if tahun:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT jl.nama AS layanan, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
                     WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
                     GROUP BY jl.nama
                     ORDER BY jumlah DESC
-                """, (user_id, tahun))
+                """,
+                    (user_id, tahun),
+                )
             else:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT jl.nama AS layanan, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
                     WHERE s.konselor_user_id = %s
                     GROUP BY jl.nama
                     ORDER BY jumlah DESC
-                """, (user_id,))
+                """,
+                    (user_id,),
+                )
             layanan_dist = cursor.fetchall()
 
             return {
-                'total_sesi': totals['total_sesi'] if totals else 0,
-                'klien_unik': totals['klien_unik'] if totals else 0,
-                'sesi_bulan_ini': bulan_ini['sesi_bulan_ini'] if bulan_ini else 0,
-                'kategori_distribusi': kategori_dist,
-                'layanan_distribusi': layanan_dist
+                "total_sesi": totals["total_sesi"] if totals else 0,
+                "klien_unik": totals["klien_unik"] if totals else 0,
+                "sesi_bulan_ini": bulan_ini["sesi_bulan_ini"] if bulan_ini else 0,
+                "kategori_distribusi": kategori_dist,
+                "layanan_distribusi": layanan_dist,
             }
         except Exception as e:
             logging.error(f"[Konselor] Error get_rekap_stats: {e}")
@@ -484,7 +513,8 @@ class KonselorSessionModel:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            cursor.execute("""
+            cursor.execute(
+                """
                 UPDATE konselor_sessions
                 SET prodi = %s,
                     jenis_layanan_id = %s,
@@ -493,27 +523,34 @@ class KonselorSessionModel:
                     tindak_lanjut_id = %s,
                     catatan_kesimpulan = %s
                 WHERE id = %s AND konselor_user_id = %s
-            """, (
-                data.get('prodi'),
-                data['jenis_layanan_id'],
-                data['topik'],
-                data['tanggal_sesi'],
-                data.get('tindak_lanjut_id'),
-                data.get('catatan_kesimpulan'),
-                session_id,
-                user_id
-            ))
-            
+            """,
+                (
+                    data.get("prodi"),
+                    data["jenis_layanan_id"],
+                    data["topik"],
+                    data["tanggal_sesi"],
+                    data.get("tindak_lanjut_id"),
+                    data.get("catatan_kesimpulan"),
+                    session_id,
+                    user_id,
+                ),
+            )
+
             if cursor.rowcount > 0 or True:
                 # Update mapping kategori
-                cursor.execute("DELETE FROM konselor_session_kategori WHERE session_id = %s", (session_id,))
-                kategori_ids = data.get('kategori_masalah_ids', [])
+                cursor.execute(
+                    "DELETE FROM konselor_session_kategori WHERE session_id = %s",
+                    (session_id,),
+                )
+                kategori_ids = data.get("kategori_masalah_ids", [])
                 if kategori_ids:
-                    mapped_values = [(session_id, int(k_id)) for k_id in kategori_ids if k_id]
+                    mapped_values = [
+                        (session_id, int(k_id)) for k_id in kategori_ids if k_id
+                    ]
                     if mapped_values:
                         cursor.executemany(
                             "INSERT INTO konselor_session_kategori (session_id, kategori_id) VALUES (%s, %s)",
-                            mapped_values
+                            mapped_values,
                         )
                 conn.commit()
                 return True, "Sesi berhasil diperbarui."
@@ -536,7 +573,7 @@ class KonselorSessionModel:
         try:
             cursor.execute(
                 "DELETE FROM konselor_sessions WHERE id = %s AND konselor_user_id = %s",
-                (session_id, user_id)
+                (session_id, user_id),
             )
             conn.commit()
             if cursor.rowcount == 0:
@@ -562,20 +599,25 @@ class KonselorJadwalModel:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            cursor.execute("""
-                INSERT INTO konselor_jadwal (konselor_user_id, nim, nama, prodi, layanan_id, tanggal, jam, status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            cursor.execute(
+                """
+                INSERT INTO konselor_jadwal (konselor_user_id, nim, nama, prodi, dosen_wali, role, layanan_id, tanggal, jam, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
-            """, (
-                data['konselor_user_id'],
-                data['nim'],
-                data.get('nama'),
-                data.get('prodi'),
-                data['layanan_id'],
-                data['tanggal'],
-                data['jam'],
-                data.get('status', 'Menunggu')
-            ))
+            """,
+                (
+                    data["konselor_user_id"],
+                    data["nim"],
+                    data.get("nama"),
+                    data.get("prodi"),
+                    data.get("dosen_wali"),
+                    data.get("role", "mahasiswa"),
+                    data["layanan_id"],
+                    data["tanggal"],
+                    data["jam"],
+                    data.get("status", "Menunggu"),
+                ),
+            )
             conn.commit()
             return True, "Jadwal berhasil dibuat."
         except Exception as e:
@@ -623,12 +665,15 @@ class KonselorJadwalModel:
             return None
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT j.*, l.nama as layanan
                 FROM konselor_jadwal j
                 LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
                 WHERE j.id = %s
-            """, (jadwal_id,))
+            """,
+                (jadwal_id,),
+            )
             return cursor.fetchone()
         except Exception as e:
             logging.error(f"[Konselor] Error get_jadwal_by_id: {e}")
@@ -643,11 +688,14 @@ class KonselorJadwalModel:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            cursor.execute("""
+            cursor.execute(
+                """
                 UPDATE konselor_jadwal
                 SET tanggal = %s, jam = %s, updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s AND konselor_user_id = %s
-            """, (tanggal, jam, jadwal_id, user_id))
+            """,
+                (tanggal, jam, jadwal_id, user_id),
+            )
             if cursor.rowcount > 0:
                 conn.commit()
                 return True, "Jadwal berhasil di-reschedule."
@@ -660,7 +708,32 @@ class KonselorJadwalModel:
         finally:
             cursor.close()
             conn.close()
-            
+
+    def get_all_by_konselor(self, user_id):
+        """Ambil semua jadwal konselor (riwayat lengkap), diurutkan terbaru dulu."""
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                """
+                SELECT j.*, l.nama AS layanan
+                FROM konselor_jadwal j
+                LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                WHERE j.konselor_user_id = %s
+                ORDER BY j.tanggal DESC, j.jam DESC
+            """,
+                (user_id,),
+            )
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_all_jadwal: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
     def update_status(self, jadwal_id, user_id, status):
         conn = self._get_connection()
         if not conn:
@@ -668,33 +741,42 @@ class KonselorJadwalModel:
         cursor = conn.cursor()
         try:
             # Jika status 'Berlangsung', set waktu_mulai jika belum ada, reset last_pause_time, & tambah total_pause_ms
-            if status == 'Berlangsung':
-                cursor.execute("""
+            if status == "Berlangsung":
+                cursor.execute(
+                    """
                     UPDATE konselor_jadwal
-                    SET status = %s, 
-                        total_pause_ms = CASE WHEN last_pause_time IS NOT NULL 
+                    SET status = %s,
+                        total_pause_ms = CASE WHEN last_pause_time IS NOT NULL
                                               THEN COALESCE(total_pause_ms, 0) + (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_pause_time)) * 1000)::BIGINT
                                               ELSE COALESCE(total_pause_ms, 0) END,
                         last_pause_time = NULL,
                         waktu_mulai = COALESCE(waktu_mulai, CURRENT_TIMESTAMP),
                         updated_at = CURRENT_TIMESTAMP
                     WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
-                """, (status, jadwal_id, user_id))
-            elif status == 'Jeda':
-                cursor.execute("""
+                """,
+                    (status, jadwal_id, user_id),
+                )
+            elif status == "Jeda":
+                cursor.execute(
+                    """
                     UPDATE konselor_jadwal
-                    SET status = %s, 
+                    SET status = %s,
                         last_pause_time = CURRENT_TIMESTAMP,
                         updated_at = CURRENT_TIMESTAMP
                     WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
-                """, (status, jadwal_id, user_id))
+                """,
+                    (status, jadwal_id, user_id),
+                )
             else:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     UPDATE konselor_jadwal
                     SET status = %s, updated_at = CURRENT_TIMESTAMP
                     WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
-                """, (status, jadwal_id, user_id))
-                
+                """,
+                    (status, jadwal_id, user_id),
+                )
+
             if cursor.rowcount > 0:
                 conn.commit()
                 return True, f"Status diperbarui menjadi {status}."
