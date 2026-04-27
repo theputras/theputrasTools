@@ -104,17 +104,38 @@
                     <div class="space-y-5">
                         <!-- Kategori Masalah -->
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-2 ml-1 uppercase tracking-wider">
+                            <label class="block text-xs font-bold text-gray-600 mb-3 ml-1 uppercase tracking-wider">
                                 Kategori Masalah <span class="text-red-400">*</span>
                             </label>
-                            <select x-model="formInput.kategori_masalah_id" required multiple
-                                    class="w-full bg-slate-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-emerald-500/50 focus:bg-white focus:outline-none transition min-h-[120px]">
-                                <!-- Options should be injected via backend, using mockup for now -->
+                            
+                            <!-- Grid Layout Selection -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 ml-1">
                                 {% for item in kategori_list %}
-                                <option value="{{ item.id }}">{{ item.nama }}</option>
+                                <button
+                                    type="button"
+                                    @click="toggleKategori('{{ item.id }}')"
+                                    :class="formInput.kategori_masalah_id.includes('{{ item.id }}') 
+                                        ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-200/50' 
+                                        : 'bg-slate-50 text-gray-600 border-gray-200 hover:border-emerald-300 hover:bg-white'"
+                                    class="relative flex items-center justify-center text-center p-3.5 rounded-xl border transition-all duration-300 active:scale-95 min-h-[64px]"
+                                >
+                                    <!-- Selection Indicator -->
+                                    <div x-show="formInput.kategori_masalah_id.includes('{{ item.id }}')" 
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-50"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         class="absolute -top-2 -right-2 w-6 h-6 bg-white text-emerald-500 rounded-full flex items-center justify-center shadow-md border border-emerald-100">
+                                        <i class="fas fa-check text-[10px]"></i>
+                                    </div>
+                                    <span class="text-xs font-bold leading-snug">{{ item.nama }}</span>
+                                </button>
                                 {% endfor %}
-                            </select>
-                            <p class="text-[10px] text-gray-500 mt-1.5 ml-1">Tahan CTRL/CMD untuk memilih lebih dari satu kategori yang relevan selama sesi.</p>
+                            </div>
+
+                            <!-- Error message if none selected -->
+                            <div x-show="formInput.kategori_masalah_id.length === 0" x-cloak class="mt-2 ml-1 text-[10px] text-red-400 italic">
+                                * Pilih minimal satu kategori masalah
+                            </div>
                         </div>
 
                         <!-- Topik Permasalahan -->
@@ -265,6 +286,15 @@ function liveSessionApp() {
             tindak_lanjut: ''
         },
 
+        toggleKategori(id) {
+            const strId = String(id);
+            if (this.formInput.kategori_masalah_id.includes(strId)) {
+                this.formInput.kategori_masalah_id = this.formInput.kategori_masalah_id.filter(k => k !== strId);
+            } else {
+                this.formInput.kategori_masalah_id.push(strId);
+            }
+        },
+
         waktuMulai: null,
 
         init() {
@@ -299,6 +329,7 @@ function liveSessionApp() {
             const s = String(totalSec % 60).padStart(2, '0');
             return `${h}:${m}:${s}`;
         },
+        
 
         async togglePause() {
             try {

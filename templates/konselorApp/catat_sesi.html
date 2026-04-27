@@ -128,9 +128,9 @@
                         />
                         <button
                             type="button"
-                            x-show="['found', 'manual'].includes(nimInputStatus)"
+                            x-show="nimInputStatus === 'manual'"
                             x-cloak
-                            @click="addParticipant()"
+                            @click="addParticipantManual()"
                             class="flex-shrink-0 bg-violet-600 hover:bg-violet-500 active:scale-95 text-white font-semibold px-5 rounded-2xl text-sm transition flex items-center gap-1.5"
                         >
                             <i class="fas fa-plus text-xs"></i>
@@ -147,9 +147,34 @@
                         Mencari data...
                     </div>
 
-                    <!-- Lookup: found or manual (preview card) -->
+                    <!-- Lookup Results List (Suggestions) -->
+                    <div x-show="lookupResults.length > 0 && nimInputStatus === 'found'" 
+                         x-cloak
+                         class="mt-3 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden divide-y divide-gray-50">
+                        <template x-for="(res, idx) in lookupResults" :key="idx">
+                            <button type="button" 
+                                    @click="selectParticipant(res)"
+                                    class="w-full text-left p-4 hover:bg-violet-50 transition flex items-center gap-4 group">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                                     :class="res.role === 'mahasiswa' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600'">
+                                    <i class="fas" :class="res.role === 'mahasiswa' ? 'fa-user-graduate' : 'fa-user-tie'"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition" x-text="res.nama_raw"></p>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="text-[10px] font-bold text-gray-400" x-text="res.nim"></span>
+                                        <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                        <span class="text-[10px] text-gray-500 truncate" x-text="res.prodi"></span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-300 group-hover:text-violet-400 transition-transform group-hover:translate-x-1"></i>
+                            </button>
+                        </template>
+                    </div>
+
+                    <!-- Manual Input Preview Card -->
                     <div
-                        x-show="['found', 'manual'].includes(nimInputStatus)"
+                        x-show="nimInputStatus === 'manual'"
                         x-cloak
                         x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="opacity-0 -translate-y-1"
@@ -158,44 +183,24 @@
                     >
                         <!-- Role Badge & Toggle -->
                         <div class="flex justify-between items-center">
-                            <p class="text-[10px] font-bold text-violet-500 uppercase tracking-widest">Preview Klien</p>
+                            <p class="text-[10px] font-bold text-violet-500 uppercase tracking-widest">Input Manual</p>
                             <div class="flex gap-1.5" x-show="nimInput !== '002'">
                                 <button type="button" @click="nimInputData.role = 'mahasiswa'" 
-                                        :disabled="nimInput.length === 11 || nimInput.length === 6 || nimInputStatus === 'found'"
-                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase transition"
                                         :class="nimInputData.role === 'mahasiswa' ? 'bg-violet-600 text-white' : 'bg-violet-100 text-violet-600'">Mahasiswa</button>
                                 <button type="button" @click="nimInputData.role = 'staff'" 
-                                        :disabled="nimInput.length === 11 || nimInput.length === 6 || nimInputStatus === 'found'"
-                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase transition"
                                         :class="nimInputData.role === 'staff' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'">Staff</button>
                             </div>
                         </div>
 
                         <!-- Manual/Editable Inputs -->
                         <div class="grid grid-cols-1 gap-4">
-                            <!-- Nama -->
                             <div class="col-span-full">
-                                <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block">Nama Klien</label>
+                                <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block">Nama Lengkap</label>
                                 <input type="text" x-model="nimInputManualData.nama" 
-                                       :readonly="nimInputStatus === 'found'"
-                                       placeholder="Input nama klien..."
-                                       :class="nimInputStatus === 'found' ? 'bg-slate-50/50' : 'bg-white'"
-                                       class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-violet-500 focus:outline-none transition">
-                            </div>
-
-                            <!-- Prodi / Bagian & Dosen Wali (Shown for regular found data, hidden for 001/002) -->
-                            <div x-show="!['001', '002'].includes(nimInput)" x-cloak class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block"
-                                           x-text="nimInputData.role === 'staff' ? 'Bagian / Unit' : 'Program Studi'"></label>
-                                    <input type="text" x-model="nimInputManualData.prodi" readonly
-                                           class="w-full bg-slate-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none transition">
-                                </div>
-                                <div x-show="nimInputData.role !== 'staff'">
-                                    <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block">Dosen Wali</label>
-                                    <input type="text" x-model="nimInputManualData.dosen_wali" readonly
-                                           class="w-full bg-slate-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none transition">
-                                </div>
+                                       placeholder="Input nama manual..."
+                                       class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-violet-500 focus:outline-none transition">
                             </div>
                         </div>
                     </div>
@@ -480,8 +485,9 @@
                     nimInput: "",
                     nimInputStatus: "", // '' | 'loading' | 'found' | 'error' | 'manual'
                     nimInputMessage: "",
-                    nimInputData: {},
+                    nimInputData: { role: "mahasiswa" },
                     nimInputManualData: { nama: "", prodi: "", dosen_wali: "" },
+                    lookupResults: [],
                     
                     // ── Master data lookup ───────────────────────────────────────────
                     kategoriList: {{ kategori_list|tojson }},
@@ -525,6 +531,7 @@
                     // ── Lookup the current nimInput value ────────────────────────────
                     async lookupInput() {
                         const nim = this.nimInput.trim();
+                        this.lookupResults = [];
 
                         // Handle special code 001 (Mode Manual)
                         if (nim === "001") {
@@ -547,17 +554,9 @@
                         // Reset if input length is too short for any search (min 3)
                         if (nim.length < 3) {
                             this.nimInputStatus = "";
-                            this.nimInputData = {};
+                            this.nimInputData = { role: "mahasiswa" };
                             this.nimInputMessage = "";
                             this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
-                            return;
-                        }
-
-                        // Duplicate guard
-                        if (this.participants.some((p) => p.nim === nim)) {
-                            this.nimInputStatus = "error";
-                            this.nimInputMessage =
-                                "NIM/NIK ini sudah ditambahkan ke sesi.";
                             return;
                         }
 
@@ -568,41 +567,28 @@
                             );
                             const data = await res.json();
 
-                            if (data.success) {
+                            if (data.success && data.data && data.data.length > 0) {
                                 this.nimInputStatus = "found";
-                                this.nimInputData = data;
-                                // Fill manual fields with found data
-                                this.nimInputManualData = {
-                                    nama: data.nama_raw || data.nama_sensor || "",
-                                    prodi: data.prodi || "",
-                                    dosen_wali: data.dosen_wali || ""
-                                };
+                                this.lookupResults = data.data;
                             } else {
                                 this.nimInputStatus = "error";
                                 this.nimInputMessage =
                                     data.message || "Data tidak ditemukan.";
-                                this.nimInputData = {};
+                                this.nimInputData = { role: "mahasiswa" };
                                 this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
                             }
                         } catch (err) {
                             console.error("[Lookup NIM]", err);
                             this.nimInputStatus = "error";
                             this.nimInputMessage = "Gagal koneksi ke server.";
-                            this.nimInputData = {};
+                            this.nimInputData = { role: "mahasiswa" };
                             this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
                         }
                     },
 
                     // ── Add the previewed lookup result to participants ───────────────
-                    addParticipant() {
-                        if (!['found', 'manual'].includes(this.nimInputStatus)) return;
-
-                        const nim = this.nimInput.trim();
-                        const data = this.nimInputData;
-                        const manual = this.nimInputManualData;
-
-                        // Use actual NIM if found via name search
-                        const actualNim = data.nim || nim;
+                    selectParticipant(participantData) {
+                        const actualNim = participantData.nim;
 
                         // Double-check for duplicates
                         if (this.participants.some((p) => p.nim === actualNim)) {
@@ -612,9 +598,38 @@
 
                         this.participants.push({
                             nim: actualNim,
+                            role: participantData.role || "mahasiswa",
+                            nama_sensor: participantData.nama_sensor || participantData.nama_raw || actualNim,
+                            nama_raw: participantData.nama_raw || actualNim,
+                            prodi: participantData.prodi || "",
+                            dosen_wali: participantData.dosen_wali || "",
+                        });
+
+                        // Clear input + preview
+                        this.nimInput = "";
+                        this.nimInputStatus = "";
+                        this.lookupResults = [];
+                        this.nimInputData = { role: "mahasiswa" };
+                        this.nimInputMessage = "";
+                        this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                    },
+
+                    addParticipantManual() {
+                        if (this.nimInputStatus !== 'manual') return;
+                        if (!this.nimInputManualData.nama) {
+                            if (window.showAlert) window.showAlert("error", "Nama harus diisi.");
+                            return;
+                        }
+
+                        const nim = this.nimInput.trim();
+                        const data = this.nimInputData;
+                        const manual = this.nimInputManualData;
+
+                        this.participants.push({
+                            nim: nim,
                             role: data.role || "mahasiswa",
-                            nama_sensor: data.nama_sensor || manual.nama || actualNim,
-                            nama_raw: manual.nama || actualNim,
+                            nama_sensor: manual.nama,
+                            nama_raw: manual.nama,
                             prodi: manual.prodi || "",
                             dosen_wali: manual.dosen_wali || "",
                         });
@@ -622,8 +637,7 @@
                         // Clear input + preview
                         this.nimInput = "";
                         this.nimInputStatus = "";
-                        this.nimInputData = {};
-                        this.nimInputMessage = "";
+                        this.nimInputData = { role: "mahasiswa" };
                         this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
                     },
 

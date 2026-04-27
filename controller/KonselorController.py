@@ -42,9 +42,9 @@ def create_sesi(konselor_user_id, form_data):
     dosen_wali = form_data.get("dosen_wali", "").strip()
 
     # Auto-lookup dosen wali jika kosong
-    if not dosen_wali and nim_raw:
+    if not dosen_wali and nim_raw and len(nim_raw) == 11:
         try:
-            from scrapper.mahasiswa import search_mahasiswa
+            from scrapper_requests import search_mahasiswa
 
             df_mhs = search_mahasiswa(nim_raw, user_id=konselor_user_id)
             if not df_mhs.empty:

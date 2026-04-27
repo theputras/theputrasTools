@@ -939,6 +939,7 @@ def konselor_live_session_finish():
         "nim": jadwal["nim"],
         "nama": jadwal["nama"],
         "prodi": jadwal["prodi"],
+        "dosen_wali": jadwal.get("dosen_wali", ""),
         "jenis_layanan_id": jadwal["layanan_id"],
         "tanggal_sesi": jadwal["tanggal"],
         "topik": request.form.get("topik"),
@@ -988,7 +989,6 @@ def konselor_catat_sesi():
     )
 
 
-# === KONSELOR: Lookup NIM via Scrapper ===
 @app.route("/konselor/lookup-civitas")
 @login_required
 def konselor_lookup_civitas():
@@ -998,7 +998,6 @@ def konselor_lookup_civitas():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import censor_name
-    # Imports are already at top, but local import for safety if preferred
     from scrapper_requests import search_mahasiswa, search_staff
 
     query = request.args.get("civitas", "").strip()
@@ -1007,101 +1006,89 @@ def konselor_lookup_civitas():
 
     try:
         user_id = g.user.get("sub")
-        
-        df = pd.DataFrame()
-        role = ""
-
-        # Logic Fleksibel:
-        # - Jika 11 digit: Prioritas Mahasiswa
-        # - Jika 6 digit: Prioritas Staff
-        # - Lainnya: Mahasiswa -> Staff
+        results = []
         
         is_11_digits = query.isdigit() and len(query) == 11
         is_6_digits = query.isdigit() and len(query) == 6
 
+        # Helper to process dataframe into results list
+        def process_df(df, role_type):
+            res_list = []
+            for _, row in df.iterrows():
+                row_data = {str(k).lower(): v for k, v in row.items()}
+                nama_raw = row_data.get("nama", "")
+                found_id = row_data.get("nim") or row_data.get("nik") or row_data.get("id") or query
+                
+                if role_type == "mahasiswa":
+                    dosen_wali = row_data.get("dosen wali", "")
+                    prodi_raw = row_data.get("prodi", "")
+                    # Resolve prodi via majorID
+                    prodi_resolved = prodi_raw
+                    if found_id and len(str(found_id)) >= 7:
+                        kode_prodi = str(found_id)[2:7]
+                        prodi_resolved = majorID.get(kode_prodi, prodi_raw)
+
+                    res_list.append({
+                        "role": "mahasiswa",
+                        "nim": found_id,
+                        "nama_raw": nama_raw,
+                        "nama_sensor": censor_name(nama_raw),
+                        "dosen_wali": dosen_wali,
+                        "prodi": prodi_resolved,
+                    })
+                else:
+                    # Staff
+                    prodi_staff = row_data.get("bagian", "") or row_data.get("unit", "") or row_data.get("prodi", "")
+                    res_list.append({
+                        "role": "staff",
+                        "nim": found_id,
+                        "nama_raw": nama_raw,
+                        "nama_sensor": nama_raw,
+                        "dosen_wali": "",
+                        "prodi": prodi_staff,
+                    })
+            return res_list
+
         if is_11_digits:
             # Prioritas Mahasiswa
-            future_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
-            df = future_mhs.result(timeout=30)
-            if not df.empty:
-                role = "mahasiswa"
+            df_mhs = executor.submit(search_mahasiswa, query, user_id=user_id).result(timeout=30)
+            if not df_mhs.empty:
+                results.extend(process_df(df_mhs, "mahasiswa"))
             else:
-                # Fallback ke staff if not found
-                future_staff = executor.submit(search_staff, query, user_id=user_id)
-                df = future_staff.result(timeout=30)
-                if not df.empty: role = "staff"
+                df_staff = executor.submit(search_staff, query, user_id=user_id).result(timeout=30)
+                if not df_staff.empty: results.extend(process_df(df_staff, "staff"))
         elif is_6_digits:
             # Prioritas Staff
-            future_staff = executor.submit(search_staff, query, user_id=user_id)
-            df = future_staff.result(timeout=30)
-            if not df.empty:
-                role = "staff"
+            df_staff = executor.submit(search_staff, query, user_id=user_id).result(timeout=30)
+            if not df_staff.empty:
+                results.extend(process_df(df_staff, "staff"))
             else:
-                # Fallback ke mahasiswa
-                future_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
-                df = future_mhs.result(timeout=30)
-                if not df.empty: role = "mahasiswa"
+                df_mhs = executor.submit(search_mahasiswa, query, user_id=user_id).result(timeout=30)
+                if not df_mhs.empty: results.extend(process_df(df_mhs, "mahasiswa"))
         else:
-            # Nama atau input lain: Mahasiswa first
-            future_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
-            df = future_mhs.result(timeout=30)
-            if not df.empty:
-                role = "mahasiswa"
-            else:
-                future_staff = executor.submit(search_staff, query, user_id=user_id)
-                df = future_staff.result(timeout=30)
-                if not df.empty:
-                    role = "staff"
+            # Nama: Cari keduanya secara paralel
+            fut_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
+            fut_staff = executor.submit(search_staff, query, user_id=user_id)
+            
+            df_mhs = fut_mhs.result(timeout=30)
+            df_staff = fut_staff.result(timeout=30)
+            
+            if not df_mhs.empty: results.extend(process_df(df_mhs, "mahasiswa"))
+            if not df_staff.empty: results.extend(process_df(df_staff, "staff"))
 
         # Jika masih kosong
-        if df.empty:
+        if not results:
             return jsonify(
                 {"success": False, "message": f"Data '{query}' tidak ditemukan."}
             )
 
-        row = df.iloc[0]
-        data = {k.lower(): v for k, v in row.items()}
-        nama_raw = data.get("nama", "")
-        # Ambil NIM/NIK dari kolom 'nim' atau 'nik' atau 'id' jika ada
-        # Scraper generic biasanya mengembalikan kolom sesuai tabel Sicyca
-        found_id = data.get("nim") or data.get("nik") or query
-
-        if role == "mahasiswa":
-            dosen_wali = data.get("dosen wali", "")
-            prodi_raw = data.get("prodi", "")
-            # Coba resolve prodi dari ID found_id via majorID
-            prodi_resolved = ""
-            if found_id and len(found_id) >= 7:
-                kode_prodi = found_id[2:7]
-                prodi_resolved = majorID.get(kode_prodi, prodi_raw)
-            else:
-                prodi_resolved = prodi_raw
-
-            return jsonify(
-                {
-                    "success": True,
-                    "role": "mahasiswa",
-                    "nim": found_id,
-                    "nama_raw": nama_raw,
-                    "nama_sensor": censor_name(nama_raw),
-                    "dosen_wali": dosen_wali,
-                    "prodi": prodi_resolved,
-                }
-            )
-        else:
-            # Staff
-            prodi_staff = data.get("bagian", "")
-            return jsonify(
-                {
-                    "success": True,
-                    "role": "staff",
-                    "nim": found_id,
-                    "nama_raw": nama_raw,
-                    "nama_sensor": nama_raw,
-                    "dosen_wali": "",
-                    "prodi": prodi_staff,
-                }
-            )
+        return jsonify(
+            {
+                "success": True,
+                "count": len(results),
+                "data": results,
+            }
+        )
 
     except Exception as e:
         logging.error(f"[Konselor] Lookup Civitas error: {e}")

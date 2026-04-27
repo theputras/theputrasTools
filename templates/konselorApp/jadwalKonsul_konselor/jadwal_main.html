@@ -408,69 +408,105 @@
                 <!-- History list -->
                 <div
                     x-show="!historyLoading && filteredHistory.length > 0"
-                    class="space-y-3"
+                    class="space-y-4"
                 >
                     <template
                         x-for="jadwal in filteredHistory"
                         :key="jadwal.id"
                     >
                         <div
-                            class="card-glow bg-white border border-gray-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4"
+                            class="card-glow bg-white border border-gray-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                            :class="jadwal.status === 'Menunggu' ? 'border-l-4 border-l-amber-500' : ''"
                         >
-                            <!-- Date+Time badge -->
-                            <div
-                                class="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-amber-50 border border-amber-100"
-                            >
-                                <span
-                                    class="text-xs font-extrabold text-amber-600 leading-tight"
-                                    x-text="formatDateShort(jadwal.tanggal)"
-                                ></span>
-                                <span
-                                    class="text-[10px] font-bold text-amber-400 mt-0.5"
-                                    x-text="jadwal.jam"
-                                ></span>
-                            </div>
-
-                            <!-- Info -->
-                            <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-4 flex-1 min-w-0">
+                                <!-- Date+Time badge -->
                                 <div
-                                    class="flex flex-wrap items-center gap-1.5 mb-1"
+                                    class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-slate-50 border border-gray-100 flex-shrink-0"
+                                    :class="{
+                                        'bg-amber-50 border-amber-100': jadwal.status === 'Menunggu',
+                                        'bg-blue-50 border-blue-100': jadwal.status === 'Selesai',
+                                        'bg-red-50 border-red-100': jadwal.status === 'Dibatalkan'
+                                    }"
                                 >
-                                    <!-- Status badge -->
                                     <span
-                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                        class="text-xs font-extrabold"
                                         :class="{
-                                        'bg-amber-50 text-amber-600': jadwal.status === 'Menunggu',
-                                        'bg-emerald-50 text-emerald-600': jadwal.status === 'Berlangsung',
-                                        'bg-orange-50 text-orange-600': jadwal.status === 'Jeda',
-                                        'bg-blue-50 text-blue-600': jadwal.status === 'Selesai',
-                                        'bg-red-50 text-red-500': jadwal.status === 'Dibatalkan'
-                                      }"
-                                        x-text="jadwal.status === 'Jeda' ? 'Pause' : jadwal.status"
+                                            'text-amber-600': jadwal.status === 'Menunggu',
+                                            'text-blue-600': jadwal.status === 'Selesai',
+                                            'text-red-600': jadwal.status === 'Dibatalkan'
+                                        }"
+                                        x-text="formatDateShort(jadwal.tanggal)"
                                     ></span>
-                                    <!-- Layanan badge -->
                                     <span
-                                        class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
-                                        x-text="jadwal.layanan"
+                                        class="text-[10px] font-bold text-gray-400 mt-0.5"
+                                        x-text="jadwal.jam"
                                     ></span>
                                 </div>
-                                <p
-                                    class="text-sm font-bold text-gray-800 truncate"
-                                    x-text="jadwal.nama_sensor || jadwal.nama"
-                                ></p>
-                                <p class="text-xs text-gray-400 mt-0.5">
-                                    <span x-text="jadwal.nim"></span>
-                                    <span x-show="jadwal.prodi"> &bull; </span>
-                                    <span x-text="jadwal.prodi"></span>
-                                </p>
+
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                                        <!-- Status badge -->
+                                        <span
+                                            class="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                            :class="{
+                                                'bg-amber-100 text-amber-700': jadwal.status === 'Menunggu' && jadwal.tanggal < todayDate,
+                                                'bg-blue-100 text-blue-700': jadwal.status === 'Menunggu' && jadwal.tanggal >= todayDate,
+                                                'bg-emerald-100 text-emerald-700': jadwal.status === 'Berlangsung',
+                                                'bg-orange-100 text-orange-700': jadwal.status === 'Jeda',
+                                                'bg-blue-100 text-blue-700': jadwal.status === 'Selesai',
+                                                'bg-red-100 text-red-700': jadwal.status === 'Dibatalkan'
+                                            }"
+                                            x-text="jadwal.status === 'Menunggu' ? (jadwal.tanggal < todayDate ? 'Terlewat' : 'Terjadwal') : (jadwal.status === 'Jeda' ? 'Pause' : jadwal.status)"
+                                        ></span>
+                                        <!-- Layanan badge -->
+                                        <span
+                                            class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
+                                            x-text="jadwal.layanan"
+                                        ></span>
+                                    </div>
+                                    <h4
+                                        class="text-sm font-bold text-gray-800 truncate"
+                                        x-text="jadwal.nama_sensor || jadwal.nama"
+                                    ></h4>
+                                    <p class="text-[11px] text-gray-500 mt-0.5 truncate">
+                                        <span x-text="jadwal.nim"></span>
+                                        <span x-show="jadwal.prodi" class="mx-1">•</span>
+                                        <span x-text="jadwal.prodi"></span>
+                                    </p>
+                                </div>
                             </div>
 
-                            <!-- Full date -->
-                            <div class="flex-shrink-0 text-right">
-                                <p
-                                    class="text-[10px] text-gray-400"
-                                    x-text="jadwal.tanggal"
-                                ></p>
+                            <!-- Action area -->
+                            <div class="w-full sm:w-auto flex justify-end gap-2 shrink-0">
+                                <!-- Smart Reschedule: Only for Missed (past date) or In-Progress sessions -->
+                                <template x-if="(jadwal.status === 'Menunggu' && jadwal.tanggal < todayDate) || jadwal.status === 'Jeda' || jadwal.status === 'Berlangsung'">
+                                    <button
+                                        @click="openModalReschedule(jadwal)"
+                                        class="flex-1 sm:flex-none bg-white border border-blue-200 hover:border-blue-500 hover:text-blue-600 text-blue-500 font-bold py-2 px-4 rounded-xl text-[11px] transition-all duration-300 active:scale-95 flex items-center justify-center gap-1.5 shadow-sm shadow-blue-500/5"
+                                    >
+                                        <i class="fas fa-calendar-day"></i> Reschedule
+                                    </button>
+                                </template>
+                                
+                                <template x-if="jadwal.status === 'Menunggu' && jadwal.tanggal < todayDate">
+                                    <button
+                                        @click="batalKonsul(jadwal.id)"
+                                        class="bg-white border border-red-100 hover:border-red-400 text-red-400 hover:text-red-500 p-2 rounded-xl transition-all active:scale-90"
+                                        title="Batalkan Permanen"
+                                    >
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </template>
+
+                                <!-- Future Menunggu in History (rare case) -->
+                                <template x-if="jadwal.status === 'Menunggu' && jadwal.tanggal >= todayDate">
+                                    <span class="text-[10px] text-blue-400 font-medium italic">Menunggu jadwal</span>
+                                </template>
+
+                                <!-- Details indicator for completed ones -->
+                                <template x-if="['Selesai', 'Dibatalkan'].includes(jadwal.status)">
+                                    <span class="text-[10px] text-gray-400 font-medium italic">Record tersimpan</span>
+                                </template>
                             </div>
                         </div>
                     </template>
@@ -527,7 +563,7 @@
                             class="block text-xs font-bold text-gray-600 mb-1.5 ml-1 uppercase tracking-wider"
                         >
                             <div class="flex items-center gap-1.5">
-                                <span>Nama / NIM / NIK</span>
+                                <span>Nama / NIM / NIK Klien</span>
                                 <div class="relative flex items-center" x-data="{ openTooltip: false }">
                                     <i class="fas fa-question-circle text-gray-400 text-[10px] cursor-help p-1" 
                                        @mouseenter="openTooltip = true" @mouseleave="openTooltip = false"
@@ -548,71 +584,145 @@
                                 <span class="text-red-400">*</span>
                             </div>
                         </label>
-                        <input
-                            type="text"
-                            x-model="formBuat.nim"
-                            placeholder="Cari Nama, NIM, atau NIK..."
-                            @input.debounce.500ms="lookupNIM()"
-                            class="w-full bg-slate-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 focus:border-violet-500/50 focus:bg-white focus:outline-none transition"
-                        />
+                        
+                        <!-- Input row (Hidden if selectedParticipant exists) -->
+                        <div class="flex gap-2" x-show="!selectedParticipant">
+                            <input
+                                type="text"
+                                x-model="nimInput"
+                                placeholder="Cari Nama, NIM, atau NIK..."
+                                @input.debounce.600ms="lookupNIM()"
+                                class="flex-1 bg-slate-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 placeholder-gray-400 focus:border-violet-500/50 focus:bg-white focus:outline-none transition"
+                            />
+                            <button
+                                type="button"
+                                x-show="lookupState === 'manual'"
+                                x-cloak
+                                @click="addParticipantManual()"
+                                class="flex-shrink-0 bg-violet-600 hover:bg-violet-500 active:scale-95 text-white font-semibold px-5 rounded-xl text-sm transition flex items-center gap-1.5"
+                            >
+                                <i class="fas fa-plus text-xs"></i>
+                                <span>Pilih</span>
+                            </button>
+                        </div>
 
                         <!-- Loading -->
                         <p
-                            x-show="lookupState === 'loading'"
+                            x-show="lookupState === 'loading' && !selectedParticipant"
                             class="text-[10px] text-violet-500 font-medium mt-1.5 ml-1 animate-pulse"
                         >
-                            <i class="fas fa-spinner fa-spin mr-1"></i> Mencari
-                            data...
+                            <i class="fas fa-spinner fa-spin mr-1"></i> Mencari data...
                         </p>
 
-                        <!-- Found or Manual State -->
+                        <!-- Lookup Results List (Suggestions) -->
+                        <div x-show="lookupResults.length > 0 && lookupState === 'found' && !selectedParticipant" 
+                             x-cloak
+                             class="mt-3 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden divide-y divide-gray-50 max-h-60 overflow-y-auto">
+                            <template x-for="(res, idx) in lookupResults" :key="idx">
+                                <button type="button" 
+                                        @click="selectParticipant(res)"
+                                        class="w-full text-left p-4 hover:bg-violet-50 transition flex items-center gap-4 group">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                                         :class="res.role === 'mahasiswa' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600'">
+                                        <i class="fas" :class="res.role === 'mahasiswa' ? 'fa-user-graduate' : 'fa-user-tie'"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition" x-text="res.nama_raw"></p>
+                                        <div class="flex items-center gap-2 mt-0.5">
+                                            <span class="text-[10px] font-bold text-gray-400" x-text="res.nim"></span>
+                                            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                            <span class="text-[10px] text-gray-500 truncate" x-text="res.prodi"></span>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-gray-300 group-hover:text-violet-400 transition-transform group-hover:translate-x-1"></i>
+                                </button>
+                            </template>
+                        </div>
+
+                        <!-- Found or Manual State (Preview Card for manual only now) -->
                         <div
-                            x-show="['found', 'manual'].includes(lookupState)"
+                            x-show="lookupState === 'manual' && !selectedParticipant"
                             x-cloak
                             x-transition
                             class="mt-3 bg-violet-500/5 border border-violet-100 rounded-xl p-4 space-y-4"
                         >
                             <!-- Role Toggle -->
                             <div class="flex justify-between items-center">
-                                <p class="text-[9px] font-bold text-violet-500 uppercase tracking-widest">Preview Data</p>
-                                <div class="flex gap-1.5" x-show="formBuat.nim !== '002'">
-                                <button type="button" @click="formBuat.role = 'mahasiswa'" 
-                                        :disabled="formBuat.nim.length === 11 || formBuat.nim.length === 6 || lookupState === 'found'"
-                                        class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                        :class="formBuat.role === 'mahasiswa' ? 'bg-violet-600 text-white' : 'bg-violet-100 text-violet-600'">Mhs</button>
-                                <button type="button" @click="formBuat.role = 'staff'" 
-                                        :disabled="formBuat.nim.length === 11 || formBuat.nim.length === 6 || lookupState === 'found'"
-                                        class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                        :class="formBuat.role === 'staff' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'">Staff</button>
+                                <p class="text-[9px] font-bold text-violet-500 uppercase tracking-widest">Input Manual</p>
+                                <div class="flex gap-1.5" x-show="nimInput !== '002'">
+                                <button type="button" @click="nimInputData.role = 'mahasiswa'" 
+                                        class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition"
+                                        :class="nimInputData.role === 'mahasiswa' ? 'bg-violet-600 text-white' : 'bg-violet-100 text-violet-600'">Mhs</button>
+                                <button type="button" @click="nimInputData.role = 'staff'" 
+                                        class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition"
+                                        :class="nimInputData.role === 'staff' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'">Staff</button>
                                 </div>
                             </div>
 
                             <!-- Manual Inputs -->
-                            <div class="space-y-3">
-                                <div>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="col-span-full">
                                     <label class="text-[9px] text-gray-500 uppercase font-bold tracking-widest mb-1 block">Nama Lengkap</label>
                                     <input type="text" x-model="nimManualData.nama" 
                                            placeholder="Nama..."
                                            class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 focus:border-violet-500 focus:outline-none transition">
                                 </div>
-                                <!-- Hidden inputs for technical fields -->
-                                <div class="hidden">
-                                    <input type="hidden" x-model="nimManualData.prodi">
-                                    <input type="hidden" x-model="nimManualData.dosen_wali">
-                                </div>
                             </div>
                         </div>
 
                         <!-- Error State with Manual Option -->
-                        <div x-show="lookupState === 'error'" x-cloak class="mt-2">
+                        <div x-show="lookupState === 'error' && !selectedParticipant" x-cloak class="mt-2">
                             <p class="text-[10px] text-red-500 font-medium mb-2">
                                 <i class="fas fa-exclamation-circle mr-1"></i>
                                 <span x-text="lookupErrorMsg"></span>
                             </p>
-                            <button type="button" @click="lookupState = 'manual'; nimManualData.nama = ''; nimManualData.prodi = '';"
+                            <button type="button" @click="lookupState = 'manual'; nimManualData.nama = ''; nimManualData.prodi = ''; nimInputData.role = 'mahasiswa';"
                                     class="text-[9px] font-bold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-lg hover:bg-violet-100 transition">
                                 <i class="fas fa-keyboard mr-1"></i> Tetap Input Manual
                             </button>
+                        </div>
+                        
+                        <!-- Selected Participant Card -->
+                        <div x-show="selectedParticipant" x-cloak class="mt-2">
+                            <div class="bg-white border border-gray-200 rounded-xl p-3 space-y-2 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <!-- Avatar icon -->
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                         :class="selectedParticipant?.role === 'mahasiswa' ? 'bg-violet-50 text-violet-500' : 'bg-blue-50 text-blue-500'">
+                                        <i class="fas fa-user text-sm"></i>
+                                    </div>
+                                    <!-- Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <template x-if="selectedParticipant?.role === 'mahasiswa'">
+                                            <p class="text-sm font-semibold text-gray-800 truncate" x-text="selectedParticipant?.nama_sensor || selectedParticipant?.nim"></p>
+                                        </template>
+                                        <template x-if="selectedParticipant?.role !== 'mahasiswa'">
+                                            <p class="text-sm font-semibold text-gray-400 italic truncate" x-text="selectedParticipant?.nama_raw || '(nama belum diisi)'"></p>
+                                        </template>
+                                        <p class="text-xs text-gray-400 mt-0.5" x-text="selectedParticipant?.nim"></p>
+                                    </div>
+                                    <!-- Badge + remove -->
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <span class="text-[9px] font-bold px-2 py-1 rounded-full uppercase"
+                                              :class="selectedParticipant?.role === 'mahasiswa' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600'"
+                                              x-text="selectedParticipant?.role"></span>
+                                        <button type="button" @click="removeParticipant()"
+                                                class="text-gray-400 hover:text-red-500 transition p-2 rounded-lg hover:bg-red-50" title="Ganti Klien">
+                                            <i class="fas fa-times text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Staff: manual name input per participant if 001 -->
+                                <template x-if="selectedParticipant?.role !== 'mahasiswa' && selectedParticipant?.nim === '001'">
+                                    <div class="pt-2 border-t border-gray-100">
+                                        <input type="text" x-model="selectedParticipant.nama_raw"
+                                               placeholder="Input nama staff manual..."
+                                               class="w-full bg-gray-50 border border-violet-200 rounded-xl px-3 py-2 text-sm text-gray-800 focus:border-violet-500 focus:outline-none transition"/>
+                                        <p class="text-[9px] text-gray-400 mt-1 italic">* Khusus staff manual, nama diinput manual</p>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
 
@@ -1112,16 +1222,14 @@
                     jadwalMendatang: [],
 
                     // Form Buat
+                    nimInput: "",
+                    nimInputData: { role: "mahasiswa" },
+                    selectedParticipant: null,
+                    lookupResults: [],
                     formBuat: {
-                        nim: "",
-                        nama: "",
-                        nama_asli: "",
-                        prodi: "",
                         tanggal: "",
                         jam: "",
                         layanan: "",
-                        role: "mahasiswa",
-                        staffNameInput: "",
                     },
                     nimManualData: { nama: "", prodi: "", dosen_wali: "" },
                     lookupState: "", // '' | 'loading' | 'found' | 'error' | 'manual'
@@ -1165,14 +1273,12 @@
 
                     // ── Computed ──────────────────────────────────────────────────────────
                     get isFormBuatValid() {
-                        const nimLen = this.formBuat.nim.trim().length;
-                        const isNimValid = (nimLen === 11 || nimLen === 6 || this.formBuat.nim === '001' || this.formBuat.nim === '002' || nimLen >= 3);
-                        const isManualFilled = this.lookupState === "manual" && this.nimManualData.nama;
-                        const isFoundFilled = this.lookupState === "found" && this.formBuat.layanan;
+                        const isNimValid = this.selectedParticipant !== null;
+                        const isNamaFilled = isNimValid && (this.selectedParticipant.nama_raw?.trim().length > 0 || this.selectedParticipant.nama_sensor?.trim().length > 0 || this.selectedParticipant.nim === '001');
 
                         return (
                             isNimValid &&
-                            (this.lookupState === "found" || isManualFilled) &&
+                            isNamaFilled &&
                             this.formBuat.layanan &&
                             this.formBuat.tanggal &&
                             this.formBuat.jam
@@ -1328,20 +1434,14 @@
 
                     // ── Lookup NIM / NIK ──────────────────────────────────────────────────
                     async lookupNIM() {
-                        const nim = this.formBuat.nim.trim();
-
-                        // Auto-detect role based on length
-                        if (nim.length === 11) {
-                            this.formBuat.role = "mahasiswa";
-                        } else if (nim.length === 6) {
-                            this.formBuat.role = "staff";
-                        }
+                        const nim = this.nimInput.trim();
+                        this.lookupResults = [];
 
                         // Handle special code 001 (Mode Manual)
                         if (nim === "001") {
                             this.lookupState = "manual";
                             this.lookupErrorMsg = "Mode input manual aktif.";
-                            this.formBuat.role = "mahasiswa";
+                            this.nimInputData = { role: "mahasiswa" };
                             this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                             return;
                         }
@@ -1350,7 +1450,7 @@
                         if (nim === "002") {
                             this.lookupState = "manual";
                             this.lookupErrorMsg = "Data dummy aktif.";
-                            this.formBuat.role = "mahasiswa";
+                            this.nimInputData = { role: "mahasiswa" };
                             this.nimManualData = { nama: "Mahasiswa Dummy", prodi: "S1 Sistem Informasi", dosen_wali: "Dosen Dummy" };
                             return;
                         }
@@ -1358,10 +1458,7 @@
                         // Trigger lookup for minimum length 3 (allows name search)
                         if (nim.length < 3) {
                             this.lookupState = "";
-                            this.formBuat.nama = "";
-                            this.formBuat.nama_asli = "";
-                            this.formBuat.prodi = "";
-                            this.formBuat.role = "mahasiswa";
+                            this.nimInputData = { role: "mahasiswa" };
                             this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                             return;
                         }
@@ -1373,39 +1470,73 @@
                             );
                             const data = await res.json();
 
-                            if (data.success) {
+                            if (data.success && data.data && data.data.length > 0) {
                                 this.lookupState = "found";
-                                this.formBuat.role = data.role || "mahasiswa";
-                                // Update NIM field if search was by name
-                                if (data.nim && data.nim !== nim) {
-                                    this.formBuat.nim = data.nim;
-                                }
-                                this.formBuat.nama =
-                                    data.nama_sensor || data.nama_raw || "";
-                                this.formBuat.nama_asli = data.nama_raw || "";
-                                this.formBuat.prodi = data.prodi || "";
-                                // Fill manual fields with found data
-                                this.nimManualData = {
-                                    nama: data.nama_raw || data.nama_sensor || "",
-                                    prodi: data.prodi || "",
-                                    dosen_wali: data.dosen_wali || ""
-                                };
+                                this.lookupResults = data.data;
                             } else {
                                 this.lookupState = "error";
-                                this.lookupErrorMsg =
-                                    data.message || "Data tidak ditemukan.";
-                                this.formBuat.nama = "";
-                                this.formBuat.nama_asli = "";
-                                this.formBuat.prodi = "";
-                                this.formBuat.role = "mahasiswa";
+                                this.lookupErrorMsg = data.message || "Data tidak ditemukan.";
+                                this.nimInputData = { role: "mahasiswa" };
                                 this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                             }
                         } catch (err) {
                             console.error(err);
                             this.lookupState = "error";
                             this.lookupErrorMsg = "Gagal koneksi ke server.";
+                            this.nimInputData = { role: "mahasiswa" };
                             this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                         }
+                    },
+
+                    selectParticipant(participantData) {
+                        this.selectedParticipant = {
+                            nim: participantData.nim,
+                            role: participantData.role || "mahasiswa",
+                            nama_sensor: participantData.nama_sensor || participantData.nama_raw || participantData.nim,
+                            nama_raw: participantData.nama_raw || participantData.nim,
+                            prodi: participantData.prodi || "",
+                            dosen_wali: participantData.dosen_wali || "",
+                        };
+
+                        // Clear search field state
+                        this.nimInput = "";
+                        this.lookupState = "";
+                        this.lookupResults = [];
+                        this.nimInputData = { role: "mahasiswa" };
+                        this.lookupErrorMsg = "";
+                        this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
+                    },
+
+                    addParticipantManual() {
+                        if (this.lookupState !== 'manual') return;
+                        if (!this.nimManualData.nama) {
+                            if (window.showAlert) window.showAlert("error", "Nama harus diisi.");
+                            return;
+                        }
+
+                        const nim = this.nimInput.trim();
+                        const data = this.nimInputData;
+                        const manual = this.nimManualData;
+
+                        this.selectedParticipant = {
+                            nim: nim,
+                            role: data.role || "mahasiswa",
+                            nama_sensor: manual.nama,
+                            nama_raw: manual.nama,
+                            prodi: manual.prodi || "",
+                            dosen_wali: manual.dosen_wali || "",
+                        };
+
+                        // Clear search field state
+                        this.nimInput = "";
+                        this.lookupState = "";
+                        this.nimInputData = { role: "mahasiswa" };
+                        this.lookupErrorMsg = "";
+                        this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
+                    },
+
+                    removeParticipant() {
+                        this.selectedParticipant = null;
                     },
 
                     // ── Time slots ────────────────────────────────────────────────────────
@@ -1444,16 +1575,14 @@
                     // ── Modal openers ─────────────────────────────────────────────────────
                     openModalBuat() {
                         this.formBuat = {
-                            nim: "",
-                            nama: "",
-                            nama_asli: "",
-                            prodi: "",
                             tanggal: "",
                             jam: "",
                             layanan: "",
-                            role: "",
-                            staffNameInput: "",
                         };
+                        this.nimInput = "";
+                        this.nimInputData = {};
+                        this.selectedParticipant = null;
+                        this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                         this.lookupState = "";
                         this.lookupErrorMsg = "";
                         this.availableSlots = [];
@@ -1487,17 +1616,16 @@
                         this.isSubmitting = true;
                         try {
                             const fd = new FormData();
-                            fd.append("nim", this.formBuat.nim.trim());
+                            fd.append("nim", this.selectedParticipant.nim);
                             
-                            // Use manual data if available, fallback to lookup data
-                            const namaKirim = this.nimManualData.nama || this.formBuat.nama_asli || this.formBuat.nama;
-                            const prodiKirim = this.nimManualData.prodi || this.formBuat.prodi;
-                            const dwalKirim = this.nimManualData.dosen_wali || "";
+                            const namaKirim = this.selectedParticipant.nama_raw || this.selectedParticipant.nama_sensor || "";
+                            const prodiKirim = this.selectedParticipant.prodi || "";
+                            const dwalKirim = this.selectedParticipant.dosen_wali || "";
 
                             fd.append("nama", namaKirim);
                             fd.append("prodi", prodiKirim);
                             fd.append("dosen_wali", dwalKirim);
-                            fd.append("role", this.formBuat.role);
+                            fd.append("role", this.selectedParticipant.role);
                             fd.append("layanan_id", this.formBuat.layanan);
                             fd.append("tanggal", this.formBuat.tanggal);
                             fd.append("jam", this.formBuat.jam);
