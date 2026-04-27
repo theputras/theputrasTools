@@ -577,27 +577,45 @@
 
                         this.nimInputStatus = "loading";
                         try {
-                            const res = await fetch(
+                            // Stage 1: Lookup Local (Instant)
+                            const localRes = await fetch(
+                                `/konselor/lookup-local?query=${encodeURIComponent(nim)}`,
+                            );
+                            const localData = await localRes.json();
+                            if (localData.success && localData.data.length > 0) {
+                                this.lookupResults = localData.data;
+                                this.nimInputStatus = "found";
+                            }
+
+                            // Stage 2: Lookup Civitas (Remote Scraper)
+                            const remoteRes = await fetch(
                                 `{{ url_for("konselor_lookup_civitas") }}?civitas=${encodeURIComponent(nim)}`,
                             );
-                            const data = await res.json();
+                            const remoteData = await remoteRes.json();
 
-                            if (data.success && data.data && data.data.length > 0) {
+                            if (remoteData.success && remoteData.data.length > 0) {
+                                // Merge & Deduplicate
+                                const existingNims = new Set(this.lookupResults.map(r => r.nim));
+                                remoteData.data.forEach(item => {
+                                    if (!existingNims.has(item.nim)) {
+                                        this.lookupResults.push(item);
+                                    }
+                                });
                                 this.nimInputStatus = "found";
-                                this.lookupResults = data.data;
-                            } else {
+                            } else if (this.lookupResults.length === 0) {
                                 this.nimInputStatus = "error";
-                                this.nimInputMessage =
-                                    data.message || "Data tidak ditemukan.";
+                                this.nimInputMessage = remoteData.message || "Data tidak ditemukan.";
                                 this.nimInputData = { role: "mahasiswa" };
                                 this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
                             }
                         } catch (err) {
                             console.error("[Lookup NIM]", err);
-                            this.nimInputStatus = "error";
-                            this.nimInputMessage = "Gagal koneksi ke server.";
-                            this.nimInputData = { role: "mahasiswa" };
-                            this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                            if (this.lookupResults.length === 0) {
+                                this.nimInputStatus = "error";
+                                this.nimInputMessage = "Gagal koneksi ke server.";
+                                this.nimInputData = { role: "mahasiswa" };
+                                this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
+                            }
                         }
                     },
 

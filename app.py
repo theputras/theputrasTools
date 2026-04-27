@@ -989,10 +989,46 @@ def konselor_catat_sesi():
     )
 
 
+@app.route("/konselor/lookup-local")
+@login_required
+def konselor_lookup_local():
+    """AJAX endpoint: cari data dari local database (konselor_data_klien)."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import censor_name
+    from models.konselor import klien_model
+
+    query = request.args.get("query", "").strip()
+    if not query:
+        return jsonify({"success": False, "data": []})
+
+    try:
+        results = []
+        local_results = klien_model.get_all_by_id_civitas(query)
+        for local_klien in local_results:
+            results.append({
+                "role": (local_klien.get("status_civitas") or "mahasiswa").lower(),
+                "nim": local_klien["id_civitas"],
+                "nama_raw": local_klien["nama"],
+                "nama_sensor": local_klien["nama"] if local_klien["id_civitas"] in ['001', '002'] else censor_name(local_klien["nama"]),
+                "dosen_wali": local_klien["dosen_wali"],
+                "prodi": local_klien["prodi"],
+                "mbti": local_klien.get("mbti"),
+                "status_abk": local_klien.get("status_abk"),
+                "is_local": True
+            })
+        return jsonify({"success": True, "data": results})
+    except Exception as e:
+        logging.error(f"[Konselor] Lookup Local error: {e}")
+        return jsonify({"success": False, "message": str(e)})
+
+
 @app.route("/konselor/lookup-civitas")
 @login_required
 def konselor_lookup_civitas():
-    """AJAX endpoint: cari data mahasiswa/staff dari Sicyca (Fleksibel: Nama/NIM/NIK)."""
+    """AJAX endpoint: cari data mahasiswa/staff dari Sicyca."""
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
@@ -1007,22 +1043,6 @@ def konselor_lookup_civitas():
     try:
         user_id = g.user.get("sub")
         results = []
-
-        # 0. Cari di local database (konselor_data_klien) dulu
-        from models.konselor import klien_model
-        local_results = klien_model.get_all_by_id_civitas(query)
-        for local_klien in local_results:
-            results.append({
-                "role": (local_klien.get("status_civitas") or "mahasiswa").lower(),
-                "nim": local_klien["id_civitas"],
-                "nama_raw": local_klien["nama"],
-                "nama_sensor": local_klien["nama"] if local_klien["id_civitas"] in ['001', '002'] else censor_name(local_klien["nama"]),
-                "dosen_wali": local_klien["dosen_wali"],
-                "prodi": local_klien["prodi"],
-                "mbti": local_klien.get("mbti"),
-                "status_abk": local_klien.get("status_abk"),
-                "is_local": True
-            })
         
         is_11_digits = query.isdigit() and len(query) == 11
         is_6_digits = query.isdigit() and len(query) == 6

@@ -1505,26 +1505,45 @@
 
                         this.lookupState = "loading";
                         try {
-                            const res = await fetch(
+                            // Stage 1: Lookup Local (Instant)
+                            const localRes = await fetch(
+                                `/konselor/lookup-local?query=${encodeURIComponent(nim)}`,
+                            );
+                            const localData = await localRes.json();
+                            if (localData.success && localData.data.length > 0) {
+                                this.lookupResults = localData.data;
+                                this.lookupState = "found";
+                            }
+
+                            // Stage 2: Lookup Civitas (Remote Scraper)
+                            const remoteRes = await fetch(
                                 `/konselor/lookup-civitas?civitas=${encodeURIComponent(nim)}`,
                             );
-                            const data = await res.json();
+                            const remoteData = await remoteRes.json();
 
-                            if (data.success && data.data && data.data.length > 0) {
+                            if (remoteData.success && remoteData.data.length > 0) {
+                                // Merge & Deduplicate based on NIM
+                                const existingNims = new Set(this.lookupResults.map(r => r.nim));
+                                remoteData.data.forEach(item => {
+                                    if (!existingNims.has(item.nim)) {
+                                        this.lookupResults.push(item);
+                                    }
+                                });
                                 this.lookupState = "found";
-                                this.lookupResults = data.data;
-                            } else {
+                            } else if (this.lookupResults.length === 0) {
                                 this.lookupState = "error";
-                                this.lookupErrorMsg = data.message || "Data tidak ditemukan.";
+                                this.lookupErrorMsg = remoteData.message || "Data tidak ditemukan.";
                                 this.nimInputData = { role: "mahasiswa" };
                                 this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                             }
                         } catch (err) {
                             console.error(err);
-                            this.lookupState = "error";
-                            this.lookupErrorMsg = "Gagal koneksi ke server.";
-                            this.nimInputData = { role: "mahasiswa" };
-                            this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
+                            if (this.lookupResults.length === 0) {
+                                this.lookupState = "error";
+                                this.lookupErrorMsg = "Gagal koneksi ke server.";
+                                this.nimInputData = { role: "mahasiswa" };
+                                this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
+                            }
                         }
                     },
 
