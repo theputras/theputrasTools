@@ -733,6 +733,45 @@ def konselor_dashboard():
     return render_template("konselorApp/indexKonselor.html")
 
 
+# === KONSELOR: Jadwal Publik (SSR) ===
+@app.route("/konselor/jadwal-offline")
+def konselor_jadwal_publik():
+    """Tampilan jadwal konseling hari ini & mendatang untuk publik."""
+    from controller.KonselorController import censor_name
+    from models.konselor import konselor_jadwal_model
+
+    try:
+        now = datetime.now(SCHEDULER_TZ)
+    except:
+        now = datetime.now()
+
+    today_str = now.strftime("%Y-%m-%d")
+    tomorrow_str = (now + timedelta(days=1)).strftime("%Y-%m-%d")
+    
+    # Hari Ini
+    hari_ini = konselor_jadwal_model.get_public_schedules(today_str, today_str)
+    # Mendatang (Semua jadwal mulai besok onwards, mengikuti logic console internal)
+    mendatang = konselor_jadwal_model.get_public_schedules(tomorrow_str)
+
+    def process_jadwal(list_j):
+        for j in list_j:
+            jam_str = str(j.get("jam", ""))
+            if len(jam_str) > 5:
+                j["jam"] = jam_str[:5]
+            j["nama_sensor"] = censor_name(j.get("nama"))
+            j["nim"] = None
+            if j.get("tanggal"):
+                j["tanggal_str"] = str(j["tanggal"])
+        return list_j
+
+    return render_template(
+        "konselorApp/jadwal_publik.html",
+        jadwal_hari_ini=process_jadwal(hari_ini),
+        jadwal_mendatang=process_jadwal(mendatang),
+        today_formatted=now.strftime("%d %B %Y"),
+    )
+
+
 # === KONSELOR: Jadwal Main ===
 @app.route("/konselor/jadwal")
 @login_required
@@ -989,24 +1028,28 @@ def konselor_catat_sesi():
     )
 
 
-@app.route("/konselor/lookup-local")
+@app.route("/konselor/lookup-civitas")
 @login_required
-def konselor_lookup_local():
-    """AJAX endpoint: cari data dari local database (konselor_data_klien)."""
+def konselor_lookup_civitas():
+    """AJAX endpoint: cari data mahasiswa/staff dari Local DB & Sicyca."""
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import censor_name
+    from scrapper_requests import search_mahasiswa, search_staff
     from models.konselor import klien_model
 
-    query = request.args.get("query", "").strip()
+    query = request.args.get("civitas", "").strip() or request.args.get("query", "").strip()
     if not query:
-        return jsonify({"success": False, "data": []})
+        return jsonify({"success": False, "message": "Query pencarian wajib diisi."})
 
     try:
+        user_id = g.user.get("sub")
         results = []
-        local_results = klien_model.get_all_by_id_civitas(query)
+        
+        # --- PHASE 1: Search Local Database ---
+        local_results = klien_model.search_klien(query)
         for local_klien in local_results:
             results.append({
                 "role": (local_klien.get("status_civitas") or "mahasiswa").lower(),
@@ -1015,35 +1058,10 @@ def konselor_lookup_local():
                 "nama_sensor": local_klien["nama"] if local_klien["id_civitas"] in ['001', '002'] else censor_name(local_klien["nama"]),
                 "dosen_wali": local_klien["dosen_wali"],
                 "prodi": local_klien["prodi"],
-                "mbti": local_klien.get("mbti"),
-                "status_abk": local_klien.get("status_abk"),
                 "is_local": True
             })
-        return jsonify({"success": True, "data": results})
-    except Exception as e:
-        logging.error(f"[Konselor] Lookup Local error: {e}")
-        return jsonify({"success": False, "message": str(e)})
 
-
-@app.route("/konselor/lookup-civitas")
-@login_required
-def konselor_lookup_civitas():
-    """AJAX endpoint: cari data mahasiswa/staff dari Sicyca."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
-
-    from controller.KonselorController import censor_name
-    from scrapper_requests import search_mahasiswa, search_staff
-
-    query = request.args.get("civitas", "").strip()
-    if not query:
-        return jsonify({"success": False, "message": "Query pencarian wajib diisi."})
-
-    try:
-        user_id = g.user.get("sub")
-        results = []
-        
+        # --- PHASE 2: Search External Civitas ---
         is_11_digits = query.isdigit() and len(query) == 11
         is_6_digits = query.isdigit() and len(query) == 6
 
@@ -1102,15 +1120,16 @@ def konselor_lookup_civitas():
                 df_mhs = executor.submit(search_mahasiswa, query, user_id=user_id).result(timeout=30)
                 if not df_mhs.empty: results.extend(process_df(df_mhs, "mahasiswa"))
         else:
-            # Nama: Cari keduanya secara paralel
-            fut_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
-            fut_staff = executor.submit(search_staff, query, user_id=user_id)
-            
-            df_mhs = fut_mhs.result(timeout=30)
-            df_staff = fut_staff.result(timeout=30)
-            
-            if not df_mhs.empty: results.extend(process_df(df_mhs, "mahasiswa"))
-            if not df_staff.empty: results.extend(process_df(df_staff, "staff"))
+            # Nama: Cari keduanya secara paralel (hanya jika query >= 3 karakter)
+            if len(query) >= 3:
+                fut_mhs = executor.submit(search_mahasiswa, query, user_id=user_id)
+                fut_staff = executor.submit(search_staff, query, user_id=user_id)
+                
+                df_mhs = fut_mhs.result(timeout=30)
+                df_staff = fut_staff.result(timeout=30)
+                
+                if not df_mhs.empty: results.extend(process_df(df_mhs, "mahasiswa"))
+                if not df_staff.empty: results.extend(process_df(df_staff, "staff"))
 
         # Deduplicate results based on NIM + Nama
         seen_keys = set()
@@ -1174,7 +1193,9 @@ def konselor_download_template():
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
-    return download_template_excel()
+    
+    mode = request.args.get("mode", "month")
+    return download_template_excel(mode=mode)
 
 
 @app.route("/konselor/sesi/import", methods=["GET", "POST"])

@@ -94,9 +94,10 @@
                             <i class="fas fa-id-card text-violet-500 mr-1"></i>
                             Nama / NIM / NIK
                             <div class="relative flex items-center" x-data="{ openTooltip: false }">
-                                <i class="fas fa-question-circle text-gray-400 text-xs cursor-help p-1" 
-                                   @mouseenter="openTooltip = true" @mouseleave="openTooltip = false"
-                                   @click="openTooltip = !openTooltip"></i>
+                                <i class="fas fa-question-circle text-gray-400 text-xs cursor-pointer p-1" 
+                                   @mouseenter="openTooltip = true"
+                                   @click="openTooltip = !openTooltip"
+                                   @click.away="openTooltip = false"></i>
                                 <div x-show="openTooltip" x-cloak
                                      class="absolute left-6 top-0 z-50 w-56 p-3 bg-gray-900/95 backdrop-blur-md text-white text-[10px] rounded-xl shadow-2xl border border-white/10"
                                      x-transition:enter="transition ease-out duration-200"
@@ -105,9 +106,9 @@
                                      x-transition:leave="transition ease-in duration-150">
                                     <div class="space-y-1.5">
                                         <p class="font-bold text-violet-300 border-b border-white/10 pb-1 mb-1">Kode Khusus Input</p>
-                                        <p><span class="text-violet-400 font-bold">001</span> : Input Manual (Nama, Prodi, Dosen Wali untuk MHS; Nama, Bagian untuk STAFF)</p>
-                                        <p><span class="text-blue-400 font-bold">002</span> : Nama Random / Umum (Contoh: Pembicara seminar, Karyawan PPTI, dll. Disembunyikan dari daftar binaan)</p>
-                                    </div>
+                                        <p><span class="text-violet-400 font-bold">001</span> : Data Formal (MHS: Nama, Prodi, Doswal | STAFF/WALI: Nama, Unit/Afiliasi)</p>
+                                            <p><span class="text-blue-400 font-bold">002</span> : Tamu / Umum (Contoh: Pembicara, Orang Tua/Wali, Karyawan Luar. Disembunyikan dari daftar binaan)</p>
+                                        </div>
                                 </div>
                             </div>
                             <span class="text-red-400">*</span>
@@ -161,11 +162,20 @@
                                     <i class="fas" :class="res.role === 'mahasiswa' ? 'fa-user-graduate' : 'fa-user-tie'"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition" x-text="res.nama_raw"></p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition" x-text="res.nama_raw"></p>
+                                        <template x-if="res.is_local">
+                                            <span class="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-600 text-[9px] font-bold uppercase tracking-wider border border-emerald-200">
+                                                Mahasiswa Binaan
+                                            </span>
+                                        </template>
+                                    </div>
                                     <div class="flex items-center gap-2 mt-0.5">
                                         <span class="text-[10px] font-bold text-gray-400" x-text="res.nim"></span>
                                         <span class="w-1 h-1 rounded-full bg-gray-300"></span>
                                         <span class="text-[10px] text-gray-500 truncate" x-text="res.prodi"></span>
+                                        <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                            <span class="text-[10px] text-gray-500 truncate" x-text="res.dosen_wali"></span>
                                     </div>
                                 </div>
                                 <i class="fas fa-chevron-right text-gray-300 group-hover:text-violet-400 transition-transform group-hover:translate-x-1"></i>
@@ -203,11 +213,12 @@
                                        placeholder="Input nama manual..."
                                        class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-violet-500 focus:outline-none transition">
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block" x-text="nimInputData.role === 'mahasiswa' ? 'Prodi' : 'Bagian'"></label>
+                                    <label class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1 block" 
+                                           x-text="nimInputData.role === 'mahasiswa' ? 'Prodi' : (nimInputData.role === 'staff' ? 'Bagian' : 'Asal / Instansi')"></label>
                                     <input type="text" x-model="nimInputManualData.prodi" 
-                                           :placeholder="nimInputData.role === 'mahasiswa' ? 'S1 Sistem Informasi' : 'PPTI'"
+                                           :placeholder="nimInputData.role === 'mahasiswa' ? 'Program Studi...' : (nimInputData.role === 'staff' ? 'Bagian...' : 'Asal / Instansi...')"
                                            class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-violet-500 focus:outline-none transition">
                                 </div>
                                 <div x-show="nimInputData.role === 'mahasiswa'">
@@ -561,8 +572,8 @@
                         if (nim === "002") {
                             this.nimInputStatus = "manual";
                             this.nimInputMessage = "Data dummy aktif.";
-                            this.nimInputData = { role: "mahasiswa" };
-                            this.nimInputManualData = { nama: "Mahasiswa Dummy", prodi: "S1 Sistem Informasi", dosen_wali: "Dosen Dummy" };
+                            this.nimInputData = { role: "umum" };
+                            this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
                             return;
                         }
 
@@ -577,45 +588,26 @@
 
                         this.nimInputStatus = "loading";
                         try {
-                            // Stage 1: Lookup Local (Instant)
-                            const localRes = await fetch(
-                                `/konselor/lookup-local?query=${encodeURIComponent(nim)}`,
+                            const res = await fetch(
+                                `{{ url_for("konselor_lookup_civitas") }}?query=${encodeURIComponent(nim)}`,
                             );
-                            const localData = await localRes.json();
-                            if (localData.success && localData.data.length > 0) {
-                                this.lookupResults = localData.data;
-                                this.nimInputStatus = "found";
-                            }
+                            const data = await res.json();
 
-                            // Stage 2: Lookup Civitas (Remote Scraper)
-                            const remoteRes = await fetch(
-                                `{{ url_for("konselor_lookup_civitas") }}?civitas=${encodeURIComponent(nim)}`,
-                            );
-                            const remoteData = await remoteRes.json();
-
-                            if (remoteData.success && remoteData.data.length > 0) {
-                                // Merge & Deduplicate
-                                const existingNims = new Set(this.lookupResults.map(r => r.nim));
-                                remoteData.data.forEach(item => {
-                                    if (!existingNims.has(item.nim)) {
-                                        this.lookupResults.push(item);
-                                    }
-                                });
+                            if (data.success && data.data.length > 0) {
+                                this.lookupResults = data.data;
                                 this.nimInputStatus = "found";
-                            } else if (this.lookupResults.length === 0) {
+                            } else {
                                 this.nimInputStatus = "error";
-                                this.nimInputMessage = remoteData.message || "Data tidak ditemukan.";
+                                this.nimInputMessage = data.message || "Data tidak ditemukan.";
                                 this.nimInputData = { role: "mahasiswa" };
                                 this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
                             }
                         } catch (err) {
                             console.error("[Lookup NIM]", err);
-                            if (this.lookupResults.length === 0) {
-                                this.nimInputStatus = "error";
-                                this.nimInputMessage = "Gagal koneksi ke server.";
-                                this.nimInputData = { role: "mahasiswa" };
-                                this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
-                            }
+                            this.nimInputStatus = "error";
+                            this.nimInputMessage = "Gagal koneksi ke server.";
+                            this.nimInputData = { role: "mahasiswa" };
+                            this.nimInputManualData = { nama: "", prodi: "", dosen_wali: "" };
                         }
                     },
 

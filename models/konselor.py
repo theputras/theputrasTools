@@ -56,6 +56,22 @@ class KlienModel:
             cursor.close()
             conn.close()
 
+    def search_klien(self, query):
+        """Cari klien berdasarkan ID atau Nama (ILIKE)."""
+        conn = self._get_connection()
+        if not conn: return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            q = f"%{query}%"
+            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas LIKE %s OR nama ILIKE %s ORDER BY nama ASC LIMIT 50", (q, q))
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error search_klien: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
     def get_by_identity(self, id_civitas, nama):
         """Ambil data klien berdasarkan kombinasi ID dan Nama."""
         conn = self._get_connection()
@@ -888,6 +904,41 @@ class KonselorJadwalModel:
             return cursor.fetchall()
         except Exception as e:
             logging.error(f"[Konselor] Error get_all_jadwal: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_public_schedules(self, start_date, end_date=None):
+        """Ambil jadwal untuk rentang tanggal tertentu (semua konselor) untuk tampilan publik."""
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            if end_date:
+                query = """
+                    SELECT j.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
+                    FROM konselor_jadwal j
+                    LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                    LEFT JOIN konselor_data_klien dk ON j.id_klien = dk.id
+                    WHERE j.tanggal >= %s AND j.tanggal <= %s AND j.status NOT IN ('Dibatalkan')
+                    ORDER BY j.tanggal ASC, j.jam ASC
+                """
+                cursor.execute(query, (start_date, end_date))
+            else:
+                query = """
+                    SELECT j.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
+                    FROM konselor_jadwal j
+                    LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
+                    LEFT JOIN konselor_data_klien dk ON j.id_klien = dk.id
+                    WHERE j.tanggal >= %s AND j.status NOT IN ('Dibatalkan')
+                    ORDER BY j.tanggal ASC, j.jam ASC
+                """
+                cursor.execute(query, (start_date,))
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_public_schedules: {e}")
             return []
         finally:
             cursor.close()

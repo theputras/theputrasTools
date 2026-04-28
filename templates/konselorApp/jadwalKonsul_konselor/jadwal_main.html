@@ -590,9 +590,10 @@
                             <div class="flex items-center gap-1.5">
                                 <span>Nama / NIM / NIK Klien</span>
                                 <div class="relative flex items-center" x-data="{ openTooltip: false }">
-                                    <i class="fas fa-question-circle text-gray-400 text-[10px] cursor-help p-1" 
-                                       @mouseenter="openTooltip = true" @mouseleave="openTooltip = false"
-                                       @click="openTooltip = !openTooltip"></i>
+                                    <i class="fas fa-question-circle text-gray-400 text-[10px] cursor-pointer p-1" 
+                                       @mouseenter="openTooltip = true"
+                                       @click="openTooltip = !openTooltip"
+                                       @click.away="openTooltip = false"></i>
                                     <div x-show="openTooltip" x-cloak
                                          class="absolute left-6 top-0 z-[120] w-56 p-3 bg-gray-900/95 backdrop-blur-md text-white text-[10px] rounded-xl shadow-2xl border border-white/10"
                                          x-transition:enter="transition ease-out duration-200"
@@ -601,8 +602,8 @@
                                          x-transition:leave="transition ease-in duration-150">
                                         <div class="space-y-1.5 normal-case tracking-normal">
                                             <p class="font-bold text-violet-300 border-b border-white/10 pb-1 mb-1">Kode Khusus Input</p>
-                                            <p><span class="text-violet-400 font-bold">001</span> : Input Manual (Nama, Prodi, Dosen Wali untuk MHS; Nama, Bagian untuk STAFF)</p>
-                                            <p><span class="text-blue-400 font-bold">002</span> : Nama Random / Umum (Contoh: Pembicara seminar, Karyawan PPTI, dll. Disembunyikan dari daftar binaan)</p>
+                                            <p><span class="text-violet-400 font-bold">001</span> : Data Formal (MHS: Nama, Prodi, Doswal | STAFF/WALI: Nama, Unit/Afiliasi)</p>
+                                            <p><span class="text-blue-400 font-bold">002</span> : Tamu / Umum (Contoh: Pembicara, Orang Tua/Wali, Karyawan Luar. Disembunyikan dari daftar binaan)</p>
                                         </div>
                                     </div>
                                 </div>
@@ -653,11 +654,20 @@
                                         <i class="fas" :class="res.role === 'mahasiswa' ? 'fa-user-graduate' : 'fa-user-tie'"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition" x-text="res.nama_raw"></p>
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition" x-text="res.nama_raw"></p>
+                                            <template x-if="res.is_local">
+                                                <span class="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-600 text-[9px] font-bold uppercase tracking-wider border border-emerald-200">
+                                                    Mahasiswa Binaan
+                                                </span>
+                                            </template>
+                                        </div>
                                         <div class="flex items-center gap-2 mt-0.5">
                                             <span class="text-[10px] font-bold text-gray-400" x-text="res.nim"></span>
                                             <span class="w-1 h-1 rounded-full bg-gray-300"></span>
                                             <span class="text-[10px] text-gray-500 truncate" x-text="res.prodi"></span>
+                                            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                            <span class="text-[10px] text-gray-500 truncate" x-text="res.dosen_wali"></span>
                                         </div>
                                     </div>
                                     <i class="fas fa-chevron-right text-gray-300 group-hover:text-violet-400 transition-transform group-hover:translate-x-1"></i>
@@ -676,12 +686,12 @@
                             <div class="flex justify-between items-center">
                                 <p class="text-[9px] font-bold text-violet-500 uppercase tracking-widest">Input Manual</p>
                                 <div class="flex gap-1.5" x-show="nimInput !== '002'">
-                                <button type="button" @click="nimInputData.role = 'mahasiswa'" 
-                                        class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition"
-                                        :class="nimInputData.role === 'mahasiswa' ? 'bg-violet-600 text-white' : 'bg-violet-100 text-violet-600'">Mhs</button>
-                                <button type="button" @click="nimInputData.role = 'staff'" 
-                                        class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition"
-                                        :class="nimInputData.role === 'staff' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'">Staff</button>
+                                    <button type="button" @click="nimInputData.role = 'mahasiswa'" 
+                                            class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition"
+                                            :class="nimInputData.role === 'mahasiswa' ? 'bg-violet-600 text-white' : 'bg-violet-100 text-violet-600'">Mhs</button>
+                                    <button type="button" @click="nimInputData.role = 'staff'" 
+                                            class="text-[8px] font-bold px-2 py-0.5 rounded-full uppercase transition"
+                                            :class="nimInputData.role === 'staff' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'">Staff</button>
                                 </div>
                             </div>
 
@@ -695,9 +705,10 @@
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="text-[9px] text-gray-500 uppercase font-bold tracking-widest mb-1 block" x-text="nimInputData.role === 'mahasiswa' ? 'Prodi' : 'Bagian'"></label>
+                                        <label class="text-[9px] text-gray-500 uppercase font-bold tracking-widest mb-1 block" 
+                                               x-text="nimInputData.role === 'mahasiswa' ? 'Prodi' : (nimInputData.role === 'staff' ? 'Bagian' : 'Asal / Instansi')"></label>
                                         <input type="text" x-model="nimManualData.prodi" 
-                                               :placeholder="nimInputData.role === 'mahasiswa' ? 'Prodi...' : 'Bagian...'"
+                                               :placeholder="nimInputData.role === 'mahasiswa' ? 'Program Studi...' : (nimInputData.role === 'staff' ? 'Bagian...' : 'Asal / Instansi...')"
                                                class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 focus:border-violet-500 focus:outline-none transition">
                                     </div>
                                     <div x-show="nimInputData.role === 'mahasiswa'">
@@ -1490,8 +1501,8 @@
                         if (nim === "002") {
                             this.lookupState = "manual";
                             this.lookupErrorMsg = "Data dummy aktif.";
-                            this.nimInputData = { role: "mahasiswa" };
-                            this.nimManualData = { nama: "Mahasiswa Dummy", prodi: "S1 Sistem Informasi", dosen_wali: "Dosen Dummy" };
+                            this.nimInputData = { role: "umum" };
+                            this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                             return;
                         }
 
@@ -1505,45 +1516,26 @@
 
                         this.lookupState = "loading";
                         try {
-                            // Stage 1: Lookup Local (Instant)
-                            const localRes = await fetch(
-                                `/konselor/lookup-local?query=${encodeURIComponent(nim)}`,
+                            const res = await fetch(
+                                `/konselor/lookup-civitas?query=${encodeURIComponent(nim)}`,
                             );
-                            const localData = await localRes.json();
-                            if (localData.success && localData.data.length > 0) {
-                                this.lookupResults = localData.data;
-                                this.lookupState = "found";
-                            }
+                            const data = await res.json();
 
-                            // Stage 2: Lookup Civitas (Remote Scraper)
-                            const remoteRes = await fetch(
-                                `/konselor/lookup-civitas?civitas=${encodeURIComponent(nim)}`,
-                            );
-                            const remoteData = await remoteRes.json();
-
-                            if (remoteData.success && remoteData.data.length > 0) {
-                                // Merge & Deduplicate based on NIM
-                                const existingNims = new Set(this.lookupResults.map(r => r.nim));
-                                remoteData.data.forEach(item => {
-                                    if (!existingNims.has(item.nim)) {
-                                        this.lookupResults.push(item);
-                                    }
-                                });
+                            if (data.success && data.data.length > 0) {
+                                this.lookupResults = data.data;
                                 this.lookupState = "found";
-                            } else if (this.lookupResults.length === 0) {
+                            } else {
                                 this.lookupState = "error";
-                                this.lookupErrorMsg = remoteData.message || "Data tidak ditemukan.";
+                                this.lookupErrorMsg = data.message || "Data tidak ditemukan.";
                                 this.nimInputData = { role: "mahasiswa" };
                                 this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                             }
                         } catch (err) {
                             console.error(err);
-                            if (this.lookupResults.length === 0) {
-                                this.lookupState = "error";
-                                this.lookupErrorMsg = "Gagal koneksi ke server.";
-                                this.nimInputData = { role: "mahasiswa" };
-                                this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
-                            }
+                            this.lookupState = "error";
+                            this.lookupErrorMsg = "Gagal koneksi ke server.";
+                            this.nimInputData = { role: "mahasiswa" };
+                            this.nimManualData = { nama: "", prodi: "", dosen_wali: "" };
                         }
                     },
 
@@ -1701,8 +1693,11 @@
                                 this.showModalBuat = false;
                                 document.body.style.overflow = "";
                                 this.loadJadwal();
-                                // Invalidate history cache so it refreshes next time
-                                this.historyLoaded = false;
+                                if (this.activeTab === 'history') {
+                                    this.loadHistory();
+                                } else {
+                                    this.historyLoaded = false;
+                                }
                             } else {
                                 if (window.showAlert)
                                     window.showAlert("error", data.message);
@@ -1742,7 +1737,11 @@
                                 this.showModalReschedule = false;
                                 document.body.style.overflow = "";
                                 this.loadJadwal();
-                                this.historyLoaded = false;
+                                if (this.activeTab === 'history') {
+                                    this.loadHistory();
+                                } else {
+                                    this.historyLoaded = false;
+                                }
                             } else {
                                 if (window.showAlert)
                                     window.showAlert("error", data.message);
@@ -1800,7 +1799,11 @@
                                 this.showModalAction = false;
                                 document.body.style.overflow = "";
                                 this.loadJadwal();
-                                this.historyLoaded = false;
+                                if (this.activeTab === 'history') {
+                                    this.loadHistory();
+                                } else {
+                                    this.historyLoaded = false;
+                                }
                             } else {
                                 if (window.showAlert)
                                     window.showAlert(

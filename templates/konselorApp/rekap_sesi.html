@@ -78,6 +78,23 @@
             </div>
         </div>
 
+        <!-- TREND CHART -->
+        <div class="grid grid-cols-1 gap-6 mb-8">
+            <div class="card-glow bg-white border border-gray-200 rounded-2xl p-6 flex flex-col min-h-[450px]">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-[11px] font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fas fa-chart-line text-violet-500"></i> Tren Sesi Tahunan
+                        </h3>
+                        <p class="text-[10px] text-gray-500 mt-1">Distribusi layanan berdasarkan tahun sesi</p>
+                    </div>
+                </div>
+                <div class="relative flex-1" style="height: 350px;">
+                    <canvas id="chartTrend"></canvas>
+                </div>
+            </div>
+        </div>
+
         <!-- CHARTS ROW -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <!-- 1. Vertical Bar Chart: Kategori Masalah -->
@@ -233,9 +250,10 @@
                     <div @click="openDetail(sesi)" 
                          class="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors group cursor-pointer">
                         <!-- Date badge -->
-                        <div class="flex-shrink-0 w-12 h-12 bg-violet-50 rounded-xl flex flex-col items-center justify-center">
+                        <div class="flex-shrink-0 w-14 h-14 bg-violet-50 rounded-xl flex flex-col items-center justify-center border border-violet-100/50">
                             <span class="text-xs font-bold text-violet-500" x-text="new Date(sesi.tanggal_sesi).getDate()"></span>
-                            <span class="text-[9px] text-gray-500" x-text="new Date(sesi.tanggal_sesi).toLocaleDateString('id-ID', {month: 'short'})"></span>
+                            <span class="text-[9px] text-gray-500 font-medium" x-text="new Date(sesi.tanggal_sesi).toLocaleDateString('id-ID', {month: 'short'})"></span>
+                            <span class="text-[8px] text-gray-400" x-text="new Date(sesi.tanggal_sesi).getFullYear()"></span>
                         </div>
                         
                         <!-- Time badge (if available) -->
@@ -597,10 +615,19 @@
              </p>
 
              <div class="space-y-3">
-                 <!-- Download Template -->
-                 <a href="{{ url_for('konselor_download_template') }}" class="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-700 text-gray-800 font-bold py-3 px-4 rounded-xl text-sm transition">
-                     <i class="fas fa-download text-emerald-500"></i> Download Template
-                 </a>
+                 <!-- Download Template Selection -->
+                 <div class="grid grid-cols-2 gap-3">
+                     <a href="{{ url_for('konselor_download_template', mode='month') }}" 
+                        class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-gray-700 py-3 px-2 rounded-xl text-xs font-bold transition">
+                         <i class="fas fa-calendar-day text-emerald-500"></i>
+                         <span>Template Bulanan</span>
+                     </a>
+                     <a href="{{ url_for('konselor_download_template', mode='year') }}" 
+                        class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-gray-700 py-3 px-2 rounded-xl text-xs font-bold transition">
+                         <i class="fas fa-calendar-alt text-emerald-500"></i>
+                         <span>Template Tahunan</span>
+                     </a>
+                 </div>
 
                  <!-- Upload Area -->
                   <form @submit.prevent="submitImport" enctype="multipart/form-data">
@@ -691,6 +718,7 @@
 let chartKategoriInstance = null;
 let chartLayananInstance = null;
 let chartProdiInstance = null;
+let chartTrendInstance = null;
 
 const CHART_COLORS = [
     'rgba(167, 139, 250, 0.8)',  // violet
@@ -710,7 +738,6 @@ function renderAppChart(canvasId, chartType, labels, data, existingChart, onSele
     const ctx = document.getElementById(canvasId);
     if (!ctx) return null;
 
-    // Use horizontal bar for prodi
     const isHorizontal = extraOptions.indexAxis === 'y';
 
     return new Chart(ctx, {
@@ -772,6 +799,59 @@ function renderAppChart(canvasId, chartType, labels, data, existingChart, onSele
                             return ` ${ctx.raw} sesi (${pct}%)`;
                         }
                     }
+                }
+            }
+        }
+    });
+}
+
+function renderTrendChart(canvasId, trendData, existingChart) {
+    if (existingChart) existingChart.destroy();
+    
+    const ctx = document.getElementById(canvasId);
+    if (!ctx || !trendData.labels.length) return null;
+
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: trendData.labels,
+            datasets: trendData.datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10, weight: 'bold' } }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.03)' },
+                    ticks: { 
+                        stepSize: 1,
+                        font: { size: 10 } 
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        boxWidth: 8,
+                        usePointStyle: true,
+                        font: { size: 9, weight: 'bold' }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(17, 17, 27, 0.95)',
+                    padding: 12,
+                    cornerRadius: 12,
                 }
             }
         }
@@ -1061,8 +1141,8 @@ function rekapApp() {
                         onChange: (selectedDates) => {
                             this.dateRange = selectedDates;
                             if (selectedDates.length === 2) {
-                                const start = selectedDates[0].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
-                                const end = selectedDates[1].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+                                const start = selectedDates[0].toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+                                const end = selectedDates[1].toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
                                 this.selectedDateText = `${start} - ${end}`;
                             } else {
                                 this.selectedDateText = "Pilih rentang tanggal";
@@ -1078,8 +1158,8 @@ function rekapApp() {
         applyFilter() {
             if (this.dateRange.length === 2) {
                 this.isFilterActive = true;
-                const start = this.dateRange[0].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
-                const end = this.dateRange[1].toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+                const start = this.dateRange[0].toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+                const end = this.dateRange[1].toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
                 this.filterBtnText = `${start} - ${end}`;
                 this.closeFilter();
             } else {
@@ -1088,47 +1168,132 @@ function rekapApp() {
             }
         },
 
-        // === DATA ===
+        // === DATA & CHARTS ===
         async loadRekap() {
             this.isLoading = true;
             try {
+                // Fetch all data (no filter by default)
                 const res = await fetch('{{ url_for("konselor_rekap_data") }}');
                 const data = await res.json();
 
                 if (data.success) {
-                    this.stats = data.stats;
                     this.sessions = data.sessions || [];
-
-                    this.$nextTick(() => {
-                        // 1. Kategori -> Vertical Bar
-                        const katLabels = this.stats.kategori_distribusi.map(k => k.kategori);
-                        const katData = this.stats.kategori_distribusi.map(k => k.jumlah);
-                        chartKategoriInstance = renderAppChart('chartKategori', 'bar', katLabels, katData, chartKategoriInstance, (val) => {
-                            this.activeFilters.kategori = val;
-                        });
-
-                        // 2. Layanan -> Donut
-                        const layLabels = this.stats.layanan_distribusi.map(l => l.layanan);
-                        const layData = this.stats.layanan_distribusi.map(l => l.jumlah);
-                        chartLayananInstance = renderAppChart('chartLayanan', 'doughnut', layLabels, layData, chartLayananInstance, (val) => {
-                            this.activeFilters.layanan = val;
-                        });
-
-                        // 3. Prodi -> Horizontal Bar
-                        if (this.stats.prodi_distribusi) {
-                            const prodiLabels = this.stats.prodi_distribusi.map(p => p.prodi);
-                            const prodiData = this.stats.prodi_distribusi.map(p => p.jumlah);
-                            chartProdiInstance = renderAppChart('chartProdi', 'bar', prodiLabels, prodiData, chartProdiInstance, (val) => {
-                                this.activeFilters.prodi = val;
-                            }, { indexAxis: 'y' });
-                        }
-                    });
+                    this.updateCharts();
+                    
+                    // Reactive watching for filters
+                    this.$watch('searchQuery', () => this.updateCharts());
+                    this.$watch('activeFilters.kategori', () => this.updateCharts());
+                    this.$watch('activeFilters.layanan', () => this.updateCharts());
+                    this.$watch('activeFilters.prodi', () => this.updateCharts());
+                    this.$watch('isFilterActive', () => this.updateCharts());
                 }
             } catch (err) {
                 console.error('[Rekap] Load error:', err);
             } finally {
                 this.isLoading = false;
             }
+        },
+
+        updateCharts() {
+            this.$nextTick(() => {
+                const filtered = this.filteredSessions;
+                
+                // 1. Recalculate Totals
+                this.stats.total_sesi = filtered.length;
+                this.stats.klien_unik = new Set(filtered.map(s => s.id_klien)).size;
+                
+                const now = new Date();
+                this.stats.sesi_bulan_ini = filtered.filter(s => {
+                    const d = new Date(s.tanggal_sesi);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                }).length;
+
+                const toTitleCase = (str) => {
+                    if (!str) return '';
+                    return str.toLowerCase().split(' ').filter(w => w).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                };
+
+                // 2. Kategori Masalah
+                const katMap = {};
+                filtered.forEach(s => {
+                    if (s.kategori_masalah) {
+                        s.kategori_masalah.split(',').forEach(k => {
+                            const name = toTitleCase(k.trim());
+                            if (name) katMap[name] = (katMap[name] || 0) + 1;
+                        });
+                    }
+                });
+                const katLabels = Object.keys(katMap).sort((a,b) => katMap[b] - katMap[a]).slice(0, 8);
+                const katData = katLabels.map(l => katMap[l]);
+                chartKategoriInstance = renderAppChart('chartKategori', 'bar', katLabels, katData, chartKategoriInstance, (val) => {
+                    this.activeFilters.kategori = val;
+                });
+
+                // 3. Jenis Layanan
+                const layMap = {};
+                filtered.forEach(s => {
+                    const name = toTitleCase(s.jenis_layanan) || 'Lainnya';
+                    layMap[name] = (layMap[name] || 0) + 1;
+                });
+                const layLabels = Object.keys(layMap);
+                const layData = layLabels.map(l => layMap[l]);
+                chartLayananInstance = renderAppChart('chartLayanan', 'doughnut', layLabels, layData, chartLayananInstance, (val) => {
+                    this.activeFilters.layanan = val;
+                });
+
+                // 4. Prodi
+                const prodiMap = {};
+                const normalizeProdi = (str) => {
+                    if (!str) return 'Lainnya/Staff';
+                    const lower = str.toLowerCase();
+                    if (lower.includes('lainnya') || lower.includes('staff')) return 'Lainnya/Staff';
+                    return toTitleCase(str);
+                };
+
+                filtered.forEach(s => {
+                    const name = normalizeProdi(s.prodi);
+                    prodiMap[name] = (prodiMap[name] || 0) + 1;
+                });
+                const prodiLabels = Object.keys(prodiMap).sort((a,b) => prodiMap[b] - prodiMap[a]).slice(0, 10);
+                const prodiData = prodiLabels.map(l => prodiMap[l]);
+                chartProdiInstance = renderAppChart('chartProdi', 'bar', prodiLabels, prodiData, chartProdiInstance, (val) => {
+                    this.activeFilters.prodi = val;
+                }, { indexAxis: 'y' });
+
+                // 5. Trend Tahunan
+                this.updateTrendChart(filtered);
+            });
+        },
+
+        updateTrendChart(filtered) {
+            const trendMap = {}; // { year: { layanan: count } }
+            const layananSet = new Set();
+            
+            filtered.forEach(s => {
+                const year = new Date(s.tanggal_sesi).getFullYear();
+                const layanan = s.jenis_layanan || 'Lainnya';
+                layananSet.add(layanan);
+                
+                if (!trendMap[year]) trendMap[year] = {};
+                trendMap[year][layanan] = (trendMap[year][layanan] || 0) + 1;
+            });
+
+            const years = Object.keys(trendMap).sort();
+            const layanans = Array.from(layananSet).sort();
+
+            const datasets = layanans.map((lay, i) => ({
+                label: lay,
+                data: years.map(y => trendMap[y][lay] || 0),
+                borderColor: CHART_COLORS[i % CHART_COLORS.length],
+                backgroundColor: CHART_COLORS[i % CHART_COLORS.length].replace('0.8', '0.1'),
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 3
+            }));
+
+            chartTrendInstance = renderTrendChart('chartTrend', { labels: years, datasets }, chartTrendInstance);
         },
 
         async hapusSesi(sessionId) {

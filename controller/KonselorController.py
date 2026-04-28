@@ -530,7 +530,7 @@ from flask import jsonify, send_file
 from scrapper_requests import search_mahasiswa
 
 
-def download_template_excel():
+def download_template_excel(mode="month"):
     from datetime import datetime
 
     df = pd.DataFrame(
@@ -545,7 +545,10 @@ def download_template_excel():
         ]
     )
 
-    sheet_name = datetime.now().strftime("%B %Y")
+    if mode == "year":
+        sheet_name = datetime.now().strftime("%Y")
+    else:
+        sheet_name = datetime.now().strftime("%B %Y")
 
     output = BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:

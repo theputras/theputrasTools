@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jadwal Konseling Publik</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <style>
+            [x-cloak] { display: none !important; }
+            body {
+                font-family: "Inter", sans-serif;
+            }
+            .gradient-text {
+                background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .card-glow {
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .card-glow:hover {
+                box-shadow: 0 0 30px -5px rgba(139, 92, 246, 0.15);
+            }
+        </style>
+    </head>
+    <body class="bg-slate-50 text-gray-600 min-h-screen" x-data="{ activeTab: 'hari_ini' }">
+        <div class="container mx-auto px-4 sm:px-6 py-10 max-w-4xl">
+            <!-- HEADER -->
+            <div class="mb-10 text-center">
+                <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight mb-2">
+                    <i class="fas fa-calendar-check text-violet-500 mr-2"></i>
+                    Jadwal <span class="gradient-text">Konseling</span>
+                </h1>
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-violet-50 text-violet-600 rounded-full text-sm font-bold border border-violet-100">
+                    <i class="fas fa-clock text-xs"></i>
+                    <span>{{ today_formatted }}</span>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="flex p-1.5 bg-white/80 backdrop-blur-md rounded-2xl border border-gray-200 mb-8 w-full sm:w-fit mx-auto shadow-sm overflow-x-auto no-scrollbar gap-0.5">
+                <button
+                    @click="activeTab = 'hari_ini'"
+                    :class="activeTab === 'hari_ini' ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/20' : 'text-gray-500 hover:text-gray-800'"
+                    class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
+                >
+                    <i class="fas fa-clock"></i> Hari Ini
+                    <span class="bg-white/20 text-white px-1.5 py-0.5 rounded-full text-[10px]" x-show="activeTab === 'hari_ini'">{{ jadwal_hari_ini|length }}</span>
+                </button>
+                <button
+                    @click="activeTab = 'mendatang'"
+                    :class="activeTab === 'mendatang' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-500 hover:text-gray-800'"
+                    class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
+                >
+                    <i class="fas fa-calendar-day"></i> Mendatang
+                    <span class="bg-white/20 text-white px-1.5 py-0.5 rounded-full text-[10px]" x-show="activeTab === 'mendatang'">{{ jadwal_mendatang|length }}</span>
+                </button>
+            </div>
+
+            <!-- TAB CONTENT: HARI INI -->
+            <div x-show="activeTab === 'hari_ini'" x-transition.opacity.duration.300ms class="space-y-4">
+                {% if not jadwal_hari_ini %}
+                    <div class="card-glow bg-white border border-gray-200 rounded-3xl p-16 text-center">
+                        <div class="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-mug-hot text-violet-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-gray-800 font-bold mb-1">Hari yang Santai</h3>
+                        <p class="text-sm text-gray-500">Tidak ada jadwal konseling untuk hari ini.</p>
+                    </div>
+                {% else %}
+                    {% for jadwal in jadwal_hari_ini %}
+                        <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-5">
+                                <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-violet-50 border border-violet-100 flex-shrink-0">
+                                    <span class="text-sm font-extrabold text-violet-600">{{ jadwal.jam }}</span>
+                                    <span class="text-[10px] font-medium text-violet-400">WIB</span>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1.5">
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full 
+                                            {% if jadwal.status == 'Berlangsung' %} bg-emerald-50 text-emerald-600
+                                            {% elif jadwal.status == 'Jeda' %} bg-orange-50 text-orange-600
+                                            {% elif jadwal.status == 'Selesai' %} bg-blue-50 text-blue-600
+                                            {% else %} bg-amber-50 text-amber-600 {% endif %}">
+                                            {{ jadwal.status }}
+                                        </span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                                            {{ jadwal.layanan }}
+                                        </span>
+                                    </div>
+                                    <h4 class="text-base font-bold text-gray-800">{{ jadwal.nama_sensor }}</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">{{ jadwal.prodi or 'Umum / Staff' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- TAB CONTENT: MENDATANG -->
+            <div x-show="activeTab === 'mendatang'" x-cloak x-transition.opacity.duration.300ms class="space-y-4">
+                {% if not jadwal_mendatang %}
+                    <div class="card-glow bg-white border border-gray-200 rounded-3xl p-16 text-center">
+                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calendar-day text-blue-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-gray-800 font-bold mb-1">Jadwal Kosong</h3>
+                        <p class="text-sm text-gray-500">Belum ada jadwal konseling mendatang.</p>
+                    </div>
+                {% else %}
+                    {% for jadwal in jadwal_mendatang %}
+                        <div class="card-glow bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-5">
+                                <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 flex-shrink-0">
+                                    <span class="text-xs font-extrabold text-blue-600">{{ jadwal.tanggal.strftime('%d %b') if jadwal.tanggal else '' }}</span>
+                                    <span class="text-[10px] font-bold text-gray-400 mt-0.5">{{ jadwal.jam }}</span>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1.5">
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
+                                            Terjadwal
+                                        </span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                                            {{ jadwal.layanan }}
+                                        </span>
+                                    </div>
+                                    <h4 class="text-base font-bold text-gray-800">{{ jadwal.nama_sensor }}</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">{{ jadwal.prodi or 'Umum / Staff' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- FOOTER -->
+            <div class="mt-16 text-center">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-4">theputras tools &bull; counseling system</p>
+                <div class="flex justify-center gap-4">
+                    <div class="w-1.5 h-1.5 rounded-full bg-violet-200"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-200"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
