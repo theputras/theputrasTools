@@ -1573,53 +1573,59 @@ function rekapApp() {
         },
 
         downloadLaporan(mode) {
-            const form = document.getElementById('downloadPdfForm');
-            document.getElementById('pdfMode').value = mode;
-            document.getElementById('pdfDosenWali').value = "";
-            document.getElementById('pdfFilterWaktu').value = "bulan";
+            try {
+                const form = document.getElementById('downloadPdfForm');
+                if (!form) return;
 
-            const chartKategori = Chart.getChart('chartKategori');
-            const chartLayanan = Chart.getChart('chartLayanan');
-            const chartProdi = Chart.getChart('chartProdi');
+                document.getElementById('pdfMode').value = mode;
+                document.getElementById('pdfDosenWali').value = "";
+                document.getElementById('pdfFilterWaktu').value = "bulan";
 
-            if (mode === 'bulan') {
-                if (!this.selectedMonth) return;
-                const [bulan, tahun] = this.selectedMonth.split('|');
-                document.getElementById('pdfBulan').value = bulan;
-                document.getElementById('pdfTahun').value = tahun;
-            } else if (mode === 'tahun') {
-                if (!this.selectedYear) return;
-                document.getElementById('pdfBulan').value = '';
-                document.getElementById('pdfTahun').value = this.selectedYear;
+                if (mode === 'bulan') {
+                    if (!this.selectedMonth) return;
+                    const [bulan, tahun] = this.selectedMonth.split('|');
+                    document.getElementById('pdfBulan').value = bulan;
+                    document.getElementById('pdfTahun').value = tahun;
+                } else if (mode === 'tahun') {
+                    if (!this.selectedYear) return;
+                    document.getElementById('pdfBulan').value = '';
+                    document.getElementById('pdfTahun').value = this.selectedYear;
+                }
+
+                document.getElementById('pdfChartKategori').value = chartKategoriInstance ? chartKategoriInstance.toBase64Image() : '';
+                document.getElementById('pdfChartLayanan').value = chartLayananInstance ? chartLayananInstance.toBase64Image() : '';
+                document.getElementById('pdfChartProdi').value = chartProdiInstance ? chartProdiInstance.toBase64Image() : '';
+
+                form.submit();
+                this.showBulanModal = false;
+                this.showTahunModal = false;
+            } catch (err) {
+                console.error('Download error:', err);
+                if (window.showAlert) window.showAlert('error', 'Gagal memproses download.');
             }
-
-            document.getElementById('pdfChartKategori').value = chartKategori ? chartKategori.toBase64Image() : '';
-            document.getElementById('pdfChartLayanan').value = chartLayanan ? chartLayanan.toBase64Image() : '';
-            document.getElementById('pdfChartProdi').value = chartProdi ? chartProdi.toBase64Image() : '';
-
-            form.submit();
-            this.showBulanModal = false;
-            this.showTahunModal = false;
         },
 
         downloadLaporanDosen() {
-            const form = document.getElementById('downloadPdfForm');
-            document.getElementById('pdfMode').value = "dosen";
-            document.getElementById('pdfDosenWali').value = this.dosenSearchName;
-            document.getElementById('pdfFilterWaktu').value = this.dosenFilterWaktu;
-            document.getElementById('pdfBulan').value = this.dosenFilterBulan;
-            document.getElementById('pdfTahun').value = this.dosenFilterTahun;
-            
-            const chartKategori = Chart.getChart('chartKategori');
-            const chartLayanan = Chart.getChart('chartLayanan');
-            // User requested: Prodi chart only for non-dosen wali
-            
-            document.getElementById('pdfChartKategori').value = chartKategori ? chartKategori.toBase64Image() : '';
-            document.getElementById('pdfChartLayanan').value = chartLayanan ? chartLayanan.toBase64Image() : '';
-            document.getElementById('pdfChartProdi').value = '';
+            try {
+                const form = document.getElementById('downloadPdfForm');
+                if (!form) return;
 
-            form.submit();
-            this.showDosenModal = false;
+                document.getElementById('pdfMode').value = "dosen";
+                document.getElementById('pdfDosenWali').value = this.dosenSearchName;
+                document.getElementById('pdfFilterWaktu').value = this.dosenFilterWaktu;
+                document.getElementById('pdfBulan').value = this.dosenFilterBulan;
+                document.getElementById('pdfTahun').value = this.dosenFilterTahun;
+                
+                document.getElementById('pdfChartKategori').value = chartKategoriInstance ? chartKategoriInstance.toBase64Image() : '';
+                document.getElementById('pdfChartLayanan').value = chartLayananInstance ? chartLayananInstance.toBase64Image() : '';
+                document.getElementById('pdfChartProdi').value = '';
+
+                form.submit();
+                this.showDosenModal = false;
+            } catch (err) {
+                console.error('Download Dosen error:', err);
+                if (window.showAlert) window.showAlert('error', 'Gagal memproses download.');
+            }
         }
     }
 }

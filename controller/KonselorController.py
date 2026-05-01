@@ -903,6 +903,9 @@ def download_laporan_pdf(user_id, request):
     bulan = request.values.get("bulan", "")
     tahun = request.values.get("tahun", "")
     dosen_wali = request.values.get("dosen_wali", "")
+    
+    nama_bulan_list = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                       "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 
     # Get data
     from connection import get_connection
@@ -987,12 +990,10 @@ def download_laporan_pdf(user_id, request):
     # Subheader info
     info_style = ParagraphStyle('InfoStyle', parent=styles['Normal'], fontSize=11, spaceAfter=2)
     
-    bulan_dict = {"1":"Januari", "2":"Februari", "3":"Maret", "4":"April", "5":"Mei", "6":"Juni", "7":"Juli", "8":"Agustus", "9":"September", "10":"Oktober", "11":"November", "12":"Desember"}
-    
     # Menentukan teks keterangan waktu
     teks_waktu = ""
-    if mode == "bulan" or (mode == "dosen" and request.form.get("filter_waktu") == "bulan"):
-        nama_bulan = bulan_dict.get(str(bulan), "")
+    if mode == "bulan" or (mode == "dosen" and request.values.get("filter_waktu") == "bulan"):
+        nama_bulan = nama_bulan_list[int(bulan)] if bulan and str(bulan).isdigit() and int(bulan) in range(1, 13) else ""
         teks_waktu = f"Bulan: {nama_bulan} {tahun}"
     else:
         teks_waktu = f"Bulan: Keseluruhan Tahun {tahun}"
@@ -1132,9 +1133,7 @@ def download_laporan_pdf(user_id, request):
         
     doc.build(elements)
     
-    # Penamaan File
-    nama_bulan_list = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
-                       "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+    buffer.seek(0)
     
     bulan_str = ""
     try:
