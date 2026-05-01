@@ -996,7 +996,7 @@ def download_laporan_pdf(user_id, request):
         nama_bulan = nama_bulan_list[int(bulan)] if bulan and str(bulan).isdigit() and int(bulan) in range(1, 13) else ""
         teks_waktu = f"Bulan: {nama_bulan} {tahun}"
     else:
-        teks_waktu = f"Bulan: Keseluruhan Tahun {tahun}"
+        teks_waktu = f"Keseluruhan Tahun {tahun}"
         
     elements.append(Paragraph(f"<b>{teks_waktu}</b>", info_style))
     
@@ -1148,9 +1148,11 @@ def download_laporan_pdf(user_id, request):
     elif mode == "tahun":
         filename = f"Rekap_Tahunan_{tahun}.pdf"
     elif mode == "dosen":
-        # Format: Rekap_Dosen_Wali_NamaDosen_Januari_2026.pdf
-        period = f"_{bulan_str}" if bulan_str else ""
-        filename = f"Rekap_Dosen_Wali_{dosen_wali}{period}_{tahun}.pdf"
+        filter_waktu = request.values.get("filter_waktu", "bulan")
+        if filter_waktu == "tahun":
+            filename = f"Rekap_Tahunan_Dosen_Wali_{dosen_wali}_{tahun}.pdf"
+        else:
+            filename = f"Rekap_Bulanan_Dosen_Wali_{dosen_wali}_{bulan_str}_{tahun}.pdf"
 
     return send_file(
         buffer,
