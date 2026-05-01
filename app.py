@@ -1245,6 +1245,33 @@ def konselor_rekap_data():
     return jsonify({"success": True, "stats": stats, "sessions": sessions})
 
 
+@app.route("/konselor/rekap/available_periods")
+@login_required
+def konselor_available_periods():
+    """Return distinct year-month pairs and dosen_wali list from sessions."""
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import get_available_periods
+
+    user_id = g.user.get("sub")
+    return jsonify(get_available_periods(user_id))
+
+
+@app.route("/konselor/rekap/download_pdf", methods=["GET", "POST"])
+@login_required
+def konselor_download_pdf():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import download_laporan_pdf
+
+    user_id = g.user.get("sub")
+    return download_laporan_pdf(user_id, request)
+
+
 @app.route("/konselor/klien/data")
 @login_required
 def konselor_klien_data():

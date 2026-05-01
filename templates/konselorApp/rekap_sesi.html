@@ -194,6 +194,35 @@
                         <i class="fas fa-calendar-alt text-[10px]"></i> 
                         <span x-text="filterBtnText">Filter</span>
                     </button>
+
+                    <!-- Download Laporan Dropdown -->
+                    <div class="relative" x-data="{ openDownload: false }">
+                        <button @click="openDownload = !openDownload" @click.outside="openDownload = false"
+                           class="text-xs font-bold text-amber-500 bg-amber-50 px-4 py-2 rounded-full hover:bg-amber-100 transition flex items-center gap-1.5">
+                            <i class="fas fa-file-pdf text-[10px]"></i> Download Laporan
+                            <i class="fas fa-chevron-down text-[8px] ml-1"></i>
+                        </button>
+                        
+                        <div x-show="openDownload" x-cloak
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden text-left">
+                            <button @click="showBulanModal = true; openDownload = false" class="w-full text-left block px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition border-b border-gray-200">
+                                <i class="fas fa-calendar-day w-5 text-amber-500"></i> Per Bulan
+                            </button>
+                            <button @click="showTahunModal = true; openDownload = false" class="w-full text-left block px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition border-b border-gray-200">
+                                <i class="fas fa-calendar-alt w-5 text-amber-500"></i> Per Tahun
+                            </button>
+                            <button @click="showDosenModal = true; openDownload = false" class="w-full text-left block px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition">
+                                <i class="fas fa-user-tie w-5 text-amber-500"></i> Per Dosen Wali
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="relative" x-data="{ openDropdown: false }">
                         <button @click="openDropdown = !openDropdown" @click.outside="openDropdown = false"
                            class="text-xs font-bold text-violet-500 bg-violet-50 px-4 py-2 rounded-full hover:bg-violet-100 transition flex items-center gap-1.5">
@@ -579,6 +608,176 @@
     </div>
 
     <!-- ============================================ -->
+    <!-- DOWNLOAD PER BULAN MODAL                     -->
+    <!-- ============================================ -->
+    <div x-show="showBulanModal" x-cloak
+         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" @click.self="showBulanModal = false">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showBulanModal = false"></div>
+        <div x-show="showBulanModal"
+             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full sm:translate-y-4 opacity-0 scale-95" x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0 opacity-100 scale-100" x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+             class="relative w-full sm:max-w-sm bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl p-6">
+             <div class="flex items-center justify-between mb-5 border-b border-gray-200 pb-4">
+                 <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                     <i class="fas fa-calendar-day text-amber-500"></i> Rekap Per Bulan
+                 </h3>
+                 <button @click="showBulanModal = false" class="text-gray-500 hover:text-gray-800 transition"><i class="fas fa-times"></i></button>
+             </div>
+             <div class="space-y-4">
+                 <div>
+                     <label class="block text-xs font-bold text-gray-700 mb-1">Pilih Bulan</label>
+                     <template x-if="availableMonths.length === 0">
+                         <p class="text-xs text-gray-400 italic">Tidak ada data sesi.</p>
+                     </template>
+                     <select x-model="selectedMonth" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                         <option value="">-- Pilih --</option>
+                         <template x-for="m in availableMonths" :key="m.tahun + '-' + m.bulan">
+                             <option :value="m.bulan + '|' + m.tahun" x-text="namaBulan(m.bulan) + ' ' + m.tahun + ' (' + m.jumlah + ' sesi)'"></option>
+                         </template>
+                     </select>
+                 </div>
+                 <button @click="downloadLaporan('bulan')" :disabled="!selectedMonth"
+                     class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                     <i class="fas fa-download"></i> Download PDF
+                 </button>
+             </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DOWNLOAD PER TAHUN MODAL                     -->
+    <!-- ============================================ -->
+    <div x-show="showTahunModal" x-cloak
+         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" @click.self="showTahunModal = false">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showTahunModal = false"></div>
+        <div x-show="showTahunModal"
+             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full sm:translate-y-4 opacity-0 scale-95" x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0 opacity-100 scale-100" x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+             class="relative w-full sm:max-w-sm bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl p-6">
+             <div class="flex items-center justify-between mb-5 border-b border-gray-200 pb-4">
+                 <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                     <i class="fas fa-calendar-alt text-amber-500"></i> Rekap Per Tahun
+                 </h3>
+                 <button @click="showTahunModal = false" class="text-gray-500 hover:text-gray-800 transition"><i class="fas fa-times"></i></button>
+             </div>
+             <div class="space-y-4">
+                 <div>
+                     <label class="block text-xs font-bold text-gray-700 mb-1">Pilih Tahun</label>
+                     <select x-model="selectedYear" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                         <option value="">-- Pilih --</option>
+                         <template x-for="y in availableYears" :key="y.tahun">
+                             <option :value="y.tahun" x-text="y.tahun + ' (' + y.jumlah + ' sesi)'"></option>
+                         </template>
+                     </select>
+                 </div>
+                 <button @click="downloadLaporan('tahun')" :disabled="!selectedYear"
+                     class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                     <i class="fas fa-download"></i> Download PDF
+                 </button>
+             </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DOWNLOAD LAPORAN DOSEN WALI MODAL            -->
+    <!-- ============================================ -->
+    <div x-show="showDosenModal" x-cloak
+         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" @click.self="showDosenModal = false">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showDosenModal = false"></div>
+        <div x-show="showDosenModal"
+             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full sm:translate-y-4 opacity-0 scale-95" x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0 opacity-100 scale-100" x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+             class="relative w-full sm:max-w-md bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl p-6">
+             <div class="flex items-center justify-between mb-5 border-b border-gray-200 pb-4">
+                 <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                     <i class="fas fa-file-pdf text-amber-500"></i> Laporan Per Dosen Wali
+                 </h3>
+                 <button @click="showDosenModal = false" class="text-gray-500 hover:text-gray-800 transition"><i class="fas fa-times"></i></button>
+             </div>
+             <div class="space-y-4">
+                 <!-- 1. Tipe Waktu -->
+                 <div>
+                     <label class="block text-xs font-bold text-gray-700 mb-1">Tipe Waktu</label>
+                     <select x-model="dosenFilterWaktu" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                         <option value="bulan">Per Bulan</option>
+                         <option value="tahun">Per Tahun</option>
+                     </select>
+                 </div>
+
+                 <!-- 2a. Bulan + Tahun (if per bulan) -->
+                 <div x-show="dosenFilterWaktu === 'bulan'" class="grid grid-cols-2 gap-3">
+                     <div>
+                         <label class="block text-xs font-bold text-gray-700 mb-1">Bulan</label>
+                         <select x-model="dosenFilterBulan" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                             <option value="">-- Pilih Bulan --</option>
+                             <template x-for="m in availableMonths.filter(m => String(m.tahun) === String(dosenFilterTahun))" :key="m.bulan">
+                                 <option :value="m.bulan" x-text="namaBulan(m.bulan) + ' (' + m.jumlah + ' sesi)'"></option>
+                             </template>
+                         </select>
+                     </div>
+                     <div>
+                         <label class="block text-xs font-bold text-gray-700 mb-1">Tahun</label>
+                         <select x-model="dosenFilterTahun" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                             <option value="">-- Pilih --</option>
+                             <template x-for="y in availableYears" :key="y.tahun">
+                                 <option :value="y.tahun" x-text="y.tahun"></option>
+                             </template>
+                         </select>
+                     </div>
+                 </div>
+
+                 <!-- 2b. Tahun (if per tahun) -->
+                 <div x-show="dosenFilterWaktu === 'tahun'">
+                     <label class="block text-xs font-bold text-gray-700 mb-1">Tahun</label>
+                     <select x-model="dosenFilterTahun" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                         <option value="">-- Pilih --</option>
+                         <template x-for="y in availableYears" :key="y.tahun">
+                             <option :value="y.tahun" x-text="y.tahun + ' (' + y.jumlah + ' sesi)'"></option>
+                         </template>
+                     </select>
+                 </div>
+
+                 <!-- 3. Pilih Dosen Wali -->
+                 <div>
+                     <label class="block text-xs font-bold text-gray-700 mb-1">Pilih Dosen Wali</label>
+                     <select x-model="dosenSearchName" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                         <option value="">-- Pilih Dosen Wali --</option>
+                         <template x-for="d in availableDosenList" :key="d.dosen_wali">
+                             <option :value="d.dosen_wali" x-text="d.dosen_wali"></option>
+                         </template>
+                     </select>
+                 </div>
+
+                 <!-- 4. Download + Count -->
+                 <div>
+                     <button @click="downloadLaporanDosen()" :disabled="!dosenSearchName || dosenSesiCount === 0"
+                         class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                         <i class="fas fa-download"></i>
+                         <span x-text="dosenSearchName ? 'Download PDF ' + dosenSesiCount + ' Sesi' : 'Download PDF'"></span>
+                     </button>
+                 </div>
+             </div>
+        </div>
+    </div>
+
+    <form id="downloadPdfForm" action="{{ url_for('konselor_download_pdf') }}" method="POST" target="_blank" class="hidden">
+        <input type="hidden" name="mode" id="pdfMode">
+        <input type="hidden" name="bulan" id="pdfBulan">
+        <input type="hidden" name="tahun" id="pdfTahun">
+        <input type="hidden" name="dosen_wali" id="pdfDosenWali">
+        <input type="hidden" name="filter_waktu" id="pdfFilterWaktu">
+        <input type="hidden" name="chart_kategori" id="pdfChartKategori">
+        <input type="hidden" name="chart_layanan" id="pdfChartLayanan">
+        <input type="hidden" name="chart_prodi" id="pdfChartProdi">
+    </form>
+
+    <!-- ============================================ -->
     <!-- IMPORT EXCEL MODAL                           -->
     <!-- ============================================ -->
     <div x-show="showImportModal" x-cloak
@@ -887,6 +1086,38 @@ function rekapApp() {
         },
         sessions: [],
         
+        // --- Download Laporan State ---
+        showBulanModal: false,
+        showTahunModal: false,
+        showDosenModal: false,
+        availableMonths: [],
+        availableYears: [],
+        availableDosenList: [],
+        selectedMonth: '',
+        selectedYear: '',
+        dosenSearchName: '',
+        dosenFilterWaktu: 'bulan',
+        dosenFilterBulan: new Date().getMonth() + 1,
+        dosenFilterTahun: new Date().getFullYear(),
+        
+        get dosenSesiCount() {
+            if (!this.dosenSearchName) return 0;
+            const keyword = this.dosenSearchName.toLowerCase();
+            return this.sessions.filter(s => {
+                if (!s.dosen_wali || !s.dosen_wali.toLowerCase().includes(keyword)) return false;
+                const d = new Date(s.tanggal_sesi);
+                if (this.dosenFilterWaktu === 'bulan') {
+                    return (d.getMonth() + 1) == this.dosenFilterBulan && d.getFullYear() == this.dosenFilterTahun;
+                } else {
+                    return d.getFullYear() == this.dosenFilterTahun;
+                }
+            }).length;
+        },
+        
+        namaBulan(n) {
+            return ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][n] || '';
+        },
+        
         // --- Smart Filter Logic ---
         searchNim: new URLSearchParams(window.location.search).get('nim') || '',
         searchNama: new URLSearchParams(window.location.search).get('nama') || '',
@@ -1179,6 +1410,7 @@ function rekapApp() {
                 if (data.success) {
                     this.sessions = data.sessions || [];
                     this.updateCharts();
+                    this.loadAvailablePeriods();
                     
                     // Reactive watching for filters
                     this.$watch('searchQuery', () => this.updateCharts());
@@ -1191,6 +1423,20 @@ function rekapApp() {
                 console.error('[Rekap] Load error:', err);
             } finally {
                 this.isLoading = false;
+            }
+        },
+
+        async loadAvailablePeriods() {
+            try {
+                const res = await fetch('{{ url_for("konselor_available_periods") }}');
+                const data = await res.json();
+                if (data.success) {
+                    this.availableMonths = data.months || [];
+                    this.availableYears = data.years || [];
+                    this.availableDosenList = data.dosen_wali_list || [];
+                }
+            } catch (err) {
+                console.error('[Rekap] Load periods error:', err);
             }
         },
 
@@ -1324,6 +1570,56 @@ function rekapApp() {
                 console.error(err);
                 if (window.showAlert) window.showAlert('error', 'Gagal menghapus sesi.');
             }
+        },
+
+        downloadLaporan(mode) {
+            const form = document.getElementById('downloadPdfForm');
+            document.getElementById('pdfMode').value = mode;
+            document.getElementById('pdfDosenWali').value = "";
+            document.getElementById('pdfFilterWaktu').value = "bulan";
+
+            const chartKategori = Chart.getChart('chartKategori');
+            const chartLayanan = Chart.getChart('chartLayanan');
+            const chartProdi = Chart.getChart('chartProdi');
+
+            if (mode === 'bulan') {
+                if (!this.selectedMonth) return;
+                const [bulan, tahun] = this.selectedMonth.split('|');
+                document.getElementById('pdfBulan').value = bulan;
+                document.getElementById('pdfTahun').value = tahun;
+            } else if (mode === 'tahun') {
+                if (!this.selectedYear) return;
+                document.getElementById('pdfBulan').value = '';
+                document.getElementById('pdfTahun').value = this.selectedYear;
+            }
+
+            document.getElementById('pdfChartKategori').value = chartKategori ? chartKategori.toBase64Image() : '';
+            document.getElementById('pdfChartLayanan').value = chartLayanan ? chartLayanan.toBase64Image() : '';
+            document.getElementById('pdfChartProdi').value = chartProdi ? chartProdi.toBase64Image() : '';
+
+            form.submit();
+            this.showBulanModal = false;
+            this.showTahunModal = false;
+        },
+
+        downloadLaporanDosen() {
+            const form = document.getElementById('downloadPdfForm');
+            document.getElementById('pdfMode').value = "dosen";
+            document.getElementById('pdfDosenWali').value = this.dosenSearchName;
+            document.getElementById('pdfFilterWaktu').value = this.dosenFilterWaktu;
+            document.getElementById('pdfBulan').value = this.dosenFilterBulan;
+            document.getElementById('pdfTahun').value = this.dosenFilterTahun;
+            
+            const chartKategori = Chart.getChart('chartKategori');
+            const chartLayanan = Chart.getChart('chartLayanan');
+            // User requested: Prodi chart only for non-dosen wali
+            
+            document.getElementById('pdfChartKategori').value = chartKategori ? chartKategori.toBase64Image() : '';
+            document.getElementById('pdfChartLayanan').value = chartLayanan ? chartLayanan.toBase64Image() : '';
+            document.getElementById('pdfChartProdi').value = '';
+
+            form.submit();
+            this.showDosenModal = false;
         }
     }
 }

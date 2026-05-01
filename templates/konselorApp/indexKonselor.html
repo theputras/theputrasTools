@@ -265,22 +265,40 @@
                     <i class="fas fa-bolt text-violet-500"></i> Aksi Cepat
                 </h2>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <a
-                        href="{{ url_for('konselor_catat_sesi') }}"
-                        class="group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-violet-600/10 to-indigo-600/10 border border-violet-500/10 rounded-2xl hover:border-violet-500/30 transition-all duration-300 active:scale-95"
-                    >
-                        <div
-                            class="p-3 bg-violet-50 rounded-xl mb-3 group-hover:bg-violet-100 transition-colors group-hover:scale-110 duration-300"
+                    <div class="relative w-full" x-data="{ openDropdown: false }">
+                        <button
+                            @click="openDropdown = !openDropdown" @click.outside="openDropdown = false"
+                            class="w-full h-full group flex flex-col items-center justify-center p-5 bg-gradient-to-br from-violet-600/10 to-indigo-600/10 border border-violet-500/10 rounded-2xl hover:border-violet-500/30 transition-all duration-300 active:scale-95"
                         >
-                            <i class="fas fa-plus text-violet-500 text-lg"></i>
+                            <div
+                                class="p-3 bg-violet-50 rounded-xl mb-3 group-hover:bg-violet-100 transition-colors group-hover:scale-110 duration-300"
+                            >
+                                <i class="fas fa-plus text-violet-500 text-lg"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-800"
+                                >Sesi Baru <i class="fas fa-chevron-down text-[10px] ml-1"></i></span
+                            >
+                            <span class="text-[10px] text-gray-500 mt-0.5"
+                                >Catat konseling</span
+                            >
+                        </button>
+                        
+                        <div x-show="openDropdown" x-cloak
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute left-0 mt-2 w-full sm:w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden text-left">
+                            <a href="{{ url_for('konselor_catat_sesi') }}" class="block px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition border-b border-gray-200">
+                                <i class="fas fa-file-signature w-5 text-violet-500"></i> Tambah Baru
+                            </a>
+                            <button @click="openImportModal(); openDropdown = false" class="w-full text-left px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition">
+                                <i class="fas fa-file-excel w-5 text-emerald-500"></i> Import dari Excel
+                            </button>
                         </div>
-                        <span class="text-xs font-bold text-gray-800"
-                            >Sesi Baru</span
-                        >
-                        <span class="text-[10px] text-gray-500 mt-0.5"
-                            >Catat konseling</span
-                        >
-                    </a>
+                    </div>
 
                     <a
                         href="{{ url_for('konselor_rekap') }}"
@@ -606,6 +624,90 @@
                     </template>
                 </div>
             </div>
+
+            <!-- ============================================ -->
+            <!-- IMPORT EXCEL MODAL                           -->
+            <!-- ============================================ -->
+            <div x-show="showImportModal" x-cloak
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
+                 @click.self="closeImportModal()">
+                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeImportModal()"></div>
+
+                <div x-show="showImportModal"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+                     x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+                     x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95"
+                     class="relative w-full sm:max-w-md bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl p-6">
+                     
+                     <div class="flex items-center justify-between mb-5 border-b border-gray-200 pb-4">
+                         <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                             <i class="fas fa-file-excel text-emerald-500"></i> Import Data Excel
+                         </h3>
+                         <button @click="closeImportModal()" class="text-gray-500 hover:text-gray-800 transition">
+                             <i class="fas fa-times"></i>
+                         </button>
+                     </div>
+
+                     <p class="text-sm text-gray-500 mb-6">
+                        Download template Excel, isi data yang diperlukan, lalu upload kembali ke sistem. Data yang NIM-nya valid akan dilengkapi otomatis dari Sicyca.
+                     </p>
+
+                     <div class="space-y-3">
+                         <!-- Download Template Selection -->
+                         <div class="grid grid-cols-2 gap-3">
+                             <a href="{{ url_for('konselor_download_template', mode='month') }}" 
+                                class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-gray-700 py-3 px-2 rounded-xl text-xs font-bold transition">
+                                 <i class="fas fa-calendar-day text-emerald-500"></i>
+                                 <span>Template Bulanan</span>
+                             </a>
+                             <a href="{{ url_for('konselor_download_template', mode='year') }}" 
+                                class="flex flex-col items-center justify-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-gray-700 py-3 px-2 rounded-xl text-xs font-bold transition">
+                                 <i class="fas fa-calendar-alt text-emerald-500"></i>
+                                 <span>Template Tahunan</span>
+                             </a>
+                         </div>
+
+                         <!-- Upload Area -->
+                          <form @submit.prevent="submitImport" enctype="multipart/form-data">
+                              <label class="w-full mt-3 flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 transition group relative overflow-hidden"
+                                     :class="isImporting ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60' : (isDragging ? 'border-emerald-500 bg-emerald-500/10 cursor-pointer' : 'border-gray-700 hover:border-emerald-500/50 hover:bg-emerald-500/5 cursor-pointer')"
+                                     @dragover.prevent="!isImporting && (isDragging = true)"
+                                     @dragleave.prevent="isDragging = false"
+                                     @drop.prevent="!isImporting && handleFileSelect($event)"
+                                     @click="isImporting && $event.preventDefault()">
+                                  
+                                  <div class="flex flex-col items-center justify-center z-10">
+                                      <i class="fas fa-cloud-upload-alt text-4xl mb-4 transition"
+                                         :class="isImporting ? 'text-gray-300' : (isDragging ? 'text-emerald-500 scale-110' : 'text-gray-500 group-hover:text-emerald-500')"></i>
+                                      <span class="text-sm font-bold text-gray-600 text-center" x-text="isImporting ? 'Sedang memproses...' : (importFileName || 'Pilih file atau seret ke sini (.xlsx)')"></span>
+                                      <p class="text-[10px] text-gray-400 mt-2" x-show="!isImporting">Maksimal 10MB • Format .xlsx / .xls</p>
+                                  </div>
+                                  
+                                  <input type="file" class="hidden" accept=".xlsx, .xls" @change="handleFileSelect" :disabled="isImporting">
+                              </label>
+                             
+                             <button type="submit" :disabled="!importFile || isImporting"
+                                     class="w-full mt-4 text-white font-extrabold py-4 rounded-xl text-sm transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 relative overflow-hidden shadow-lg shadow-emerald-500/10"
+                                     :style="isImporting 
+                                       ? `background: linear-gradient(to right, #059669 ${importProgress}%, #374151 ${importProgress}%);`
+                                       : 'background: linear-gradient(to right, #059669, #0d9488);'"
+                                     :class="isImporting ? 'cursor-not-allowed' : 'hover:from-emerald-500 hover:to-teal-500'">
+                                 <i class="fas z-10" :class="isImporting ? 'fa-spinner fa-spin' : 'fa-check-circle'"></i>
+                                 <span class="z-10" x-text="isImporting ? `Mengimport... ${importProgress}%` : 'Import Sekarang'"></span>
+                             </button>
+                         </form>
+                     </div>
+                </div>
+            </div>
         </div>
 
         {% include 'muslimTools/prayerWidget.html' %} {% include
@@ -616,6 +718,14 @@
                 return {
                     currentDate: "",
                     searchQuery: "",
+
+                    showImportModal: false,
+                    importFile: null,
+                    importFileName: "",
+                    isImporting: false,
+                    importProgress: 0,
+                    isDragging: false,
+                    pollingInterval: null,
 
                     stats: {
                         totalMahasiswa: 0,
@@ -805,6 +915,92 @@
                             );
                         } else {
                             alert(`Fitur "${feature}" akan segera hadir!`);
+                        }
+                    },
+
+                    openImportModal() {
+                        this.importFile = null;
+                        this.importFileName = "";
+                        this.importProgress = 0;
+                        this.showImportModal = true;
+                        this.$nextTick(() => {
+                            const fileInput = document.querySelector('input[type="file"]');
+                            if (fileInput) fileInput.value = "";
+                        });
+                    },
+
+                    closeImportModal() {
+                        this.showImportModal = false;
+                        this.stopPollingProgress();
+                    },
+
+                    handleFileSelect(e) {
+                        const file = e.target.files ? e.target.files[0] : (e.dataTransfer ? e.dataTransfer.files[0] : null);
+                        if (file) {
+                            if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                                if (window.showAlert) window.showAlert('error', 'Format file harus .xlsx atau .xls');
+                                return;
+                            }
+                            this.importFile = file;
+                            this.importFileName = file.name;
+                        }
+                        this.isDragging = false;
+                    },
+
+                    startPollingProgress() {
+                        this.importProgress = 0;
+                        this.pollingInterval = setInterval(async () => {
+                            try {
+                                const res = await fetch('{{ url_for("konselor_import_sesi") }}');
+                                const data = await res.json();
+                                if (data.success) {
+                                    this.importProgress = data.progress;
+                                }
+                            } catch (err) {
+                                console.error('Polling error:', err);
+                            }
+                        }, 500);
+                    },
+
+                    stopPollingProgress() {
+                        if (this.pollingInterval) {
+                            clearInterval(this.pollingInterval);
+                            this.pollingInterval = null;
+                        }
+                    },
+
+                    async submitImport() {
+                        if (!this.importFile || this.isImporting) return;
+                        this.isImporting = true;
+                        this.importProgress = 0;
+                        this.startPollingProgress();
+
+                        try {
+                            const fd = new FormData();
+                            fd.append('file', this.importFile);
+
+                            const res = await fetch('{{ url_for("konselor_import_sesi") }}', {
+                                method: 'POST',
+                                body: fd
+                            });
+                            const data = await res.json();
+
+                            if (data.success) {
+                                this.importProgress = 100;
+                                setTimeout(() => {
+                                    if (window.showAlert) window.showAlert('success', data.message);
+                                    this.closeImportModal();
+                                    this.loadDashboardData();
+                                }, 500);
+                            } else {
+                                if (window.showAlert) window.showAlert('error', data.message);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            if (window.showAlert) window.showAlert('error', 'Gagal mengimport data.');
+                        } finally {
+                            this.isImporting = false;
+                            this.stopPollingProgress();
                         }
                     },
                 };

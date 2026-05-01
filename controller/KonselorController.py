@@ -826,3 +826,336 @@ def update_klien_metadata(id_civitas, form_data):
     nama = form_data.get("nama")
     success = klien_model.update_metadata(id_civitas, nama, metadata)
     return success, "Data berhasil diperbarui" if success else "Gagal memperbarui data"
+
+
+def get_available_periods(user_id):
+    """Return distinct year-month pairs (with counts) and dosen_wali list from sessions."""
+    from connection import get_connection
+    conn = get_connection()
+    if not conn:
+        return {"success": False, "months": [], "years": [], "dosen_wali_list": []}
+
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # 1. Distinct months with count
+        cursor.execute("""
+            SELECT EXTRACT(YEAR FROM s.tanggal_sesi)::int as tahun,
+                   EXTRACT(MONTH FROM s.tanggal_sesi)::int as bulan,
+                   COUNT(*) as jumlah
+            FROM konselor_sessions s
+            WHERE s.konselor_user_id = %s
+            GROUP BY tahun, bulan
+            ORDER BY tahun DESC, bulan ASC
+        """, (user_id,))
+        months = cursor.fetchall()
+
+        # 2. Distinct years with count
+        cursor.execute("""
+            SELECT EXTRACT(YEAR FROM s.tanggal_sesi)::int as tahun,
+                   COUNT(*) as jumlah
+            FROM konselor_sessions s
+            WHERE s.konselor_user_id = %s
+            GROUP BY tahun
+            ORDER BY tahun DESC
+        """, (user_id,))
+        years = cursor.fetchall()
+
+        # 3. Distinct dosen_wali with count of sessions
+        cursor.execute("""
+            SELECT dk.dosen_wali, COUNT(*) as jumlah
+            FROM konselor_sessions s
+            JOIN konselor_data_klien dk ON s.id_klien = dk.id
+            WHERE s.konselor_user_id = %s
+              AND dk.dosen_wali IS NOT NULL
+              AND dk.dosen_wali != ''
+            GROUP BY dk.dosen_wali
+            ORDER BY dk.dosen_wali ASC
+        """, (user_id,))
+        dosen_list = cursor.fetchall()
+
+        return {
+            "success": True,
+            "months": months,
+            "years": years,
+            "dosen_wali_list": dosen_list,
+        }
+    except Exception as e:
+        logging.error(f"[Konselor] Error get_available_periods: {e}")
+        return {"success": False, "months": [], "years": [], "dosen_wali_list": []}
+    finally:
+        cursor.close()
+        conn.close()
+
+
+import io
+import base64
+from flask import send_file, jsonify
+from reportlab.lib.pagesizes import landscape, A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image as RLImage
+from reportlab.lib.enums import TA_CENTER
+
+def download_laporan_pdf(user_id, request):
+    # Gunakan request.values untuk mendukung POST dan GET (fallback jika refresh)
+    mode = request.values.get("mode", "bulan")
+    bulan = request.values.get("bulan", "")
+    tahun = request.values.get("tahun", "")
+    dosen_wali = request.values.get("dosen_wali", "")
+
+    # Get data
+    from connection import get_connection
+    conn = get_connection()
+    if not conn:
+        return jsonify({"success": False, "message": "Database error"}), 500
+
+    cursor = conn.cursor(dictionary=True)
+    
+    # 1. Base Query for Sessions
+    query = """
+        SELECT dk.id_civitas as nim, dk.prodi, jl.nama as jenis_layanan,
+               s.topik as topik_permasalahan, s.tanggal_sesi, tl.nama as tindak_lanjut, dk.dosen_wali
+        FROM konselor_sessions s
+        JOIN konselor_data_klien dk ON s.id_klien = dk.id
+        LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
+        LEFT JOIN konselor_tindak_lanjut tl ON s.tindak_lanjut_id = tl.id
+        WHERE s.konselor_user_id = %s
+    """
+    params = [user_id]
+
+    if mode == "bulan" and bulan and tahun:
+        query += " AND EXTRACT(MONTH FROM s.tanggal_sesi) = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
+        params.extend([bulan, tahun])
+    elif mode == "tahun" and tahun:
+        query += " AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
+        params.extend([tahun])
+    elif mode == "dosen":
+        if dosen_wali:
+            query += " AND dk.dosen_wali ILIKE %s"
+            params.append(f"%{dosen_wali}%")
+        
+        filter_waktu = request.values.get("filter_waktu", "bulan")
+        if filter_waktu == "bulan" and bulan and tahun:
+            query += " AND EXTRACT(MONTH FROM s.tanggal_sesi) = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
+            params.extend([bulan, tahun])
+        elif filter_waktu == "tahun" and tahun:
+            query += " AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
+            params.extend([tahun])
+            
+    query += " ORDER BY s.tanggal_sesi ASC"
+    
+    cursor.execute(query, tuple(params))
+    sessions = cursor.fetchall()
+    
+    # Rekapitulasi Data
+    rekap_layanan = {}
+    total_klien_set = set()
+    klien_per_layanan = {}
+    
+    for s in sessions:
+        layanan = s['jenis_layanan'] or '-'
+        nim = s['nim']
+        
+        if layanan not in rekap_layanan:
+            rekap_layanan[layanan] = 0
+            klien_per_layanan[layanan] = set()
+            
+        rekap_layanan[layanan] += 1
+        klien_per_layanan[layanan].add(nim)
+        total_klien_set.add(nim)
+        
+    # Ambil nama konselor
+    cursor.execute("SELECT username FROM users WHERE id = %s", (user_id,))
+    konselor_info = cursor.fetchone()
+    nama_konselor = konselor_info['username'] if konselor_info else "Konselor"
+    
+    cursor.close()
+    conn.close()
+
+    # Generate PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
+    elements = []
+    styles = getSampleStyleSheet()
+    
+    # Title
+    title_style = ParagraphStyle('TitleStyle', parent=styles['Heading1'], alignment=TA_CENTER, fontSize=14)
+    elements.append(Paragraph("<b>REKAP LAPORAN BIMBINGAN DAN KONSELING</b>", title_style))
+    elements.append(Spacer(1, 12))
+    
+    # Subheader info
+    info_style = ParagraphStyle('InfoStyle', parent=styles['Normal'], fontSize=11, spaceAfter=2)
+    
+    bulan_dict = {"1":"Januari", "2":"Februari", "3":"Maret", "4":"April", "5":"Mei", "6":"Juni", "7":"Juli", "8":"Agustus", "9":"September", "10":"Oktober", "11":"November", "12":"Desember"}
+    
+    # Menentukan teks keterangan waktu
+    teks_waktu = ""
+    if mode == "bulan" or (mode == "dosen" and request.form.get("filter_waktu") == "bulan"):
+        nama_bulan = bulan_dict.get(str(bulan), "")
+        teks_waktu = f"Bulan: {nama_bulan} {tahun}"
+    else:
+        teks_waktu = f"Bulan: Keseluruhan Tahun {tahun}"
+        
+    elements.append(Paragraph(f"<b>{teks_waktu}</b>", info_style))
+    
+    if mode == "dosen" and dosen_wali:
+        elements.append(Paragraph(f"<b>Nama Konselor: {nama_konselor} | Dosen Wali: {dosen_wali}</b>", info_style))
+    else:
+        elements.append(Paragraph(f"<b>Nama Konselor: {nama_konselor}</b>", info_style))
+        
+    elements.append(Paragraph("<b>Unit/Lembaga: Universitas Dinamika</b>", info_style))
+    elements.append(Spacer(1, 12))
+    
+    # Table 1: Data Layanan
+    elements.append(Paragraph("<b>Data Layanan Konseling</b>", styles['Heading3']))
+    elements.append(Spacer(1, 6))
+    
+    table_data = [['No', 'NIM', 'Prodi', 'Jenis Layanan', 'Topik Permasalahan', 'Tanggal Sesi', 'Tindak Lanjut']]
+    
+    for idx, s in enumerate(sessions, 1):
+        tgl = s['tanggal_sesi'].strftime("%d/%m/%y") if hasattr(s['tanggal_sesi'], 'strftime') else s['tanggal_sesi']
+        table_data.append([
+            str(idx) + ".",
+            s['nim'],
+            Paragraph(s['prodi'] or '-', styles['Normal']),
+            Paragraph(s['jenis_layanan'] or '-', styles['Normal']),
+            Paragraph(s['topik_permasalahan'] or '-', styles['Normal']),
+            tgl,
+            Paragraph(s['tindak_lanjut'] or '-', styles['Normal'])
+        ])
+        
+    col_widths = [30, 80, 150, 100, 200, 80, 140]
+    
+    t1 = Table(table_data, colWidths=col_widths, repeatRows=1)
+    t1.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#e2e8f0')),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.black),
+        ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+        ('ALIGN', (0,0), (0,-1), 'CENTER'),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,0), 10),
+        ('BOTTOMPADDING', (0,0), (-1,0), 8),
+        ('TOPPADDING', (0,0), (-1,0), 8),
+        ('BACKGROUND', (0,1), (-1,-1), colors.white),
+        ('GRID', (0,0), (-1,-1), 1, colors.black),
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+    ]))
+    
+    elements.append(t1)
+    elements.append(Spacer(1, 20))
+    
+    # Table 2: Rekapitulasi
+    elements.append(Paragraph("<b>Rekapitulasi Jumlah Layanan</b>", styles['Heading3']))
+    elements.append(Spacer(1, 6))
+    
+    rekap_data = [['Jenis Layanan', 'Jumlah Sesi', 'Jumlah Klien']]
+    total_sesi = len(sessions)
+    total_klien = len(total_klien_set)
+    
+    for layanan, count in rekap_layanan.items():
+        klien_count = len(klien_per_layanan[layanan])
+        rekap_data.append([layanan, str(count), str(klien_count)])
+        
+    rekap_data.append(['Total', str(total_sesi), str(total_klien)])
+    
+    t2 = Table(rekap_data, colWidths=[200, 100, 100], repeatRows=1)
+    t2.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#e2e8f0')),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.black),
+        ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+        ('ALIGN', (1,0), (2,-1), 'CENTER'),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('FONTNAME', (0,-1), (-1,-1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,-1), 10),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+        ('TOPPADDING', (0,0), (-1,-1), 6),
+        ('GRID', (0,0), (-1,-1), 1, colors.black),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+    ]))
+    
+    elements.append(t2)
+    
+    # Charts (Kategori, Layanan, Prodi)
+    chart_kategori = request.values.get("chart_kategori")
+    chart_layanan = request.values.get("chart_layanan")
+    chart_prodi = request.values.get("chart_prodi")
+    
+    import tempfile
+    import os
+    
+    try:
+        def add_chart(b64str):
+            if b64str and ',' in b64str:
+                try:
+                    img_data = base64.b64decode(b64str.split(',')[1])
+                    fd, temp_path = tempfile.mkstemp(suffix=".png")
+                    with os.fdopen(fd, 'wb') as f:
+                        f.write(img_data)
+                    img = RLImage(temp_path, width=3.5*inch, height=2.5*inch)
+                    return img
+                except Exception as e:
+                    logging.error(f"Error decoding chart: {e}")
+            return None
+
+        img1 = add_chart(chart_kategori)
+        img2 = add_chart(chart_layanan)
+        img3 = add_chart(chart_prodi)
+        
+        charts_to_display = []
+        if img1: charts_to_display.append(img1)
+        if img2: charts_to_display.append(img2)
+        if img3: charts_to_display.append(img3)
+        
+        if charts_to_display:
+            elements.append(Spacer(1, 20))
+            elements.append(Paragraph("<b>Grafik Layanan Konseling</b>", styles['Heading3']))
+            elements.append(Spacer(1, 10))
+            
+            # Layout: 2 charts per row
+            rows = []
+            for i in range(0, len(charts_to_display), 2):
+                chunk = charts_to_display[i:i+2]
+                if len(chunk) < 2:
+                    chunk.append('') # Empty cell for alignment
+                rows.append(chunk)
+                
+            chart_table = Table(rows, colWidths=[4*inch, 4*inch])
+            chart_table.setStyle(TableStyle([
+                ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+                ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ]))
+            elements.append(chart_table)
+            
+    except Exception as e:
+        logging.error(f"[Konselor PDF] Error appending charts: {e}")
+        
+    doc.build(elements)
+    
+    # Penamaan File
+    nama_bulan_list = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                       "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+    
+    bulan_str = ""
+    try:
+        if bulan and int(bulan) in range(1, 13):
+            bulan_str = nama_bulan_list[int(bulan)]
+    except:
+        pass
+
+    filename = f"Rekap_Laporan_Konseling.pdf"
+    if mode == "bulan":
+        filename = f"Rekap_Bulanan_{bulan_str}_{tahun}.pdf"
+    elif mode == "tahun":
+        filename = f"Rekap_Tahunan_{tahun}.pdf"
+    elif mode == "dosen":
+        # Format: Rekap_Dosen_Wali_NamaDosen_Januari_2026.pdf
+        period = f"_{bulan_str}" if bulan_str else ""
+        filename = f"Rekap_Dosen_Wali_{dosen_wali}{period}_{tahun}.pdf"
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/pdf"
+    )

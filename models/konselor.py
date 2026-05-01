@@ -499,9 +499,8 @@ class KonselorSessionModel:
                 LEFT JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
                 LEFT JOIN konselor_tindak_lanjut tl ON s.tindak_lanjut_id = tl.id
                 JOIN konselor_data_klien dk ON s.id_klien = dk.id
-                WHERE s.konselor_user_id = %s
             """
-            params = [user_id]
+            params = []
             group_by = """
                 GROUP BY s.id, dk.id, jl.nama, tl.nama
                 ORDER BY s.tanggal_sesi DESC, s.id DESC
@@ -524,29 +523,31 @@ class KonselorSessionModel:
             cursor.close()
             conn.close()
 
-    def get_rekap_stats(self, user_id, tahun=None):
+    def get_rekap_stats(self, user_id=None, tahun=None):
         """
-        Hitung statistik rekap:
+        Hitung statistik rekap GLOBAL:
         - Total sesi
-        - Klien unik (distinct nim_id)
+        - Klien unik (distinct id_klien)
         - Sesi bulan ini
-        - Distribusi per kategori masalah (untuk pie chart)
+        - Distribusi per kategori masalah
+        - Distribusi per jenis layanan
+        - Distribusi per prodi
         """
         conn = self._get_connection()
         if not conn:
             return None
         cursor = conn.cursor(dictionary=True)
         try:
-            # Total sesi & klien unik (all time atau per tahun)
+            # 1. Total sesi & klien unik
             if tahun:
                 cursor.execute(
                     """
                     SELECT COUNT(*) AS total_sesi,
                            COUNT(DISTINCT id_klien) AS klien_unik
                     FROM konselor_sessions
-                    WHERE konselor_user_id = %s AND EXTRACT(YEAR FROM tanggal_sesi) = %s
+                    WHERE EXTRACT(YEAR FROM tanggal_sesi) = %s
                 """,
-                    (user_id, tahun),
+                    (tahun,),
                 )
             else:
                 cursor.execute(
@@ -554,37 +555,33 @@ class KonselorSessionModel:
                     SELECT COUNT(*) AS total_sesi,
                            COUNT(DISTINCT id_klien) AS klien_unik
                     FROM konselor_sessions
-                    WHERE konselor_user_id = %s
                 """,
-                    (user_id,),
+                    (),
                 )
             totals = cursor.fetchone()
 
-            # Sesi bulan ini: Gabungan dari sesi yang sudah dicatat (konselor_sessions)
-            # DITAMBAH dengan jadwal yang masih Menunggu/Berlangsung (konselor_jadwal)
+            # 2. Sesi bulan ini
             cursor.execute(
                 """
                 SELECT
                     (SELECT COUNT(*)
                      FROM konselor_sessions
-                     WHERE konselor_user_id = %s
-                       AND EXTRACT(MONTH FROM tanggal_sesi) = EXTRACT(MONTH FROM CURRENT_DATE)
+                     WHERE EXTRACT(MONTH FROM tanggal_sesi) = EXTRACT(MONTH FROM CURRENT_DATE)
                        AND EXTRACT(YEAR FROM tanggal_sesi) = EXTRACT(YEAR FROM CURRENT_DATE)
                     )
                     +
                     (SELECT COUNT(*)
                      FROM konselor_jadwal
-                     WHERE konselor_user_id = %s
-                       AND status IN ('Menunggu', 'Berlangsung')
+                     WHERE status IN ('Menunggu', 'Berlangsung')
                        AND EXTRACT(MONTH FROM tanggal) = EXTRACT(MONTH FROM CURRENT_DATE)
                        AND EXTRACT(YEAR FROM tanggal) = EXTRACT(YEAR FROM CURRENT_DATE)
                     ) AS sesi_bulan_ini
             """,
-                (user_id, user_id),
+                (),
             )
             bulan_ini = cursor.fetchone()
 
-            # Distribusi per kategori
+            # 3. Distribusi per kategori
             if tahun:
                 cursor.execute(
                     """
@@ -592,11 +589,11 @@ class KonselorSessionModel:
                     FROM konselor_session_kategori sk
                     JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
                     JOIN konselor_sessions s ON sk.session_id = s.id
-                    WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
+                    WHERE EXTRACT(YEAR FROM s.tanggal_sesi) = %s
                     GROUP BY km.nama
                     ORDER BY jumlah DESC
                 """,
-                    (user_id, tahun),
+                    (tahun,),
                 )
             else:
                 cursor.execute(
@@ -604,27 +601,24 @@ class KonselorSessionModel:
                     SELECT km.nama AS kategori, COUNT(sk.session_id) AS jumlah
                     FROM konselor_session_kategori sk
                     JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
-                    JOIN konselor_sessions s ON sk.session_id = s.id
-                    WHERE s.konselor_user_id = %s
                     GROUP BY km.nama
                     ORDER BY jumlah DESC
-                """,
-                    (user_id,),
+                """
                 )
             kategori_dist = cursor.fetchall()
 
-            # Distribusi per jenis layanan
+            # 4. Distribusi per jenis layanan
             if tahun:
                 cursor.execute(
                     """
                     SELECT jl.nama AS layanan, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
-                    WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
+                    WHERE EXTRACT(YEAR FROM s.tanggal_sesi) = %s
                     GROUP BY jl.nama
                     ORDER BY jumlah DESC
                 """,
-                    (user_id, tahun),
+                    (tahun,),
                 )
             else:
                 cursor.execute(
@@ -632,26 +626,24 @@ class KonselorSessionModel:
                     SELECT jl.nama AS layanan, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     LEFT JOIN konselor_jenis_layanan jl ON s.jenis_layanan_id = jl.id
-                    WHERE s.konselor_user_id = %s
                     GROUP BY jl.nama
                     ORDER BY jumlah DESC
-                """,
-                    (user_id,),
+                """
                 )
             layanan_dist = cursor.fetchall()
 
-            # Distribusi per Prodi
+            # 5. Distribusi per Prodi
             if tahun:
                 cursor.execute(
                     """
                     SELECT COALESCE(dk.prodi, 'Lainnya/Staff') AS prodi, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     JOIN konselor_data_klien dk ON s.id_klien = dk.id
-                    WHERE s.konselor_user_id = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s
+                    WHERE EXTRACT(YEAR FROM s.tanggal_sesi) = %s
                     GROUP BY dk.prodi
                     ORDER BY jumlah DESC
                 """,
-                    (user_id, tahun),
+                    (tahun,),
                 )
             else:
                 cursor.execute(
@@ -659,11 +651,9 @@ class KonselorSessionModel:
                     SELECT COALESCE(dk.prodi, 'Lainnya/Staff') AS prodi, COUNT(s.id) AS jumlah
                     FROM konselor_sessions s
                     JOIN konselor_data_klien dk ON s.id_klien = dk.id
-                    WHERE s.konselor_user_id = %s
                     GROUP BY dk.prodi
                     ORDER BY jumlah DESC
-                """,
-                    (user_id,),
+                """
                 )
             prodi_dist = cursor.fetchall()
 
@@ -810,20 +800,20 @@ class KonselorJadwalModel:
                     FROM konselor_jadwal j
                     LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
                     JOIN konselor_data_klien dk ON j.id_klien = dk.id
-                    WHERE j.konselor_user_id = %s AND j.tanggal >= %s AND j.tanggal <= %s
+                    WHERE j.tanggal >= %s AND j.tanggal <= %s
                     ORDER BY j.tanggal ASC, j.jam ASC
                 """
-                cursor.execute(query, (user_id, start_date, end_date))
+                cursor.execute(query, (start_date, end_date))
             else:
                 query = """
                     SELECT j.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
                     FROM konselor_jadwal j
                     LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
                     JOIN konselor_data_klien dk ON j.id_klien = dk.id
-                    WHERE j.konselor_user_id = %s AND j.tanggal >= %s
+                    WHERE j.tanggal >= %s
                     ORDER BY j.tanggal ASC, j.jam ASC
                 """
-                cursor.execute(query, (user_id, start_date))
+                cursor.execute(query, (start_date,))
             return cursor.fetchall()
         except Exception as e:
             logging.error(f"[Konselor] Error get_jadwal: {e}")
@@ -896,10 +886,9 @@ class KonselorJadwalModel:
                 FROM konselor_jadwal j
                 LEFT JOIN konselor_jenis_layanan l ON j.layanan_id = l.id
                 JOIN konselor_data_klien dk ON j.id_klien = dk.id
-                WHERE j.konselor_user_id = %s
-                ORDER BY j.tanggal DESC, j.jam DESC
+                ORDER BY j.tanggal DESC, j.jam ASC
             """,
-                (user_id,),
+                (),
             )
             return cursor.fetchall()
         except Exception as e:

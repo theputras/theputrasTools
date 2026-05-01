@@ -119,6 +119,7 @@ CREATE TABLE google_oauth_tokens (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_google_oauth_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 CREATE TABLE konselor_data_klien (
     id SERIAL PRIMARY KEY,
     id_civitas VARCHAR(64) NOT NULL,
