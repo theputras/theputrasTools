@@ -1001,11 +1001,12 @@ def download_laporan_pdf(user_id, request):
     elements.append(Paragraph(f"<b>{teks_waktu}</b>", info_style))
     
     if mode == "dosen" and dosen_wali:
-        elements.append(Paragraph(f"<b>Nama Konselor: {nama_konselor} | Dosen Wali: {dosen_wali}</b>", info_style))
+        elements.append(Paragraph(f"Nama Konselor: <b>{nama_konselor}</b>", info_style))
+        elements.append(Paragraph(f"Dosen Wali: <b>{dosen_wali}</b>", info_style))
     else:
-        elements.append(Paragraph(f"<b>Nama Konselor: {nama_konselor}</b>", info_style))
+        elements.append(Paragraph(f"Nama Konselor: <b>{nama_konselor}</b>", info_style))
         
-    elements.append(Paragraph("<b>Unit/Lembaga: Universitas Dinamika</b>", info_style))
+    elements.append(Paragraph("Unit/Lembaga: <b>Universitas Dinamika Surabaya</b>", info_style))
     elements.append(Spacer(1, 12))
     
     # Table 1: Data Layanan
