@@ -705,7 +705,8 @@
                  <div>
                      <label class="block text-xs font-bold text-gray-700 mb-1">Tipe Waktu</label>
                      <select x-model="dosenFilterWaktu" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
-                         <option value="bulan">Per Bulan</option>
+                        <option value="">-- Pilih Tipe Waktu --</option> 
+                        <option value="bulan">Per Bulan</option>
                          <option value="tahun">Per Tahun</option>
                      </select>
                  </div>
@@ -713,20 +714,20 @@
                  <!-- 2a. Bulan + Tahun (if per bulan) -->
                  <div x-show="dosenFilterWaktu === 'bulan'" class="grid grid-cols-2 gap-3">
                      <div>
-                         <label class="block text-xs font-bold text-gray-700 mb-1">Bulan</label>
-                         <select x-model="dosenFilterBulan" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
-                             <option value="">-- Pilih Bulan --</option>
-                             <template x-for="m in availableMonths.filter(m => String(m.tahun) === String(dosenFilterTahun))" :key="m.bulan">
-                                 <option :value="m.bulan" x-text="namaBulan(m.bulan) + ' (' + m.jumlah + ' sesi)'"></option>
+                         <label class="block text-xs font-bold text-gray-700 mb-1">Tahun</label>
+                         <select x-model="dosenFilterTahun" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                             <option value="">-- Pilih Tahun --</option>
+                             <template x-for="y in availableYears" :key="y.tahun">
+                                 <option :value="y.tahun" x-text="y.tahun"></option>
                              </template>
                          </select>
                      </div>
                      <div>
-                         <label class="block text-xs font-bold text-gray-700 mb-1">Tahun</label>
-                         <select x-model="dosenFilterTahun" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
-                             <option value="">-- Pilih --</option>
-                             <template x-for="y in availableYears" :key="y.tahun">
-                                 <option :value="y.tahun" x-text="y.tahun"></option>
+                         <label class="block text-xs font-bold text-gray-700 mb-1">Bulan</label>
+                         <select x-model="dosenFilterBulan" :disabled="!dosenFilterTahun" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition disabled:opacity-50">
+                             <option value="">-- Pilih Bulan --</option>
+                             <template x-for="m in availableMonths.filter(m => String(m.tahun) === String(dosenFilterTahun))" :key="m.bulan">
+                                 <option :value="m.bulan" x-text="namaBulan(m.bulan) + ' (' + m.jumlah + ' sesi)'"></option>
                              </template>
                          </select>
                      </div>
@@ -736,7 +737,7 @@
                  <div x-show="dosenFilterWaktu === 'tahun'">
                      <label class="block text-xs font-bold text-gray-700 mb-1">Tahun</label>
                      <select x-model="dosenFilterTahun" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
-                         <option value="">-- Pilih --</option>
+                         <option value="">-- Pilih Tahun --</option>
                          <template x-for="y in availableYears" :key="y.tahun">
                              <option :value="y.tahun" x-text="y.tahun + ' (' + y.jumlah + ' sesi)'"></option>
                          </template>
@@ -746,20 +747,30 @@
                  <!-- 3. Pilih Dosen Wali -->
                  <div>
                      <label class="block text-xs font-bold text-gray-700 mb-1">Pilih Dosen Wali</label>
-                     <select x-model="dosenSearchName" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition">
+                     <select x-model="dosenSearchName" :disabled="filteredDosenList.length === 0" class="w-full border-gray-300 rounded-xl text-sm focus:border-amber-500 focus:ring focus:ring-amber-200 transition disabled:opacity-50">
                          <option value="">-- Pilih Dosen Wali --</option>
-                         <template x-for="d in availableDosenList" :key="d.dosen_wali">
+                         <template x-for="d in filteredDosenList" :key="d.dosen_wali">
                              <option :value="d.dosen_wali" x-text="d.dosen_wali"></option>
                          </template>
                      </select>
+                     <p x-show="dosenFilterWaktu && filteredDosenList.length === 0" class="text-xs text-amber-600 mt-1">
+                         <i class="fas fa-info-circle"></i> Tidak ada data dosen wali untuk periode ini.
+                     </p>
                  </div>
 
                  <!-- 4. Download + Count -->
-                 <div>
+                 <div class="flex flex-col gap-2">
                      <button @click="downloadLaporanDosen()" :disabled="!dosenSearchName || dosenSesiCount === 0"
                          class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                          <i class="fas fa-download"></i>
                          <span x-text="dosenSearchName ? 'Download PDF ' + dosenSesiCount + ' Sesi' : 'Download PDF'"></span>
+                     </button>
+                     
+                     <button @click="downloadAllDosenZip()" 
+                         :disabled="allDosenSesiCount === 0 || dosenSearchName !== ''"
+                         class="w-full bg-white border-2 border-amber-500 text-amber-600 hover:bg-amber-50 font-bold py-2.5 px-4 rounded-xl transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400">
+                         <i class="fas fa-file-archive"></i> 
+                         <span x-text="'Download All ' + allDosenSesiCount + ' Sesi (ZIP)'"></span>
                      </button>
                  </div>
              </div>
@@ -1096,9 +1107,28 @@ function rekapApp() {
         selectedMonth: '',
         selectedYear: '',
         dosenSearchName: '',
-        dosenFilterWaktu: 'bulan',
-        dosenFilterBulan: new Date().getMonth() + 1,
-        dosenFilterTahun: new Date().getFullYear(),
+        dosenFilterWaktu: '',
+        dosenFilterBulan: '',
+        dosenFilterTahun: '',
+
+        init() {
+            // Reactive watching for filters
+            this.$watch('searchQuery', () => this.updateCharts());
+            this.$watch('activeFilters.kategori', () => this.updateCharts());
+            this.$watch('activeFilters.layanan', () => this.updateCharts());
+            this.$watch('activeFilters.prodi', () => this.updateCharts());
+            this.$watch('isFilterActive', () => this.updateCharts());
+
+            // Watchers for resetting modal selections
+            this.$watch('showBulanModal', (val) => { if (!val) this.resetSelections(); });
+            this.$watch('showTahunModal', (val) => { if (!val) this.resetSelections(); });
+            this.$watch('showDosenModal', (val) => { if (!val) this.resetSelections(); });
+
+            // Watchers for cascading filters
+            this.$watch('dosenFilterTahun', () => { this.dosenFilterBulan = ''; this.dosenSearchName = ''; });
+            this.$watch('dosenFilterBulan', () => { this.dosenSearchName = ''; });
+            this.$watch('dosenFilterWaktu', () => { this.dosenFilterBulan = ''; this.dosenFilterTahun = ''; this.dosenSearchName = ''; });
+        },
         
         get dosenSesiCount() {
             if (!this.dosenSearchName) return 0;
@@ -1108,9 +1138,48 @@ function rekapApp() {
                 const d = new Date(s.tanggal_sesi);
                 if (this.dosenFilterWaktu === 'bulan') {
                     return (d.getMonth() + 1) == this.dosenFilterBulan && d.getFullYear() == this.dosenFilterTahun;
-                } else {
+                } else if (this.dosenFilterWaktu === 'tahun') {
                     return d.getFullYear() == this.dosenFilterTahun;
                 }
+                return false;
+            }).length;
+        },
+
+
+        get filteredDosenList() {
+            if (!this.dosenFilterWaktu) return [];
+            if (this.dosenFilterWaktu === 'bulan' && (!this.dosenFilterBulan || !this.dosenFilterTahun)) return [];
+            if (this.dosenFilterWaktu === 'tahun' && !this.dosenFilterTahun) return [];
+
+            const dosens = new Set();
+            this.sessions.forEach(s => {
+                if (!s.dosen_wali) return;
+                const d = new Date(s.tanggal_sesi);
+                let match = false;
+                if (this.dosenFilterWaktu === 'bulan') {
+                    match = (d.getMonth() + 1) == this.dosenFilterBulan && d.getFullYear() == this.dosenFilterTahun;
+                } else if (this.dosenFilterWaktu === 'tahun') {
+                    match = d.getFullYear() == this.dosenFilterTahun;
+                }
+                if (match) dosens.add(s.dosen_wali);
+            });
+            return Array.from(dosens).sort().map(name => ({ dosen_wali: name }));
+        },
+
+        get allDosenSesiCount() {
+            if (!this.dosenFilterWaktu) return 0;
+            if (this.dosenFilterWaktu === 'bulan' && (!this.dosenFilterBulan || !this.dosenFilterTahun)) return 0;
+            if (this.dosenFilterWaktu === 'tahun' && !this.dosenFilterTahun) return 0;
+
+            return this.sessions.filter(s => {
+                if (!s.dosen_wali) return false;
+                const d = new Date(s.tanggal_sesi);
+                if (this.dosenFilterWaktu === 'bulan') {
+                    return (d.getMonth() + 1) == this.dosenFilterBulan && d.getFullYear() == this.dosenFilterTahun;
+                } else if (this.dosenFilterWaktu === 'tahun') {
+                    return d.getFullYear() == this.dosenFilterTahun;
+                }
+                return false;
             }).length;
         },
         
@@ -1411,19 +1480,21 @@ function rekapApp() {
                     this.sessions = data.sessions || [];
                     this.updateCharts();
                     this.loadAvailablePeriods();
-                    
-                    // Reactive watching for filters
-                    this.$watch('searchQuery', () => this.updateCharts());
-                    this.$watch('activeFilters.kategori', () => this.updateCharts());
-                    this.$watch('activeFilters.layanan', () => this.updateCharts());
-                    this.$watch('activeFilters.prodi', () => this.updateCharts());
-                    this.$watch('isFilterActive', () => this.updateCharts());
                 }
             } catch (err) {
                 console.error('[Rekap] Load error:', err);
             } finally {
                 this.isLoading = false;
             }
+        },
+
+        resetSelections() {
+            this.selectedMonth = '';
+            this.selectedYear = '';
+            this.dosenSearchName = '';
+            this.dosenFilterWaktu = '';
+            this.dosenFilterBulan = '';
+            this.dosenFilterTahun = '';
         },
 
         async loadAvailablePeriods() {
@@ -1577,6 +1648,7 @@ function rekapApp() {
                 const form = document.getElementById('downloadPdfForm');
                 if (!form) return;
 
+                form.action = "{{ url_for('konselor_download_pdf') }}";
                 document.getElementById('pdfMode').value = mode;
                 document.getElementById('pdfDosenWali').value = "";
                 document.getElementById('pdfFilterWaktu').value = "bulan";
@@ -1610,6 +1682,7 @@ function rekapApp() {
                 const form = document.getElementById('downloadPdfForm');
                 if (!form) return;
 
+                form.action = "{{ url_for('konselor_download_pdf') }}";
                 document.getElementById('pdfMode').value = "dosen";
                 document.getElementById('pdfDosenWali').value = this.dosenSearchName;
                 document.getElementById('pdfFilterWaktu').value = this.dosenFilterWaktu;
@@ -1625,6 +1698,29 @@ function rekapApp() {
             } catch (err) {
                 console.error('Download Dosen error:', err);
                 if (window.showAlert) window.showAlert('error', 'Gagal memproses download.');
+            }
+        },
+
+        downloadAllDosenZip() {
+            try {
+                const form = document.getElementById('downloadPdfForm');
+                if (!form) return;
+
+                form.action = "{{ url_for('konselor_download_zip') }}";
+                document.getElementById('pdfMode').value = "dosen_all";
+                document.getElementById('pdfFilterWaktu').value = this.dosenFilterWaktu;
+                document.getElementById('pdfBulan').value = this.dosenFilterBulan;
+                document.getElementById('pdfTahun').value = this.dosenFilterTahun;
+                
+                document.getElementById('pdfChartKategori').value = chartKategoriInstance ? chartKategoriInstance.toBase64Image() : '';
+                document.getElementById('pdfChartLayanan').value = chartLayananInstance ? chartLayananInstance.toBase64Image() : '';
+                document.getElementById('pdfChartProdi').value = '';
+
+                form.submit();
+                this.showDosenModal = false;
+            } catch (err) {
+                console.error('Download ZIP error:', err);
+                if (window.showAlert) window.showAlert('error', 'Gagal memproses download ZIP.');
             }
         }
     }

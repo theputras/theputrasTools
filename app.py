@@ -1272,6 +1272,19 @@ def konselor_download_pdf():
     return download_laporan_pdf(user_id, request)
 
 
+@app.route("/konselor/rekap/download_zip", methods=["GET", "POST"])
+@login_required
+def konselor_download_zip():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "message": "Akses ditolak"}), 403
+
+    from controller.KonselorController import download_laporan_zip
+
+    user_id = g.user.get("sub")
+    return download_laporan_zip(user_id, request)
+
+
 @app.route("/konselor/klien/data")
 @login_required
 def konselor_klien_data():

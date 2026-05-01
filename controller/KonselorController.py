@@ -2,7 +2,8 @@
 # Controller untuk fitur Pencatatan Sesi Konseling
 # NIM disimpan mentah, nama disensor saat display
 
-import logging
+import logging, zipfile
+from datetime import datetime
 
 from models.konselor import (
     jenis_layanan_model,
@@ -897,13 +898,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image as RLImage
 from reportlab.lib.enums import TA_CENTER
 
-def download_laporan_pdf(user_id, request):
-    # Gunakan request.values untuk mendukung POST dan GET (fallback jika refresh)
-    mode = request.values.get("mode", "bulan")
-    bulan = request.values.get("bulan", "")
-    tahun = request.values.get("tahun", "")
-    dosen_wali = request.values.get("dosen_wali", "")
-    
+def _generate_konselor_pdf_buffer(user_id, mode, bulan, tahun, dosen_wali, filter_waktu, chart_data):
     nama_bulan_list = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
                        "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 
@@ -911,7 +906,7 @@ def download_laporan_pdf(user_id, request):
     from connection import get_connection
     conn = get_connection()
     if not conn:
-        return jsonify({"success": False, "message": "Database error"}), 500
+        raise Exception("Database connection failed")
 
     cursor = conn.cursor(dictionary=True)
     
@@ -938,7 +933,6 @@ def download_laporan_pdf(user_id, request):
             query += " AND dk.dosen_wali ILIKE %s"
             params.append(f"%{dosen_wali}%")
         
-        filter_waktu = request.values.get("filter_waktu", "bulan")
         if filter_waktu == "bulan" and bulan and tahun:
             query += " AND EXTRACT(MONTH FROM s.tanggal_sesi) = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
             params.extend([bulan, tahun])
@@ -992,7 +986,7 @@ def download_laporan_pdf(user_id, request):
     
     # Menentukan teks keterangan waktu
     teks_waktu = ""
-    if mode == "bulan" or (mode == "dosen" and request.values.get("filter_waktu") == "bulan"):
+    if mode == "bulan" or (mode == "dosen" and filter_waktu == "bulan"):
         nama_bulan = nama_bulan_list[int(bulan)] if bulan and str(bulan).isdigit() and int(bulan) in range(1, 13) else ""
         teks_waktu = f"Bulan: {nama_bulan} {tahun}"
     else:
@@ -1078,10 +1072,10 @@ def download_laporan_pdf(user_id, request):
     
     elements.append(t2)
     
-    # Charts (Kategori, Layanan, Prodi)
-    chart_kategori = request.values.get("chart_kategori")
-    chart_layanan = request.values.get("chart_layanan")
-    chart_prodi = request.values.get("chart_prodi")
+    # Charts
+    chart_kategori = chart_data.get("chart_kategori")
+    chart_layanan = chart_data.get("chart_layanan")
+    chart_prodi = chart_data.get("chart_prodi")
     
     import tempfile
     import os
@@ -1107,19 +1101,18 @@ def download_laporan_pdf(user_id, request):
         charts_to_display = []
         if img1: charts_to_display.append(img1)
         if img2: charts_to_display.append(img2)
-        if img3: charts_to_display.append(img3)
+        if img3 and mode != "dosen": charts_to_display.append(img3) # Prodi hidden for Dosen Wali
         
         if charts_to_display:
             elements.append(Spacer(1, 20))
             elements.append(Paragraph("<b>Grafik Layanan Konseling</b>", styles['Heading3']))
             elements.append(Spacer(1, 10))
             
-            # Layout: 2 charts per row
             rows = []
             for i in range(0, len(charts_to_display), 2):
                 chunk = charts_to_display[i:i+2]
                 if len(chunk) < 2:
-                    chunk.append('') # Empty cell for alignment
+                    chunk.append('') 
                 rows.append(chunk)
                 
             chart_table = Table(rows, colWidths=[4*inch, 4*inch])
@@ -1133,7 +1126,6 @@ def download_laporan_pdf(user_id, request):
         logging.error(f"[Konselor PDF] Error appending charts: {e}")
         
     doc.build(elements)
-    
     buffer.seek(0)
     
     bulan_str = ""
@@ -1149,15 +1141,105 @@ def download_laporan_pdf(user_id, request):
     elif mode == "tahun":
         filename = f"Rekap_Tahunan_{tahun}.pdf"
     elif mode == "dosen":
-        filter_waktu = request.values.get("filter_waktu", "bulan")
         if filter_waktu == "tahun":
             filename = f"Rekap_Tahunan_Dosen_Wali_{dosen_wali}_{tahun}.pdf"
         else:
             filename = f"Rekap_Bulanan_Dosen_Wali_{dosen_wali}_{bulan_str}_{tahun}.pdf"
 
+    return buffer, filename
+
+def download_laporan_pdf(user_id, request):
+    mode = request.values.get("mode", "bulan")
+    bulan = request.values.get("bulan", "")
+    tahun = request.values.get("tahun", "")
+    dosen_wali = request.values.get("dosen_wali", "")
+    filter_waktu = request.values.get("filter_waktu", "bulan")
+    
+    chart_data = {
+        "chart_kategori": request.values.get("chart_kategori"),
+        "chart_layanan": request.values.get("chart_layanan"),
+        "chart_prodi": request.values.get("chart_prodi")
+    }
+
+    try:
+        buffer, filename = _generate_konselor_pdf_buffer(
+            user_id, mode, bulan, tahun, dosen_wali, filter_waktu, chart_data
+        )
+        return send_file(
+            buffer,
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/pdf"
+        )
+    except Exception as e:
+        logging.error(f"[Konselor PDF] Error: {e}")
+        return jsonify({"success": False, "message": str(e)}), 500
+
+def download_laporan_zip(user_id, request):
+    bulan = request.values.get("bulan", "")
+    tahun = request.values.get("tahun", "")
+    filter_waktu = request.values.get("filter_waktu", "bulan")
+    
+    chart_data = {
+        "chart_kategori": request.values.get("chart_kategori"),
+        "chart_layanan": request.values.get("chart_layanan"),
+        "chart_prodi": request.values.get("chart_prodi")
+    }
+
+    from connection import get_connection
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    query = """
+        SELECT DISTINCT dk.dosen_wali
+        FROM konselor_sessions s
+        JOIN konselor_data_klien dk ON s.id_klien = dk.id
+        WHERE s.konselor_user_id = %s
+          AND dk.dosen_wali IS NOT NULL AND dk.dosen_wali != ''
+    """
+    params = [user_id]
+    
+    if filter_waktu == "bulan" and bulan and tahun:
+        query += " AND EXTRACT(MONTH FROM s.tanggal_sesi) = %s AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
+        params.extend([bulan, tahun])
+    elif filter_waktu == "tahun" and tahun:
+        query += " AND EXTRACT(YEAR FROM s.tanggal_sesi) = %s"
+        params.extend([tahun])
+        
+    cursor.execute(query, tuple(params))
+    dosen_list = [row['dosen_wali'] for row in cursor.fetchall()]
+    cursor.close()
+    conn.close()
+
+    if not dosen_list:
+        return jsonify({"success": False, "message": "Tidak ada data dosen wali untuk periode ini"}), 404
+
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for dw in dosen_list:
+            try:
+                pdf_buffer, filename = _generate_konselor_pdf_buffer(
+                    user_id, "dosen", bulan, tahun, dw, filter_waktu, chart_data
+                )
+                zf.writestr(filename, pdf_buffer.getvalue())
+            except Exception as e:
+                logging.error(f"Error generating PDF for {dw}: {e}")
+            
+    zip_buffer.seek(0)
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    nama_bulan_list = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                       "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+    bulan_str = nama_bulan_list[int(bulan)] if bulan and str(bulan).isdigit() and int(bulan) in range(1, 13) else ""
+    
+    if filter_waktu == "bulan":
+        zip_name = f"Laporan_All_Dosen_Wali_{bulan_str}_{tahun}_{timestamp}.zip"
+    else:
+        zip_name = f"Laporan_All_Dosen_Wali_Tahunan_{tahun}_{timestamp}.zip"
+    
     return send_file(
-        buffer,
+        zip_buffer,
         as_attachment=True,
-        download_name=filename,
-        mimetype="application/pdf"
+        download_name=zip_name,
+        mimetype="application/zip"
     )
