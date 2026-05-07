@@ -212,7 +212,7 @@ def create_sesi_bulk(konselor_user_id, form_data):
         if not nim_raw:
             continue
 
-        nama = str(p.get("nama", "")).strip()
+        nama = str(p.get("nama") or p.get("nama_raw", "")).strip()
         # Prodi & dosen_wali diambil per peserta dari participants array
         prodi = str(p.get("prodi", "")).strip()
         dosen_wali = str(p.get("dosen_wali", "")).strip()
@@ -355,47 +355,109 @@ def update_sesi(session_id, konselor_user_id, form_data):
 from models.konselor import konselor_jadwal_model
 
 
-def create_jadwal(konselor_user_id, form_data):
-    nim = form_data.get("nim", "").strip()
-    nama = form_data.get("nama", "").strip()
-    prodi = form_data.get("prodi", "").strip()
-    dosen_wali = form_data.get("dosen_wali", "").strip()
-    role = form_data.get("role", "mahasiswa")
+def create_jadwal_bulk(konselor_user_id, form_data):
+    """
+    Buat jadwal konseling untuk MULTIPLE NIM/NIK sekaligus.
+    Satu record per peserta.
+    """
+    import json
+    participants_str = form_data.get("participants", "[]")
+    try:
+        participants = json.loads(participants_str)
+    except Exception:
+        participants = []
+
+    # Fallback ke single nim/nama jika participants kosong
+    if not participants:
+        single_nim = form_data.get("nim", "").strip()
+        single_nama = form_data.get("nama", "").strip()
+        if single_nim:
+            participants = [{
+                "nim": single_nim,
+                "nama": single_nama,
+                "prodi": form_data.get("prodi", ""),
+                "dosen_wali": form_data.get("dosen_wali", ""),
+                "role": form_data.get("role", "mahasiswa")
+            }]
+
+    if not participants:
+        return False, "Data peserta tidak lengkap."
+
     layanan_id = form_data.get("layanan_id")
     tanggal = form_data.get("tanggal")
     jam = form_data.get("jam")
 
-    if not nim or not layanan_id or not tanggal or not jam:
-        return False, "Data tidak lengkap."
+    if not layanan_id or not tanggal or not jam:
+        return False, "Data layanan, tanggal, atau jam tidak lengkap."
 
-    # Validasi jam bentrok
+    # Validasi jam bentrok: hanya block jika ada sesi LAIN (layanan_id berbeda) di jam yang sama.
+    # Sesi kelompok (layanan_id sama) boleh punya beberapa peserta di jam yang sama.
     existing = get_jadwal_by_date(konselor_user_id, tanggal)
     for j in existing:
         if j["status"] in ("Menunggu", "Berlangsung") and j["jam"] == jam:
-            return False, f"Jadwal pada jam {jam} sudah terisi."
+            if str(j.get("layanan_id")) != str(layanan_id):
+                return False, f"Jadwal pada jam {jam} sudah terisi dengan layanan lain."
 
-    # Upsert ke tabel data klien untuk sinkronisasi dan dapatkan ID
-    klien_data = {
-        "id_civitas": nim,
-        "nama": nama,
-        "prodi": prodi,
-        "dosen_wali": dosen_wali,
-        "status_civitas": role
-    }
-    id_klien = klien_model.upsert(klien_data)
-    if not id_klien:
-        return False, "Gagal memproses data klien."
+    success_count = 0
+    failed_nims = []
 
-    data = {
-        "konselor_user_id": konselor_user_id,
-        "id_klien": id_klien,
-        "layanan_id": int(layanan_id),
-        "tanggal": tanggal,
-        "jam": jam,
-        "status": "Menunggu",
-    }
+    for p in participants:
+        nim_raw = str(p.get("nim", "")).strip()
+        if not nim_raw: continue
 
-    return konselor_jadwal_model.create(data)
+        nama = str(p.get("nama") or p.get("nama_raw", "")).strip()
+        prodi = str(p.get("prodi", "")).strip()
+        dosen_wali = str(p.get("dosen_wali", "")).strip()
+        role = p.get("role", "mahasiswa")
+
+        # Auto-lookup dosen wali jika kosong
+        if not dosen_wali and len(nim_raw) == 11:
+            try:
+                from scrapper_requests import search_mahasiswa
+                df_mhs = search_mahasiswa(nim_raw, user_id=konselor_user_id)
+                if not df_mhs.empty:
+                    mhs_dict = {str(k).lower(): v for k, v in df_mhs.iloc[0].items()}
+                    dosen_wali = mhs_dict.get("dosen wali", "")
+            except Exception as e:
+                logging.error(f"[Konselor Jadwal Bulk] Auto-lookup gagal untuk {nim_raw}: {e}")
+
+        # Upsert klien
+        kd = {
+            "id_civitas": nim_raw,
+            "nama": nama,
+            "prodi": prodi,
+            "dosen_wali": dosen_wali,
+            "status_civitas": role
+        }
+        id_klien = klien_model.upsert(kd)
+        if not id_klien:
+            failed_nims.append(nim_raw)
+            continue
+
+        data = {
+            "konselor_user_id": konselor_user_id,
+            "id_klien": id_klien,
+            "layanan_id": int(layanan_id),
+            "tanggal": tanggal,
+            "jam": jam,
+            "status": "Menunggu",
+        }
+
+        ok, msg = konselor_jadwal_model.create(data)
+        if ok:
+            success_count += 1
+        else:
+            failed_nims.append(nim_raw)
+
+    total = len(participants)
+    if success_count == 0:
+        return False, f"Gagal menyimpan semua jadwal ({', '.join(failed_nims)})."
+    if failed_nims:
+        return True, f"{success_count} dari {total} jadwal berhasil disimpan. Gagal: {', '.join(failed_nims)}."
+    
+    if success_count == 1:
+        return True, "Jadwal berhasil disimpan."
+    return True, f"{success_count} jadwal berhasil disimpan."
 
 
 def get_jadwal_by_date(konselor_user_id, start_date, end_date=None):
@@ -412,6 +474,56 @@ def get_jadwal_by_date(konselor_user_id, start_date, end_date=None):
         # Sensor nama untuk frontend, DB tetap simpan asli
         j["nama_sensor"] = censor_name(j.get("nama"))
     return jadwals
+
+
+def group_jadwal_entries(jadwals):
+    """Group jadwal entries with same tanggal+jam+layanan_id into a single item."""
+    grouped = {}
+    for j in jadwals:
+        # Normalize tanggal and jam for grouping key
+        tgl = str(j.get("tanggal"))
+        jam_str = str(j.get("jam", ""))
+        if len(jam_str) > 5: jam_str = jam_str[:5]
+        
+        key = (tgl, jam_str, j.get("layanan_id"))
+        if key not in grouped:
+            j["jam"] = jam_str
+            j["tanggal"] = tgl
+            grouped[key] = {
+                **j,
+                "ids": [j["id"]],
+                "participants": [{
+                    "id": j["id"],
+                    "nim": j.get("nim"),
+                    "nama": j.get("nama"),
+                    "nama_sensor": censor_name(j.get("nama")),
+                    "prodi": j.get("prodi"),
+                    "status": j.get("status"),
+                }],
+                "is_group": False,
+            }
+        else:
+            grouped[key]["ids"].append(j["id"])
+            grouped[key]["participants"].append({
+                "id": j["id"],
+                "nim": j.get("nim"),
+                "nama": j.get("nama"),
+                "nama_sensor": censor_name(j.get("nama")),
+                "prodi": j.get("prodi"),
+                "status": j.get("status"),
+            })
+
+    result = []
+    for g_item in grouped.values():
+        pcount = len(g_item["participants"])
+        if pcount > 1:
+            g_item["is_group"] = True
+            names = [p["nama_sensor"] for p in g_item["participants"]]
+            g_item["nama_sensor"] = ", ".join(names[:2]) + (f", +{pcount-2}" if pcount > 2 else "")
+        else:
+            g_item["nama_sensor"] = censor_name(g_item.get("nama"))
+        result.append(g_item)
+    return result
 
 
 def reschedule_jadwal(jadwal_id, konselor_user_id, form_data):
@@ -433,11 +545,10 @@ def reschedule_jadwal(jadwal_id, konselor_user_id, form_data):
     return konselor_jadwal_model.update_waktu(jadwal_id, konselor_user_id, tanggal, jam)
 
 
-def update_status_jadwal(jadwal_id, konselor_user_id, status):
+def update_status_jadwal(jadwal_id, konselor_user_id, status, token=None):
     if status not in ("Menunggu", "Berlangsung", "Jeda", "Selesai", "Dibatalkan"):
         return False, "Status tidak valid."
-    return konselor_jadwal_model.update_status(jadwal_id, konselor_user_id, status)
-
+    return konselor_jadwal_model.update_status(jadwal_id, konselor_user_id, status, token)
 
 def get_jadwal_detail(jadwal_id):
     jadwal = konselor_jadwal_model.get_by_id(jadwal_id)
@@ -450,26 +561,26 @@ def get_jadwal_detail(jadwal_id):
         jadwal["nama_sensor"] = censor_name(jadwal.get("nama"))
     return jadwal
 
+def get_grouped_jadwal_detail(jadwal_id, konselor_user_id):
+    jadwals = konselor_jadwal_model.get_grouped_jadwal(jadwal_id, konselor_user_id)
+    for jadwal in jadwals:
+        jam_str = str(jadwal["jam"])
+        if len(jam_str) > 5:
+            jadwal["jam"] = jam_str[:5]
+        jadwal["tanggal"] = str(jadwal["tanggal"])
+        jadwal["nama_sensor"] = censor_name(jadwal.get("nama"))
+    return jadwals
+
+def takeover_live_session_jadwal(jadwal_id, konselor_user_id):
+    return konselor_jadwal_model.takeover_live_session(jadwal_id, konselor_user_id)
+
 
 def get_available_slots(konselor_user_id, tanggal):
-    """Return only booked slots for the given date, with censored names."""
+    """Return only booked slots for the given date, grouped by time/service."""
     booked_slots_query = konselor_jadwal_model.get_by_konselor_and_date_range(
         konselor_user_id, tanggal, tanggal
     )
-
-    slots = []
-    for j in booked_slots_query:
-        jam_str = str(j["jam"])
-        if len(jam_str) > 5:
-            jam_str = jam_str[:5]
-        slots.append(
-            {
-                "jam": jam_str,
-                "nama": censor_name(j.get("nama")),
-                "status": j.get("status", "Menunggu"),
-            }
-        )
-    return slots
+    return group_jadwal_entries(booked_slots_query)
 
 
 # === CRUD Master Data ===

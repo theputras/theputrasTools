@@ -70,16 +70,20 @@
                     </h3>
                     
                     <div class="space-y-4">
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Nama Mahasiswa</p>
-                            <p class="text-sm font-semibold text-gray-800" x-text="sessionData.nama"></p>
-                            <p class="text-xs text-gray-500 mt-0.5" x-text="sessionData.nim"></p>
-                        </div>
-                        
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Program Studi</p>
-                            <p class="text-sm text-gray-800" x-text="sessionData.prodi"></p>
-                        </div>
+                        <!-- Iterasi untuk semua peserta (Group) -->
+                        <template x-for="(p, index) in sessionData.participants" :key="index">
+                            <div class="p-3 bg-slate-50 border border-gray-100 rounded-xl mb-3">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Nama Mahasiswa</p>
+                                    <p class="text-sm font-semibold text-gray-800" x-text="p.nama"></p>
+                                    <p class="text-xs text-gray-500 mt-0.5" x-text="p.nim"></p>
+                                </div>
+                                <div class="mt-2" x-show="p.prodi">
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Program Studi</p>
+                                    <p class="text-xs text-gray-800" x-text="p.prodi"></p>
+                                </div>
+                            </div>
+                        </template>
 
                         <div>
                             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Jenis Layanan</p>
@@ -231,12 +235,12 @@
             </div>
 
             <div class="p-5 border-t border-gray-100 shrink-0 flex gap-3">
-                <button @click="showWrapUpModal = false"
-                        class="w-1/3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-bold py-3.5 rounded-xl transition-all duration-300 active:scale-[0.98] text-sm">
-                    Kembali
-                </button>
-                <button @click="simpanSelesai()" :disabled="!isWrapUpValid || isSubmitting"
-                        class="w-2/3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm">
+                    <button @click="showWrapUpModal = false"
+                            class="w-1/3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-bold py-3.5 rounded-xl transition-all duration-300 active:scale-[0.98] text-sm">
+                        Kembali
+                    </button>
+                    <button @click="simpanSelesai()" :disabled="!isWrapUpValid || isSubmitting"
+                            class="w-2/3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm">
                     <template x-if="isSubmitting"><i class="fas fa-spinner fa-spin"></i></template>
                     <template x-if="!isSubmitting"><i class="fas fa-check-circle"></i></template>
                     <span x-text="isSubmitting ? 'Menyimpan...' : 'Simpan & Selesaikan'"></span>
@@ -268,15 +272,25 @@ function liveSessionApp() {
         // Data from backend (Jinja2 injected)
         sessionData: {
             id: '{{ jadwal.id }}',
-            nim: '{{ jadwal.nim }}',
-            nama: '{{ jadwal.nama_sensor or jadwal.nama }}',
-            prodi: '{{ jadwal.prodi }}',
             layanan: '{{ jadwal.layanan }}',
             tanggal: '{{ jadwal.tanggal }}',
             jam_mulai: '{{ jadwal.jam }}',
             layanan_id: '{{ jadwal.layanan_id }}',
             waktu_mulai_db: '{{ jadwal.waktu_mulai or "" }}',
-            total_pause_ms: parseInt('{{ jadwal.total_pause_ms or 0 }}') || 0
+            total_pause_ms: parseInt('{{ jadwal.total_pause_ms or 0 }}') || 0,
+            token: '{{ conselling_token }}',
+            participants: [
+                {% for j in grouped_jadwals %}
+                {
+                    nim: '{{ j.nim }}',
+                    nama: '{{ j.nama_sensor or j.nama }}',
+                    nama_raw: '{{ j.nama }}',
+                    prodi: '{{ j.prodi }}',
+                    dosen_wali: '{{ j.dosen_wali or "" }}',
+                    role: 'mahasiswa'
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
         },
 
         formInput: {
@@ -320,6 +334,21 @@ function liveSessionApp() {
             
             // Prevent accidental page close
             window.addEventListener('beforeunload', unloadHandler);
+
+            // Heartbeat untuk deteksi jika sesi diambil alih perangkat lain
+            setInterval(async () => {
+                if (this.isSubmitting) return; // Jangan redirect jika sedang proses submit
+                try {
+                    const res = await fetch(`/konselor/live-session/check-lock?id=${this.sessionData.id}&token=${this.sessionData.token}`);
+                    const data = await res.json();
+                    if (data.locked_out) {
+                        window.removeEventListener('beforeunload', unloadHandler);
+                        window.location.href = `/konselor/live-session?id=${this.sessionData.id}`;
+                    }
+                } catch (e) {
+                    console.error("Gagal mengecek lock sesi", e);
+                }
+            }, 5000); // Cek setiap 5 detik
         },
 
         _formatDuration(ms) {
@@ -336,7 +365,16 @@ function liveSessionApp() {
                 const fd = new FormData();
                 fd.append('id', this.sessionData.id);
                 fd.append('status', this.isPaused ? 'Berlangsung' : 'Jeda');
-                await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+                fd.append('token', this.sessionData.token);
+                
+                const res = await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+                const data = await res.json();
+
+                if (data.locked_out) {
+                    if(window.showAlert) window.showAlert('error', data.message);
+                    setTimeout(() => window.location.href = '/konselor/jadwal', 2000);
+                    return;
+                }
                 
                 if (this.isPaused) {
                     // Resume: adjust startTime to account for paused duration
@@ -364,6 +402,7 @@ function liveSessionApp() {
                     const fd = new FormData();
                     fd.append('id', this.sessionData.id);
                     fd.append('status', 'Jeda');
+                    fd.append('token', this.sessionData.token);
                     await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
                 } catch(e) {
                     console.error("Gagal menjeda sesi sebelum kembali", e);
@@ -382,8 +421,17 @@ function liveSessionApp() {
                     const fd = new FormData();
                     fd.append('id', this.sessionData.id);
                     fd.append('status', 'Dibatalkan');
-                    await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+                    fd.append('token', this.sessionData.token);
                     
+                    const res = await fetch('/konselor/jadwal/update-status', { method: 'POST', body: fd });
+                    const data = await res.json();
+
+                    if (data.locked_out) {
+                        if(window.showAlert) window.showAlert('error', data.message);
+                        setTimeout(() => window.location.href = '/konselor/jadwal', 2000);
+                        return;
+                    }
+
                     clearInterval(this.timerInterval);
                     window.removeEventListener('beforeunload', unloadHandler);
                     window.location.href = '/konselor/jadwal';
@@ -414,10 +462,20 @@ function liveSessionApp() {
             try {
                 const fd = new FormData();
                 fd.append('jadwal_id', this.sessionData.id);
+                fd.append('token', this.sessionData.token);
                 fd.append('topik', this.formInput.topik);
                 fd.append('catatan_kesimpulan', this.formInput.catatan_kesimpulan);
                 fd.append('tindak_lanjut', this.formInput.tindak_lanjut);
                 fd.append('kategori_masalah_ids', JSON.stringify(this.formInput.kategori_masalah_id));
+                
+                // Tambahkan mapping participants ke JSON sama seperti catat_sesi.html
+                fd.append('participants', JSON.stringify(this.sessionData.participants.map(p => ({
+                    nim: p.nim,
+                    nama_raw: p.nama_raw,
+                    prodi: p.prodi,
+                    dosen_wali: p.dosen_wali,
+                    role: p.role
+                }))));
                 
                 fd.append('waktu_mulai', this.waktuMulai);
                 const endNow = new Date();
@@ -426,6 +484,12 @@ function liveSessionApp() {
                 const res = await fetch('/konselor/live-session/finish', { method: 'POST', body: fd });
                 const data = await res.json();
                 
+                if (data.locked_out) {
+                    if(window.showAlert) window.showAlert('error', data.message);
+                    setTimeout(() => window.location.href = '/konselor/jadwal', 2000);
+                    return;
+                }
+
                 if (data.success) {
                     if(window.showAlert) window.showAlert('success', data.message);
                     window.location.href = '/konselor/jadwal';

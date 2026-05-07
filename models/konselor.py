@@ -852,14 +852,20 @@ class KonselorJadwalModel:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                """
+            group_subquery = """
+                SELECT j2.id FROM konselor_jadwal j2 
+                JOIN konselor_jadwal j1 ON j1.id = %s::INT 
+                WHERE j2.konselor_user_id = j1.konselor_user_id
+                  AND j2.layanan_id = j1.layanan_id
+                  AND j2.tanggal = j1.tanggal
+                  AND j2.jam = j1.jam
+            """
+            cursor.execute(f"""
                 UPDATE konselor_jadwal
                 SET tanggal = %s, jam = %s, updated_at = CURRENT_TIMESTAMP
-                WHERE id = %s AND konselor_user_id = %s
-            """,
-                (tanggal, jam, jadwal_id, user_id),
-            )
+                WHERE id IN ({group_subquery}) AND konselor_user_id = %s::BIGINT
+            """, (tanggal, jam, jadwal_id, user_id))
+            
             if cursor.rowcount > 0:
                 conn.commit()
                 return True, "Jadwal berhasil di-reschedule."
@@ -933,16 +939,104 @@ class KonselorJadwalModel:
             cursor.close()
             conn.close()
 
-    def update_status(self, jadwal_id, user_id, status):
+    def get_grouped_jadwal(self, jadwal_id, user_id):
+        conn = self._get_connection()
+        if not conn: return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                SELECT j2.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
+                FROM konselor_jadwal j1
+                JOIN konselor_jadwal j2 ON j1.konselor_user_id = j2.konselor_user_id 
+                                       AND j1.layanan_id = j2.layanan_id 
+                                       AND j1.tanggal = j2.tanggal 
+                                       AND j1.jam = j2.jam
+                LEFT JOIN konselor_jenis_layanan l ON j2.layanan_id = l.id
+                JOIN konselor_data_klien dk ON j2.id_klien = dk.id
+                WHERE j1.id = %s AND j1.konselor_user_id = %s
+                ORDER BY j2.id ASC
+            """, (jadwal_id, user_id))
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[Konselor] Error get_grouped_jadwal: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def takeover_live_session(self, jadwal_id, user_id):
+        import uuid
+        conn = self._get_connection()
+        if not conn: return False, "Gagal koneksi", None
+        cursor = conn.cursor()
+        try:
+            token = str(uuid.uuid4())
+            # Update seluruh jadwal dalam group yang sama menjadi Berlangsung, set token, dan catat last_active
+            cursor.execute("""
+                UPDATE konselor_jadwal
+                SET status = 'Berlangsung',
+                    conselling_token = %s,
+                    conselling_last_active = CURRENT_TIMESTAMP,
+                    waktu_mulai = COALESCE(waktu_mulai, CURRENT_TIMESTAMP),
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id IN (
+                    SELECT j2.id FROM konselor_jadwal j2 
+                    JOIN konselor_jadwal j1 ON j1.id = %s::INT 
+                    WHERE j2.konselor_user_id = j1.konselor_user_id
+                      AND j2.layanan_id = j1.layanan_id
+                      AND j2.tanggal = j1.tanggal
+                      AND j2.jam = j1.jam
+                ) AND konselor_user_id = %s::BIGINT
+            """, (token, jadwal_id, user_id))
+            conn.commit()
+            return True, "Sesi berhasil diambil alih", token
+        except Exception as e:
+            logging.error(f"[Konselor] Error takeover_live_session: {e}")
+            return False, "Gagal ambil alih sesi", None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def check_token(self, jadwal_id, user_id, token):
+        conn = self._get_connection()
+        if not conn: return False
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT conselling_token FROM konselor_jadwal WHERE id = %s AND konselor_user_id = %s", (jadwal_id, user_id))
+            row = cursor.fetchone()
+            if row and row[0] == token:
+                return True
+            return False
+        except Exception as e:
+            logging.error(f"[Konselor] Error check_token: {e}")
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    def update_status(self, jadwal_id, user_id, status, token=None):
         conn = self._get_connection()
         if not conn:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            # Jika status 'Berlangsung', set waktu_mulai jika belum ada, reset last_pause_time, & tambah total_pause_ms
+            if token is not None:
+                cursor.execute("SELECT conselling_token FROM konselor_jadwal WHERE id = %s AND konselor_user_id = %s", (jadwal_id, user_id))
+                row = cursor.fetchone()
+                if row and row[0] and row[0] != token:
+                    return False, "Sesi telah diambil alih oleh perangkat lain. Silakan muat ulang halaman."
+
+            group_subquery = """
+                SELECT j2.id FROM konselor_jadwal j2 
+                JOIN konselor_jadwal j1 ON j1.id = %s::INT 
+                WHERE j2.konselor_user_id = j1.konselor_user_id
+                  AND j2.layanan_id = j1.layanan_id
+                  AND j2.tanggal = j1.tanggal
+                  AND j2.jam = j1.jam
+            """
+
             if status == "Berlangsung":
-                cursor.execute(
-                    """
+                cursor.execute(f"""
                     UPDATE konselor_jadwal
                     SET status = %s,
                         total_pause_ms = CASE WHEN last_pause_time IS NOT NULL
@@ -950,31 +1044,24 @@ class KonselorJadwalModel:
                                               ELSE COALESCE(total_pause_ms, 0) END,
                         last_pause_time = NULL,
                         waktu_mulai = COALESCE(waktu_mulai, CURRENT_TIMESTAMP),
+                        conselling_last_active = CURRENT_TIMESTAMP,
                         updated_at = CURRENT_TIMESTAMP
-                    WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
-                """,
-                    (status, jadwal_id, user_id),
-                )
+                    WHERE id IN ({group_subquery}) AND konselor_user_id = %s::BIGINT
+                """, (status, jadwal_id, user_id))
             elif status == "Jeda":
-                cursor.execute(
-                    """
+                cursor.execute(f"""
                     UPDATE konselor_jadwal
                     SET status = %s,
                         last_pause_time = CURRENT_TIMESTAMP,
                         updated_at = CURRENT_TIMESTAMP
-                    WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
-                """,
-                    (status, jadwal_id, user_id),
-                )
+                    WHERE id IN ({group_subquery}) AND konselor_user_id = %s::BIGINT
+                """, (status, jadwal_id, user_id))
             else:
-                cursor.execute(
-                    """
+                cursor.execute(f"""
                     UPDATE konselor_jadwal
                     SET status = %s, updated_at = CURRENT_TIMESTAMP
-                    WHERE id = %s::INT AND konselor_user_id = %s::BIGINT
-                """,
-                    (status, jadwal_id, user_id),
-                )
+                    WHERE id IN ({group_subquery}) AND konselor_user_id = %s::BIGINT
+                """, (status, jadwal_id, user_id))
 
             if cursor.rowcount > 0:
                 conn.commit()

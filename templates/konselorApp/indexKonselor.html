@@ -891,19 +891,7 @@
                         }
                     },
 
-                    async startSession(id) {
-                        try {
-                            // Update status ke Berlangsung dulu
-                            const fd = new FormData();
-                            fd.append("id", id);
-                            fd.append("status", "Berlangsung");
-                            await fetch("/konselor/jadwal/update-status", {
-                                method: "POST",
-                                body: fd,
-                            });
-                        } catch (err) {
-                            console.error("Gagal update status:", err);
-                        }
+                    startSession(id) {
                         window.location.href = `/konselor/live-session?id=${id}`;
                     },
 

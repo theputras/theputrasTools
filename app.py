@@ -754,15 +754,49 @@ def konselor_jadwal_publik():
     mendatang = konselor_jadwal_model.get_public_schedules(tomorrow_str)
 
     def process_jadwal(list_j):
+        grouped = {}
         for j in list_j:
+            # Grouping key: date, time, service, and counselor
+            key = (str(j.get('tanggal')), str(j.get('jam')), j.get('layanan_id'), j.get('konselor_user_id'))
+            
+            # Formatting jam
             jam_str = str(j.get("jam", ""))
             if len(jam_str) > 5:
-                j["jam"] = jam_str[:5]
-            j["nama_sensor"] = censor_name(j.get("nama"))
-            j["nim"] = None
-            if j.get("tanggal"):
-                j["tanggal_str"] = str(j["tanggal"])
-        return list_j
+                jam_str = jam_str[:5]
+            
+            censored_name_val = censor_name(j.get("nama"))
+            prodi_val = j.get("prodi") or "Umum / Staff"
+
+            if key not in grouped:
+                j['jam'] = jam_str
+                j['names'] = [censored_name_val]
+                j['prodis'] = [prodi_val]
+                j['nim'] = None
+                if j.get("tanggal"):
+                    j["tanggal_str"] = str(j["tanggal"])
+                grouped[key] = j
+            else:
+                grouped[key]['names'].append(censored_name_val)
+                if prodi_val not in grouped[key]['prodis']:
+                    grouped[key]['prodis'].append(prodi_val)
+        
+        result = []
+        for g in grouped.values():
+            pcount = len(g['names'])
+            if pcount > 1:
+                # Group session name display
+                g['nama_sensor'] = ", ".join(g['names'][:2]) + (f", +{pcount-2} lainnya" if pcount > 2 else "")
+                g['is_group'] = True
+                g['participant_count'] = pcount
+            else:
+                g['nama_sensor'] = g['names'][0]
+                g['is_group'] = False
+                g['participant_count'] = 1
+            
+            # Display prodis
+            g['prodi'] = ", ".join(g['prodis'][:2]) + ("..." if len(g['prodis']) > 2 else "")
+            result.append(g)
+        return result
 
     return render_template(
         "konselorApp/jadwal_publik.html",
@@ -789,15 +823,17 @@ def konselor_jadwal_main():
     )
 
 
+
+
 @app.route("/konselor/jadwal/data")
 @login_required
 def konselor_jadwal_data():
+    """Ambil data jadwal konselor (Hari Ini & Mendatang)."""
     role_id = g.user.get("role_id")
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
-    from controller.KonselorController import get_jadwal_by_date
-
+    from controller.KonselorController import get_jadwal_by_date, group_jadwal_entries
     user_id = g.user.get("sub")
 
     today = datetime.now(SCHEDULER_TZ).strftime("%Y-%m-%d")
@@ -807,7 +843,7 @@ def konselor_jadwal_data():
     jadwal_mendatang = get_jadwal_by_date(user_id, tomorrow)
 
     return jsonify(
-        {"success": True, "hari_ini": jadwal_hari_ini, "mendatang": jadwal_mendatang}
+        {"success": True, "hari_ini": group_jadwal_entries(jadwal_hari_ini), "mendatang": group_jadwal_entries(jadwal_mendatang)}
     )
 
 
@@ -818,10 +854,9 @@ def konselor_jadwal_create():
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
-    from controller.KonselorController import create_jadwal
-
+    from controller.KonselorController import create_jadwal_bulk
     user_id = g.user.get("sub")
-    success, msg = create_jadwal(user_id, request.form)
+    success, msg = create_jadwal_bulk(user_id, request.form)
     return jsonify({"success": success, "message": msg})
 
 
@@ -852,12 +887,13 @@ def konselor_jadwal_update_status():
     user_id = g.user.get("sub")
     jadwal_id = request.form.get("id")
     status = request.form.get("status")
+    token = request.form.get("token")
 
     if not jadwal_id or not status:
         return jsonify({"success": False, "message": "Data tidak lengkap"}), 400
 
-    success, msg = update_status_jadwal(jadwal_id, user_id, status)
-    return jsonify({"success": success, "message": msg})
+    success, msg = update_status_jadwal(jadwal_id, user_id, status, token)
+    return jsonify({"success": success, "message": msg, "locked_out": not success and "diambil alih" in msg})
 
 
 @app.route("/konselor/jadwal/history")
@@ -868,19 +904,15 @@ def konselor_jadwal_history():
     if role_id not in [1, 5]:
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
-    from controller.KonselorController import censor_name
+    from controller.KonselorController import censor_name, group_jadwal_entries
     from models.konselor import konselor_jadwal_model
 
     user_id = g.user.get("sub")
     try:
         jadwals = konselor_jadwal_model.get_all_by_konselor(user_id)
-        for j in jadwals:
-            jam_str = str(j.get("jam", ""))
-            if len(jam_str) > 5:
-                j["jam"] = jam_str[:5]
-            j["tanggal"] = str(j.get("tanggal", ""))
-            j["nama_sensor"] = censor_name(j.get("nama"))
-        return jsonify({"success": True, "history": jadwals})
+        # Note: group_jadwal_entries already handles date/time formatting and name censoring
+        history_grouped = group_jadwal_entries(jadwals)
+        return jsonify({"success": True, "history": history_grouped})
     except Exception as e:
         logging.error(f"[Konselor] Jadwal history error: {e}")
         return jsonify({"success": False, "message": str(e)}), 500
@@ -904,7 +936,7 @@ def konselor_jadwal_slots():
     return jsonify({"success": True, "slots": slots})
 
 
-@app.route("/konselor/live-session")
+@app.route("/konselor/live-session", methods=["GET", "POST"])
 @login_required
 def konselor_live_session():
     role_id = g.user.get("role_id")
@@ -915,12 +947,47 @@ def konselor_live_session():
         get_all_kategori,
         get_all_tindak_lanjut,
         get_jadwal_detail,
-        update_status_jadwal,
+        takeover_live_session_jadwal,
+        get_grouped_jadwal_detail
     )
 
     user_id = g.user.get("sub")
-    jadwal_id = request.args.get("id")
+    
+    if request.method == "POST":
+        # Aksi "Gunakan di Sini" (Ambil Alih) dari halaman takeover
+        jadwal_id = request.form.get("id")
+        if not jadwal_id:
+            return redirect(url_for("konselor_jadwal_main"))
+            
+        success, msg, token = takeover_live_session_jadwal(jadwal_id, user_id)
+        if not success:
+            flash(msg, "error")
+            return redirect(url_for("konselor_jadwal_main"))
+            
+        grouped_jadwals = get_grouped_jadwal_detail(jadwal_id, user_id)
+        if not grouped_jadwals:
+            flash("Gagal memuat detail sesi.", "error")
+            return redirect(url_for("konselor_jadwal_main"))
+            
+        jadwal_utama = grouped_jadwals[0]
+        if jadwal_utama.get("waktu_mulai"):
+            from datetime import datetime
+            if isinstance(jadwal_utama["waktu_mulai"], datetime):
+                jadwal_utama["waktu_mulai"] = jadwal_utama["waktu_mulai"].isoformat()
+            else:
+                jadwal_utama["waktu_mulai"] = str(jadwal_utama["waktu_mulai"])
 
+        return render_template(
+            "konselorApp/jadwalKonsul_konselor/live_session.html",
+            jadwal=jadwal_utama,
+            grouped_jadwals=grouped_jadwals,
+            conselling_token=token,
+            kategori_list=get_all_kategori(),
+            tindak_lanjut_list=get_all_tindak_lanjut(),
+        )
+
+    # Metode GET (Buka dari jadwal utama)
+    jadwal_id = request.args.get("id")
     if not jadwal_id:
         return redirect(url_for("konselor_jadwal_main"))
 
@@ -934,24 +1001,55 @@ def konselor_live_session():
         return redirect(url_for("konselor_jadwal_main"))
 
     if jadwal["status"] in ["Menunggu", "Jeda"]:
-        update_status_jadwal(jadwal_id, user_id, "Berlangsung")
-        # Re-fetch untuk mendapatkan update waktu_mulai dan total_pause_ms yang baru
-        jadwal = get_jadwal_detail(jadwal_id)
+        # Baru buka, langsung mulai sesi
+        success, msg, token = takeover_live_session_jadwal(jadwal_id, user_id)
+        if not success:
+            flash(msg, "error")
+            return redirect(url_for("konselor_jadwal_main"))
+            
+        grouped_jadwals = get_grouped_jadwal_detail(jadwal_id, user_id)
+        jadwal_utama = grouped_jadwals[0]
+        if jadwal_utama.get("waktu_mulai"):
+            from datetime import datetime
+            if isinstance(jadwal_utama["waktu_mulai"], datetime):
+                jadwal_utama["waktu_mulai"] = jadwal_utama["waktu_mulai"].isoformat()
+            else:
+                jadwal_utama["waktu_mulai"] = str(jadwal_utama["waktu_mulai"])
 
-    if jadwal.get("waktu_mulai"):
-        from datetime import datetime
+        return render_template(
+            "konselorApp/jadwalKonsul_konselor/live_session.html",
+            jadwal=jadwal_utama,
+            grouped_jadwals=grouped_jadwals,
+            conselling_token=token,
+            kategori_list=get_all_kategori(),
+            tindak_lanjut_list=get_all_tindak_lanjut(),
+        )
 
-        if isinstance(jadwal["waktu_mulai"], datetime):
-            jadwal["waktu_mulai"] = jadwal["waktu_mulai"].isoformat()
-        else:
-            jadwal["waktu_mulai"] = str(jadwal["waktu_mulai"])
-
+    # Jika status Berlangsung, dan diakses lewat GET, tampilkan halaman Takeover.
     return render_template(
-        "konselorApp/jadwalKonsul_konselor/live_session.html",
-        jadwal=jadwal,
-        kategori_list=get_all_kategori(),
-        tindak_lanjut_list=get_all_tindak_lanjut(),
+        "konselorApp/jadwalKonsul_konselor/live_session_takeover.html",
+        jadwal=jadwal
     )
+
+
+@app.route("/konselor/live-session/check-lock")
+@login_required
+def konselor_live_session_check_lock():
+    role_id = g.user.get("role_id")
+    if role_id not in [1, 5]:
+        return jsonify({"success": False, "locked_out": True})
+
+    user_id = g.user.get("sub")
+    jadwal_id = request.args.get("id")
+    token = request.args.get("token")
+
+    if not jadwal_id or not token:
+        return jsonify({"success": False, "locked_out": True})
+
+    from models.konselor import konselor_jadwal_model
+    # Check if the token is still valid
+    is_valid = konselor_jadwal_model.check_token(jadwal_id, user_id, token)
+    return jsonify({"success": True, "locked_out": not is_valid})
 
 
 @app.route("/konselor/live-session/finish", methods=["POST"])
@@ -962,36 +1060,33 @@ def konselor_live_session_finish():
         return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
-        create_sesi,
-        get_jadwal_detail,
+        create_sesi_bulk,
         update_status_jadwal,
+        get_jadwal_detail
     )
 
     user_id = g.user.get("sub")
     jadwal_id = request.form.get("jadwal_id")
+    token = request.form.get("token")
 
     jadwal = get_jadwal_detail(jadwal_id)
     if not jadwal or str(jadwal["konselor_user_id"]) != str(user_id):
         return jsonify({"success": False, "message": "Jadwal tidak ditemukan."})
 
-    form_data = {
-        "nim": jadwal["nim"],
-        "nama": jadwal["nama"],
-        "prodi": jadwal["prodi"],
-        "dosen_wali": jadwal.get("dosen_wali", ""),
-        "jenis_layanan_id": jadwal["layanan_id"],
-        "tanggal_sesi": jadwal["tanggal"],
-        "topik": request.form.get("topik"),
-        "kategori_masalah_ids": request.form.get("kategori_masalah_ids"),
-        "catatan_kesimpulan": request.form.get("catatan_kesimpulan"),
-        "tindak_lanjut": request.form.get("tindak_lanjut"),
-        "waktu_mulai": request.form.get("waktu_mulai"),
-        "waktu_selesai": request.form.get("waktu_selesai"),
-    }
+    # Verifikasi token sebelum allow finish
+    from models.konselor import konselor_jadwal_model
+    if not konselor_jadwal_model.check_token(jadwal_id, user_id, token):
+        return jsonify({"success": False, "message": "Sesi telah diambil alih oleh perangkat lain. Silakan muat ulang halaman.", "locked_out": True})
 
-    success_sesi, msg_sesi = create_sesi(user_id, form_data)
+    # form_data sudah ada dari form request langsung diteruskan ke create_sesi_bulk
+    # yang terpenting: form_data contains "participants" json array
+    form_data = request.form.to_dict()
+    form_data["jenis_layanan_id"] = jadwal["layanan_id"]
+    form_data["tanggal_sesi"] = jadwal["tanggal"]
+
+    success_sesi, msg_sesi = create_sesi_bulk(user_id, form_data)
     if success_sesi:
-        update_status_jadwal(jadwal_id, user_id, "Selesai")
+        update_status_jadwal(jadwal_id, user_id, "Selesai", token)
         return jsonify({"success": True, "message": "Sesi berhasil diselesaikan."})
     else:
         return jsonify({"success": False, "message": msg_sesi})

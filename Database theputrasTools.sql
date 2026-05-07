@@ -164,6 +164,8 @@ CREATE TABLE konselor_jadwal (
     total_pause_ms BIGINT DEFAULT 0,
     last_pause_time TIMESTAMP DEFAULT NULL,
     status VARCHAR(20) DEFAULT 'Menunggu' CHECK (status IN ('Menunggu', 'Berlangsung', 'Jeda', 'Selesai', 'Dibatalkan')),
+    conselling_token VARCHAR(64) DEFAULT NULL,
+    conselling_last_active TIMESTAMP DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_konselor_jadwal_user FOREIGN KEY (konselor_user_id) REFERENCES users(id) ON DELETE CASCADE,
