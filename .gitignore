@@ -17,3 +17,9 @@ notes.txt
 venv/
 contohLaporan/
 scratch/
+debug_rekap.py
+dev/migrate_klien_data.py
+dev/refactor_database.py
+fix_json.py
+fix_json_clean.py
+patch_ocr.py
