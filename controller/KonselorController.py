@@ -504,14 +504,25 @@ def group_jadwal_entries(jadwals):
             }
         else:
             grouped[key]["ids"].append(j["id"])
-            grouped[key]["participants"].append({
-                "id": j["id"],
-                "nim": j.get("nim"),
-                "nama": j.get("nama"),
-                "nama_sensor": censor_name(j.get("nama")),
-                "prodi": j.get("prodi"),
-                "status": j.get("status"),
-            })
+            # Check if duplicate participant exists (prevent false 'kelompok' from double booking)
+            is_duplicate = False
+            for p in grouped[key]["participants"]:
+                if j.get("nim") and p.get("nim") == j.get("nim"):
+                    is_duplicate = True
+                    break
+                elif not j.get("nim") and j.get("nama") and p.get("nama") == j.get("nama"):
+                    is_duplicate = True
+                    break
+            
+            if not is_duplicate:
+                grouped[key]["participants"].append({
+                    "id": j["id"],
+                    "nim": j.get("nim"),
+                    "nama": j.get("nama"),
+                    "nama_sensor": censor_name(j.get("nama")),
+                    "prodi": j.get("prodi"),
+                    "status": j.get("status"),
+                })
 
     result = []
     for g_item in grouped.values():
@@ -606,12 +617,12 @@ def get_all_layanan():
     return jenis_layanan_model.get_all()
 
 
-def create_layanan(nama):
-    return jenis_layanan_model.create(nama)
+def create_layanan(nama, value_jenislayanan=None):
+    return jenis_layanan_model.create(nama, value_jenislayanan=value_jenislayanan)
 
 
-def update_layanan(layanan_id, nama):
-    return jenis_layanan_model.update(layanan_id, nama)
+def update_layanan(layanan_id, nama, value_jenislayanan=None):
+    return jenis_layanan_model.update(layanan_id, nama, value_jenislayanan=value_jenislayanan)
 
 
 def delete_layanan(layanan_id):

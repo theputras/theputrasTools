@@ -1549,7 +1549,10 @@ def konselor_layanan():
     if action == "create":
         if not nama:
             return jsonify({"success": False, "message": "Nama tidak boleh kosong."})
-        success, message = create_layanan(nama)
+        # Build value_jenislayanan from form
+        multiple_support = request.form.get("multipleSupport", "false").lower() == "true"
+        value_jenislayanan = {"multipleSupport": multiple_support}
+        success, message = create_layanan(nama, value_jenislayanan=value_jenislayanan)
         new_id = None
         if success:
             from models.konselor import jenis_layanan_model
@@ -1559,13 +1562,16 @@ def konselor_layanan():
                 if l["nama"] == nama:
                     new_id = l["id"]
                     break
-        return jsonify({"success": success, "message": message, "id": new_id})
+        return jsonify({"success": success, "message": message, "id": new_id, "value_jenislayanan": value_jenislayanan})
 
     elif action == "update":
         if not item_id or not nama:
             return jsonify({"success": False, "message": "Data tidak lengkap."})
-        success, message = update_layanan(item_id, nama)
-        return jsonify({"success": success, "message": message})
+        # Build value_jenislayanan from form
+        multiple_support = request.form.get("multipleSupport", "false").lower() == "true"
+        value_jenislayanan = {"multipleSupport": multiple_support}
+        success, message = update_layanan(item_id, nama, value_jenislayanan=value_jenislayanan)
+        return jsonify({"success": success, "message": message, "value_jenislayanan": value_jenislayanan})
 
     elif action == "delete":
         if not item_id:

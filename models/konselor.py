@@ -250,14 +250,26 @@ class JenisLayananModel:
         return get_connection()
 
     def get_all(self):
-        """Ambil semua jenis layanan."""
+        """Ambil semua jenis layanan beserta value_jenislayanan."""
         conn = self._get_connection()
         if not conn:
             return []
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT id, nama FROM konselor_jenis_layanan ORDER BY id")
-            return cursor.fetchall()
+            cursor.execute("SELECT id, nama, value_jenislayanan FROM konselor_jenis_layanan ORDER BY id")
+            rows = cursor.fetchall()
+            # Parse JSONB value_jenislayanan jika masih string
+            import json as _json
+            for r in rows:
+                val = r.get('value_jenislayanan')
+                if isinstance(val, str):
+                    try:
+                        r['value_jenislayanan'] = _json.loads(val)
+                    except Exception:
+                        r['value_jenislayanan'] = {}
+                elif val is None:
+                    r['value_jenislayanan'] = {}
+            return rows
         except Exception as e:
             logging.error(f"[Konselor] Error get_all layanan: {e}")
             return []
@@ -265,15 +277,18 @@ class JenisLayananModel:
             cursor.close()
             conn.close()
 
-    def create(self, nama):
-        """Tambah jenis layanan baru."""
+    def create(self, nama, value_jenislayanan=None):
+        """Tambah jenis layanan baru dengan opsional value_jenislayanan (JSON)."""
+        import json as _json
         conn = self._get_connection()
         if not conn:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
+            val_json = _json.dumps(value_jenislayanan) if value_jenislayanan else '{}'
             cursor.execute(
-                "INSERT INTO konselor_jenis_layanan (nama) VALUES (%s)", (nama.strip(),)
+                "INSERT INTO konselor_jenis_layanan (nama, value_jenislayanan) VALUES (%s, %s::jsonb)",
+                (nama.strip(), val_json),
             )
             conn.commit()
             return True, "Jenis layanan berhasil ditambahkan."
@@ -286,17 +301,25 @@ class JenisLayananModel:
             cursor.close()
             conn.close()
 
-    def update(self, layanan_id, nama):
-        """Update nama jenis layanan."""
+    def update(self, layanan_id, nama, value_jenislayanan=None):
+        """Update nama dan value_jenislayanan jenis layanan."""
+        import json as _json
         conn = self._get_connection()
         if not conn:
             return False, "Gagal koneksi database."
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                "UPDATE konselor_jenis_layanan SET nama = %s WHERE id = %s",
-                (nama.strip(), layanan_id),
-            )
+            if value_jenislayanan is not None:
+                val_json = _json.dumps(value_jenislayanan)
+                cursor.execute(
+                    "UPDATE konselor_jenis_layanan SET nama = %s, value_jenislayanan = %s::jsonb WHERE id = %s",
+                    (nama.strip(), val_json, layanan_id),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE konselor_jenis_layanan SET nama = %s WHERE id = %s",
+                    (nama.strip(), layanan_id),
+                )
             conn.commit()
             return True, "Jenis layanan berhasil diperbarui."
         except Exception as e:

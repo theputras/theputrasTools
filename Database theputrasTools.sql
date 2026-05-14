@@ -17,7 +17,8 @@ CREATE TABLE tools (
 
 CREATE TABLE konselor_jenis_layanan (
     id SERIAL PRIMARY KEY,
-    nama VARCHAR(150) NOT NULL UNIQUE
+    nama VARCHAR(150) NOT NULL UNIQUE,
+    value_jenislayanan JSONB DEFAULT '{}'::jsonb
 );
 
 CREATE TABLE konselor_kategori_masalah (

@@ -275,7 +275,7 @@
                     </div>
                 </template>
 
-                <template x-for="(sesi, idx) in filteredSessions" :key="sesi.id">
+                <template x-for="(sesi, idx) in groupedFilteredSessions" :key="sesi.id || idx">
                     <div @click="openDetail(sesi)" 
                          class="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors group cursor-pointer">
                         <!-- Date badge -->
@@ -1097,6 +1097,13 @@ function rekapApp() {
         },
         sessions: [],
         
+        // Group layanan Names — driven by multipleSupport flag in database
+        groupLayananNames: [
+            {% for item in jenis_layanan_list %}
+                {% if item.value_jenislayanan and item.value_jenislayanan.multipleSupport %}'{{ item.nama }}',{% endif %}
+            {% endfor %}
+        ],
+        
         // --- Download Laporan State ---
         showBulanModal: false,
         showTahunModal: false,
@@ -1255,6 +1262,42 @@ function rekapApp() {
             }
             
             return res;
+        },
+
+        get groupedFilteredSessions() {
+            let res = this.filteredSessions;
+            let grouped = [];
+            let groupMap = {}; // key: "tanggal_sesi|waktu_mulai|jenis_layanan"
+
+            res.forEach(s => {
+                if (this.groupLayananNames.includes(s.jenis_layanan)) {
+                    let key = `${s.tanggal_sesi}|${s.waktu_mulai}|${s.waktu_selesai}|${s.jenis_layanan}`;
+                    if (!groupMap[key]) {
+                        // Deep clone to avoid mutating original
+                        let cloned = JSON.parse(JSON.stringify(s));
+                        cloned.is_group = true;
+                        cloned.peserta_list = [];
+                        if (cloned.nama_sensor && cloned.nama_sensor !== '-') cloned.peserta_list.push(cloned.nama_sensor);
+                        groupMap[key] = cloned;
+                        grouped.push(cloned);
+                    } else {
+                        if (s.nama_sensor && s.nama_sensor !== '-') {
+                            groupMap[key].peserta_list.push(s.nama_sensor);
+                        }
+                    }
+                } else {
+                    grouped.push(s);
+                }
+            });
+
+            // Update nama_sensor for groups
+            grouped.forEach(s => {
+                if (s.is_group && s.peserta_list && s.peserta_list.length > 0) {
+                    s.nama_sensor = s.peserta_list.join(", ");
+                }
+            });
+
+            return grouped;
         },
 
         resetAllFilters() {

@@ -127,14 +127,21 @@
         <!-- ======================= -->
         <div x-show="activeTab === 'layanan'" x-transition x-cloak>
             <!-- Add form -->
-            <div class="flex gap-2 mb-4">
-                <input type="text" x-model="newLayanan" placeholder="Nama jenis layanan baru..."
-                       @keydown.enter="addLayanan()"
-                       class="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 focus:border-blue-500/30 focus:outline-none transition">
-                <button @click="addLayanan()" :disabled="!newLayanan.trim()"
-                        class="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
-                    <i class="fas fa-plus text-xs"></i> Tambah
-                </button>
+            <div class="space-y-3 mb-4">
+                <div class="flex gap-2">
+                    <input type="text" x-model="newLayanan" placeholder="Nama jenis layanan baru..."
+                           @keydown.enter="addLayanan()"
+                           class="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 focus:border-blue-500/30 focus:outline-none transition">
+                    <button @click="addLayanan()" :disabled="!newLayanan.trim()"
+                            class="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold px-5 py-3 rounded-xl text-sm transition active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-plus text-xs"></i> Tambah
+                    </button>
+                </div>
+                <label class="flex items-center gap-2 ml-1 cursor-pointer select-none">
+                    <input type="checkbox" x-model="newLayananMultipleSupport"
+                           class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-xs text-gray-600"><i class="fas fa-users text-blue-400 mr-1"></i>Multiple Support (bisa lebih dari 1 klien)</span>
+                </label>
             </div>
 
             <!-- List -->
@@ -155,7 +162,14 @@
                         <!-- View mode -->
                         <template x-if="editLayananId !== item.id">
                             <div class="flex-1 flex items-center justify-between">
-                                <span class="text-sm text-gray-800 font-medium" x-text="item.nama"></span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-800 font-medium" x-text="item.nama"></span>
+                                    <template x-if="item.value_jenislayanan && item.value_jenislayanan.multipleSupport">
+                                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-violet-100 text-violet-600 uppercase tracking-wider flex items-center gap-1">
+                                            <i class="fas fa-users text-[8px]"></i> Multi
+                                        </span>
+                                    </template>
+                                </div>
                                 <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
                                     <button @click="startEditLayanan(item)" class="text-blue-500 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 transition" title="Edit">
                                         <i class="fas fa-edit text-xs"></i>
@@ -169,17 +183,24 @@
 
                         <!-- Edit mode -->
                         <template x-if="editLayananId === item.id">
-                            <div class="flex-1 flex items-center gap-2">
-                                <input type="text" x-model="editLayananNama"
-                                       @keydown.enter="saveEditLayanan()"
-                                       @keydown.escape="editLayananId = null"
-                                       class="flex-1 bg-white border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none">
-                                <button @click="saveEditLayanan()" class="text-emerald-500 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-50 transition" title="Simpan">
-                                    <i class="fas fa-check text-xs"></i>
-                                </button>
-                                <button @click="editLayananId = null" class="text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 transition" title="Batal">
-                                    <i class="fas fa-times text-xs"></i>
-                                </button>
+                            <div class="flex-1 space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <input type="text" x-model="editLayananNama"
+                                           @keydown.enter="saveEditLayanan()"
+                                           @keydown.escape="editLayananId = null"
+                                           class="flex-1 bg-white border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none">
+                                    <button @click="saveEditLayanan()" class="text-emerald-500 hover:text-emerald-300 p-2 rounded-lg hover:bg-emerald-50 transition" title="Simpan">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </button>
+                                    <button @click="editLayananId = null" class="text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 transition" title="Batal">
+                                        <i class="fas fa-times text-xs"></i>
+                                    </button>
+                                </div>
+                                <label class="flex items-center gap-2 ml-1 cursor-pointer select-none">
+                                    <input type="checkbox" x-model="editLayananMultipleSupport"
+                                           class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="text-xs text-gray-600"><i class="fas fa-users text-blue-400 mr-1"></i>Multiple Support</span>
+                                </label>
                             </div>
                         </template>
                     </div>
@@ -271,8 +292,10 @@ function kelolaMasterApp() {
         // Layanan
         layananList: JSON.parse('{{ layanan_list | tojson }}'),
         newLayanan: '',
+        newLayananMultipleSupport: false,
         editLayananId: null,
         editLayananNama: '',
+        editLayananMultipleSupport: false,
 
         // Tindak Lanjut
         tindakLanjutList: JSON.parse('{{ tindak_lanjut_list | tojson }}'),
@@ -345,11 +368,13 @@ function kelolaMasterApp() {
             const fd = new FormData();
             fd.append('nama', this.newLayanan.trim());
             fd.append('action', 'create');
+            fd.append('multipleSupport', this.newLayananMultipleSupport ? 'true' : 'false');
             const res = await fetch('{{ url_for("konselor_layanan") }}', { method: 'POST', body: fd });
             const data = await res.json();
             if (data.success) {
-                this.layananList.push({ id: data.id, nama: this.newLayanan.trim() });
+                this.layananList.push({ id: data.id, nama: this.newLayanan.trim(), value_jenislayanan: data.value_jenislayanan || {} });
                 this.newLayanan = '';
+                this.newLayananMultipleSupport = false;
                 if (window.showAlert) window.showAlert('success', data.message);
             } else {
                 if (window.showAlert) window.showAlert('error', data.message);
@@ -359,6 +384,7 @@ function kelolaMasterApp() {
         startEditLayanan(item) {
             this.editLayananId = item.id;
             this.editLayananNama = item.nama;
+            this.editLayananMultipleSupport = !!(item.value_jenislayanan && item.value_jenislayanan.multipleSupport);
         },
 
         async saveEditLayanan() {
@@ -367,11 +393,15 @@ function kelolaMasterApp() {
             fd.append('id', this.editLayananId);
             fd.append('nama', this.editLayananNama.trim());
             fd.append('action', 'update');
+            fd.append('multipleSupport', this.editLayananMultipleSupport ? 'true' : 'false');
             const res = await fetch('{{ url_for("konselor_layanan") }}', { method: 'POST', body: fd });
             const data = await res.json();
             if (data.success) {
                 const item = this.layananList.find(l => l.id === this.editLayananId);
-                if (item) item.nama = this.editLayananNama.trim();
+                if (item) {
+                    item.nama = this.editLayananNama.trim();
+                    item.value_jenislayanan = data.value_jenislayanan || {};
+                }
                 this.editLayananId = null;
                 if (window.showAlert) window.showAlert('success', data.message);
             } else {
