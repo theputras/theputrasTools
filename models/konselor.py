@@ -579,7 +579,12 @@ class KonselorSessionModel:
                 LEFT JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
                 LEFT JOIN konselor_tindak_lanjut tl ON s.tindak_lanjut_id = tl.id
                 JOIN konselor_data_klien dk ON s.id_klien = dk.id
-                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                LEFT JOIN mbti_test_history h ON h.id = (
+                    SELECT id FROM mbti_test_history
+                    WHERE id_civitas = dk.id_civitas
+                    ORDER BY tested_at DESC
+                    LIMIT 1
+                )
             """
             params = []
             group_by = """
@@ -1026,7 +1031,11 @@ class KonselorJadwalModel:
         cursor = conn.cursor(dictionary=True)
         try:
             cursor.execute("""
-                SELECT j2.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi
+                SELECT j2.*, l.nama as layanan, dk.id_civitas as nim, dk.nama, dk.prodi,
+                       h.mbti_result AS mbti, h.score_e, h.score_i, h.score_s, h.score_n,
+                       h.score_t, h.score_f, h.score_j, h.score_p,
+                       ri.title AS mbti_title, ri.characteristics AS mbti_characteristics,
+                       ri.development_suggestions AS mbti_suggestions, ri.description AS mbti_description
                 FROM konselor_jadwal j1
                 JOIN konselor_jadwal j2 ON j1.konselor_user_id = j2.konselor_user_id 
                                        AND j1.layanan_id = j2.layanan_id 
@@ -1034,6 +1043,13 @@ class KonselorJadwalModel:
                                        AND j1.jam = j2.jam
                 LEFT JOIN konselor_jenis_layanan l ON j2.layanan_id = l.id
                 JOIN konselor_data_klien dk ON j2.id_klien = dk.id
+                LEFT JOIN mbti_test_history h ON h.id = (
+                    SELECT id FROM mbti_test_history
+                    WHERE id_civitas = dk.id_civitas
+                    ORDER BY tested_at DESC
+                    LIMIT 1
+                )
+                LEFT JOIN mbti_results_info ri ON h.mbti_result = ri.mbti_type
                 WHERE j1.id = %s AND j1.konselor_user_id = %s
                 ORDER BY j2.id ASC
             """, (jadwal_id, user_id))
