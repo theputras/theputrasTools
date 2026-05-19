@@ -21,7 +21,12 @@ class KlienModel:
                 SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
                        h.mbti_result AS mbti
                 FROM konselor_data_klien dk
-                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                LEFT JOIN mbti_test_history h ON h.id = (
+                    SELECT id FROM mbti_test_history
+                    WHERE id_civitas = dk.id_civitas
+                    ORDER BY tested_at DESC
+                    LIMIT 1
+                )
                 ORDER BY dk.nama ASC
             """)
             return cursor.fetchall()
@@ -42,7 +47,12 @@ class KlienModel:
                 SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
                        h.mbti_result AS mbti
                 FROM konselor_data_klien dk
-                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                LEFT JOIN mbti_test_history h ON h.id = (
+                    SELECT id FROM mbti_test_history
+                    WHERE id_civitas = dk.id_civitas
+                    ORDER BY tested_at DESC
+                    LIMIT 1
+                )
                 WHERE dk.id_civitas = %s
                 ORDER BY dk.updated_at DESC
             """, (id_civitas,))
@@ -64,7 +74,12 @@ class KlienModel:
                 SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
                        h.mbti_result AS mbti
                 FROM konselor_data_klien dk
-                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                LEFT JOIN mbti_test_history h ON h.id = (
+                    SELECT id FROM mbti_test_history
+                    WHERE id_civitas = dk.id_civitas
+                    ORDER BY tested_at DESC
+                    LIMIT 1
+                )
                 WHERE dk.id_civitas = %s
                 ORDER BY dk.nama ASC
             """, (id_civitas,))
@@ -87,7 +102,12 @@ class KlienModel:
                 SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
                        h.mbti_result AS mbti
                 FROM konselor_data_klien dk
-                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                LEFT JOIN mbti_test_history h ON h.id = (
+                    SELECT id FROM mbti_test_history
+                    WHERE id_civitas = dk.id_civitas
+                    ORDER BY tested_at DESC
+                    LIMIT 1
+                )
                 WHERE dk.id_civitas LIKE %s OR dk.nama ILIKE %s
                 ORDER BY dk.nama ASC
                 LIMIT 50
@@ -110,7 +130,12 @@ class KlienModel:
                 SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
                        h.mbti_result AS mbti
                 FROM konselor_data_klien dk
-                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                LEFT JOIN mbti_test_history h ON h.id = (
+                    SELECT id FROM mbti_test_history
+                    WHERE id_civitas = dk.id_civitas
+                    ORDER BY tested_at DESC
+                    LIMIT 1
+                )
                 WHERE dk.id_civitas = %s AND dk.nama = %s
             """, (id_civitas, (nama or "").strip()))
             return cursor.fetchone()
@@ -128,12 +153,11 @@ class KlienModel:
         cursor = conn.cursor()
         try:
             sql = """
-                INSERT INTO konselor_data_klien (id_civitas, nama, prodi, dosen_wali, mbti, status_abk, status_civitas)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO konselor_data_klien (id_civitas, nama, prodi, dosen_wali, status_abk, status_civitas)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 ON CONFLICT (id_civitas, nama) DO UPDATE SET
                     prodi = COALESCE(EXCLUDED.prodi, konselor_data_klien.prodi),
                     dosen_wali = COALESCE(EXCLUDED.dosen_wali, konselor_data_klien.dosen_wali),
-                    mbti = COALESCE(EXCLUDED.mbti, konselor_data_klien.mbti),
                     status_abk = COALESCE(EXCLUDED.status_abk, konselor_data_klien.status_abk),
                     status_civitas = COALESCE(EXCLUDED.status_civitas, konselor_data_klien.status_civitas),
                     updated_at = CURRENT_TIMESTAMP
@@ -144,7 +168,6 @@ class KlienModel:
                 data.get('nama'),
                 data.get('prodi'),
                 data.get('dosen_wali'),
-                data.get('mbti'),
                 data.get('status_abk'),
                 data.get('status_civitas', 'Mahasiswa')
             ))

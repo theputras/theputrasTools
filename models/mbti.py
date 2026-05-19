@@ -200,6 +200,18 @@ class MBTITestHistoryModel:
         if not conn: return None
         cursor = conn.cursor()
         try:
+            # Sync ke konselor_data_klien untuk memastikan id_civitas terdaftar (FK constraint)
+            try:
+                from models.konselor import klien_model
+                klien_model.upsert({
+                    "id_civitas": data.get('nim'),
+                    "nama": data.get('nama'),
+                    "prodi": data.get('prodi'),
+                    "status_civitas": "Mahasiswa"
+                })
+            except Exception as sync_err:
+                logging.error(f"[MBTI] Gagal sync ke konselor_data_klien: {sync_err}")
+
             cursor.execute(
                 """INSERT INTO mbti_test_history
                    (user_id, id_civitas, score_e, score_i, score_s, score_n,
@@ -215,19 +227,6 @@ class MBTITestHistoryModel:
             )
             history_id = cursor.fetchone()[0]
             conn.commit()
-
-            # Sync hasil MBTI ke tabel konselor_data_klien
-            try:
-                from models.konselor import klien_model
-                klien_model.upsert({
-                    "id_civitas": data.get('nim'),
-                    "nama": data.get('nama'),
-                    "prodi": data.get('prodi'),
-                    "mbti": history_id,
-                    "status_civitas": "Mahasiswa"
-                })
-            except Exception as sync_err:
-                logging.error(f"[MBTI] Gagal sync ke konselor_data_klien: {sync_err}")
 
             return history_id
         except Exception as e:

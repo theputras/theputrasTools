@@ -936,10 +936,8 @@ def get_all_klien_data():
 
 
 def update_klien_metadata(id_civitas, form_data):
-    """Update metadata mbti/abk dari klien."""
+    """Update metadata abk dari klien."""
     metadata = {}
-    if "mbti" in form_data:
-        metadata["mbti"] = form_data.get("mbti")
     if "status_abk" in form_data:
         metadata["status_abk"] = form_data.get("status_abk")
     

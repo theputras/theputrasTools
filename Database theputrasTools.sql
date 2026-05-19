@@ -130,6 +130,19 @@ CREATE TABLE mbti_results_info (
     suitable_professions TEXT NOT NULL
 );
 
+CREATE TABLE konselor_data_klien (
+    id SERIAL PRIMARY KEY,
+    id_civitas VARCHAR(64) NOT NULL,
+    nama VARCHAR(150) DEFAULT NULL,
+    prodi VARCHAR(100) DEFAULT NULL,
+    dosen_wali VARCHAR(150) DEFAULT NULL,
+    status_abk VARCHAR(100) DEFAULT NULL,
+    status_civitas VARCHAR(50) DEFAULT 'Mahasiswa',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_id_nama UNIQUE (id_civitas, nama)
+);
+
 CREATE TABLE mbti_test_history (
     id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -146,21 +159,6 @@ CREATE TABLE mbti_test_history (
     tested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_mbti_history_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_mbti_history_result FOREIGN KEY (mbti_result) REFERENCES mbti_results_info(mbti_type) ON DELETE RESTRICT
-);
-
-CREATE TABLE konselor_data_klien (
-    id SERIAL PRIMARY KEY,
-    id_civitas VARCHAR(64) NOT NULL,
-    nama VARCHAR(150) DEFAULT NULL,
-    prodi VARCHAR(100) DEFAULT NULL,
-    dosen_wali VARCHAR(150) DEFAULT NULL,
-    mbti INT DEFAULT NULL,
-    status_abk VARCHAR(100) DEFAULT NULL,
-    status_civitas VARCHAR(50) DEFAULT 'Mahasiswa',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_id_nama UNIQUE (id_civitas, nama),
-    CONSTRAINT fk_klien_mbti FOREIGN KEY (mbti) REFERENCES mbti_test_history(id) ON DELETE SET NULL
 );
 
 CREATE TABLE konselor_sessions (
