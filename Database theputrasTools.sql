@@ -121,6 +121,15 @@ CREATE TABLE google_oauth_tokens (
     CONSTRAINT fk_google_oauth_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE mbti_results_info (
+    mbti_type VARCHAR(4) PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    characteristics TEXT NOT NULL,
+    development_suggestions TEXT NOT NULL,
+    suitable_professions TEXT NOT NULL
+);
+
 CREATE TABLE konselor_data_klien (
     id SERIAL PRIMARY KEY,
     id_civitas VARCHAR(64) NOT NULL,
@@ -132,7 +141,8 @@ CREATE TABLE konselor_data_klien (
     status_civitas VARCHAR(50) DEFAULT 'Mahasiswa',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_id_nama UNIQUE (id_civitas, nama)
+    CONSTRAINT unique_id_nama UNIQUE (id_civitas, nama),
+    CONSTRAINT fk_klien_mbti FOREIGN KEY (mbti) REFERENCES mbti_results_info(mbti_type) ON DELETE SET NULL
 );
 
 CREATE TABLE konselor_sessions (
@@ -345,6 +355,86 @@ CREATE TABLE logbook_signatures (
     UNIQUE (logbook_id, bulan),
     CONSTRAINT fk_sig_logbook FOREIGN KEY (logbook_id) REFERENCES logbooks(id) ON DELETE CASCADE
 );
+
+-- ==========================================================
+-- 4B. TABEL PERMISSION DINAMIS KONSELOR APP
+-- ==========================================================
+
+CREATE TABLE konselor_role_permissions (
+    id SERIAL PRIMARY KEY,
+    role_id INT NOT NULL,
+    page_identifier VARCHAR(100) NOT NULL,
+    can_view SMALLINT DEFAULT 0,
+    can_create SMALLINT DEFAULT 0,
+    can_update SMALLINT DEFAULT 0,
+    can_delete SMALLINT DEFAULT 0,
+    can_import SMALLINT DEFAULT 0,
+    can_export SMALLINT DEFAULT 0,
+    data_scope VARCHAR(20) DEFAULT 'OWN' CHECK (data_scope IN ('ALL', 'OWN', 'NONE')),
+    CONSTRAINT fk_konselor_perm_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+    UNIQUE (role_id, page_identifier)
+);
+-- ==========================================================
+-- 4C. TABEL USERS KHUSUS KONSELOR APP
+-- (Copy dari users utama, role_id = role khusus konselor)
+-- ==========================================================
+
+CREATE TABLE konselor_users (
+    id BIGSERIAL PRIMARY KEY,
+    source_user_id BIGINT NOT NULL UNIQUE,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(150) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    role_id INT DEFAULT 5,
+    CONSTRAINT fk_konselor_users_source FOREIGN KEY (source_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_konselor_users_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL
+);
+
+-- ==========================================================
+-- 4D. TABEL MBTI (Tes Kepribadian)
+-- ==========================================================
+
+CREATE TABLE mbti_questions (
+    id SERIAL PRIMARY KEY,
+    question_text TEXT NOT NULL,
+    dimension VARCHAR(2) NOT NULL CHECK (dimension IN ('EI', 'SN', 'TF', 'JP')),
+    choice_a TEXT NOT NULL,
+    choice_b TEXT NOT NULL,
+    sort_order INT DEFAULT 0,
+    is_active SMALLINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+CREATE TABLE mbti_test_history (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    nama VARCHAR(150) NOT NULL,
+    nim VARCHAR(64) DEFAULT NULL,
+    prodi VARCHAR(100) DEFAULT NULL,
+    score_e INT DEFAULT 0,
+    score_i INT DEFAULT 0,
+    score_s INT DEFAULT 0,
+    score_n INT DEFAULT 0,
+    score_t INT DEFAULT 0,
+    score_f INT DEFAULT 0,
+    score_j INT DEFAULT 0,
+    score_p INT DEFAULT 0,
+    mbti_result VARCHAR(4) NOT NULL,
+    tested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_mbti_history_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_mbti_history_result FOREIGN KEY (mbti_result) REFERENCES mbti_results_info(mbti_type) ON DELETE RESTRICT
+);
+
+CREATE TABLE mbti_configs (
+    config_key VARCHAR(100) PRIMARY KEY,
+    config_value TEXT NOT NULL
+);
+
+
 
 -- ==========================================================
 -- 5. TAMBAHAN INDEX UNTUK PERFORMA QUERY

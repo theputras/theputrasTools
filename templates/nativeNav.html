@@ -29,6 +29,7 @@
             <span class="relative text-[9px] font-bold tracking-wider {% if request.path == home_url %} text-white drop-shadow-md {% endif %}">Home</span>
         </a>
 
+        {% if g.user.role_id != 3 %}
         <a href="{{ gate_undika }}" 
            class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group
                   {% if request.path == gate_undika %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
@@ -43,6 +44,8 @@
             <span class="relative text-[9px] text-center font-bold tracking-wider {% if request.path == gate_undika %} text-white drop-shadow-md {% endif %}">Gate UNDIKA</span>
         </a>
         {% endif %}
+        {% endif %}
+        {% if not g.user or g.user.role_id != 3 %}
         <a href="{{ tools_url }}" 
            class="relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 group
                   {% if request.path == tools_url %} text-white w-[5rem] {% else %} text-gray-400 hover:text-gray-200 {% endif %}">
@@ -58,6 +61,7 @@
             </svg>
             <span class="relative text-[9px] font-bold tracking-wider {% if request.path == tools_url %} text-white drop-shadow-md {% endif %}">Tools</span>
         </a>
+        {% endif %}
 
         <a href="{{ account_url }}" 
            class="relative flex flex-col items-center justify-center w-14 h-14 transition-all duration-300 group

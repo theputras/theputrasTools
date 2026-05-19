@@ -1100,6 +1100,301 @@ class KonselorJadwalModel:
             conn.close()
 
 
+class KonselorRolePermissionModel:
+    """Model untuk manajemen hak akses dinamis per role per halaman di Konselor App."""
+
+    def _get_connection(self):
+        return get_connection()
+
+    def get_permissions_by_role(self, role_id):
+        """Ambil semua permission untuk role tertentu. Return dict {page_identifier: {can_view, can_create, ...}}."""
+        conn = self._get_connection()
+        if not conn:
+            return {}
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                "SELECT * FROM konselor_role_permissions WHERE role_id = %s",
+                (role_id,),
+            )
+            rows = cursor.fetchall()
+            result = {}
+            for r in rows:
+                result[r["page_identifier"]] = {
+                    "can_view": r["can_view"],
+                    "can_create": r["can_create"],
+                    "can_update": r["can_update"],
+                    "can_delete": r["can_delete"],
+                    "can_import": r["can_import"],
+                    "can_export": r["can_export"],
+                    "data_scope": r["data_scope"],
+                }
+            return result
+        except Exception as e:
+            logging.error(f"[KonselorPerm] Error get_permissions_by_role: {e}")
+            return {}
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_all_permissions(self):
+        """Ambil semua permission untuk semua role (untuk halaman admin kelola akses)."""
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                SELECT krp.*, r.nama_role
+                FROM konselor_role_permissions krp
+                JOIN roles r ON krp.role_id = r.id
+                ORDER BY krp.role_id, krp.page_identifier
+            """)
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[KonselorPerm] Error get_all_permissions: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def upsert_permission(self, role_id, page_identifier, data):
+        """Insert atau update permission untuk role + halaman tertentu."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                INSERT INTO konselor_role_permissions
+                    (role_id, page_identifier, can_view, can_create, can_update, can_delete, can_import, can_export, data_scope)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (role_id, page_identifier) DO UPDATE SET
+                    can_view = EXCLUDED.can_view,
+                    can_create = EXCLUDED.can_create,
+                    can_update = EXCLUDED.can_update,
+                    can_delete = EXCLUDED.can_delete,
+                    can_import = EXCLUDED.can_import,
+                    can_export = EXCLUDED.can_export,
+                    data_scope = EXCLUDED.data_scope
+            """, (
+                role_id,
+                page_identifier,
+                data.get("can_view", 0),
+                data.get("can_create", 0),
+                data.get("can_update", 0),
+                data.get("can_delete", 0),
+                data.get("can_import", 0),
+                data.get("can_export", 0),
+                data.get("data_scope", "OWN"),
+            ))
+            conn.commit()
+            return True, "Permission berhasil disimpan."
+        except Exception as e:
+            logging.error(f"[KonselorPerm] Error upsert_permission: {e}")
+            return False, f"Gagal menyimpan permission: {str(e)}"
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_accessible_pages(self, role_id):
+        """Return list of page_identifier yang boleh diakses (can_view=1) oleh role tertentu."""
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                "SELECT page_identifier FROM konselor_role_permissions WHERE role_id = %s AND can_view = 1",
+                (role_id,),
+            )
+            return [r["page_identifier"] for r in cursor.fetchall()]
+        except Exception as e:
+            logging.error(f"[KonselorPerm] Error get_accessible_pages: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def check_permission(self, role_id, page_identifier, action="can_view"):
+        """Cek apakah role punya izin untuk action tertentu di halaman tertentu."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "NONE"
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                "SELECT * FROM konselor_role_permissions WHERE role_id = %s AND page_identifier = %s",
+                (role_id, page_identifier),
+            )
+            row = cursor.fetchone()
+            if not row:
+                return False, "NONE"
+            return bool(row.get(action, 0)), row.get("data_scope", "NONE")
+        except Exception as e:
+            logging.error(f"[KonselorPerm] Error check_permission: {e}")
+            return False, "NONE"
+        finally:
+            cursor.close()
+            conn.close()
+
+
+class KonselorUserModel:
+    """Model untuk manajemen user khusus Konselor App (tabel konselor_users)."""
+
+    def _get_connection(self):
+        return get_connection()
+
+    def get_by_source_user_id(self, source_user_id):
+        """Cari user konselor berdasarkan ID user utama (untuk middleware auth)."""
+        conn = self._get_connection()
+        if not conn:
+            return None
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                """SELECT ku.*, r.nama_role
+                   FROM konselor_users ku
+                   JOIN roles r ON ku.role_id = r.id
+                   WHERE ku.source_user_id = %s""",
+                (source_user_id,),
+            )
+            return cursor.fetchone()
+        except Exception as e:
+            logging.error(f"[KonselorUser] Error get_by_source_user_id: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_all(self):
+        """Ambil semua user konselor."""
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                SELECT ku.*, r.nama_role
+                FROM konselor_users ku
+                LEFT JOIN roles r ON ku.role_id = r.id
+                ORDER BY ku.role_id, ku.username
+            """)
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[KonselorUser] Error get_all: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def add_from_main_user(self, source_user_id, konselor_role_id):
+        """Copy user dari tabel users utama ke konselor_users dengan role konselor."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor(dictionary=True)
+        try:
+            # Cek apakah sudah ada
+            cursor.execute(
+                "SELECT id FROM konselor_users WHERE source_user_id = %s",
+                (source_user_id,),
+            )
+            if cursor.fetchone():
+                return False, "User sudah terdaftar di Konselor App."
+
+            # Ambil data dari users utama
+            cursor.execute(
+                "SELECT id, username, password, email FROM users WHERE id = %s",
+                (source_user_id,),
+            )
+            main_user = cursor.fetchone()
+            if not main_user:
+                return False, "User tidak ditemukan di tabel utama."
+
+            # Insert ke konselor_users
+            cursor.execute("""
+                INSERT INTO konselor_users (source_user_id, username, password, email, role_id)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (
+                main_user["id"],
+                main_user["username"],
+                main_user["password"],
+                main_user["email"],
+                konselor_role_id,
+            ))
+            conn.commit()
+            return True, f"User '{main_user['username']}' berhasil ditambahkan ke Konselor App."
+        except Exception as e:
+            logging.error(f"[KonselorUser] Error add_from_main_user: {e}")
+            return False, f"Gagal menambahkan user: {str(e)}"
+        finally:
+            cursor.close()
+            conn.close()
+
+    def update_role(self, konselor_user_id, new_role_id):
+        """Update role konselor untuk user tertentu."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "UPDATE konselor_users SET role_id = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+                (new_role_id, konselor_user_id),
+            )
+            conn.commit()
+            return True, "Role berhasil diperbarui."
+        except Exception as e:
+            logging.error(f"[KonselorUser] Error update_role: {e}")
+            return False, f"Gagal update role: {str(e)}"
+        finally:
+            cursor.close()
+            conn.close()
+
+    def remove(self, konselor_user_id):
+        """Hapus user dari konselor_users (tidak menghapus dari users utama)."""
+        conn = self._get_connection()
+        if not conn:
+            return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute("DELETE FROM konselor_users WHERE id = %s", (konselor_user_id,))
+            conn.commit()
+            return True, "User berhasil dihapus dari Konselor App."
+        except Exception as e:
+            logging.error(f"[KonselorUser] Error remove: {e}")
+            return False, f"Gagal menghapus user: {str(e)}"
+        finally:
+            cursor.close()
+            conn.close()
+
+    def search_main_users(self, query=""):
+        """Cari user dari tabel utama (untuk dropdown tambah user)."""
+        conn = self._get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                SELECT u.id, u.username, u.email, u.role_id, r.nama_role,
+                       CASE WHEN ku.id IS NOT NULL THEN 1 ELSE 0 END AS already_added
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                LEFT JOIN konselor_users ku ON u.id = ku.source_user_id
+                WHERE u.username ILIKE %s OR u.email ILIKE %s
+                ORDER BY u.username
+                LIMIT 20
+            """, (f"%{query}%", f"%{query}%"))
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"[KonselorUser] Error search_main_users: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+
 # Instances
 kategori_masalah_model = KategoriMasalahModel()
 jenis_layanan_model = JenisLayananModel()
@@ -1107,3 +1402,7 @@ tindak_lanjut_model = TindakLanjutModel()
 konselor_session_model = KonselorSessionModel()
 klien_model = KlienModel()
 konselor_jadwal_model = KonselorJadwalModel()
+konselor_role_permission_model = KonselorRolePermissionModel()
+konselor_user_model = KonselorUserModel()
+
+

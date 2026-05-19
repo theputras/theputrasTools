@@ -109,6 +109,7 @@ from controller.WebAuthnController import (
 )
 from extensions import limiter
 from middleware.auth_quard import check_permission, login_required
+from middleware.konselor_guard import konselor_permission
 from models.auth_api import (
     _revoke_all_user_sessions,
     _revoke_refresh_token,
@@ -632,8 +633,10 @@ def index():
     if role_id == 4:
         return redirect(url_for("tools_page"))
 
-    # Jika dia role Konselor (5), arahkan ke dashboard konselor
-    if role_id == 5:
+    # Cek apakah user terdaftar di Konselor App
+    from models.konselor import konselor_user_model
+    konselor_user = konselor_user_model.get_by_source_user_id(user_id)
+    if konselor_user:
         return redirect(url_for("konselor_dashboard"))
 
     # Cek apakah user punya kredensial Gate
@@ -722,15 +725,38 @@ def index():
 
 @app.route("/konselor")
 @login_required
+@konselor_permission('dashboard', 'can_view')
 def konselor_dashboard():
-    """Dashboard khusus untuk user dengan role Konselor."""
-    role_id = g.user.get("role_id")
+    """Dashboard khusus untuk user dengan role yang punya akses konselor."""
+    konselor_role_id = g.konselor_user.get('role_id') if hasattr(g, 'konselor_user') and g.konselor_user else None
 
-    # Hanya role Konselor (5) dan Super Admin (1) yang boleh akses
-    if role_id not in [1, 5]:
-        return redirect(url_for("index"))
+    # Mahasiswa Biasa → Portal Mahasiswa
+    if konselor_role_id == 3:
+        from models.mbti import mbti_test_history_model, mbti_config_model
+        user_id = g.user.get("sub")
+        latest_test = mbti_test_history_model.get_latest_by_user(user_id)
+        retake_days = int(mbti_config_model.get('retake_interval_days', '30'))
 
-    return render_template("konselorApp/indexKonselor.html")
+        needs_retake = False
+        if latest_test and latest_test.get('tested_at'):
+            from datetime import datetime, timedelta
+            tested_at = latest_test['tested_at']
+            if isinstance(tested_at, str):
+                tested_at = datetime.fromisoformat(tested_at)
+            if datetime.now() - tested_at > timedelta(days=retake_days):
+                needs_retake = True
+
+        return render_template(
+            "konselorApp/index_mahasiswa.html",
+            latest_test=latest_test,
+            needs_retake=needs_retake,
+            retake_days=retake_days,
+        )
+
+    return render_template(
+        "konselorApp/indexKonselor.html",
+        konselor_perms=g.konselor_all_perms,
+    )
 
 
 # === KONSELOR: Jadwal Publik (SSR) ===
@@ -809,11 +835,8 @@ def konselor_jadwal_publik():
 # === KONSELOR: Jadwal Main ===
 @app.route("/konselor/jadwal")
 @login_required
+@konselor_permission('jadwal_konsul', 'can_view')
 def konselor_jadwal_main():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return redirect(url_for("index"))
-
     from controller.KonselorController import get_all_layanan
 
     return render_template(
@@ -827,12 +850,9 @@ def konselor_jadwal_main():
 
 @app.route("/konselor/jadwal/data")
 @login_required
+@konselor_permission('jadwal_konsul', 'can_view')
 def konselor_jadwal_data():
     """Ambil data jadwal konselor (Hari Ini & Mendatang)."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
-
     from controller.KonselorController import get_jadwal_by_date, group_jadwal_entries
     user_id = g.user.get("sub")
 
@@ -849,10 +869,8 @@ def konselor_jadwal_data():
 
 @app.route("/konselor/jadwal/create", methods=["POST"])
 @login_required
+@konselor_permission('jadwal_konsul', 'can_create')
 def konselor_jadwal_create():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import create_jadwal_bulk
     user_id = g.user.get("sub")
@@ -862,10 +880,8 @@ def konselor_jadwal_create():
 
 @app.route("/konselor/jadwal/reschedule", methods=["POST"])
 @login_required
+@konselor_permission('jadwal_konsul', 'can_update')
 def konselor_jadwal_reschedule():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import reschedule_jadwal
 
@@ -877,10 +893,8 @@ def konselor_jadwal_reschedule():
 
 @app.route("/konselor/jadwal/update-status", methods=["POST"])
 @login_required
+@konselor_permission('jadwal_konsul', 'can_update')
 def konselor_jadwal_update_status():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import update_status_jadwal
 
@@ -898,11 +912,9 @@ def konselor_jadwal_update_status():
 
 @app.route("/konselor/jadwal/history")
 @login_required
+@konselor_permission('jadwal_konsul', 'can_view')
 def konselor_jadwal_history():
     """Ambil semua riwayat jadwal milik konselor untuk tab History."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import censor_name, group_jadwal_entries
     from models.konselor import konselor_jadwal_model
@@ -920,10 +932,8 @@ def konselor_jadwal_history():
 
 @app.route("/konselor/jadwal/slots")
 @login_required
+@konselor_permission('jadwal_konsul', 'can_view')
 def konselor_jadwal_slots():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import get_available_slots
 
@@ -938,10 +948,8 @@ def konselor_jadwal_slots():
 
 @app.route("/konselor/live-session", methods=["GET", "POST"])
 @login_required
+@konselor_permission('jadwal_konsul', 'can_update')
 def konselor_live_session():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return redirect(url_for("index"))
 
     from controller.KonselorController import (
         get_all_kategori,
@@ -1034,10 +1042,8 @@ def konselor_live_session():
 
 @app.route("/konselor/live-session/check-lock")
 @login_required
+@konselor_permission('jadwal_konsul', 'can_view')
 def konselor_live_session_check_lock():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "locked_out": True})
 
     user_id = g.user.get("sub")
     jadwal_id = request.args.get("id")
@@ -1054,10 +1060,8 @@ def konselor_live_session_check_lock():
 
 @app.route("/konselor/live-session/finish", methods=["POST"])
 @login_required
+@konselor_permission('jadwal_konsul', 'can_update')
 def konselor_live_session_finish():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
         create_sesi_bulk,
@@ -1095,11 +1099,9 @@ def konselor_live_session_finish():
 # === KONSELOR: Catat Sesi Baru ===
 @app.route("/konselor/catat", methods=["GET", "POST"])
 @login_required
+@konselor_permission('catat_sesi', 'can_view')
 def konselor_catat_sesi():
     """Form pencatatan sesi konseling baru."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return redirect(url_for("index"))
 
     from controller.KonselorController import (
         create_sesi_bulk,
@@ -1125,11 +1127,9 @@ def konselor_catat_sesi():
 
 @app.route("/konselor/lookup-civitas")
 @login_required
+@konselor_permission('dashboard', 'can_view')
 def konselor_lookup_civitas():
     """AJAX endpoint: cari data mahasiswa/staff dari Local DB & Sicyca."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import censor_name
     from scrapper_requests import search_mahasiswa, search_staff
@@ -1257,11 +1257,9 @@ def konselor_lookup_civitas():
 # === KONSELOR: Dashboard Rekap ===
 @app.route("/konselor/rekap")
 @login_required
+@konselor_permission('rekap_sesi', 'can_view')
 def konselor_rekap():
     """Halaman dashboard rekap sesi konseling."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return redirect(url_for("index"))
 
     from controller.KonselorController import (
         get_all_kategori,
@@ -1281,13 +1279,10 @@ def konselor_rekap():
 # === KONSELOR: Excel Import/Export ===
 @app.route("/konselor/template/download")
 @login_required
+@konselor_permission('catat_sesi', 'can_import')
 def konselor_download_template():
     """Download template excel untuk import sesi"""
     from controller.KonselorController import download_template_excel
-
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
     
     mode = request.args.get("mode", "month")
     return download_template_excel(mode=mode)
@@ -1295,11 +1290,9 @@ def konselor_download_template():
 
 @app.route("/konselor/sesi/import", methods=["GET", "POST"])
 @login_required
+@konselor_permission('catat_sesi', 'can_import')
 def konselor_import_sesi():
     """Import sesi (POST) atau cek progress import (GET)."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     user_id = g.user.get("sub")
     
@@ -1316,11 +1309,9 @@ def konselor_import_sesi():
 # === KONSELOR: Rekap Data (JSON) ===
 @app.route("/konselor/rekap/data")
 @login_required
+@konselor_permission('rekap_sesi', 'can_view')
 def konselor_rekap_data():
     """JSON data rekap + riwayat sesi."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import get_rekap, get_riwayat_sesi
 
@@ -1342,11 +1333,9 @@ def konselor_rekap_data():
 
 @app.route("/konselor/rekap/available_periods")
 @login_required
+@konselor_permission('rekap_sesi', 'can_view')
 def konselor_available_periods():
     """Return distinct year-month pairs and dosen_wali list from sessions."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import get_available_periods
 
@@ -1356,10 +1345,8 @@ def konselor_available_periods():
 
 @app.route("/konselor/rekap/download_pdf", methods=["GET", "POST"])
 @login_required
+@konselor_permission('rekap_sesi', 'can_export')
 def konselor_download_pdf():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import download_laporan_pdf
 
@@ -1369,10 +1356,8 @@ def konselor_download_pdf():
 
 @app.route("/konselor/rekap/download_zip", methods=["GET", "POST"])
 @login_required
+@konselor_permission('rekap_sesi', 'can_export')
 def konselor_download_zip():
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import download_laporan_zip
 
@@ -1382,13 +1367,10 @@ def konselor_download_zip():
 
 @app.route("/konselor/klien/data")
 @login_required
+@konselor_permission('dashboard', 'can_view')
 def konselor_klien_data():
     """Endpoint untuk mengambil data semua klien."""
     from controller.KonselorController import get_all_klien_data
-
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     data = get_all_klien_data()
     return jsonify({"success": True, "clients": data})
@@ -1396,13 +1378,10 @@ def konselor_klien_data():
 
 @app.route("/konselor/klien/update-metadata", methods=["POST"])
 @login_required
+@konselor_permission('dashboard', 'can_update')
 def konselor_update_klien_metadata():
     """Endpoint untuk update metadata klien (MBTI, ABK)."""
     from controller.KonselorController import update_klien_metadata
-
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     id_civitas = request.form.get("id_civitas")
     if not id_civitas:
@@ -1415,11 +1394,9 @@ def konselor_update_klien_metadata():
 # === KONSELOR: Hapus Sesi ===
 @app.route("/konselor/sesi/delete", methods=["POST"])
 @login_required
+@konselor_permission('rekap_sesi', 'can_delete')
 def konselor_delete_sesi():
     """Hapus sesi konseling."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import delete_sesi
 
@@ -1436,11 +1413,9 @@ def konselor_delete_sesi():
 # === KONSELOR: Update Sesi ===
 @app.route("/konselor/sesi/update", methods=["POST"])
 @login_required
+@konselor_permission('rekap_sesi', 'can_update')
 def konselor_update_sesi():
     """Update sesi konseling."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import update_sesi
 
@@ -1458,33 +1433,134 @@ def konselor_update_sesi():
 @app.route("/konselor/kelola")
 @login_required
 def konselor_kelola_master():
-    """Halaman CRUD master data (Kategori Masalah & Jenis Layanan)."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return redirect(url_for("index"))
+    """Halaman CRUD master data (Kategori Masalah, Jenis Layanan, User/Akses, & MBTI)."""
+    from middleware.konselor_guard import has_permission
+    can_view_master = has_permission('kelola_master', 'can_view')
+    can_view_akses = has_permission('kelola_akses', 'can_view')
+    can_view_mbti = has_permission('kelola_mbti', 'can_view')
+
+    if not can_view_master and not can_view_akses and not can_view_mbti:
+        flash("Anda tidak memiliki akses ke halaman ini.", "error")
+        return redirect(url_for("konselor_dashboard"))
 
     from controller.KonselorController import (
         get_all_kategori,
         get_all_layanan,
         get_all_tindak_lanjut,
     )
+    from models.konselor import konselor_role_permission_model
+
+    all_perms = konselor_role_permission_model.get_all_permissions()
+    roles = get_all_roles(include_super_admin=True)
+
+    page_definitions = [
+        {
+            "id": "dashboard", "nama": "Dashboard Konselor", "icon": "fas fa-home",
+            "desc": "Halaman utama konselor dengan ringkasan data",
+            "features": [
+                {"id": "dashboard.stats", "nama": "Kartu Statistik", "desc": "Total binaan, sesi bulan ini, pending, selesai"},
+                {"id": "dashboard.jadwal", "nama": "Widget Jadwal Hari Ini", "desc": "Daftar sesi terjadwal hari ini"},
+                {"id": "dashboard.aktivitas", "nama": "Aktivitas Terbaru", "desc": "Log aktivitas konseling terbaru"},
+                {"id": "dashboard.mahasiswa", "nama": "Daftar Mahasiswa Binaan", "desc": "Tabel data klien/mahasiswa binaan"},
+            ]
+        },
+        {
+            "id": "catat_sesi", "nama": "Catat Sesi", "icon": "fas fa-file-signature",
+            "desc": "Pencatatan sesi konseling manual & import",
+            "features": [
+                {"id": "catat_sesi.form", "nama": "Form Pencatatan Manual", "desc": "Formulir input sesi baru (topik, kategori, tindak lanjut)"},
+                {"id": "catat_sesi.import_excel", "nama": "Import dari Excel", "desc": "Bulk import sesi dari file Excel (.xlsx)"},
+                {"id": "catat_sesi.lookup_civitas", "nama": "Pencarian Civitas", "desc": "Cari data mahasiswa/staff dari Sicyca & database lokal"},
+            ]
+        },
+        {
+            "id": "rekap_sesi", "nama": "Rekap & Riwayat", "icon": "fas fa-chart-pie",
+            "desc": "Dashboard statistik dan riwayat sesi konseling",
+            "features": [
+                {"id": "rekap_sesi.statistik", "nama": "Grafik & Statistik", "desc": "Chart distribusi kategori, layanan, prodi"},
+                {"id": "rekap_sesi.riwayat", "nama": "Tabel Riwayat Sesi", "desc": "Daftar semua sesi konseling (filter bulan/tahun)"},
+                {"id": "rekap_sesi.edit_sesi", "nama": "Edit Sesi", "desc": "Ubah data sesi yang sudah tercatat"},
+                {"id": "rekap_sesi.hapus_sesi", "nama": "Hapus Sesi", "desc": "Hapus data sesi konseling"},
+                {"id": "rekap_sesi.download_pdf", "nama": "Download Laporan PDF", "desc": "Ekspor laporan ke format PDF"},
+                {"id": "rekap_sesi.download_zip", "nama": "Download Laporan ZIP", "desc": "Ekspor semua laporan ke file ZIP"},
+            ]
+        },
+        {
+            "id": "jadwal_konsul", "nama": "Penjadwalan", "icon": "fas fa-calendar-alt",
+            "desc": "Kelola jadwal dan sesi konseling langsung",
+            "features": [
+                {"id": "jadwal_konsul.list", "nama": "Daftar Jadwal", "desc": "Lihat jadwal hari ini & mendatang"},
+                {"id": "jadwal_konsul.create", "nama": "Buat Jadwal Baru", "desc": "Tambah jadwal konseling baru"},
+                {"id": "jadwal_konsul.reschedule", "nama": "Reschedule", "desc": "Jadwal ulang sesi yang sudah terdaftar"},
+                {"id": "jadwal_konsul.live_session", "nama": "Live Session", "desc": "Mulai dan kelola sesi konseling secara langsung"},
+                {"id": "jadwal_konsul.history", "nama": "Riwayat Jadwal", "desc": "Lihat semua riwayat penjadwalan (selesai/batal)"},
+            ]
+        },
+        {
+            "id": "kelola_master", "nama": "Kelola Data Master", "icon": "fas fa-cogs",
+            "desc": "CRUD master data referensi konseling",
+            "features": [
+                {"id": "kelola_master.kategori", "nama": "Kategori Masalah", "desc": "Kelola daftar kategori (Pribadi, Sosial, Akademik, dll)"},
+                {"id": "kelola_master.layanan", "nama": "Jenis Layanan", "desc": "Kelola jenis layanan (Individu, Kelompok, Mediasi, dll)"},
+                {"id": "kelola_master.tindak_lanjut", "nama": "Tindak Lanjut", "desc": "Kelola opsi tindak lanjut (Monitoring, Terminasi, Rujuk)"},
+            ]
+        },
+        {
+            "id": "kelola_akses", "nama": "Manajemen Akses", "icon": "fas fa-shield-halved",
+            "desc": "Konfigurasi hak akses role & fitur",
+            "features": [
+                {"id": "kelola_akses.permissions", "nama": "Atur Permission", "desc": "Konfigurasi CRUD dan scope per halaman"},
+                {"id": "kelola_akses.roles", "nama": "Kelola Role", "desc": "Tambah role baru"},
+            ]
+        },
+        {
+            "id": "kelola_mbti", "nama": "Kelola MBTI (Admin)", "icon": "fas fa-brain",
+            "desc": "Manajemen soal kuis dan konfigurasi interval retake MBTI",
+            "features": [
+                {"id": "kelola_mbti.questions", "nama": "Pertanyaan MBTI", "desc": "Kelola bank soal kuis kepribadian MBTI"},
+                {"id": "kelola_mbti.configs", "nama": "Pengaturan MBTI", "desc": "Atur durasi interval retake kuis MBTI"},
+            ]
+        },
+    ]
+
+    perm_map = {}
+    for p in all_perms:
+        perm_map[(p["role_id"], p["page_identifier"])] = p
+
+    # Tentukan tab pertama yang diizinkan
+    allowed_tabs = []
+    if can_view_master:
+        allowed_tabs.append("master_data")
+    if can_view_akses:
+        allowed_tabs.append("user_akses")
+    if can_view_mbti:
+        allowed_tabs.append("mbti")
+
+    initial_tab = request.args.get("tab")
+    if not initial_tab or initial_tab not in allowed_tabs:
+        initial_tab = allowed_tabs[0] if allowed_tabs else "master_data"
 
     return render_template(
         "konselorApp/kelola_master.html",
         kategori_list=get_all_kategori(),
         layanan_list=get_all_layanan(),
         tindak_lanjut_list=get_all_tindak_lanjut(),
+        roles=roles,
+        pages=page_definitions,
+        perm_map=perm_map,
+        initial_tab=initial_tab,
+        can_view_master=can_view_master,
+        can_view_akses=can_view_akses,
+        can_view_mbti=can_view_mbti,
     )
 
 
 # === KONSELOR: CRUD Kategori Masalah ===
 @app.route("/konselor/kategori", methods=["POST"])
 @login_required
+@konselor_permission('kelola_master', 'can_create')
 def konselor_kategori():
     """CRUD untuk kategori masalah."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
         create_kategori,
@@ -1530,11 +1606,9 @@ def konselor_kategori():
 # === KONSELOR: CRUD Jenis Layanan ===
 @app.route("/konselor/layanan", methods=["POST"])
 @login_required
+@konselor_permission('kelola_master', 'can_create')
 def konselor_layanan():
     """CRUD untuk jenis layanan."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
         create_layanan,
@@ -1585,11 +1659,9 @@ def konselor_layanan():
 # === KONSELOR: CRUD Tindak Lanjut ===
 @app.route("/konselor/tindak_lanjut", methods=["POST"])
 @login_required
+@konselor_permission('kelola_master', 'can_create')
 def konselor_tindak_lanjut():
     """CRUD untuk tindak lanjut."""
-    role_id = g.user.get("role_id")
-    if role_id not in [1, 5]:
-        return jsonify({"success": False, "message": "Akses ditolak"}), 403
 
     from controller.KonselorController import (
         create_tindak_lanjut,
@@ -1629,6 +1701,439 @@ def konselor_tindak_lanjut():
         return jsonify({"success": success, "message": message})
 
     return jsonify({"success": False, "message": "Action tidak valid."})
+
+
+# ======================================================
+# ROUTES KONSELOR: MANAJEMEN HAK AKSES DINAMIS
+# ======================================================
+
+
+@app.route("/konselor/akses")
+@login_required
+def konselor_kelola_akses():
+    """Redirect ke halaman kelola master dengan tab akses aktif."""
+    return redirect(url_for("konselor_kelola_master", tab="user"))
+
+
+@app.route("/konselor/akses/update", methods=["POST"])
+@login_required
+@konselor_permission('kelola_akses', 'can_update')
+def konselor_update_akses():
+    """API: Update permission untuk role + halaman tertentu."""
+    from models.konselor import konselor_role_permission_model
+
+    data = request.json
+    role_id = data.get("role_id")
+    page_identifier = data.get("page_identifier")
+
+    if not role_id or not page_identifier:
+        return jsonify({"success": False, "message": "Data tidak lengkap."}), 400
+
+    perm_data = {
+        "can_view": data.get("can_view", 0),
+        "can_create": data.get("can_create", 0),
+        "can_update": data.get("can_update", 0),
+        "can_delete": data.get("can_delete", 0),
+        "can_import": data.get("can_import", 0),
+        "can_export": data.get("can_export", 0),
+        "data_scope": data.get("data_scope", "OWN"),
+    }
+
+    success, message = konselor_role_permission_model.upsert_permission(
+        role_id, page_identifier, perm_data
+    )
+    return jsonify({"success": success, "message": message})
+
+
+@app.route("/konselor/akses/add-role", methods=["POST"])
+@login_required
+@konselor_permission('kelola_akses', 'can_create')
+def konselor_add_role():
+    """API: Tambah role baru."""
+    data = request.json
+    nama_role = (data.get("nama_role") or "").strip()
+    deskripsi = (data.get("deskripsi") or "").strip()
+
+    if not nama_role:
+        return jsonify({"success": False, "message": "Nama role wajib diisi."}), 400
+
+    conn = get_connection()
+    if not conn:
+        return jsonify({"success": False, "message": "Gagal koneksi database."}), 500
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            "INSERT INTO roles (nama_role, deskripsi) VALUES (%s, %s) RETURNING id, nama_role, deskripsi",
+            (nama_role, deskripsi),
+        )
+        new_role = cursor.fetchone()
+        conn.commit()
+        return jsonify({"success": True, "message": f"Role '{nama_role}' berhasil ditambahkan!", "role": new_role})
+    except Exception as e:
+        if "duplicate" in str(e).lower() or "unique" in str(e).lower():
+            return jsonify({"success": False, "message": f"Role '{nama_role}' sudah ada."}), 409
+        logging.error(f"[KonselorAkses] Error add_role: {e}")
+        return jsonify({"success": False, "message": "Gagal menambah role."}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route("/konselor/akses/my-permissions")
+@login_required
+def konselor_my_permissions():
+    """API: Ambil hak akses user yang sedang login (berdasarkan konselor_users)."""
+    from models.konselor import konselor_user_model, konselor_role_permission_model
+
+    main_user_id = g.user.get("sub")
+    konselor_user = konselor_user_model.get_by_source_user_id(main_user_id)
+    if not konselor_user:
+        return jsonify({"success": False, "permissions": {}, "role_id": None, "message": "Belum terdaftar di Konselor App."})
+
+    konselor_role_id = konselor_user.get("role_id")
+    perms = konselor_role_permission_model.get_permissions_by_role(konselor_role_id)
+    return jsonify({"success": True, "permissions": perms, "role_id": konselor_role_id})
+
+
+# ======================================================
+# ROUTES KONSELOR: MANAJEMEN USER KONSELOR
+# ======================================================
+
+
+@app.route("/konselor/users/list")
+@login_required
+@konselor_permission('kelola_akses', 'can_view')
+def konselor_users_list():
+    """API: List semua user yang terdaftar di Konselor App."""
+    from models.konselor import konselor_user_model
+    users = konselor_user_model.get_all()
+    # Serialize datetime fields
+    for u in users:
+        for key in ['created_at', 'updated_at']:
+            if u.get(key):
+                u[key] = u[key].isoformat() if hasattr(u[key], 'isoformat') else str(u[key])
+    return jsonify({"success": True, "users": users})
+
+
+@app.route("/konselor/users/search-main")
+@login_required
+@konselor_permission('kelola_akses', 'can_view')
+def konselor_users_search_main():
+    """API: Cari user dari tabel utama (untuk modal tambah user)."""
+    from models.konselor import konselor_user_model
+    query = request.args.get("q", "")
+    users = konselor_user_model.search_main_users(query)
+    return jsonify({"success": True, "users": users})
+
+
+@app.route("/konselor/users/add", methods=["POST"])
+@login_required
+@konselor_permission('kelola_akses', 'can_create')
+def konselor_users_add():
+    """API: Tambah user dari tabel utama ke konselor_users."""
+    from models.konselor import konselor_user_model
+    data = request.json
+    source_user_id = data.get("source_user_id")
+    konselor_role_id = data.get("role_id", 5)  # Default: Konselor
+
+    if not source_user_id:
+        return jsonify({"success": False, "message": "User ID wajib diisi."}), 400
+
+    success, message = konselor_user_model.add_from_main_user(source_user_id, konselor_role_id)
+    return jsonify({"success": success, "message": message})
+
+
+@app.route("/konselor/users/update-role", methods=["POST"])
+@login_required
+@konselor_permission('kelola_akses', 'can_update')
+def konselor_users_update_role():
+    """API: Update role konselor untuk user tertentu."""
+    from models.konselor import konselor_user_model
+    data = request.json
+    konselor_user_id = data.get("id")
+    new_role_id = data.get("role_id")
+
+    if not konselor_user_id or not new_role_id:
+        return jsonify({"success": False, "message": "Data tidak lengkap."}), 400
+
+    success, message = konselor_user_model.update_role(konselor_user_id, new_role_id)
+    return jsonify({"success": success, "message": message})
+
+
+@app.route("/konselor/users/remove", methods=["POST"])
+@login_required
+@konselor_permission('kelola_akses', 'can_delete')
+def konselor_users_remove():
+    """API: Hapus user dari konselor_users (tidak menghapus dari users utama)."""
+    from models.konselor import konselor_user_model
+    data = request.json
+    konselor_user_id = data.get("id")
+
+    if not konselor_user_id:
+        return jsonify({"success": False, "message": "User ID wajib diisi."}), 400
+
+    success, message = konselor_user_model.remove(konselor_user_id)
+    return jsonify({"success": success, "message": message})
+
+
+
+# ======================================================
+# ROUTES KONSELOR: MBTI ASSESSMENT SYSTEM
+# ======================================================
+
+@app.route("/konselor/mbti")
+@login_required
+@konselor_permission('dashboard', 'can_view')
+def konselor_mbti_menu():
+    """Halaman menu utama MBTI mahasiswa."""
+    from models.mbti import mbti_test_history_model, mbti_config_model
+    from datetime import datetime, timedelta
+
+    user_id = g.user.get("sub")
+    latest_test = mbti_test_history_model.get_latest_by_user(user_id)
+    retake_days = int(mbti_config_model.get('retake_interval_days', '30'))
+
+    needs_retake = False
+    if latest_test and latest_test.get('tested_at'):
+        tested_at = latest_test['tested_at']
+        if isinstance(tested_at, str):
+            tested_at = datetime.fromisoformat(tested_at)
+        if datetime.now() - tested_at > timedelta(days=retake_days):
+            needs_retake = True
+
+    history_list = mbti_test_history_model.get_all_by_user(user_id)
+
+    return render_template(
+        "konselorApp/mbti_menu.html",
+        latest_test=latest_test,
+        needs_retake=needs_retake,
+        retake_days=retake_days,
+        history_list=history_list
+    )
+
+
+@app.route("/konselor/mbti/identity", methods=["GET", "POST"])
+@login_required
+@konselor_permission('dashboard', 'can_view')
+def konselor_mbti_identity():
+    """Halaman input identitas personal sebelum memulai tes."""
+    if request.method == "POST":
+        nama = request.form.get("nama", "").strip()
+        nim = request.form.get("nim", "").strip()
+        prodi = request.form.get("prodi", "").strip()
+        
+        if not nama or not nim:
+            flash("Nama dan NIM wajib diisi.", "error")
+            return redirect(url_for("konselor_mbti_identity"))
+            
+        session['mbti_identity'] = {
+            "nama": nama,
+            "nim": nim,
+            "prodi": prodi
+        }
+        return redirect(url_for("konselor_mbti_test"))
+
+    return render_template("konselorApp/mbti_identity.html")
+
+
+@app.route("/konselor/mbti/test")
+@login_required
+@konselor_permission('dashboard', 'can_view')
+def konselor_mbti_test():
+    """Halaman kuis interaktif MBTI."""
+    if 'mbti_identity' not in session:
+        return redirect(url_for("konselor_mbti_identity"))
+        
+    from models.mbti import mbti_question_model
+    questions = mbti_question_model.get_all_active()
+    
+    return render_template(
+        "konselorApp/mbti_test.html",
+        questions=questions,
+        identity=session['mbti_identity']
+    )
+
+
+@app.route("/konselor/mbti/submit", methods=["POST"])
+@login_required
+@konselor_permission('dashboard', 'can_view')
+def konselor_mbti_submit():
+    """Submit jawaban kuis MBTI dan kalkulasi hasil."""
+    if 'mbti_identity' not in session:
+        return jsonify({"success": False, "message": "Identitas tidak ditemukan. Harap ulangi tes."}), 400
+        
+    data = request.json
+    answers = data.get("answers", {})  # format: {question_id: "A" or "B"}
+    
+    from models.mbti import mbti_question_model, mbti_test_history_model
+    questions = mbti_question_model.get_all_active()
+    
+    score_e = score_i = score_s = score_n = score_t = score_f = score_j = score_p = 0
+    
+    # Hitung skor berdasarkan jawaban dan dimensi
+    for q in questions:
+        q_id = str(q['id'])
+        ans = answers.get(q_id)
+        if not ans:
+            continue
+            
+        dim = q['dimension'] # 'EI', 'SN', 'TF', 'JP'
+        if dim == 'EI':
+            if ans == 'A': score_e += 1
+            elif ans == 'B': score_i += 1
+        elif dim == 'SN':
+            if ans == 'A': score_s += 1
+            elif ans == 'B': score_n += 1
+        elif dim == 'TF':
+            if ans == 'A': score_t += 1
+            elif ans == 'B': score_f += 1
+        elif dim == 'JP':
+            if ans == 'A': score_j += 1
+            elif ans == 'B': score_p += 1
+
+    # Tentukan tipe MBTI
+    mbti_result = ""
+    mbti_result += "E" if score_e >= score_i else "I"
+    mbti_result += "S" if score_s >= score_n else "N"
+    mbti_result += "T" if score_t >= score_f else "F"
+    mbti_result += "J" if score_j >= score_p else "P"
+    
+    identity = session['mbti_identity']
+    
+    history_data = {
+        "user_id": g.user.get("sub"),
+        "nama": identity["nama"],
+        "nim": identity["nim"],
+        "prodi": identity["prodi"],
+        "score_e": score_e,
+        "score_i": score_i,
+        "score_s": score_s,
+        "score_n": score_n,
+        "score_t": score_t,
+        "score_f": score_f,
+        "score_j": score_j,
+        "score_p": score_p,
+        "mbti_result": mbti_result
+    }
+    
+    history_id = mbti_test_history_model.save_result(history_data)
+    if not history_id:
+        return jsonify({"success": False, "message": "Gagal menyimpan hasil tes."}), 500
+        
+    # Bersihkan session
+    session.pop('mbti_identity', None)
+    
+    return jsonify({
+        "success": True,
+        "history_id": history_id,
+        "result": mbti_result
+    })
+
+
+@app.route("/konselor/mbti/result/<int:history_id>")
+@login_required
+@konselor_permission('dashboard', 'can_view')
+def konselor_mbti_result(history_id):
+    """Menampilkan detail hasil tes MBTI."""
+    from models.mbti import mbti_test_history_model
+    
+    history = mbti_test_history_model.get_by_id(history_id)
+    if not history:
+        flash("Hasil tes tidak ditemukan.", "error")
+        return redirect(url_for("konselor_mbti_menu"))
+        
+    # Pastikan user yang bersangkutan yang melihat, atau admin/konselor
+    user_id = g.user.get("sub")
+    konselor_role_id = g.konselor_user.get('role_id') if hasattr(g, 'konselor_user') and g.konselor_user else None
+    
+    if history['user_id'] != user_id and konselor_role_id not in [1, 5, 7]:
+        flash("Anda tidak memiliki akses melihat hasil tes ini.", "error")
+        return redirect(url_for("konselor_mbti_menu"))
+        
+    # Hitung persentase untuk grafik
+    total_ei = (history['score_e'] or 0) + (history['score_i'] or 0) or 1
+    total_sn = (history['score_s'] or 0) + (history['score_n'] or 0) or 1
+    total_tf = (history['score_t'] or 0) + (history['score_f'] or 0) or 1
+    total_jp = (history['score_j'] or 0) + (history['score_p'] or 0) or 1
+    
+    percentages = {
+        "E": round((history['score_e'] or 0) / total_ei * 100),
+        "I": round((history['score_i'] or 0) / total_ei * 100),
+        "S": round((history['score_s'] or 0) / total_sn * 100),
+        "N": round((history['score_n'] or 0) / total_sn * 100),
+        "T": round((history['score_t'] or 0) / total_tf * 100),
+        "F": round((history['score_f'] or 0) / total_tf * 100),
+        "J": round((history['score_j'] or 0) / total_jp * 100),
+        "P": round((history['score_p'] or 0) / total_jp * 100),
+    }
+    
+    return render_template(
+        "konselorApp/mbti_result.html",
+        history=history,
+        pct=percentages
+    )
+
+
+# ======================================================
+# API KONSELOR: PENGATURAN MBTI (Untuk Kelola Akses Admin)
+# ======================================================
+
+@app.route("/konselor/api/mbti/questions", methods=["GET"])
+@login_required
+@konselor_permission('kelola_mbti', 'can_view')
+def konselor_api_mbti_questions_get():
+    from models.mbti import mbti_question_model
+    return jsonify({"success": True, "questions": mbti_question_model.get_all()})
+
+
+@app.route("/konselor/api/mbti/questions", methods=["POST"])
+@login_required
+@konselor_permission('kelola_mbti', 'can_create')
+def konselor_api_mbti_questions_create():
+    from models.mbti import mbti_question_model
+    data = request.json
+    success, result = mbti_question_model.create(data)
+    if success:
+        return jsonify({"success": True, "message": "Pertanyaan berhasil ditambahkan.", "id": result})
+    return jsonify({"success": False, "message": result}), 500
+
+
+@app.route("/konselor/api/mbti/questions/<int:q_id>", methods=["PUT"])
+@login_required
+@konselor_permission('kelola_mbti', 'can_update')
+def konselor_api_mbti_questions_update(q_id):
+    from models.mbti import mbti_question_model
+    data = request.json
+    success, message = mbti_question_model.update(q_id, data)
+    return jsonify({"success": success, "message": message})
+
+
+@app.route("/konselor/api/mbti/questions/<int:q_id>", methods=["DELETE"])
+@login_required
+@konselor_permission('kelola_mbti', 'can_delete')
+def konselor_api_mbti_questions_delete(q_id):
+    from models.mbti import mbti_question_model
+    success, message = mbti_question_model.delete(q_id)
+    return jsonify({"success": success, "message": message})
+
+
+@app.route("/konselor/api/mbti/config", methods=["GET", "POST"])
+@login_required
+@konselor_permission('kelola_mbti', 'can_view')
+def konselor_api_mbti_config():
+    from models.mbti import mbti_config_model
+    if request.method == "POST":
+        data = request.json
+        interval = data.get("retake_interval_days")
+        if not interval:
+            return jsonify({"success": False, "message": "Interval wajib diisi."}), 400
+        mbti_config_model.set("retake_interval_days", interval)
+        return jsonify({"success": True, "message": "Konfigurasi berhasil disimpan."})
+        
+    return jsonify({
+        "success": True,
+        "config": mbti_config_model.get_all()
+    })
 
 
 @app.route("/tools")

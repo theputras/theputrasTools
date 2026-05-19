@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tes MBTI - The Putras Tools</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+            body {
+                font-family: "Inter", sans-serif;
+            }
+            .gradient-text {
+                background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+        </style>
+    </head>
+    <body class="bg-slate-50 text-gray-600 min-h-screen" x-data="mbtiTestApp()">
+        <!-- Header Nav (Floating/Top) -->
+        <header class="bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-30 shadow-sm">
+            <div class="container mx-auto max-w-2xl flex items-center justify-between">
+                <span class="text-xs font-bold text-gray-400">MBTI KEPRIBADIAN</span>
+                <span class="text-xs font-bold text-gray-800 bg-slate-100 px-3 py-1 rounded-full" 
+                      x-text="`Sesi: ${identity.nama}`"></span>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-4 sm:px-6 py-8 max-w-2xl">
+            <!-- PROGRESS BAR -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center text-xs font-bold text-gray-500 mb-2">
+                    <span x-text="`Soal ${currentIndex + 1} dari ${totalQuestions}`"></span>
+                    <span x-text="`${progressPercentage}% Selesai`"></span>
+                </div>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden shadow-inner">
+                    <div class="bg-gradient-to-r from-violet-500 to-indigo-500 h-full rounded-full transition-all duration-300"
+                         :style="`width: ${progressPercentage}%`"></div>
+                </div>
+            </div>
+
+            <!-- QUESTION CARD -->
+            <div class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-md relative min-h-[320px] flex flex-col justify-between overflow-hidden">
+                <!-- Decorative background elements -->
+                <div class="absolute -top-12 -left-12 w-32 h-32 bg-violet-500/5 rounded-full blur-2xl"></div>
+
+                <div class="relative z-10 space-y-6 flex-1 flex flex-col justify-center">
+                    <!-- Dimension Badge (Hidden / for debug or subtle UI) -->
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-violet-500 uppercase tracking-widest bg-violet-50 px-2.5 py-1 rounded-md">
+                            Dimensi: <span x-text="currentQuestion.dimension"></span>
+                        </span>
+                        <span class="text-xs text-gray-400" x-text="`No. ${currentQuestion.sort_order}`"></span>
+                    </div>
+
+                    <!-- Question Text -->
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-800 leading-snug"
+                        x-text="currentQuestion.question_text">
+                    </h2>
+                </div>
+
+                <!-- OPTIONS -->
+                <div class="relative z-10 mt-8 space-y-4">
+                    <!-- Option A -->
+                    <button type="button" 
+                            @click="selectOption('A')"
+                            class="w-full text-left p-5 border-2 rounded-2xl transition-all duration-200 active:scale-[0.99] flex items-center justify-between gap-4 group"
+                            :class="answers[currentQuestion.id] === 'A' 
+                                ? 'border-violet-500 bg-violet-500/5 text-violet-700 shadow-md shadow-violet-200/40' 
+                                : 'border-gray-200 bg-white hover:border-violet-300 hover:bg-slate-50/50 text-gray-700'">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm border transition"
+                                 :class="answers[currentQuestion.id] === 'A' 
+                                     ? 'bg-violet-600 border-violet-600 text-white' 
+                                     : 'bg-slate-50 border-gray-300 text-gray-500 group-hover:border-violet-400 group-hover:text-violet-600'">
+                                A
+                            </div>
+                            <span class="text-xs sm:text-sm font-semibold" x-text="currentQuestion.choice_a"></span>
+                        </div>
+                        <i class="fas fa-circle-check text-violet-500 text-lg opacity-0 transition-opacity"
+                           :class="answers[currentQuestion.id] === 'A' ? 'opacity-100' : ''"></i>
+                    </button>
+
+                    <!-- Option B -->
+                    <button type="button" 
+                            @click="selectOption('B')"
+                            class="w-full text-left p-5 border-2 rounded-2xl transition-all duration-200 active:scale-[0.99] flex items-center justify-between gap-4 group"
+                            :class="answers[currentQuestion.id] === 'B' 
+                                ? 'border-violet-500 bg-violet-500/5 text-violet-700 shadow-md shadow-violet-200/40' 
+                                : 'border-gray-200 bg-white hover:border-violet-300 hover:bg-slate-50/50 text-gray-700'">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm border transition"
+                                 :class="answers[currentQuestion.id] === 'B' 
+                                     ? 'bg-violet-600 border-violet-600 text-white' 
+                                     : 'bg-slate-50 border-gray-300 text-gray-500 group-hover:border-violet-400 group-hover:text-violet-600'">
+                                B
+                            </div>
+                            <span class="text-xs sm:text-sm font-semibold" x-text="currentQuestion.choice_b"></span>
+                        </div>
+                        <i class="fas fa-circle-check text-violet-500 text-lg opacity-0 transition-opacity"
+                           :class="answers[currentQuestion.id] === 'B' ? 'opacity-100' : ''"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- BACK / NEXT BUTTONS -->
+            <div class="mt-6 flex justify-between items-center px-2">
+                <button type="button" 
+                        @click="prevQuestion()"
+                        :disabled="currentIndex === 0"
+                        class="px-5 py-3 bg-white hover:bg-slate-100 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:text-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-left mr-1"></i> Sebelumnya
+                </button>
+
+                <!-- Submit / Next -->
+                <button type="button"
+                        x-show="currentIndex < totalQuestions - 1"
+                        @click="nextQuestion()"
+                        :disabled="!answers[currentQuestion.id]"
+                        class="px-5 py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    Selanjutnya <i class="fas fa-chevron-right ml-1"></i>
+                </button>
+
+                <button type="button"
+                        x-show="currentIndex === totalQuestions - 1"
+                        @click="submitTest()"
+                        :disabled="!isAllAnswered || submitting"
+                        class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl text-xs font-bold shadow-md transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                    <i class="fas fa-save" :class="submitting ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                    <span x-text="submitting ? 'Mengirim...' : 'Kirim Jawaban'"></span>
+                </button>
+            </div>
+        </div>
+
+        <script>
+            function mbtiTestApp() {
+                return {
+                    identity: {{ identity|tojson }},
+                    questions: {{ questions|tojson }},
+                    currentIndex: 0,
+                    answers: {},
+                    submitting: false,
+
+                    get totalQuestions() {
+                        return this.questions.length;
+                    },
+
+                    get currentQuestion() {
+                        return this.questions[this.currentIndex] || {};
+                    },
+
+                    get progressPercentage() {
+                        const answeredCount = Object.keys(this.answers).length;
+                        return Math.round((answeredCount / this.totalQuestions) * 100);
+                    },
+
+                    get isAllAnswered() {
+                        return Object.keys(this.answers).length === this.totalQuestions;
+                    },
+
+                    selectOption(choice) {
+                        const qId = this.currentQuestion.id;
+                        this.answers[qId] = choice;
+
+                        // Auto advance after 300ms delay for nice visual feedback
+                        setTimeout(() => {
+                            if (this.currentIndex < this.totalQuestions - 1) {
+                                this.currentIndex++;
+                            }
+                        }, 250);
+                    },
+
+                    prevQuestion() {
+                        if (this.currentIndex > 0) {
+                            this.currentIndex--;
+                        }
+                    },
+
+                    nextQuestion() {
+                        if (this.currentIndex < this.totalQuestions - 1) {
+                            this.currentIndex++;
+                        }
+                    },
+
+                    async submitTest() {
+                        if (!this.isAllAnswered) return;
+                        this.submitting = true;
+
+                        try {
+                            const res = await fetch("{{ url_for('konselor_mbti_submit') }}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    answers: this.answers
+                                })
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                                window.location.href = `/konselor/mbti/result/${data.history_id}`;
+                            } else {
+                                alert(data.message || "Gagal menyimpan jawaban.");
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("Koneksi bermasalah.");
+                        } finally {
+                            this.submitting = false;
+                        }
+                    }
+                };
+            }
+        </script>
+    </body>
+</html>
