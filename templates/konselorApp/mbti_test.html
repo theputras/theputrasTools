@@ -84,7 +84,7 @@
                     <!-- Dimension Badge (Hidden / for debug or subtle UI) -->
                     <div class="flex justify-between items-center">
                         <span class="text-[10px] font-bold text-violet-500 uppercase tracking-widest bg-violet-50 px-2.5 py-1 rounded-md">
-                            Dimensi: <span x-text="currentQuestion.dimension"></span>
+                            Dimensi: <span x-text="{'EI': 'Extraversion vs Introversion', 'SN': 'Sensing vs Intuition', 'TF': 'Thinking vs Feeling', 'JP': 'Judging vs Perceiving'}[currentQuestion.dimension] || currentQuestion.dimension"></span>
                         </span>
                         <span class="text-xs text-gray-400" x-text="`No. ${currentQuestion.sort_order}`"></span>
                     </div>
