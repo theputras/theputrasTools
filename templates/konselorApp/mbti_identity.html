@@ -77,11 +77,17 @@
                             <button type="button" 
                                     @click="selectIdentity(res)"
                                     class="w-full text-left p-4 hover:bg-violet-50 transition flex items-center gap-4 group">
-                                <div class="w-8 h-8 rounded-lg bg-violet-50 text-violet-500 flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-user-graduate text-xs"></i>
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
+                                     :class="res.is_local ? 'bg-emerald-50 text-emerald-600' : 'bg-violet-50 text-violet-500'">
+                                    <i class="text-xs transition-all" :class="res.is_local ? 'fas fa-user-check' : 'fas fa-user-graduate'"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition truncate" x-text="res.nama_raw"></p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-violet-700 transition truncate" x-text="res.nama_raw"></p>
+                                        <span x-show="res.is_local" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100/50 flex-shrink-0" x-cloak>
+                                            <i class="fas fa-check text-[8px]"></i> Binaan
+                                        </span>
+                                    </div>
                                     <p class="text-[10px] text-gray-400 truncate mt-0.5" x-text="res.nim + ' &bull; ' + res.prodi"></p>
                                 </div>
                                 <i class="fas fa-chevron-right text-gray-300 group-hover:text-violet-400 transition-transform group-hover:translate-x-1"></i>

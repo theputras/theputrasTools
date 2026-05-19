@@ -17,7 +17,13 @@ class KlienModel:
         if not conn: return []
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT * FROM konselor_data_klien ORDER BY nama ASC")
+            cursor.execute("""
+                SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
+                       h.mbti_result AS mbti
+                FROM konselor_data_klien dk
+                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                ORDER BY dk.nama ASC
+            """)
             return cursor.fetchall()
         except Exception as e:
             logging.error(f"[Konselor] Error get_all klien: {e}")
@@ -32,7 +38,14 @@ class KlienModel:
         if not conn: return None
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas = %s ORDER BY updated_at DESC", (id_civitas,))
+            cursor.execute("""
+                SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
+                       h.mbti_result AS mbti
+                FROM konselor_data_klien dk
+                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                WHERE dk.id_civitas = %s
+                ORDER BY dk.updated_at DESC
+            """, (id_civitas,))
             return cursor.fetchone()
         except Exception as e:
             logging.error(f"[Konselor] Error get_by_id_civitas: {e}")
@@ -47,7 +60,14 @@ class KlienModel:
         if not conn: return []
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas = %s ORDER BY nama ASC", (id_civitas,))
+            cursor.execute("""
+                SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
+                       h.mbti_result AS mbti
+                FROM konselor_data_klien dk
+                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                WHERE dk.id_civitas = %s
+                ORDER BY dk.nama ASC
+            """, (id_civitas,))
             return cursor.fetchall()
         except Exception as e:
             logging.error(f"[Konselor] Error get_all_by_id_civitas: {e}")
@@ -63,7 +83,15 @@ class KlienModel:
         cursor = conn.cursor(dictionary=True)
         try:
             q = f"%{query}%"
-            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas LIKE %s OR nama ILIKE %s ORDER BY nama ASC LIMIT 50", (q, q))
+            cursor.execute("""
+                SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
+                       h.mbti_result AS mbti
+                FROM konselor_data_klien dk
+                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                WHERE dk.id_civitas LIKE %s OR dk.nama ILIKE %s
+                ORDER BY dk.nama ASC
+                LIMIT 50
+            """, (q, q))
             return cursor.fetchall()
         except Exception as e:
             logging.error(f"[Konselor] Error search_klien: {e}")
@@ -78,7 +106,13 @@ class KlienModel:
         if not conn: return None
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT * FROM konselor_data_klien WHERE id_civitas = %s AND nama = %s", (id_civitas, (nama or "").strip()))
+            cursor.execute("""
+                SELECT dk.id, dk.id_civitas, dk.nama, dk.prodi, dk.dosen_wali, dk.status_abk, dk.status_civitas, dk.created_at, dk.updated_at,
+                       h.mbti_result AS mbti
+                FROM konselor_data_klien dk
+                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
+                WHERE dk.id_civitas = %s AND dk.nama = %s
+            """, (id_civitas, (nama or "").strip()))
             return cursor.fetchone()
         except Exception as e:
             logging.error(f"[Konselor] Error get_by_identity: {e}")
@@ -513,7 +547,7 @@ class KonselorSessionModel:
                 SELECT s.id, s.id_klien, dk.id_civitas as nim_id, dk.nama, dk.dosen_wali, dk.prodi, s.topik, s.tanggal_sesi, s.waktu_mulai, s.waktu_selesai, s.tindak_lanjut_id, s.catatan_kesimpulan, s.created_at,
                        s.jenis_layanan_id,
                        dk.nama as nama_klien, dk.prodi as prodi_klien, dk.dosen_wali as dosen_wali_klien,
-                       dk.mbti, dk.status_abk, dk.status_civitas,
+                       h.mbti_result AS mbti, dk.status_abk, dk.status_civitas,
                        STRING_AGG(DISTINCT km.id::text, ',') AS kategori_masalah_id,
                        jl.nama AS jenis_layanan, STRING_AGG(DISTINCT km.nama, ', ') AS kategori_masalah, tl.nama AS tindak_lanjut
                 FROM konselor_sessions s
@@ -522,10 +556,11 @@ class KonselorSessionModel:
                 LEFT JOIN konselor_kategori_masalah km ON sk.kategori_id = km.id
                 LEFT JOIN konselor_tindak_lanjut tl ON s.tindak_lanjut_id = tl.id
                 JOIN konselor_data_klien dk ON s.id_klien = dk.id
+                LEFT JOIN mbti_test_history h ON dk.mbti::TEXT = h.id::TEXT
             """
             params = []
             group_by = """
-                GROUP BY s.id, dk.id, jl.nama, tl.nama
+                GROUP BY s.id, dk.id, jl.nama, tl.nama, h.mbti_result
                 ORDER BY s.tanggal_sesi DESC, s.id DESC
             """
 
