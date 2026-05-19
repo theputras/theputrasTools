@@ -132,6 +132,28 @@ class MBTIResultInfoModel:
             cursor.close()
             conn.close()
 
+    def update(self, mbti_type, data):
+        conn = self._get_connection()
+        if not conn: return False, "Gagal koneksi database."
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                """UPDATE mbti_results_info 
+                   SET title=%s, description=%s, characteristics=%s, 
+                       development_suggestions=%s, suitable_professions=%s
+                   WHERE mbti_type=%s""",
+                (data['title'], data['description'], data['characteristics'],
+                 data['development_suggestions'], data['suitable_professions'], mbti_type.upper())
+            )
+            conn.commit()
+            return True, "Informasi tipe kepribadian berhasil diperbarui."
+        except Exception as e:
+            logging.error(f"[MBTI] Error update result info: {e}")
+            return False, str(e)
+        finally:
+            cursor.close()
+            conn.close()
+
 
 class MBTIConfigModel:
     """Kelola konfigurasi MBTI (interval retake, dll)."""
@@ -246,6 +268,8 @@ class MBTITestHistoryModel:
                           COALESCE(h.id_civitas, dk.id_civitas, u.username) AS nim,
                           COALESCE(dk.nama, u.username) AS nama,
                           dk.prodi,
+                          dk.dosen_wali,
+                          dk.status_civitas,
                           r.title, r.description, r.characteristics,
                           r.development_suggestions, r.suitable_professions
                    FROM mbti_test_history h

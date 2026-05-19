@@ -536,106 +536,177 @@
         {% if can_view_mbti %}
         <div x-show="activeTab === 'mbti'" x-transition x-cloak>
             
-            <!-- CONFIG INTERVAL PANEL -->
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-8">
-                <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50/50">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-violet-100 rounded-xl"><i class="fas fa-sliders text-violet-500"></i></div>
-                            <div>
-                                <h2 class="text-base font-bold text-gray-800">Pengaturan Interval Tes MBTI</h2>
-                                <p class="text-[11px] text-gray-500 mt-0.5">Konfigurasi batas waktu minimal sebelum mahasiswa boleh mengisi ulang tes MBTI</p>
+            <!-- SUB-TAB MBTI Selector -->
+            <div class="flex p-1 bg-gray-100 rounded-xl mb-6 w-fit gap-1">
+                <button @click="activeMbtiSubTab = 'questions'"
+                        :class="activeMbtiSubTab === 'questions' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                        class="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all duration-200 flex items-center gap-1.5">
+                    <i class="fas fa-circle-question text-violet-500"></i> Pertanyaan & Konfigurasi
+                </button>
+                <button @click="activeMbtiSubTab = 'results_info'"
+                        :class="activeMbtiSubTab === 'results_info' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                        class="px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all duration-200 flex items-center gap-1.5">
+                    <i class="fas fa-id-card-clip text-indigo-500"></i> Info Hasil MBTI
+                </button>
+            </div>
+
+            <!-- SUB TAB: QUESTIONS & CONFIGS -->
+            <div x-show="activeMbtiSubTab === 'questions'" x-transition>
+                <!-- CONFIG INTERVAL PANEL -->
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-8">
+                    <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50/50">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-violet-100 rounded-xl"><i class="fas fa-sliders text-violet-500"></i></div>
+                                <div>
+                                    <h2 class="text-base font-bold text-gray-800">Pengaturan Interval Tes MBTI</h2>
+                                    <p class="text-[11px] text-gray-500 mt-0.5">Konfigurasi batas waktu minimal sebelum mahasiswa boleh mengisi ulang tes MBTI</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="p-6">
+                        <form @submit.prevent="saveMbtiConfig()" class="flex flex-col sm:flex-row items-end gap-4 max-w-md">
+                            <div class="flex-1">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Interval Tes Ulang (Hari)</label>
+                                <input type="number" x-model="mbtiConfig.retake_interval_days" required min="1"
+                                       class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none transition shadow-sm" />
+                            </div>
+                            <button type="submit" :disabled="savingConfig"
+                                    class="px-5 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-md hover:from-violet-700 hover:to-indigo-700 transition active:scale-95 disabled:opacity-50">
+                                <i class="fas fa-save mr-1"></i> Simpan
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <form @submit.prevent="saveMbtiConfig()" class="flex flex-col sm:flex-row items-end gap-4 max-w-md">
-                        <div class="flex-1">
-                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Interval Tes Ulang (Hari)</label>
-                            <input type="number" x-model="mbtiConfig.retake_interval_days" required min="1"
-                                   class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none transition shadow-sm" />
+
+                <!-- QUESTIONS CRUD LIST -->
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-violet-100 rounded-xl"><i class="fas fa-circle-question text-violet-500"></i></div>
+                            <div>
+                                <h2 class="text-base font-bold text-gray-800">Daftar Pertanyaan MBTI</h2>
+                                <p class="text-[11px] text-gray-500 mt-0.5">Daftar pertanyaan tes kepribadian MBTI dinamis</p>
+                            </div>
                         </div>
-                        <button type="submit" :disabled="savingConfig"
-                                class="px-5 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-md hover:from-violet-700 hover:to-indigo-700 transition active:scale-95 disabled:opacity-50">
-                            <i class="fas fa-save mr-1"></i> Simpan
-                        </button>
-                    </form>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <input type="text" x-model="mbtiSearchQuery" placeholder="Cari pertanyaan..."
+                                   class="bg-white border border-gray-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-violet-400 w-full sm:w-48 shadow-sm">
+                            <button @click="openAddMbtiModal()"
+                                    class="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-violet-600/20 hover:from-violet-700 hover:to-indigo-700 transition-all active:scale-95 flex items-center gap-2">
+                                <i class="fas fa-plus text-[10px]"></i> Tambah Soal
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-600">
+                            <thead class="bg-gray-50/80 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-200">
+                                <tr>
+                                    <th class="px-5 py-3 w-16 text-center">Urutan</th>
+                                    <th class="px-4 py-3 w-24 text-center">Dimensi</th>
+                                    <th class="px-4 py-3 min-w-[250px]">Pertanyaan</th>
+                                    <th class="px-4 py-3">Pilihan A (Skor Kiri)</th>
+                                    <th class="px-4 py-3">Pilihan B (Skor Kanan)</th>
+                                    <th class="px-4 py-3 text-center">Status</th>
+                                    <th class="px-4 py-3 text-center w-24">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <template x-if="filteredMbtiQuestions.length === 0">
+                                    <tr>
+                                        <td colspan="7" class="px-5 py-8 text-center text-gray-400">
+                                            <i class="fas fa-folder-open text-gray-300 text-2xl mb-2 block"></i>
+                                            <span class="text-xs">Tidak ada pertanyaan ditemukan.</span>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-for="q in filteredMbtiQuestions" :key="q.id">
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-5 py-3.5 text-center font-bold text-gray-800" x-text="q.sort_order"></td>
+                                        <td class="px-4 py-3.5 text-center">
+                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
+                                                  :class="{
+                                                      'bg-violet-100 text-violet-700': q.dimension === 'EI',
+                                                      'bg-blue-100 text-blue-700': q.dimension === 'SN',
+                                                      'bg-emerald-100 text-emerald-700': q.dimension === 'TF',
+                                                      'bg-amber-100 text-amber-700': q.dimension === 'JP',
+                                                  }" x-text="q.dimension"></span>
+                                        </td>
+                                        <td class="px-4 py-3.5 font-medium text-gray-800 text-xs" x-text="q.question_text"></td>
+                                        <td class="px-4 py-3.5 text-gray-500 text-xs" x-text="q.choice_a"></td>
+                                        <td class="px-4 py-3.5 text-gray-500 text-xs" x-text="q.choice_b"></td>
+                                        <td class="px-4 py-3.5 text-center">
+                                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                                  :class="q.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'"
+                                                  x-text="q.is_active ? 'Aktif' : 'Non-Aktif'"></span>
+                                        </td>
+                                        <td class="px-4 py-3.5 text-center">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <button @click="openEditMbtiModal(q)" class="p-1.5 text-gray-400 hover:text-violet-500 rounded-lg hover:bg-violet-50 transition" title="Edit Soal"><i class="fas fa-edit text-xs"></i></button>
+                                                <button @click="deleteMbtiQuestion(q.id)" class="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition" title="Hapus Soal"><i class="fas fa-trash-alt text-xs"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- QUESTIONS CRUD LIST -->
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-violet-100 rounded-xl"><i class="fas fa-circle-question text-violet-500"></i></div>
-                        <div>
-                            <h2 class="text-base font-bold text-gray-800">Daftar Pertanyaan MBTI</h2>
-                            <p class="text-[11px] text-gray-500 mt-0.5">Daftar pertanyaan tes kepribadian MBTI dinamis</p>
+            <!-- SUB TAB: RESULTS INFO -->
+            <div x-show="activeMbtiSubTab === 'results_info'" x-transition x-cloak>
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-indigo-100 rounded-xl"><i class="fas fa-id-card-clip text-indigo-500"></i></div>
+                            <div>
+                                <h2 class="text-base font-bold text-gray-800">Manajemen Informasi Hasil MBTI</h2>
+                                <p class="text-[11px] text-gray-500 mt-0.5">Kelola detail penjelasan, karakteristik, saran pengembangan, dan profesi yang cocok untuk 16 tipe MBTI</p>
+                            </div>
                         </div>
+                        <input type="text" x-model="mbtiResultSearchQuery" placeholder="Cari tipe/judul..."
+                               class="bg-white border border-gray-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-400 w-full sm:w-48 shadow-sm">
                     </div>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <input type="text" x-model="mbtiSearchQuery" placeholder="Cari pertanyaan..."
-                               class="bg-white border border-gray-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-violet-400 w-full sm:w-48 shadow-sm">
-                        <button @click="openAddMbtiModal()"
-                                class="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-violet-600/20 hover:from-violet-700 hover:to-indigo-700 transition-all active:scale-95 flex items-center gap-2">
-                            <i class="fas fa-plus text-[10px]"></i> Tambah Soal
-                        </button>
-                    </div>
-                </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-gray-600">
-                        <thead class="bg-gray-50/80 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-200">
-                            <tr>
-                                <th class="px-5 py-3 w-16 text-center">Urutan</th>
-                                <th class="px-4 py-3 w-24 text-center">Dimensi</th>
-                                <th class="px-4 py-3 min-w-[250px]">Pertanyaan</th>
-                                <th class="px-4 py-3">Pilihan A (Skor Kiri)</th>
-                                <th class="px-4 py-3">Pilihan B (Skor Kanan)</th>
-                                <th class="px-4 py-3 text-center">Status</th>
-                                <th class="px-4 py-3 text-center w-24">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <template x-if="filteredMbtiQuestions.length === 0">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-600">
+                            <thead class="bg-gray-50/80 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-200">
                                 <tr>
-                                    <td colspan="7" class="px-5 py-8 text-center text-gray-400">
-                                        <i class="fas fa-folder-open text-gray-300 text-2xl mb-2 block"></i>
-                                        <span class="text-xs">Tidak ada pertanyaan ditemukan.</span>
-                                    </td>
+                                    <th class="px-5 py-3 w-24 text-center">Tipe</th>
+                                    <th class="px-4 py-3 min-w-[150px]">Nama/Judul</th>
+                                    <th class="px-4 py-3 min-w-[250px]">Deskripsi Singkat</th>
+                                    <th class="px-4 py-3 text-center w-24">Aksi</th>
                                 </tr>
-                            </template>
-                            <template x-for="q in filteredMbtiQuestions" :key="q.id">
-                                <tr class="hover:bg-gray-50/50 transition-colors">
-                                    <td class="px-5 py-3.5 text-center font-bold text-gray-800" x-text="q.sort_order"></td>
-                                    <td class="px-4 py-3.5 text-center">
-                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
-                                              :class="{
-                                                  'bg-violet-100 text-violet-700': q.dimension === 'EI',
-                                                  'bg-blue-100 text-blue-700': q.dimension === 'SN',
-                                                  'bg-emerald-100 text-emerald-700': q.dimension === 'TF',
-                                                  'bg-amber-100 text-amber-700': q.dimension === 'JP',
-                                              }" x-text="q.dimension"></span>
-                                    </td>
-                                    <td class="px-4 py-3.5 font-medium text-gray-800 text-xs" x-text="q.question_text"></td>
-                                    <td class="px-4 py-3.5 text-gray-500 text-xs" x-text="q.choice_a"></td>
-                                    <td class="px-4 py-3.5 text-gray-500 text-xs" x-text="q.choice_b"></td>
-                                    <td class="px-4 py-3.5 text-center">
-                                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full"
-                                              :class="q.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'"
-                                              x-text="q.is_active ? 'Aktif' : 'Non-Aktif'"></span>
-                                    </td>
-                                    <td class="px-4 py-3.5 text-center">
-                                        <div class="flex items-center justify-center gap-1.5">
-                                            <button @click="openEditMbtiModal(q)" class="p-1.5 text-gray-400 hover:text-violet-500 rounded-lg hover:bg-violet-50 transition" title="Edit Soal"><i class="fas fa-edit text-xs"></i></button>
-                                            <button @click="deleteMbtiQuestion(q.id)" class="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition" title="Hapus Soal"><i class="fas fa-trash-alt text-xs"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <template x-if="filteredMbtiResults.length === 0">
+                                    <tr>
+                                        <td colspan="4" class="px-5 py-8 text-center text-gray-400">
+                                            <i class="fas fa-folder-open text-gray-300 text-2xl mb-2 block"></i>
+                                            <span class="text-xs">Tidak ada data hasil MBTI ditemukan.</span>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-for="r in filteredMbtiResults" :key="r.mbti_type">
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-5 py-3.5 text-center">
+                                            <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-black tracking-wider" x-text="r.mbti_type"></span>
+                                        </td>
+                                        <td class="px-4 py-3.5 font-bold text-gray-800 text-xs" x-text="r.title"></td>
+                                        <td class="px-4 py-3.5 text-gray-500 text-xs truncate max-w-xs" x-text="r.description"></td>
+                                        <td class="px-4 py-3.5 text-center">
+                                            <button @click="openEditMbtiResultModal(r)" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg font-bold text-[11px] transition flex items-center gap-1.5 mx-auto">
+                                                <i class="fas fa-edit text-[10px]"></i> Edit
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -793,6 +864,47 @@
                 </form>
             </div>
         </div>
+        <!-- ======================================== -->
+        <!-- MODAL: MBTI RESULT INFO                  -->
+        <!-- ======================================== -->
+        <div x-show="showMbtiResultModal" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showMbtiResultModal = false"></div>
+            <div x-show="showMbtiResultModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full sm:translate-y-4 opacity-0 scale-95" x-transition:enter-end="translate-y-0 opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0 opacity-100 scale-100" x-transition:leave-end="translate-y-full sm:translate-y-4 opacity-0 scale-95" class="relative w-full sm:max-w-xl bg-white border border-gray-200 rounded-t-3xl sm:rounded-2xl shadow-2xl p-6 overflow-y-auto max-h-[90vh]">
+                <div class="flex items-center justify-between mb-5 border-b border-gray-200 pb-4">
+                    <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                        <div class="p-2 bg-indigo-100 rounded-lg"><i class="fas fa-id-card-clip text-indigo-500 text-sm"></i></div>
+                        <span>Edit Informasi MBTI: <span class="text-indigo-600 uppercase" x-text="mbtiResultForm.mbti_type"></span></span>
+                    </h3>
+                    <button @click="showMbtiResultModal = false" class="text-gray-400 hover:text-gray-600 transition p-1"><i class="fas fa-times"></i></button>
+                </div>
+                <form @submit.prevent="submitMbtiResultForm()" class="space-y-4">
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Nama / Julukan Kepribadian</label>
+                        <input type="text" x-model="mbtiResultForm.title" required placeholder="e.g. Penasihat / Advocate" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition" />
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Deskripsi Singkat</label>
+                        <textarea x-model="mbtiResultForm.description" rows="3" required placeholder="Masukkan deskripsi kepribadian..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Karakteristik Utama (Pisahkan dengan tanda titik koma ';')</label>
+                        <textarea x-model="mbtiResultForm.characteristics" rows="3" required placeholder="Peduli; Idealis; Terorganisir;..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Saran Pengembangan Diri (Pisahkan dengan tanda titik koma ';')</label>
+                        <textarea x-model="mbtiResultForm.development_suggestions" rows="3" required placeholder="Belajar terbuka terhadap kritik; Keluar dari zona nyaman;..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Profesi & Karir Cocok (Pisahkan dengan tanda koma ',')</label>
+                        <textarea x-model="mbtiResultForm.suitable_professions" rows="2" required placeholder="Psikolog, Penulis, Pengajar, Konselor..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition resize-none"></textarea>
+                    </div>
+                    <button type="submit" :disabled="savingMbtiResult" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-600/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 text-sm">
+                        <i class="fas" :class="savingMbtiResult ? 'fa-spinner fa-spin' : 'fa-check'"></i>
+                        <span x-text="savingMbtiResult ? 'Menyimpan...' : 'Simpan Informasi'"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
 
     </div>
 
@@ -842,6 +954,21 @@ function kelolaMasterApp() {
         addingUser: false,
         addUserRoleId: 5,
 
+        // MBTI Results Info Management
+        activeMbtiSubTab: 'questions',
+        mbtiResults: [],
+        mbtiResultSearchQuery: '',
+        showMbtiResultModal: false,
+        savingMbtiResult: false,
+        mbtiResultForm: {
+            mbti_type: '',
+            title: '',
+            description: '',
+            characteristics: '',
+            development_suggestions: '',
+            suitable_professions: ''
+        },
+
         // MBTI Configuration
         mbtiConfig: { retake_interval_days: 30 },
         savingConfig: false,
@@ -880,6 +1007,7 @@ function kelolaMasterApp() {
             await this.loadKonselorUsers();
             await this.loadMbtiConfig();
             await this.loadMbtiQuestions();
+            await this.loadMbtiResults();
         },
 
         // === KATEGORI CRUD ===
@@ -1291,6 +1419,70 @@ function kelolaMasterApp() {
                 }
             } catch (e) {
                 if (window.showAlert) window.showAlert('error', 'Gagal menghapus pertanyaan');
+            }
+        },
+
+        // === MBTI RESULTS INFO MANAGEMENT ===
+        async loadMbtiResults() {
+            try {
+                const res = await fetch('/konselor/api/mbti/results');
+                const data = await res.json();
+                if (data.success) {
+                    this.mbtiResults = data.results;
+                }
+            } catch (e) {
+                console.error('Failed to load MBTI results info', e);
+            }
+        },
+
+        get filteredMbtiResults() {
+            if (!this.mbtiResultSearchQuery) return this.mbtiResults;
+            const q = this.mbtiResultSearchQuery.toLowerCase();
+            return this.mbtiResults.filter(item => 
+                item.mbti_type.toLowerCase().includes(q) ||
+                item.title.toLowerCase().includes(q) ||
+                item.description.toLowerCase().includes(q)
+            );
+        },
+
+        openEditMbtiResultModal(r) {
+            this.mbtiResultForm = {
+                mbti_type: r.mbti_type,
+                title: r.title,
+                description: r.description,
+                characteristics: r.characteristics,
+                development_suggestions: r.development_suggestions,
+                suitable_professions: r.suitable_professions
+            };
+            this.showMbtiResultModal = true;
+        },
+
+        async submitMbtiResultForm() {
+            this.savingMbtiResult = true;
+            try {
+                const res = await fetch('/konselor/api/mbti/results/' + this.mbtiResultForm.mbti_type, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: this.mbtiResultForm.title,
+                        description: this.mbtiResultForm.description,
+                        characteristics: this.mbtiResultForm.characteristics,
+                        development_suggestions: this.mbtiResultForm.development_suggestions,
+                        suitable_professions: this.mbtiResultForm.suitable_professions
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (window.showAlert) window.showAlert('success', data.message);
+                    this.showMbtiResultModal = false;
+                    await this.loadMbtiResults();
+                } else {
+                    if (window.showAlert) window.showAlert('error', data.message);
+                }
+            } catch (e) {
+                if (window.showAlert) window.showAlert('error', 'Gagal menyimpan info hasil MBTI');
+            } finally {
+                this.savingMbtiResult = false;
             }
         }
     }

@@ -17,6 +17,47 @@
             defer
             src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
         ></script>
+        <!-- Confetti Gimmick -->
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        
+        {% set mbti_type = history.mbti_result.upper() %}
+        {% set palette = color_mbti.get(mbti_type, {}) %}
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                // Central burst first
+                confetti({
+                    particleCount: 80,
+                    spread: 60,
+                    origin: { y: 0.6 },
+                    colors: ['{{ palette.get("gradient_start", "#8B5CF6") }}', '{{ palette.get("gradient_end", "#6366F1") }}', '{{ palette.get("accent_text", "#7C3AED") }}', '#fbbf24', '#ffffff']
+                });
+
+                // Side bursts for 2.5 seconds
+                var duration = 2.5 * 1000;
+                var end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 3,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0, y: 0.8 },
+                        colors: ['{{ palette.get("gradient_start", "#8B5CF6") }}', '{{ palette.get("gradient_end", "#6366F1") }}', '{{ palette.get("accent_text", "#7C3AED") }}']
+                    });
+                    confetti({
+                        particleCount: 3,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1, y: 0.8 },
+                        colors: ['{{ palette.get("gradient_start", "#8B5CF6") }}', '{{ palette.get("gradient_end", "#6366F1") }}', '{{ palette.get("accent_text", "#7C3AED") }}']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            });
+        </script>
         <style>
             [x-cloak] {
                 display: none !important;
@@ -25,158 +66,86 @@
                 font-family: "Inter", sans-serif;
             }
             .gradient-text {
-                background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+                background: linear-gradient(135deg, {{ palette.get('gradient_start', '#8B5CF6') }}, {{ palette.get('gradient_end', '#6366F1') }});
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
             .gradient-bg {
-                background: linear-gradient(135deg, #8b5cf6, #6366f1);
+                background: linear-gradient(135deg, {{ palette.get('gradient_start', '#8B5CF6') }}, {{ palette.get('gradient_end', '#6366F1') }});
+            }
+            .dynamic-bg-light {
+                background-color: {{ palette.get('bg_light', '#F5F3FF') }};
+            }
+            .dynamic-border {
+                border-color: {{ palette.get('border_color', '#DDD6FE') }};
+            }
+            .dynamic-accent-text {
+                color: {{ palette.get('accent_text', '#7C3AED') }};
+            }
+            .dynamic-badge-bg {
+                background-color: {{ palette.get('badge_bg', '#EDE9FE') }};
+            }
+            @keyframes celebrate {
+                0% { transform: scale(0.9); opacity: 0; }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            .celebration-card {
+                animation: celebrate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
             }
         </style>
     </head>
-    <body class="bg-slate-50 text-gray-600 min-h-screen mt-10 lg:mt-0 md:mt-15">
-        <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl">
-            <!-- BACK BUTTON -->
-            <div class="mb-6 flex justify-between items-center">
-                <a href="{{ url_for('konselor_dashboard') }}" class="inline-flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-violet-500 transition">
-                    <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
-                </a>
-                
-                <button onclick="window.print()" class="px-3.5 py-1.5 bg-white border border-gray-200 rounded-xl hover:bg-slate-50 text-xs font-bold text-gray-600 transition flex items-center gap-1.5">
-                    <i class="fas fa-print"></i> Cetak Hasil
-                </button>
-            </div>
+    <body class="bg-slate-50 text-gray-600 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6">
+        <div class="container mx-auto max-w-xl">
+            <!-- CELEBRATION CARD -->
+            <div class="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl text-center celebration-card relative overflow-hidden">
+                <!-- Decorative blurred background circles -->
+                <div class="absolute -top-12 -left-12 w-40 h-40 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-            <!-- RESULT BANNER -->
-            <div class="gradient-bg rounded-3xl p-6 sm:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
-                <!-- Abstract decorations -->
-                <div class="absolute right-0 top-0 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
-
-                <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 text-center md:text-left">
-                    <div class="w-28 h-28 bg-white/10 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center border border-white/20 shadow-lg">
-                        <span class="text-4xl font-black tracking-widest">{{ history.mbti_result }}</span>
-                        <span class="text-[9px] font-bold uppercase tracking-wider opacity-80 mt-1">TIPE MBTI</span>
-                    </div>
-                    <div class="flex-1">
-                        <span class="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">Hasil Pengukuran</span>
-                        <h1 class="text-2xl sm:text-3xl font-black mt-2 tracking-tight">{{ history.title }}</h1>
-                        <p class="text-xs text-white/80 mt-2 leading-relaxed max-w-xl">
-                            {{ history.description }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DIMENSION SPECTRUM CHART -->
-            <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm mb-8">
-                <h2 class="text-sm font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <i class="fas fa-chart-bar text-violet-500"></i> Spektrum Dimensi Kepribadian Anda
-                </h2>
-
-                <div class="space-y-6">
-                    <!-- E vs I -->
-                    <div>
-                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                            <span class="text-violet-600">Extraversion (E) &bull; {{ pct['E'] }}%</span>
-                            <span class="text-indigo-600">{{ pct['I'] }}% &bull; Introversion (I)</span>
-                        </div>
-                        <div class="w-full bg-indigo-100 h-3.5 rounded-full overflow-hidden flex shadow-inner">
-                            <div class="bg-violet-500 h-full transition-all duration-500" :style="`width: {{ pct['E'] }}%`" style="width: {{ pct['E'] }}%"></div>
-                            <div class="bg-indigo-500 h-full transition-all duration-500 flex-1"></div>
-                        </div>
-                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda menyalurkan dan memulihkan energi Anda (interaksi sosial vs waktu mandiri).</p>
-                    </div>
-
-                    <!-- S vs N -->
-                    <div>
-                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                            <span class="text-violet-600">Sensing (S) &bull; {{ pct['S'] }}%</span>
-                            <span class="text-indigo-600">{{ pct['N'] }}% &bull; Intuition (N)</span>
-                        </div>
-                        <div class="w-full bg-indigo-100 h-3.5 rounded-full overflow-hidden flex shadow-inner">
-                            <div class="bg-violet-500 h-full transition-all duration-500" :style="`width: {{ pct['S'] }}%`" style="width: {{ pct['S'] }}%"></div>
-                            <div class="bg-indigo-500 h-full transition-all duration-500 flex-1"></div>
-                        </div>
-                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda memproses informasi (fakta/detail konkret vs kemungkinan/pola abstrak).</p>
-                    </div>
-
-                    <!-- T vs F -->
-                    <div>
-                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                            <span class="text-violet-600">Thinking (T) &bull; {{ pct['T'] }}%</span>
-                            <span class="text-indigo-600">{{ pct['F'] }}% &bull; Feeling (F)</span>
-                        </div>
-                        <div class="w-full bg-indigo-100 h-3.5 rounded-full overflow-hidden flex shadow-inner">
-                            <div class="bg-violet-500 h-full transition-all duration-500" :style="`width: {{ pct['T'] }}%`" style="width: {{ pct['T'] }}%"></div>
-                            <div class="bg-indigo-500 h-full transition-all duration-500 flex-1"></div>
-                        </div>
-                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda mengambil keputusan (logika objektif vs perasaan/empati interpersonal).</p>
-                    </div>
-
-                    <!-- J vs P -->
-                    <div>
-                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                            <span class="text-violet-600">Judging (J) &bull; {{ pct['J'] }}%</span>
-                            <span class="text-indigo-600">{{ pct['P'] }}% &bull; Perceiving (P)</span>
-                        </div>
-                        <div class="w-full bg-indigo-100 h-3.5 rounded-full overflow-hidden flex shadow-inner">
-                            <div class="bg-violet-500 h-full transition-all duration-500" :style="`width: {{ pct['J'] }}%`" style="width: {{ pct['J'] }}%"></div>
-                            <div class="bg-indigo-500 h-full transition-all duration-500 flex-1"></div>
-                        </div>
-                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda mengorganisasi kehidupan sehari-hari (terstruktur/terencana vs fleksibel/spontan).</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DETAIL EXPLANATIONS -->
-            <div class="space-y-6">
-                <!-- Ciri-ciri -->
-                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                        <i class="fas fa-circle-info text-violet-500"></i> Ciri-ciri & Karakteristik Utama
-                    </h3>
-                    <ul class="space-y-2.5">
-                        {% for line in history.characteristics.split(';') %}
-                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
-                            <i class="fas fa-check text-emerald-500 mt-0.5"></i>
-                            <span>{{ line.strip() }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                <!-- Success Icon -->
+                <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-100 shadow-sm text-emerald-500">
+                    <i class="fas fa-circle-check text-3xl"></i>
                 </div>
 
-                <!-- Saran Pengembangan -->
-                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                        <i class="fas fa-graduation-cap text-violet-500"></i> Saran Pengembangan Diri
-                    </h3>
-                    <ul class="space-y-2.5">
-                        {% for line in history.development_suggestions.split(';') %}
-                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
-                            <i class="fas fa-lightbulb text-amber-500 mt-0.5"></i>
-                            <span>{{ line.strip() }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                <span class="text-[10px] font-bold dynamic-accent-text uppercase tracking-widest dynamic-badge-bg px-3 py-1 rounded-full">Tes Selesai Disimpan</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-tight mt-4">
+                    Selamat, Kepribadian Anda Teridentifikasi!
+                </h1>
+                <p class="text-xs text-gray-500 mt-2 leading-relaxed max-w-sm mx-auto">
+                    Hasil jawaban tes MBTI Anda telah berhasil dianalisis dengan tipe kepribadian berikut:
+                </p>
+
+                <!-- MBTI Result Block -->
+                <div class="my-8 p-6 dynamic-bg-light border dynamic-border rounded-2xl">
+                    <div class="relative w-32 h-32 mx-auto mb-4">
+                        <div class="w-32 h-32 gradient-bg rounded-2xl flex items-center justify-center text-white shadow-lg overflow-hidden">
+                            <img src="{{ palette.get('avatar', '') }}" alt="{{ history.mbti_result }}" class="w-28 h-28 object-contain mt-2">
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-white text-gray-800 px-2 py-0.5 rounded-md text-[10px] font-black tracking-wider shadow border border-gray-100">
+                            {{ history.mbti_result }}
+                        </div>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">{{ history.title }}</h2>
+                    <p class="text-xs text-gray-500 mt-2 leading-relaxed line-clamp-3 px-2">
+                        {{ history.description }}
+                    </p>
                 </div>
 
-                <!-- Profesi Cocok -->
-                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                        <i class="fas fa-briefcase text-violet-500"></i> Profesi & Karir yang Cocok
-                    </h3>
-                    <div class="flex flex-wrap gap-2">
-                        {% for prof in history.suitable_professions.split(',') %}
-                        <span class="px-3.5 py-1.5 bg-violet-50 text-violet-700 font-semibold text-xs rounded-xl border border-violet-100/50">
-                            {{ prof.strip() }}
-                        </span>
-                        {% endfor %}
-                    </div>
+                <!-- CTA Actions -->
+                <div class="space-y-3">
+                    <a href="{{ url_for('konselor_mbti_detail', history_id=history.id) }}" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 gradient-bg hover:opacity-90 text-white font-bold text-sm rounded-xl shadow-md transition-all active:scale-98">
+                        <i class="fas fa-chart-pie"></i> Lihat Analisis & Grafik Lengkap
+                    </a>
+                    
+                    <a href="{{ url_for('konselor_mbti_menu') }}" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-gray-700 font-bold text-xs rounded-xl transition">
+                        <i class="fas fa-home"></i> Kembali ke Menu MBTI
+                    </a>
                 </div>
             </div>
         </div>
 
-        {% include 'nativeNav.html' %}
+        {% include 'alert.html' %}
     </body>
 </html>

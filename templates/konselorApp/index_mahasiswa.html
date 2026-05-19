@@ -165,9 +165,14 @@
                 </h2>
                 
                 <div class="flex flex-col sm:flex-row gap-6 items-center">
-                    <div class="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-2xl flex flex-col items-center justify-center text-white shadow-lg">
-                        <span class="text-2xl font-black tracking-wider">{{ latest_test.mbti_result }}</span>
-                        <span class="text-[9px] font-bold uppercase opacity-85 mt-0.5">Kepribadian</span>
+                    {% set mbti_type = latest_test.mbti_result.upper() %}
+                    {% set palette = color_mbti.get(mbti_type, {}) %}
+                    <div class="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden border shadow-lg relative"
+                         style="background: linear-gradient(135deg, {{ palette.get('gradient_start', '#8B5CF6') }}, {{ palette.get('gradient_end', '#6366F1') }}); border-color: {{ palette.get('border_color', '#DDD6FE') }};">
+                        <img src="{{ palette.get('avatar', '') }}" alt="{{ latest_test.mbti_result }}" class="w-20 h-20 object-contain mt-1">
+                        <div class="absolute bottom-0 inset-x-0 text-center bg-black/50 text-white text-[8px] font-black tracking-widest leading-none py-0.5">
+                            {{ latest_test.mbti_result }}
+                        </div>
                     </div>
                     <div class="flex-1 text-center sm:text-left">
                         <h3 class="text-lg font-bold text-gray-800">{{ latest_test.title }}</h3>
@@ -176,7 +181,7 @@
                             {{ latest_test.description }}
                         </p>
                         <div class="mt-4 flex flex-wrap justify-center sm:justify-start gap-2">
-                            <a href="{{ url_for('konselor_mbti_result', history_id=latest_test.id) }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-gray-700 font-bold text-xs rounded-lg transition">
+                            <a href="{{ url_for('konselor_mbti_detail', history_id=latest_test.id) }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-gray-700 font-bold text-xs rounded-lg transition">
                                 Lihat Detail Penjelasan & Grafik
                             </a>
                         </div>

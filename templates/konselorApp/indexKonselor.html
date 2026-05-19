@@ -605,7 +605,13 @@
                                         x-text="mhs.nim + ' • ' + mhs.prodi"
                                     ></p>
                                     <template x-if="mhs.mbti">
-                                        <span class="text-[9px] font-bold bg-violet-50 text-violet-500 px-1.5 py-0.5 rounded uppercase" x-text="mhs.mbti"></span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase border"
+                                              :style="{
+                                                  backgroundColor: colorMbti[mhs.mbti.toUpperCase()]?.bg_light || '#F5F3FF',
+                                                  borderColor: colorMbti[mhs.mbti.toUpperCase()]?.border_color || '#DDD6FE',
+                                                  color: colorMbti[mhs.mbti.toUpperCase()]?.accent_text || '#7C3AED'
+                                              }"
+                                              x-text="mhs.mbti"></span>
                                     </template>
                                     <template x-if="mhs.status_abk">
                                         <span class="text-[9px] font-bold bg-rose-50 text-rose-500 px-1.5 py-0.5 rounded" x-text="mhs.status_abk"></span>
@@ -730,6 +736,7 @@
                 return {
                     currentDate: "",
                     searchQuery: "",
+                    colorMbti: {{ color_mbti | tojson if color_mbti else '{}' }},
 
                     showImportModal: false,
                     importFile: null,

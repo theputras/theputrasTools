@@ -112,8 +112,13 @@
                         {% for hist in history_list %}
                         <div class="flex items-center justify-between p-4 sm:p-5 hover:bg-gray-50/50 transition">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center text-xs font-black text-violet-600">
-                                    {{ hist.mbti_result }}
+                                {% set hist_palette = color_mbti.get(hist.mbti_result.upper(), {}) %}
+                                <div class="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden border relative flex-shrink-0"
+                                     style="background-color: {{ hist_palette.get('bg_light', '#F5F3FF') }}; border-color: {{ hist_palette.get('border_color', '#DDD6FE') }};">
+                                    <img src="{{ hist_palette.get('avatar', '') }}" alt="{{ hist.mbti_result }}" class="w-10 h-10 object-contain mt-1">
+                                    <div class="absolute bottom-0 inset-x-0 text-center bg-black/50 text-white text-[7px] font-black tracking-widest leading-none py-0.5">
+                                        {{ hist.mbti_result }}
+                                    </div>
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-gray-800">{{ hist.title }}</h4>
@@ -123,7 +128,7 @@
                                 </div>
                             </div>
                             <div>
-                                <a href="{{ url_for('konselor_mbti_result', history_id=hist.id) }}" class="px-3 py-1.5 bg-slate-100 hover:bg-violet-50 hover:text-violet-600 border border-slate-200 hover:border-violet-200 rounded-lg text-xs font-bold text-gray-600 transition">
+                                <a href="{{ url_for('konselor_mbti_detail', history_id=hist.id) }}" class="px-3 py-1.5 bg-slate-100 hover:bg-violet-50 hover:text-violet-600 border border-slate-200 hover:border-violet-200 rounded-lg text-xs font-bold text-gray-600 transition">
                                     Buka Detail <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
                                 </a>
                             </div>

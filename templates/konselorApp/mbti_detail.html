@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Detail Hasil Tes MBTI - The Putras Tools</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        
+        {% set mbti_type = history.mbti_result.upper() %}
+        {% set palette = color_mbti.get(mbti_type, {}) %}
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+            body {
+                font-family: "Inter", sans-serif;
+            }
+            .gradient-text {
+                background: linear-gradient(135deg, {{ palette.get('gradient_start', '#8B5CF6') }}, {{ palette.get('gradient_end', '#6366F1') }});
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, {{ palette.get('gradient_start', '#8B5CF6') }}, {{ palette.get('gradient_end', '#6366F1') }});
+            }
+            .dynamic-bg-light {
+                background-color: {{ palette.get('bg_light', '#F5F3FF') }};
+            }
+            .dynamic-border {
+                border-color: {{ palette.get('border_color', '#DDD6FE') }};
+            }
+            .dynamic-accent-text {
+                color: {{ palette.get('accent_text', '#7C3AED') }};
+            }
+            .dynamic-accent-text-secondary {
+                color: {{ palette.get('gradient_end', '#6366F1') }};
+            }
+            .dynamic-progress-bg {
+                background-color: {{ palette.get('progress_bg', '#E0E7FF') }};
+            }
+            .dynamic-progress-bar-left {
+                background-color: {{ palette.get('progress_bar', '#8B5CF6') }};
+            }
+            .dynamic-progress-bar-right {
+                background-color: {{ palette.get('gradient_end', '#6366F1') }};
+            }
+        </style>
+    </head>
+    <body class="bg-slate-50 text-gray-600 min-h-screen mt-10 lg:mt-0 md:mt-15">
+        <div class="container mx-auto px-4 sm:px-6 py-6 pb-40 max-w-3xl">
+            <!-- BACK BUTTON -->
+            <div class="mb-6 flex justify-between items-center">
+                <a href="{{ url_for('konselor_mbti_menu') }}" class="inline-flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-violet-500 transition">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Menu MBTI
+                </a>
+                
+                <button onclick="window.print()" class="px-3.5 py-1.5 bg-white border border-gray-200 rounded-xl hover:bg-slate-50 text-xs font-bold text-gray-600 transition flex items-center gap-1.5">
+                    <i class="fas fa-print"></i> Cetak Hasil
+                </button>
+            </div>
+
+            <!-- RESULT BANNER -->
+            <div class="gradient-bg rounded-3xl p-6 sm:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
+                <!-- Abstract decorations -->
+                <div class="absolute right-0 top-0 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
+
+                <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 text-center md:text-left">
+                    <div class="flex-shrink-0 relative">
+                        <div class="w-28 h-28 bg-white/10 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center border border-white/20 shadow-lg overflow-hidden">
+                            <img src="{{ palette.get('avatar', '') }}" alt="{{ history.mbti_result }}" class="w-24 h-24 object-contain mt-2">
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-white text-gray-800 px-2 py-0.5 rounded-md text-[10px] font-black tracking-wider shadow border border-gray-100">
+                            {{ history.mbti_result }}
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <span class="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">Hasil Pengukuran</span>
+                        <h1 class="text-2xl sm:text-3xl font-black mt-2 tracking-tight">{{ history.title }}</h1>
+                        <p class="text-xs text-white/80 mt-2 leading-relaxed max-w-xl">
+                            {{ history.description }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BIODATA KLIEN -->
+            <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm mb-8">
+                <h2 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-user-graduate dynamic-accent-text"></i> Biodata Lengkap Klien
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-xs">
+                    <div class="space-y-3">
+                        <div class="flex justify-between border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 font-medium">Nama Lengkap</span>
+                            <span class="text-gray-800 font-bold text-right">{{ history.nama or '-' }}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 font-medium">NIM / Nomor Identitas</span>
+                            <span class="text-gray-800 font-mono font-bold text-right">{{ history.nim or '-' }}</span>
+                        </div>
+                        <div class="flex justify-between md:border-none border-b border-gray-100 pb-2 md:pb-0">
+                            <span class="text-gray-400 font-medium">Status Civitas</span>
+                            <span class="px-2.5 py-0.5 dynamic-bg-light dynamic-accent-text rounded-full text-[10px] font-bold text-right">
+                                {{ history.status_civitas or 'Mahasiswa' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 font-medium">Program Studi</span>
+                            <span class="text-gray-800 font-bold text-right">{{ history.prodi or '-' }}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 font-medium">Dosen Wali</span>
+                            <span class="text-gray-800 font-bold text-right">{{ history.dosen_wali or '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIMENSION SPECTRUM CHART -->
+            <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm mb-8">
+                <h2 class="text-sm font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <i class="fas fa-chart-bar dynamic-accent-text"></i> Spektrum Dimensi Kepribadian Anda
+                </h2>
+
+                <div class="space-y-6">
+                    <!-- E vs I -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                            <span class="dynamic-accent-text">Extraversion (E) &bull; {{ pct['E'] }}%</span>
+                            <span class="dynamic-accent-text-secondary">{{ pct['I'] }}% &bull; Introversion (I)</span>
+                        </div>
+                        <div class="w-full dynamic-progress-bg h-3.5 rounded-full overflow-hidden flex shadow-inner">
+                            <div class="dynamic-progress-bar-left h-full transition-all duration-500" :style="`width: {{ pct['E'] }}%`" style="width: {{ pct['E'] }}%"></div>
+                            <div class="dynamic-progress-bar-right h-full transition-all duration-500 flex-1"></div>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda menyalurkan dan memulihkan energi Anda (interaksi sosial vs waktu mandiri).</p>
+                    </div>
+
+                    <!-- S vs N -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                            <span class="dynamic-accent-text">Sensing (S) &bull; {{ pct['S'] }}%</span>
+                            <span class="dynamic-accent-text-secondary">{{ pct['N'] }}% &bull; Intuition (N)</span>
+                        </div>
+                        <div class="w-full dynamic-progress-bg h-3.5 rounded-full overflow-hidden flex shadow-inner">
+                            <div class="dynamic-progress-bar-left h-full transition-all duration-500" :style="`width: {{ pct['S'] }}%`" style="width: {{ pct['S'] }}%"></div>
+                            <div class="dynamic-progress-bar-right h-full transition-all duration-500 flex-1"></div>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda memproses informasi (fakta/detail konkret vs kemungkinan/pola abstrak).</p>
+                    </div>
+
+                    <!-- T vs F -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                            <span class="dynamic-accent-text">Thinking (T) &bull; {{ pct['T'] }}%</span>
+                            <span class="dynamic-accent-text-secondary">{{ pct['F'] }}% &bull; Feeling (F)</span>
+                        </div>
+                        <div class="w-full dynamic-progress-bg h-3.5 rounded-full overflow-hidden flex shadow-inner">
+                            <div class="dynamic-progress-bar-left h-full transition-all duration-500" :style="`width: {{ pct['T'] }}%`" style="width: {{ pct['T'] }}%"></div>
+                            <div class="dynamic-progress-bar-right h-full transition-all duration-500 flex-1"></div>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda mengambil keputusan (logika objektif vs perasaan/empati interpersonal).</p>
+                    </div>
+
+                    <!-- J vs P -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                            <span class="dynamic-accent-text">Judging (J) &bull; {{ pct['J'] }}%</span>
+                            <span class="dynamic-accent-text-secondary">{{ pct['P'] }}% &bull; Perceiving (P)</span>
+                        </div>
+                        <div class="w-full dynamic-progress-bg h-3.5 rounded-full overflow-hidden flex shadow-inner">
+                            <div class="dynamic-progress-bar-left h-full transition-all duration-500" :style="`width: {{ pct['J'] }}%`" style="width: {{ pct['J'] }}%"></div>
+                            <div class="dynamic-progress-bar-right h-full transition-all duration-500 flex-1"></div>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Menggambarkan bagaimana Anda mengorganisasi kehidupan sehari-hari (terstruktur/terencana vs fleksibel/spontan).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAIL EXPLANATIONS -->
+            <div class="space-y-6">
+                <!-- Ciri-ciri -->
+                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-circle-info dynamic-accent-text"></i> Ciri-ciri & Karakteristik Utama
+                    </h3>
+                    <ul class="space-y-2.5">
+                        {% for line in history.characteristics.split(';') %}
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i class="fas fa-check text-emerald-500 mt-0.5"></i>
+                            <span>{{ line.strip() }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Saran Pengembangan -->
+                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-graduation-cap dynamic-accent-text"></i> Saran Pengembangan Diri
+                    </h3>
+                    <ul class="space-y-2.5">
+                        {% for line in history.development_suggestions.split(';') %}
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i class="fas fa-lightbulb text-amber-500 mt-0.5"></i>
+                            <span>{{ line.strip() }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Profesi Cocok -->
+                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-briefcase dynamic-accent-text"></i> Profesi & Karir yang Cocok
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for prof in history.suitable_professions.split(',') %}
+                        <span class="px-3.5 py-1.5 dynamic-bg-light dynamic-accent-text font-semibold text-xs rounded-xl border dynamic-border">
+                            {{ prof.strip() }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include 'nativeNav.html' %}
+    </body>
+</html>

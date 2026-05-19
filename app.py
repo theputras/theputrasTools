@@ -134,6 +134,19 @@ from scrapper_requests import (
 load_dotenv()  # biar bisa baca file .env
 
 app = Flask(__name__)
+
+# Load MBTI Colors and Avatars Config
+COLOR_MBTI = {}
+try:
+    with open("colorMBTI.json", "r", encoding="utf-8") as f:
+        COLOR_MBTI = json.load(f)
+except Exception as e:
+    logging.error(f"Failed to load colorMBTI.json: {e}")
+
+@app.context_processor
+def inject_mbti_config():
+    return dict(color_mbti=COLOR_MBTI)
+
 # Konfigurasi Rate Limiter
 limiter.init_app(app)
 
@@ -2034,7 +2047,7 @@ def konselor_mbti_submit():
 @login_required
 @konselor_permission('dashboard', 'can_view')
 def konselor_mbti_result(history_id):
-    """Menampilkan detail hasil tes MBTI."""
+    """Menampilkan ringkasan hasil setelah tes selesai secara instan."""
     from models.mbti import mbti_test_history_model
     
     history = mbti_test_history_model.get_by_id(history_id)
@@ -2046,7 +2059,33 @@ def konselor_mbti_result(history_id):
     user_id = g.user.get("sub")
     konselor_role_id = g.konselor_user.get('role_id') if hasattr(g, 'konselor_user') and g.konselor_user else None
     
-    if history['user_id'] != user_id and konselor_role_id not in [1, 5, 7]:
+    if str(history['user_id']) != str(user_id) and konselor_role_id not in [1, 5, 7]:
+        flash("Anda tidak memiliki akses melihat hasil tes ini.", "error")
+        return redirect(url_for("konselor_mbti_menu"))
+        
+    return render_template(
+        "konselorApp/mbti_result.html",
+        history=history
+    )
+
+
+@app.route("/konselor/mbti/detail/<int:history_id>")
+@login_required
+@konselor_permission('dashboard', 'can_view')
+def konselor_mbti_detail(history_id):
+    """Menampilkan detail analisis lengkap hasil tes MBTI."""
+    from models.mbti import mbti_test_history_model
+    
+    history = mbti_test_history_model.get_by_id(history_id)
+    if not history:
+        flash("Hasil tes tidak ditemukan.", "error")
+        return redirect(url_for("konselor_mbti_menu"))
+        
+    # Pastikan user yang bersangkutan yang melihat, atau admin/konselor
+    user_id = g.user.get("sub")
+    konselor_role_id = g.konselor_user.get('role_id') if hasattr(g, 'konselor_user') and g.konselor_user else None
+    
+    if str(history['user_id']) != str(user_id) and konselor_role_id not in [1, 5, 7]:
         flash("Anda tidak memiliki akses melihat hasil tes ini.", "error")
         return redirect(url_for("konselor_mbti_menu"))
         
@@ -2068,7 +2107,7 @@ def konselor_mbti_result(history_id):
     }
     
     return render_template(
-        "konselorApp/mbti_result.html",
+        "konselorApp/mbti_detail.html",
         history=history,
         pct=percentages
     )
@@ -2134,6 +2173,24 @@ def konselor_api_mbti_config():
         "success": True,
         "config": mbti_config_model.get_all()
     })
+
+
+@app.route("/konselor/api/mbti/results", methods=["GET"])
+@login_required
+@konselor_permission('kelola_mbti', 'can_view')
+def konselor_api_mbti_results_get():
+    from models.mbti import mbti_result_info_model
+    return jsonify({"success": True, "results": mbti_result_info_model.get_all()})
+
+
+@app.route("/konselor/api/mbti/results/<string:mbti_type>", methods=["PUT"])
+@login_required
+@konselor_permission('kelola_mbti', 'can_update')
+def konselor_api_mbti_results_update(mbti_type):
+    from models.mbti import mbti_result_info_model
+    data = request.json
+    success, message = mbti_result_info_model.update(mbti_type, data)
+    return jsonify({"success": success, "message": message})
 
 
 @app.route("/tools")
