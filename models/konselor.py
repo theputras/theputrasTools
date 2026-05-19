@@ -131,11 +131,11 @@ class KlienModel:
                 INSERT INTO konselor_data_klien (id_civitas, nama, prodi, dosen_wali, mbti, status_abk, status_civitas)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (id_civitas, nama) DO UPDATE SET
-                    prodi = EXCLUDED.prodi,
-                    dosen_wali = EXCLUDED.dosen_wali,
+                    prodi = COALESCE(EXCLUDED.prodi, konselor_data_klien.prodi),
+                    dosen_wali = COALESCE(EXCLUDED.dosen_wali, konselor_data_klien.dosen_wali),
                     mbti = COALESCE(EXCLUDED.mbti, konselor_data_klien.mbti),
                     status_abk = COALESCE(EXCLUDED.status_abk, konselor_data_klien.status_abk),
-                    status_civitas = EXCLUDED.status_civitas,
+                    status_civitas = COALESCE(EXCLUDED.status_civitas, konselor_data_klien.status_civitas),
                     updated_at = CURRENT_TIMESTAMP
                 RETURNING id
             """

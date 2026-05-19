@@ -202,10 +202,11 @@ class MBTITestHistoryModel:
         try:
             cursor.execute(
                 """INSERT INTO mbti_test_history
-                   (user_id, score_e, score_i, score_s, score_n,
+                   (user_id, id_civitas, score_e, score_i, score_s, score_n,
                     score_t, score_f, score_j, score_p, mbti_result)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id""",
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id""",
                 (data['user_id'],
+                 data.get('nim'),
                  data.get('score_e',0), data.get('score_i',0),
                  data.get('score_s',0), data.get('score_n',0),
                  data.get('score_t',0), data.get('score_f',0),
@@ -243,15 +244,15 @@ class MBTITestHistoryModel:
         try:
             cursor.execute(
                 """SELECT h.*, 
-                          u.username AS nim,
-                          dk.nama,
+                          COALESCE(h.id_civitas, dk.id_civitas, u.username) AS nim,
+                          COALESCE(dk.nama, u.username) AS nama,
                           dk.prodi,
                           r.title, r.description, r.characteristics,
                           r.development_suggestions, r.suitable_professions
                    FROM mbti_test_history h
                    JOIN mbti_results_info r ON h.mbti_result = r.mbti_type
                    LEFT JOIN users u ON h.user_id = u.id
-                   LEFT JOIN konselor_data_klien dk ON u.username = dk.id_civitas
+                   LEFT JOIN konselor_data_klien dk ON COALESCE(h.id_civitas, u.username) = dk.id_civitas
                    WHERE h.id = %s""", (history_id,))
             return cursor.fetchone()
         except Exception as e:
@@ -269,14 +270,14 @@ class MBTITestHistoryModel:
         try:
             cursor.execute(
                 """SELECT h.*, 
-                          u.username AS nim,
-                          dk.nama,
+                          COALESCE(h.id_civitas, dk.id_civitas, u.username) AS nim,
+                          COALESCE(dk.nama, u.username) AS nama,
                           dk.prodi,
                           r.title 
                    FROM mbti_test_history h
                    JOIN mbti_results_info r ON h.mbti_result = r.mbti_type
                    LEFT JOIN users u ON h.user_id = u.id
-                   LEFT JOIN konselor_data_klien dk ON u.username = dk.id_civitas
+                   LEFT JOIN konselor_data_klien dk ON COALESCE(h.id_civitas, u.username) = dk.id_civitas
                    WHERE h.user_id = %s ORDER BY h.tested_at DESC LIMIT 1""", (user_id,))
             return cursor.fetchone()
         except Exception as e:
@@ -293,14 +294,14 @@ class MBTITestHistoryModel:
         try:
             cursor.execute(
                 """SELECT h.id, 
-                          dk.nama, 
-                          u.username AS nim, 
+                          COALESCE(dk.nama, u.username) AS nama, 
+                          COALESCE(h.id_civitas, dk.id_civitas, u.username) AS nim, 
                           dk.prodi, 
                           h.mbti_result, h.tested_at, r.title
                    FROM mbti_test_history h
                    JOIN mbti_results_info r ON h.mbti_result = r.mbti_type
                    LEFT JOIN users u ON h.user_id = u.id
-                   LEFT JOIN konselor_data_klien dk ON u.username = dk.id_civitas
+                   LEFT JOIN konselor_data_klien dk ON COALESCE(h.id_civitas, u.username) = dk.id_civitas
                    WHERE h.user_id = %s ORDER BY h.tested_at DESC""", (user_id,))
             return cursor.fetchall()
         except Exception as e:

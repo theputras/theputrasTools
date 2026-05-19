@@ -133,6 +133,7 @@ CREATE TABLE mbti_results_info (
 CREATE TABLE mbti_test_history (
     id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
+    id_civitas VARCHAR(64) DEFAULT NULL,
     score_e INT DEFAULT 0,
     score_i INT DEFAULT 0,
     score_s INT DEFAULT 0,
@@ -437,10 +438,11 @@ CREATE TABLE mbti_configs (
 -- ==========================================================
 -- 5. TAMBAHAN INDEX UNTUK PERFORMA QUERY
 -- ==========================================================
-CREATE INDEX idx_konselor_nim ON konselor_sessions(nim_id);
+CREATE INDEX idx_konselor_id_klien ON konselor_sessions(id_klien);
 CREATE INDEX idx_konselor_tanggal ON konselor_sessions(tanggal_sesi);
 CREATE INDEX idx_payment_status ON payment_transactions(status);
 CREATE INDEX idx_payment_user_created ON payment_transactions(user_id, created_at);
+CREATE INDEX idx_mbti_history_id_civitas ON mbti_test_history(id_civitas);
 
 
 

@@ -61,8 +61,9 @@
                             type="text"
                             x-model="searchQuery"
                             @input.debounce.500ms="lookupCivitas()"
+                            :disabled="loading"
                             placeholder="Ketik nama atau NIM Anda..."
-                            class="w-full bg-slate-50 border border-gray-200 rounded-2xl p-4 pr-10 text-gray-800 placeholder-gray-400 focus:border-violet-500/30 focus:bg-white focus:outline-none transition text-sm"
+                            class="w-full bg-slate-50 border border-gray-200 rounded-2xl p-4 pr-10 text-gray-800 placeholder-gray-400 focus:border-violet-500/30 focus:bg-white focus:outline-none transition text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
                             <i x-show="loading" class="fas fa-spinner fa-spin text-violet-500" x-cloak></i>

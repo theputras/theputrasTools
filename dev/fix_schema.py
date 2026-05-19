@@ -42,6 +42,82 @@ def get_existing_columns(cursor, table_name):
         return set()
 
 
+def get_existing_columns_with_types(cursor, table_name):
+    """Ambil kolom beserta tipe datanya dari tabel tertentu."""
+    try:
+        cursor.execute("""
+            SELECT column_name, udt_name, character_maximum_length, column_default
+            FROM information_schema.columns
+            WHERE table_name = %s AND table_schema = 'public'
+            ORDER BY ordinal_position
+        """, (table_name,))
+        cols = {}
+        for row in cursor.fetchall():
+            if isinstance(row, dict):
+                cols[row['column_name']] = row
+            else:
+                cols[row[0]] = {
+                    'column_name': row[0], 'udt_name': row[1],
+                    'character_maximum_length': row[2], 'column_default': row[3]
+                }
+        return cols
+    except Exception:
+        return {}
+
+
+def get_existing_constraints(cursor, table_name):
+    """Ambil set nama constraint yang sudah ada di tabel."""
+    try:
+        cursor.execute("""
+            SELECT constraint_name FROM information_schema.table_constraints
+            WHERE table_name = %s AND table_schema = 'public'
+        """, (table_name,))
+        return {row[0] if isinstance(row, tuple) else row['constraint_name'] for row in cursor.fetchall()}
+    except Exception:
+        return set()
+
+
+def normalize_sql_type_to_pg(raw_type):
+    """Normalize tipe data SQL ke format udt_name PostgreSQL.
+    Returns: (udt_name, max_length atau None)
+    """
+    t = raw_type.upper().strip()
+    for kw in ['DEFAULT', 'NOT NULL', 'CHECK(', 'CHECK (', 'REFERENCES', 'UNIQUE', 'PRIMARY']:
+        idx = t.find(kw)
+        if idx > 0:
+            t = t[:idx].strip()
+    if t.endswith(' NULL'):
+        t = t[:-5].strip()
+
+    m = re.match(r'VARCHAR\s*\(\s*(\d+)\s*\)', t)
+    if m:
+        return 'varchar', int(m.group(1))
+    if t.startswith('TIMESTAMP'):
+        return 'timestamp', None
+
+    mapping = {
+        'SERIAL': ('int4', None), 'BIGSERIAL': ('int8', None),
+        'BIGINT': ('int8', None), 'INT': ('int4', None), 'INTEGER': ('int4', None),
+        'SMALLINT': ('int2', None), 'TEXT': ('text', None),
+        'JSONB': ('jsonb', None), 'JSON': ('json', None),
+        'BOOLEAN': ('bool', None), 'REAL': ('float4', None),
+        'DOUBLE PRECISION': ('float8', None), 'DATE': ('date', None),
+    }
+    return mapping.get(t, (t.lower(), None))
+
+
+def build_pg_type_string(udt_name, max_length=None):
+    """Konversi udt_name ke SQL type string untuk ALTER COLUMN."""
+    type_map = {
+        'int4': 'INTEGER', 'int8': 'BIGINT', 'int2': 'SMALLINT',
+        'varchar': f'VARCHAR({max_length})' if max_length else 'TEXT',
+        'text': 'TEXT', 'timestamp': 'TIMESTAMP', 'jsonb': 'JSONB',
+        'json': 'JSON', 'bool': 'BOOLEAN', 'float4': 'REAL',
+        'float8': 'DOUBLE PRECISION', 'date': 'DATE',
+    }
+    return type_map.get(udt_name, udt_name.upper())
+
+
 def parse_sql_statements(sql_content):
     """Parse SQL content menjadi individual statements."""
     # Hapus komentar single line (-- ... )
@@ -120,48 +196,82 @@ def run_schema_migration(cursor, existing_tables, replace=False):
                 continue
 
             if table_name in existing_tables and not replace:
-                print(f"  ⏭️  Tabel '{table_name}' sudah ada → Pengecekan kolom yang kurang...")
+                print(f"  ⏭️  Tabel '{table_name}' sudah ada → Pengecekan kolom, tipe data & constraint...")
                 
-                # Parsing definis kolom dari create_table_statement
-                # Ambil isi dalam kurung CREATE TABLE ... ( ... )
                 match_content = re.search(r'\((.*)\)', stmt, flags=re.IGNORECASE | re.DOTALL)
                 if match_content:
                     columns_content = match_content.group(1)
-                    
-                    # Split berdasarkan koma. Tapi hati-hati bila ada function yg punya koma 
-                    # Pendekatan sederhana: split per newline karena di SQL dump ini biasanya per newline 
-                    # Atau split koma dengan state machine sederhana
                     col_defs = [c.strip() for c in columns_content.split('\n') if c.strip()]
                     
-                    existing_cols = get_existing_columns(cursor, table_name)
+                    existing_cols_info = get_existing_columns_with_types(cursor, table_name)
+                    existing_cols = set(existing_cols_info.keys())
+                    existing_constraints = get_existing_constraints(cursor, table_name)
                     
                     for col_def in col_defs:
                         if col_def.endswith(','):
                             col_def = col_def[:-1].strip()
-                            
-                        # Abaikan constraint/index/primary key dll yang lazim di MySQL
-                        if col_def.upper().startswith(('CONSTRAINT', 'PRIMARY', 'FOREIGN', 'UNIQUE', 'INDEX', 'KEY', 'FULLTEXT')):
+                        if not col_def:
+                            continue
+
+                        # --- CONSTRAINT: cek apakah sudah ada, tambahkan jika belum ---
+                        if col_def.upper().startswith('CONSTRAINT'):
+                            cmatch = re.match(r'CONSTRAINT\s+[`"]?(\w+)[`"]?\s+(.*)', col_def, re.IGNORECASE | re.DOTALL)
+                            if cmatch:
+                                cname = cmatch.group(1)
+                                if cname not in existing_constraints:
+                                    try:
+                                        cursor.execute(f'ALTER TABLE "{table_name}" ADD {col_def}')
+                                        print(f"  ✅ [CONSTRAINT] Ditambahkan '{cname}' pada '{table_name}'")
+                                        created += 1
+                                    except Exception as e:
+                                        if 'already exists' not in str(e).lower():
+                                            print(f"  ⚠️  [CONSTRAINT] Skip '{cname}': {e}")
                             continue
                             
-                        # Ambil nama kolom (word pertama)
+                        # Skip non-column definitions lainnya
+                        if col_def.upper().startswith(('PRIMARY', 'FOREIGN', 'UNIQUE(', 'UNIQUE ', 'INDEX', 'KEY', 'FULLTEXT')):
+                            continue
+                            
+                        # --- COLUMN: cek ada/tidaknya dan tipe datanya ---
                         parts = col_def.split(maxsplit=1)
                         if not parts:
                             continue
-                            
                         col_name = parts[0].strip('`"')
                         
                         if col_name and col_name not in existing_cols:
+                            # Kolom belum ada → ADD COLUMN
                             try:
-                                alter_stmt = f"ALTER TABLE \"{table_name}\" ADD COLUMN {col_def}"
-                                cursor.execute(alter_stmt)
-                                print(f"  ✅ [AUTO-ALTER] Menambahkan kolom '{col_name}' ke tabel '{table_name}'")
+                                cursor.execute(f'ALTER TABLE "{table_name}" ADD COLUMN {col_def}')
+                                print(f"  ✅ [ADD COLUMN] '{col_name}' ke '{table_name}'")
                                 created += 1
                             except Exception as e:
-                                err_str = str(e)
-                                if 'Duplicate column' in err_str:
-                                    pass
+                                if 'already exists' not in str(e).lower():
+                                    print(f"  ❌ [ADD COLUMN] Gagal '{col_name}': {e}")
+                        elif col_name and len(parts) > 1 and col_name in existing_cols_info:
+                            # Kolom sudah ada → Cek apakah tipe data berubah
+                            info = existing_cols_info[col_name]
+                            # Skip kolom auto-increment (SERIAL/BIGSERIAL)
+                            if 'nextval' in str(info.get('column_default') or ''):
+                                continue
+                            expected_udt, expected_len = normalize_sql_type_to_pg(parts[1])
+                            actual_udt = info['udt_name']
+                            actual_len = info.get('character_maximum_length')
+                            
+                            type_changed = (expected_udt != actual_udt)
+                            len_changed = (expected_udt == 'varchar' and expected_len and actual_len and expected_len != actual_len)
+                            
+                            if type_changed or len_changed:
+                                pg_type = build_pg_type_string(expected_udt, expected_len)
+                                if actual_udt == 'varchar' and expected_udt in ('int4', 'int8', 'int2'):
+                                    using = f'USING NULLIF("{col_name}", \'\')::{pg_type}'
                                 else:
-                                    print(f"  ❌ [AUTO-ALTER] Gagal menambah kolom '{col_name}': {e}")
+                                    using = f'USING "{col_name}"::{pg_type}'
+                                try:
+                                    cursor.execute(f'ALTER TABLE "{table_name}" ALTER COLUMN "{col_name}" TYPE {pg_type} {using}')
+                                    print(f"  ✅ [ALTER TYPE] '{table_name}.{col_name}': {actual_udt} → {expected_udt}")
+                                    created += 1
+                                except Exception as e:
+                                    print(f"  ⚠️  [ALTER TYPE] Skip '{col_name}': {e}")
                 
             else:
                 if replace and table_name in existing_tables:
